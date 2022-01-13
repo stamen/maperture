@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Style Compare</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
+    <script src="js/d3.v4.min.js"></script>
+    <style>
+    body { margin: 0; padding: 0; }
+    #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+    </style>
+</head>
+<body>
+<style>
+    body {
+        overflow: hidden;
+        font-family:sans-serif;
+    }
+
+    body * {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    .map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        background:#ccc;
+    }
+
+    .panel {
+        padding:20px;
+        margin:10px;
+        background:white;
+        z-index: 99;
+        position:absolute;
+        box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
+    }
+
+    #settings > * {
+        float:left;
+        margin-right:10px;
+        height:36px;
+    }
+</style>
+
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.4.0/mapbox-gl-compare.js"></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css" type="text/css">
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.4.0/mapbox-gl-compare.css" type="text/css">
+<div>
+    <div class='panel' style='bottom:0'>
+        <h3 class='l title'>(blank)</h3>
+        <select class='presets l'></select>
+        <button class='customUrl' id='l'>Custom URL</button>
+    </div>
+    <div class='panel' style='right:0; bottom:0; text-align: right'>
+        <h3 class='r title'>(blank)</h3>
+        <select class='presets r'></select>
+        <button class='customUrl' id='r'>Custom URL</button>
+    </div>
+    <div class='panel' id='settings' style='top: 20px; left:50%; transform:translateX(-50%)'>
+        <div id='geocoder'></div>
+        <button id='loadPresets'>Change Presets</button>
+    </div>
+
+</div>
+<div id="comparison-container">
+    <div id="before" class="map">
+    </div>
+    <div id="after" class="map">
+    </div>
+</div>
+
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic3RhbWVuIiwiYSI6ImNreWM1emM2NjAyNTgyb25kc2o5ZG1iMmoifQ.o2QhFbe03ilcplg9sAhYZQ';
+
+    // the state object both stores the current state, and uses setters to propagate the necessary
+    // changes with each state update
+    const state = {
+
+        _hash:{},
+
+        get lUrl() {
+            return state._hash.lUrl
+        },
+
+        get rUrl() {
+            return state._hash.rUrl
+        },
+
+        // style URL setters: fetches style, sets style, updates hash, updates title text
+
+        set lUrl(url) {
+
+            app.fetchStyle(url, style => {
+                app.lMap.setStyle(style);
+                state._hash.lUrl = url;
+                app.setHash();
+                d3.select('.l.title')
+                    .text(style.name)
+            })
+        },
+
+        set rUrl(url) {
+
+            app.fetchStyle(url, style => {
+                app.rMap.setStyle(style);
+                state._hash.rUrl = url;
+                app.setHash();
+
+                // set style title
+                d3.select('.r.title')
+                    .text(style.name)
+            })
+        },
+
+        set presets(url) {
+
+            // fetch preset URL (fallback to hardcoded presets)
+            app.fetchStyle(
+                url || 'https://gist.githubusercontent.com/peterqliu/bafe0434cc7f17b68087aebdfa907bdf/raw/af48f29022807cc1083572963a0ddbd298f0553e/presets.json', 
+
+                presets => {
+
+                    // set hash only if not a fallback preset
+                    if (url) {
+                        state._hash.presets = url;
+                        app.setHash();
+                    }
+
+                    // update dropdowns
+                    state._presets = presets;
+                    app.updatePresets();
+                }
+            )
+        },
+
+        get presets() {
+            return state._presets
+        }
+    };
+
+
+
+    const app = {
+
+        fetchStyle: (url, cb) => {
+            d3.json(url, (e,r) => {
+                if (e) throw e;
+                else if(cb) cb(r)
+            })
+        },
+
+        lMap: new mapboxgl.Map({
+            container: 'before',
+            center: [0, 0],
+            zoom: 0
+        }),
+
+        rMap:new mapboxgl.Map({
+            container: 'after',
+            center: [0, 0],
+            zoom: 0
+        }),
+
+        // parses hash string to update state parameters
+        parseHash: () => {
+            const hashObj = {};
+            location.hash.replace('#', '')
+                .split('&')
+                .forEach(kv=>{
+                    [key, value] = kv.split('=');
+                    hashObj[key] = value;
+                });
+
+            Object.assign(state, hashObj)
+        },
+
+        setHash: () => {
+
+            const string = Object.entries(state._hash)
+                .map(kv=>kv.join('='))
+                .join('&')
+
+            location.hash = string;
+        },
+
+        side: i => i ? 'r' : 'l',
+
+        // (re)populate dropdowns and bind functionality when presets load
+        updatePresets: () => {
+
+            d3.selectAll('.presets option').remove();
+            state._presets.unshift({name: 'Select style...'});
+
+            d3.selectAll('.presets')
+                .on('change', (d,i) => state[`${app.side(i)}Url`] = event.target.value)
+                .selectAll('option')
+                .data(state._presets)
+                .enter()
+                .append('option')
+                .attr('value', (d,i) => i ? d.url : undefined)
+                .text(d=>d.name);
+
+            // set selected value
+            app.setDropdownValue(d3.select('.l.presets'), state.lUrl)
+            app.setDropdownValue(d3.select('.r.presets'), state.rUrl)
+
+        },
+
+        setDropdownValue: (dropdown, value) => {
+            dropdown
+                .selectAll('option')
+                .property('selected', (d,i) => {
+                    if (value) return d.url === value ? true : null;
+                    else return i === 0 ? true : null
+                })
+        },
+
+        init: () => {
+
+            // cull url's from hash
+            app.parseHash();
+
+            // if no preset provided in hash, set it to null to flag setter to fetch default presets
+            if (!state.presets) state.presets = null;
+
+            // bind functionality for custom URL button 
+            d3.selectAll('.customUrl')
+                .on('click', (d,i) => {
+                    const sideUrl = `${app.side(i)}Url`;
+                    const cU = prompt('Enter style URL', state._hash[sideUrl]);
+                    if (cU) state[sideUrl] = cU;
+
+                    // reset dropdown to placeholder value
+                    app.setDropdownValue(d3.select(`.${app.side(i)}.presets`))
+
+                })
+
+            // bind presets button functionality
+            d3.select('#loadPresets')
+                .on('click', ()=> {
+                    const presetsUrl = prompt('Enter URL for presets object')
+                    if (presetsUrl) state.presets = presetsUrl;
+                })
+            
+            // set up geocoder
+            const geocoder = new MapboxGeocoder({
+                accessToken: mapboxgl.accessToken,
+                mapboxgl: mapboxgl,
+                position:'bottom-left'
+            })
+
+            document.getElementById('geocoder')
+                .appendChild(geocoder.onAdd(app.lMap));
+
+        },
+    }
+
+    app.init();
+
+    // A selector or reference to HTML element
+    const container = '#comparison-container';
+
+    const map = new mapboxgl.Compare(app.lMap, app.rMap, container, {
+        // Set this to enable comparing two maps by mouse movement:
+        // mousemove: true
+    });
+</script>
+
+</body>
+</html>
