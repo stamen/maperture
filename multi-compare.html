@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Style Compare</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <style>
+    body { margin: 0; padding: 0; }
+    #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+    </style>
+</head>
+<body>
+<style>
+    body {
+        overflow: hidden;
+        font-family:sans-serif;
+    }
+
+    body * {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    .map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        background:#ccc;
+    }
+
+    .panel {
+        margin:10px;
+        background:white;
+        z-index: 99;
+        position:absolute;
+        box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
+    }
+
+    .style {
+        padding:15px;
+        cursor:pointer;
+        border-bottom:1px solid #eee;
+        color:#333;
+    }
+
+    .style.active {
+        font-weight: bold;
+        color: dodgerblue;
+    }
+    .style:hover {
+        background:#eee;
+    }
+
+    .num {
+    transform: scale(1.5);
+    display: inline-block;
+    margin-right: 10px;
+    }
+</style>
+
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css" type="text/css">
+<div>
+    <div class='panel' id='settings' style='top: 20px; left:0%;'>
+        <div id='geocoder'></div>
+    </div>
+
+</div>
+<div id="comparison-container">
+</div>
+
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic3RhbWVuIiwiYSI6ImNreWM1emM2NjAyNTgyb25kc2o5ZG1iMmoifQ.o2QhFbe03ilcplg9sAhYZQ';
+    const numbers = ['➊', '➋','➌', '➍', '➎', '➏','➐', '➑', '➒' ];
+    // the state object both stores the current state, and uses setters to propagate the necessary
+    // changes with each state update
+    const state = {
+
+        _hash:{},
+        _: {
+            activeMap: 1
+        },
+        set activeMap(num) {
+            state._.activeMap = num;
+            app.syncMaps();
+            document.querySelectorAll('.map')
+                .forEach((m,i) => {
+                    m.style = `z-index:${i+1 === num ? 1 : -99}`
+                })
+
+            document.querySelectorAll('.style')
+                .forEach((m,i) => {
+                    m.className = `style ${i+1 === num ? 'active' : ''}`
+                })
+        },
+
+        get activeMap() {
+            return state._.activeMap
+        }
+    };
+
+
+
+    const app = {
+
+        fetchStyle: (url, cb) => {
+            d3.json(url, (e,r) => {
+                if (e) throw e;
+                else if(cb) cb(r)
+            })
+        },
+
+        maps:[],
+
+        syncMaps:() => {
+            const activeMap = app.maps[state.activeMap - 1];
+            const params = {
+                center: activeMap.getCenter(), 
+                zoom: activeMap.getZoom(),
+                bearing: activeMap.getBearing(),
+                pitch: activeMap.getPitch()
+            }
+            // iterate through all maps (except the active one, to avoid an infinite loop) 
+            //and set it to the active map's extent
+            app.maps.forEach((d,mapIndex) => {
+                if (state.activeMap !== mapIndex+1) {
+                    d.jumpTo(params)
+                }
+            })
+        },
+
+        // parses hash string to update state parameters
+        parseHash: () => {
+            const hashObj = {};
+            location.hash.replace('#', '')
+                .split('&')
+                .forEach(kv=>{
+                    [key, value] = kv.split('=');
+                    hashObj[key] = value.split(',');
+                });
+
+            Object.assign(state, hashObj)
+        },
+
+        setHash: () => {
+
+            const string = Object.entries(state._hash)
+                .map(kv=>kv.join('='))
+                .join('&')
+
+            location.hash = string;
+        },
+
+        init: () => {
+
+            // cull url's from hash
+            app.parseHash();
+
+            state.urls.forEach((u,i)=>{
+                const panel = document.getElementById('settings')
+                const container = document.createElement('div');
+                container.className = `style ${i ? '' : 'active'}`
+                container.text = u;
+                panel.appendChild(container);
+                container.addEventListener('click', () => {
+                        state.activeMap = i+1;
+                })
+            })
+
+            app.maps = state.urls.map((u,i)=>{
+                const container = document.createElement('div');
+                container.id = `map${i}`;
+                container.className = 'map'
+                container.style = `z-index:${i ? -99 : 1}`;
+                document.getElementById('comparison-container')
+                    .appendChild(container)
+
+                const map = new mapboxgl.Map({
+                    container: `map${i}`,
+                    style: u,
+                    center: [0, 0],
+                    zoom: 0
+                })
+
+                map
+                .on('load', ()=>document.querySelectorAll('#settings .style')[i].innerHTML = `<span class='num'>${numbers[i]}</span> ${map.style.stylesheet.name}`)
+                .on('moveend', () => {
+
+                    // only the active map updates the rest
+                    if (i+1 == state.activeMap) app.syncMaps();
+                })
+
+                return map
+            })
+
+            // bind number switcher functionality
+            document.addEventListener('keydown', event=>{
+                const focusedInput = document.querySelector('input:focus');
+
+                if (!focusedInput) {
+                    const num = parseFloat(event.key);
+                    if (!isNaN(num)){
+                        state.activeMap = num;
+                    }
+                }
+            })
+            
+            // set up geocoder
+            app.geocoder = new MapboxGeocoder({
+                accessToken: mapboxgl.accessToken,
+                marker:false,
+                mapboxgl: mapboxgl,
+                position:'bottom-left'
+            })
+            .on('result',({ result }) => {
+                if (result.bbox) {
+                    app.maps.forEach(m=>m.fitBounds(result.bbox, {duration:0}));
+                }
+                else {
+                    app.maps.forEach(m=>m.jumpTo({
+                        center: result.center,
+                        zoom: 17
+                    }));
+                }
+            })
+
+            document.getElementById('geocoder')
+                .appendChild(app.geocoder.onAdd(app.maps[0]));
+
+        },
+    }
+
+    app.init();
+
+</script>
+
+</body>
+</html>
