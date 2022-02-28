@@ -1,4 +1,4 @@
-import * as localConfig from './config.local';
+import * as localConfig from './local';
 
 const config = {
   defaultMapNames: ['Mapbox Streets', 'Mapbox Light'],
