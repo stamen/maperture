@@ -11,9 +11,6 @@
   export let zoom;
   export let showCollisions;
 
-  // TODO style
-  // TODO add view modes
-
   $: {
     dispatch('mapState', {
       options: { showCollisions }
