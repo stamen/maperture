@@ -8,7 +8,7 @@
 
   export let id;
   export let style;
-  export let watch; // TODO
+  export let watch;
   export let bearing;
   export let center;
   export let pitch;
