@@ -82,12 +82,12 @@
       <div class="map-state">{formattedLocation}</div>
       <div class="location-actions">
 	<div>
-	  <Button class="location-button" on:click={handleChangeStart}>
+	  <Button on:click={handleChangeStart}>
 	    change
 	  </Button>
 	</div>
 	<div>
-	  <Button class="location-button" on:click={handleCopy}>
+	  <Button on:click={handleCopy}>
 	    {copied ? "copied" : "copy"}
 	  </Button>
 	</div>
