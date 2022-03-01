@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { Geocoder } from '@beyonk/svelte-mapbox';
-  import { round } from '../math';
+  import MapLocationControl from './MapLocationControl.svelte';
 
   export let bearing;
   export let center;
@@ -11,60 +11,12 @@
   export let zoom;
 
   const dispatch = createEventDispatcher();
-  let copied = false;
-  let formattedLocation = '';
-  let changingState = false;
-  let stateInput = '';
+  let mapLocation;
 
-  $: {
-    dispatch('mapState', {
-      options: { showCollisions }
-    });
-  }
+  $: mapLocation = { bearing, center, pitch, zoom };
 
-  $: {
-    let locationParts = [
-      round(zoom, 2),
-      round(center.lat, 3),
-      round(center.lng, 3)
-    ];
-
-    if (pitch || bearing) {
-      locationParts = locationParts.concat([
-	round(pitch, 1),
-	round(bearing, 1)
-      ]);
-    }
-    formattedLocation = locationParts.join('/');
-  }
-
-  const handleMapStateChangeStart = () => {
-    changingState = true;
-    stateInput = [
-      round(zoom, 2),
-      round(center.lat, 3),
-      round(center.lng, 3),
-      round(pitch, 1),
-      round(bearing, 1)
-    ].join('/');
-  };
-
-  const handleMapStateChangeCancel = () => {
-    changingState = false;
-  };
-
-  const handleMapStateChangeEnd = () => {
-    changingState = false;
-    copied = false;
-
-    const [zoom, lat, lng, pitch, bearing] = stateInput.split('/');
-    const options = { mapStateUpdateOrigin: 'controls' };
-    if (zoom !== undefined) options.zoom = +zoom;
-    if (lat !== undefined && lng !== undefined) options.center = [+lng, +lat];
-    if (pitch !== undefined) options.pitch = +pitch;
-    if (bearing !== undefined) options.bearing = +bearing;
-    dispatch('mapState', { options });
-  };
+  // When showCollisions changes, update map state
+  $: dispatch('mapState', { options: { showCollisions } });
 
   const handleGeocoderResult = ({ detail }) => {
     const { result } = detail;
@@ -77,37 +29,11 @@
     }
     dispatch('mapState', { options });
   };
-
-  const handleLocationCopy = () => {
-    copied = true;
-    navigator.clipboard.writeText(formattedLocation);
-  };
 </script>
 
 <div class="map-controls">
   <div class="control-section">
-    {#if changingState}
-      <div class="state-record">
-	<label>enter zoom/lat/lng[/pitch/bearing]</label>
-	<input type="text"
-	  bind:value={stateInput}
-	  on:keydown={e => {
-	    if (e.key === 'Enter') handleMapStateChangeEnd()
-	    if (e.key === 'Escape') handleMapStateChangeCancel()
-	  }}
-	/>
-      </div>
-    {:else}
-      <div class="map-state-container">
-	<div class="map-state">{formattedLocation}</div>
-	<div class="location-actions">
-	  <div class="location-button" on:click={handleMapStateChangeStart}>change</div>
-	  <div class="location-button" on:click={handleLocationCopy}>
-	    {copied ? "copied" : "copy"}
-	  </div>
-	</div>
-      </div>
-    {/if}
+    <MapLocationControl on:mapState {...mapLocation} />
   </div>
 
   <div class="control-section">
@@ -141,32 +67,5 @@
 
   .control-section {
     margin: 0 1em;
-  }
-
-  .map-state-container {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .map-state {
-    display: flex;
-    justify-content: space-around;
-  }
-
-  .state-record {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .location-actions {
-    display: flex;
-    flex-direction: row;
-  }
-
-  .location-button {
-    font-size: 0.75em;
-    margin: 0 0.5em;
   }
 </style>
