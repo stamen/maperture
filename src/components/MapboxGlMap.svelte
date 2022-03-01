@@ -26,13 +26,6 @@
   mapboxgl.accessToken = mapboxGlAccessToken;
 
   const updateMapFromProps = (newState, origin) => {
-    const currentMapState = {
-      bearing: map.getBearing(),
-      center: map.getCenter(),
-      pitch: map.getPitch(),
-      zoom: map.getZoom(),
-    };
-
     if (id === origin) return;
     map.jumpTo(newState, { origin: 'props' });
   };
