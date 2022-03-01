@@ -7,12 +7,14 @@
   export let center;
   export let mapboxGlAccessToken;
   export let pitch;
-  export let zoom;
   export let showCollisions;
+  export let zoom;
 
   const dispatch = createEventDispatcher();
   let copied = false;
   let formattedLocation = '';
+  let changingState = false;
+  let stateInput = '';
 
   $: {
     dispatch('mapState', {
@@ -35,9 +37,6 @@
     }
     formattedLocation = locationParts.join('/');
   }
-
-  let changingState = false;
-  let stateInput = '';
 
   const handleMapStateChangeStart = () => {
     changingState = true;
@@ -114,6 +113,7 @@
   <div class="control-section">
     <Geocoder
       accessToken={mapboxGlAccessToken}
+      geocoder={null}
       on:result={handleGeocoderResult}
     />
   </div>
