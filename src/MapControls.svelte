@@ -1,8 +1,7 @@
 <script>
-  import { createEventDispatcher, onMount } from 'svelte';
+  import { createEventDispatcher } from 'svelte';
   import { Geocoder } from '@beyonk/svelte-mapbox';
   import { round } from './math';
-  const dispatch = createEventDispatcher();
 
   export let bearing;
   export let center;
@@ -11,15 +10,15 @@
   export let zoom;
   export let showCollisions;
 
+  const dispatch = createEventDispatcher();
+  let copied = false;
+  let formattedLocation = '';
+
   $: {
     dispatch('mapState', {
       options: { showCollisions }
     });
   }
-
-  let copied = false;
-
-  let formattedLocation = '';
 
   $: {
     let locationParts = [
@@ -89,9 +88,9 @@
 <div class="map-controls">
   <div class="control-section">
     {#if changingState}
-      <div class="state-record map-view-input-container">
+      <div class="state-record">
 	<label>enter zoom/lat/lng[/pitch/bearing]</label>
-	<input type="text" class="map-view-input"
+	<input type="text"
 	  bind:value={stateInput}
 	  on:keydown={e => {
 	    if (e.key === 'Enter') handleMapStateChangeEnd()

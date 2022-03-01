@@ -5,13 +5,14 @@
   export let maps;
   export let mapStateUpdateOrigin;
 
-  let width;
-  let sliderPosition = 0;
+  const dispatch = createEventDispatcher();
   const sliderWidth = 10;
 
-  $: sliderPosition = width / 2;
-
   let dragging = false;
+  let sliderPosition = 0;
+  let width;
+
+  $: sliderPosition = width / 2;
 
   const handleSliderMouseDown = e => {
     dragging = true;
@@ -25,8 +26,6 @@
   const handleSliderMouseUp = e => {
     dragging = false;
   };
-
-  const dispatch = createEventDispatcher();
 
   const handleMapMove = event => {
     dispatch('mapState', { options: event.detail.options });
@@ -74,7 +73,7 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    cursor: pointer;
+    cursor: col-resize;
     background: black;
     z-index: 1000;
   }

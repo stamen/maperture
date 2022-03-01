@@ -1,15 +1,16 @@
 <script>
-  export let name;
   export let style;
 
   let changing = false;
 </script>
 
 <div class="map-style-input">
-  <div class="map-label">{name}</div>
-  <div class="change-style" on:click={() => changing = !changing}>change</div>
+  <button on:click={() => changing = !changing}>
+    change style
+  </button>
+
   {#if changing}
-    <div class="change-section">Change style here</div>
+    <div>Change style here (not yet implmented)</div>
   {/if}
 </div>
 
@@ -18,21 +19,13 @@
     position: relative;
   }
 
-  .map-label {
-    text-align: center;
-  }
-
-  .change-style {
+  button {
+    background: none;
+    border: none;
     cursor: pointer;
-    font-size: 0.5em;
+    font-size: 0.75em;
     font-weight: normal;
-    margin-left: 1em;
-  }
-
-  .change-section {
-    background: white;
-    position: absolute;
-    top: 2em;
-    z-index: 1000;
+    padding: 0;
+    margin: 0;
   }
 </style>

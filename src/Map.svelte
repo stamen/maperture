@@ -1,7 +1,4 @@
 <script>
-  import deepEqual from 'deep-equal';
-  import { createEventDispatcher } from 'svelte';
-
   import MapboxGlMap from './MapboxGlMap.svelte';
   import MapLabel from './MapLabel.svelte';
   import MapStyleInput from './MapStyleInput.svelte';
@@ -14,7 +11,6 @@
 
   let width;
   let height;
-
   let MapComponent;
 
   switch (type) {
@@ -40,19 +36,9 @@
   <div class={`map-label-container map-label-container-${index}`}>
     <MapLabel name={name} style={style} />
   </div>
-
-  <img
-    class="phone-outline"
-    src="img/motog-outline-small.png"
-    alt="Phone outline"
-  />
 </div>
 
 <style>
-  .phone-outline {
-    display: none;
-  }
-
   .map-container {
     position: absolute;
     top: 0;
@@ -72,14 +58,5 @@
     left: unset;
     right: 1em;
     bottom: 2em;
-  }
-
-  .map {
-    height: 100%;
-  }
-
-  :global(.map-container .mapboxgl-control-container *) {
-    pointer-events: none;
-    user-select: none;
   }
 </style>

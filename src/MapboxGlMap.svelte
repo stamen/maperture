@@ -1,10 +1,9 @@
 <script>
-  import deepEqual from 'deep-equal';
   import { createEventDispatcher, onMount } from 'svelte';
   import mapboxgl from 'mapbox-gl';
   import "../node_modules/mapbox-gl/dist/mapbox-gl.css";
-  import { mapboxGlAccessToken } from './config';
   import throttle from 'lodash.throttle';
+  import { mapboxGlAccessToken } from './config';
 
   export let id;
   export let style;
@@ -16,6 +15,8 @@
   export let showCollisions;
   export let mapStateUpdateOrigin;
 
+  const dispatch = createEventDispatcher();
+
   let map;
 
   $: {
@@ -23,8 +24,6 @@
   }
 
   mapboxgl.accessToken = mapboxGlAccessToken;
-
-  const dispatch = createEventDispatcher();
 
   const updateMapFromProps = (newState, origin) => {
     const currentMapState = {
@@ -76,10 +75,5 @@
 <style>
   .map {
     height: 100%;
-  }
-
-  :global(.map-container .mapboxgl-control-container *) {
-    pointer-events: none;
-    user-select: none;
   }
 </style>

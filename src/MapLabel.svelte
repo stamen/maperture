@@ -6,6 +6,7 @@
 </script>
 
 <div class="map-label">
+  <div class="map-name">{name}</div>
   <MapStyleInput name={name} style={style} />
 </div>
 
@@ -15,9 +16,11 @@
     box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
     padding: 1em;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+  }
+
+  .map-name {
     font-size: 1.25em;
     font-weight: bold;
-    justify-content: space-around;
   }
 </style>
