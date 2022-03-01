@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
+  import Button from './inputs/Button.svelte';
   import { round } from '../math';
 
   export let bearing;
@@ -80,9 +81,15 @@
     <div class="map-state-container">
       <div class="map-state">{formattedLocation}</div>
       <div class="location-actions">
-	<div class="location-button" on:click={handleChangeStart}>change</div>
-	<div class="location-button" on:click={handleCopy}>
-	  {copied ? "copied" : "copy"}
+	<div>
+	  <Button class="location-button" on:click={handleChangeStart}>
+	    change
+	  </Button>
+	</div>
+	<div>
+	  <Button class="location-button" on:click={handleCopy}>
+	    {copied ? "copied" : "copy"}
+	  </Button>
 	</div>
       </div>
     </div>
@@ -112,8 +119,7 @@
     flex-direction: row;
   }
 
-  .location-button {
-    font-size: 0.75em;
+  .location-actions > div {
     margin: 0 0.5em;
   }
 </style>
