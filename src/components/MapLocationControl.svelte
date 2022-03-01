@@ -70,27 +70,27 @@
     <div class="state-record">
       <label>enter zoom/lat/lng[/pitch/bearing]</label>
       <input type="text"
-	bind:value={stateInput}
-	on:keydown={e => {
-	  if (e.key === 'Enter') handleChangeEnd()
-	  if (e.key === 'Escape') handleChangeCancel()
-	}}
+        bind:value={stateInput}
+        on:keydown={e => {
+          if (e.key === 'Enter') handleChangeEnd()
+          if (e.key === 'Escape') handleChangeCancel()
+        }}
       />
     </div>
   {:else}
     <div class="map-state-container">
       <div class="map-state">{formattedLocation}</div>
       <div class="location-actions">
-	<div>
-	  <Button on:click={handleChangeStart}>
-	    change
-	  </Button>
-	</div>
-	<div>
-	  <Button on:click={handleCopy}>
-	    {copied ? "copied" : "copy"}
-	  </Button>
-	</div>
+        <div>
+          <Button on:click={handleChangeStart}>
+            change
+          </Button>
+        </div>
+        <div>
+          <Button on:click={handleCopy}>
+            {copied ? "copied" : "copy"}
+          </Button>
+        </div>
       </div>
     </div>
   {/if}

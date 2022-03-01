@@ -56,11 +56,11 @@
       if (origin === id || origin === 'props') return;
 
       const mapState = {
-	bearing: map.getBearing(),
-	center: map.getCenter(),
-	mapStateUpdateOrigin: id,
-	pitch: map.getPitch(),
-	zoom: map.getZoom(),
+        bearing: map.getBearing(),
+        center: map.getCenter(),
+        mapStateUpdateOrigin: id,
+        pitch: map.getPitch(),
+        zoom: map.getZoom(),
       };
 
       dispatch('mapMove', { options: mapState });
