@@ -1,9 +1,9 @@
 <script>
   import { createEventDispatcher, onMount } from 'svelte';
   import mapboxgl from 'mapbox-gl';
-  import "../node_modules/mapbox-gl/dist/mapbox-gl.css";
+  import "mapbox-gl/dist/mapbox-gl.css";
   import throttle from 'lodash.throttle';
-  import { mapboxGlAccessToken } from './config';
+  import { mapboxGlAccessToken } from '../config';
 
   export let id;
   export let style;

@@ -1,6 +1,6 @@
 <script>
-  import Maps from './Maps.svelte';
-  import MapControls from './MapControls.svelte';
+  import Maps from './components/Maps.svelte';
+  import MapControls from './components/MapControls.svelte';
   import { writeHash } from './query';
   import { getInitialSettings } from './settings';
   import { mapboxGlAccessToken } from './config';

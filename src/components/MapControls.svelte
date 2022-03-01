@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { Geocoder } from '@beyonk/svelte-mapbox';
-  import { round } from './math';
+  import { round } from '../math';
 
   export let bearing;
   export let center;

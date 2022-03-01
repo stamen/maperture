@@ -7,7 +7,7 @@
 
 <div class="map-label">
   <div class="map-name">{name}</div>
-  <MapStyleInput name={name} style={style} />
+  <MapStyleInput style={style} />
 </div>
 
 <style>
