@@ -42,10 +42,10 @@
   <div class="maps-container">
     {#each maps as map }
       <Map
-	{...map}
-	sliderPosition={map.index > 0 ? sliderPosition : null}
-	mapStateUpdateOrigin={mapStateUpdateOrigin}
-	on:mapMove={handleMapMove}
+        {...map}
+        sliderPosition={map.index > 0 ? sliderPosition : null}
+        mapStateUpdateOrigin={mapStateUpdateOrigin}
+        on:mapMove={handleMapMove}
       />
     {/each}
   </div>
