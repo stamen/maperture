@@ -1,19 +1,25 @@
 import { readHash } from './query';
-import { defaultMapNames, defaultMapStyles, defaultMapWatches } from './config';
+import {
+  defaultMapState,
+  defaultMapNames,
+  defaultMapStyles,
+  defaultMapWatches
+} from './config';
 
 export const getInitialSettings = () => {
   const urlState = readHash(window.location.hash);
 
   return {
-    bearing: urlState.bearing ? urlState.bearing : 0,
+    bearing: urlState.bearing ? urlState.bearing : defaultMapState.bearing,
     center: urlState.lat && urlState.lng ?
       { lng: urlState.lng, lat: urlState.lat } :
-      { lng: -73.92169, lat: 40.83962 },
-	names: urlState.names || defaultMapNames,
-	styles: urlState.styles || defaultMapStyles,
-	watches: urlState.watches || defaultMapWatches,
-    pitch: urlState.pitch != null && !Number.isNaN(urlState.pitch) ? urlState.pitch : 0,
+      defaultMapState.center,
+    names: urlState.names || defaultMapNames,
+    styles: urlState.styles || defaultMapStyles,
+    watches: urlState.watches || defaultMapWatches,
+    pitch: urlState.pitch != null && !Number.isNaN(urlState.pitch) ?
+      urlState.pitch : defaultMapState.pitch,
     showCollisions: urlState.showCollisions === 'true',
-    zoom: urlState.zoom ? urlState.zoom : 13.25,
+    zoom: urlState.zoom ? urlState.zoom : defaultMapState.zoom,
   };
 };
