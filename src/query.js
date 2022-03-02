@@ -1,5 +1,17 @@
 import { round } from './math';
 
+// Keys that should be encoded/decoded as arrays
+const arrayKeys = ['names', 'styles', 'watches'];
+
+// Keys that should be encoded/decoded as boolean values
+const booleanKeys = ['showCollisions'];
+
+// Keys that should be encoded (not decoded) encoded as one map param
+const mapLocationKeys = ['bearing', 'center', 'pitch', 'zoom'];
+
+// Keys that should be decoded as numbers
+const numericKeys = ['bearing', 'lat', 'lng', 'pitch', 'zoom'];
+
 function toQueryString(obj) {
   let qs = obj.map ? `map=${obj.map}` : '';
 
@@ -30,12 +42,10 @@ function fromQueryString(qs) {
 }
 
 export function writeHash(mapSettings) {
-  const arrayKeys = ['names', 'styles', 'watches'];
-  const mapLocationKeys = ['bearing', 'center', 'pitch', 'zoom'];
   const nonMapSettings = Object.fromEntries(
     Object.entries(mapSettings)
-	  .filter(([k, v]) => !mapLocationKeys.includes(k))
-	  .map(([k, v]) => [k, arrayKeys.includes(k) ? JSON.stringify(v) : v])
+      .filter(([k, v]) => !mapLocationKeys.includes(k))
+      .map(([k, v]) => [k, arrayKeys.includes(k) ? JSON.stringify(v) : v])
   );
   window.location.hash = toQueryString({
     map: [
@@ -50,16 +60,30 @@ export function writeHash(mapSettings) {
 }
 
 export function readHash(qs) {
-  const urlState = fromQueryString(qs);
-  return {
-    ...urlState,
-	names: urlState.names ? JSON.parse(urlState.names) : null,
-	styles: urlState.styles ? JSON.parse(urlState.styles) : null,
-	watches: urlState.watches ? JSON.parse(urlState.watches) : null,
-    bearing: +urlState.bearing,
-    lat: +urlState.lat,
-    lng: +urlState.lng,
-    pitch: +urlState.pitch,
-    zoom: +urlState.zoom,
-  };
+  // Remove unset values, convert value as necessary
+  let urlState = Object.fromEntries(
+    Object.entries(fromQueryString(qs))
+      .filter(([k, v]) => v !== null)
+      .map(([k, v]) => {
+	if (arrayKeys.includes(k)) return [k, JSON.parse(v)];
+	if (booleanKeys.includes(k)) return [k, v === 'true'];
+	if (numericKeys.includes(k)) return [k, +v];
+	return [k, v];
+      })
+  );
+
+  // Only return center, not lat and lng
+  if (urlState.lat && urlState.lng) {
+    const { lat, lng } = urlState;
+    urlState.center = { lat, lng }
+    delete urlState.lat;
+    delete urlState.lng;
+  }
+
+  // map is redundant here, remove it
+  if (urlState.map) {
+    delete urlState.map;
+  }
+
+  return urlState;
 }

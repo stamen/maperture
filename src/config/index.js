@@ -11,6 +11,7 @@ const config = {
     bearing: 0,
     center: { lng: -73.92169, lat: 40.83962 },
     pitch: 0,
+    showCollisions: false,
     zoom: 13.25
   },
   ...localConfig
