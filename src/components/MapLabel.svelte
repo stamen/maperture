@@ -1,5 +1,6 @@
 <script>
-  import MapStyleInput from './MapStyleInput.svelte';
+  // TODO in follow-up issue (add style changer)
+  // import MapStyleInput from './MapStyleInput.svelte';
 
   export let name;
   export let style;
@@ -7,7 +8,7 @@
 
 <div class="map-label">
   <div class="map-name">{name}</div>
-  <MapStyleInput style={style} />
+  <!-- <MapStyleInput style={style} /> -->
 </div>
 
 <style>
