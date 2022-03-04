@@ -3,7 +3,7 @@
   // import MapStyleInput from './MapStyleInput.svelte';
 
   export let name;
-  export let style;
+  export let url;
 </script>
 
 <div class="map-label">

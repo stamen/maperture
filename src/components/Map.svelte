@@ -6,8 +6,8 @@
   export let index;
   export let name;
   export let sliderPosition;
-  export let style;
   export let type;
+  export let url;
 
   let width;
   let height;
@@ -28,13 +28,13 @@
 >
   <svelte:component
     this={MapComponent}
-    style={style}
+    {url}
     {...$$restProps}
     on:mapMove
   />
 
   <div class={`map-label-container map-label-container-${index}`}>
-    <MapLabel name={name} style={style} />
+    <MapLabel {name} {url} />
   </div>
 </div>
 

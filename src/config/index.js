@@ -1,12 +1,20 @@
 import * as localConfig from './local';
 
 const config = {
-  defaultMapNames: ['Mapbox Streets', 'Mapbox Light'],
-  defaultMapStyles: [
-    'mapbox://styles/mapbox/streets-v11',
-    'mapbox://styles/mapbox/light-v10'
+  defaultMaps: [
+    {
+      id: 'mapbox-streets',
+      name: 'Mapbox Streets',
+      type: 'mapbox-gl',
+      url: 'mapbox://styles/mapbox/streets-v11',
+    },
+    {
+      id: 'mapbox-light',
+      name: 'Mapbox Light',
+      type: 'mapbox-gl',
+      url: 'mapbox://styles/mapbox/light-v10',
+    }
   ],
-  defaultMapWatches: [false, false],
   defaultMapState: {
     bearing: 0,
     center: { lng: -73.92169, lat: 40.83962 },
@@ -19,8 +27,6 @@ const config = {
 
 export const {
   defaultMapState,
-  defaultMapNames,
-  defaultMapStyles,
-  defaultMapWatches,
+  defaultMaps,
   mapboxGlAccessToken
 } = config;

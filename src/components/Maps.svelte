@@ -3,10 +3,10 @@
   import Map from './Map.svelte';
 
   export let maps;
-  export let mapStateUpdateOrigin;
+  export let mapState;
 
   const dispatch = createEventDispatcher();
-  const sliderWidth = 10;
+  const sliderWidth = 5;
 
   let dragging = false;
   let sliderPosition = 0;
@@ -43,8 +43,8 @@
     {#each maps as map }
       <Map
         {...map}
+        {...mapState}
         sliderPosition={map.index > 0 ? sliderPosition : null}
-        mapStateUpdateOrigin={mapStateUpdateOrigin}
         on:mapMove={handleMapMove}
       />
     {/each}

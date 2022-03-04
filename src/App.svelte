@@ -4,54 +4,44 @@
   import { writeHash } from './query';
   import { getInitialSettings } from './settings';
   import { mapboxGlAccessToken } from './config';
+  import throttle from 'lodash.throttle';
 
-  let mapSettings = getInitialSettings();
-
-  $: writeHash(mapSettings);
-
-  let mapProps = {};
-  $: {
-    const { bearing, center, pitch, showCollisions, zoom } = mapSettings;
-    mapProps = { bearing, center, pitch, showCollisions, zoom };
-  }
+  let mapState = {};
   let maps = [];
+  let settings = getInitialSettings();
+
+  // Throttle writing to the hash since this can get invoked many times when
+  // moving the map around
+  const throttledWriteHash = throttle(() => {
+    writeHash({ ...settings, ...mapState });
+  }, 250);
+
+  $: if (settings && mapState) throttledWriteHash();
 
   $: {
-    const { names, styles, watches } = mapSettings;
-    maps = names.map((name, i) => ({
-      ...mapProps,
-      id: `map-${i}`,
-      index: i,
-      name,
-      style: styles[i],
-      type: 'mapbox-gl',
-      watch: watches[i]
-    }));
+    const { bearing, center, pitch, showCollisions, zoom } = settings;
+    mapState = { bearing, center, pitch, showCollisions, zoom };
+  }
+
+  $: {
+    maps = settings.maps.map((map, index) => ({ ...map, index }));
   }
 
   const handleMapState = event => {
-    mapSettings = {
-      ...mapSettings,
+    mapState = {
+      ...mapState,
       ...event.detail.options
     };
   };
 </script>
 
 <main>
-  <Maps 
-    maps={maps}
-    mapStateUpdateOrigin={mapSettings.mapStateUpdateOrigin}
-    on:mapState={handleMapState}
-  />
+  <Maps {maps} {mapState} on:mapState={handleMapState} />
 
   <div class="map-controls-container">
     <MapControls
       mapboxGlAccessToken={mapboxGlAccessToken}
-      bearing={mapSettings.bearing}
-      center={mapSettings.center}
-      pitch={mapSettings.pitch}
-      showCollisions={mapSettings.showCollisions}
-      zoom={mapSettings.zoom}
+      {...mapState}
       on:mapState={handleMapState}
     />
   </div>

@@ -1,7 +1,7 @@
 import { round } from './math';
 
 // Keys that should be encoded/decoded as arrays
-const arrayKeys = ['names', 'styles', 'watches'];
+const jsonKeys = ['maps'];
 
 // Keys that should be encoded/decoded as boolean values
 const booleanKeys = ['showCollisions'];
@@ -45,7 +45,7 @@ export function writeHash(mapSettings) {
   const nonMapSettings = Object.fromEntries(
     Object.entries(mapSettings)
       .filter(([k, v]) => !mapLocationKeys.includes(k))
-      .map(([k, v]) => [k, arrayKeys.includes(k) ? JSON.stringify(v) : v])
+      .map(([k, v]) => [k, jsonKeys.includes(k) ? JSON.stringify(v) : v])
   );
   window.location.hash = toQueryString({
     map: [
@@ -65,7 +65,7 @@ export function readHash(qs) {
     Object.entries(fromQueryString(qs))
       .filter(([k, v]) => v !== null)
       .map(([k, v]) => {
-	if (arrayKeys.includes(k)) return [k, JSON.parse(v)];
+	if (jsonKeys.includes(k)) return [k, JSON.parse(v)];
 	if (booleanKeys.includes(k)) return [k, v === 'true'];
 	if (numericKeys.includes(k)) return [k, +v];
 	return [k, v];
