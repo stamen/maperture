@@ -14,17 +14,12 @@
 
   $: sliderPosition = width / 2;
 
-  const handleSliderMouseDown = e => {
-    dragging = true;
-  };
+  const handleSliderMouseDown = () => dragging = true;
+  const handleSliderMouseUp = () => dragging = false;
 
   const handleSliderMouseMove = e => {
     if (!dragging || e.clientX === 0) return;
     sliderPosition = e.clientX - sliderWidth / 2;
-  };
-
-  const handleSliderMouseUp = e => {
-    dragging = false;
   };
 
   const handleMapMove = event => {
