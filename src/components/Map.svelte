@@ -16,7 +16,7 @@
   switch (type) {
     case 'mapbox-gl':
     default:
-      // This is currently the only map component implmented
+      // This is currently the only map component implemented
       MapComponent = MapboxGlMap;
   }
 </script>
