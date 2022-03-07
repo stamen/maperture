@@ -1,6 +1,6 @@
 # map-compare
 
-A web application for comparing webmap GL styles.
+A web application for comparing webmap styles.
 
 ## Get started
 
