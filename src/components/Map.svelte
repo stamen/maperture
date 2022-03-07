@@ -1,7 +1,6 @@
 <script>
   import MapboxGlMap from './MapboxGlMap.svelte';
   import MapLabel from './MapLabel.svelte';
-  import MapStyleInput from './MapStyleInput.svelte';
 
   export let index;
   export let name;
