@@ -63,11 +63,11 @@ export function readHash(qs) {
   // Remove unset values, convert value as necessary
   let urlState = Object.fromEntries(
     Object.entries(fromQueryString(qs))
-      .filter(([k, v]) => v !== null)
+      .filter(([k, v]) => !!v)
       .map(([k, v]) => {
 	if (jsonKeys.includes(k)) return [k, JSON.parse(v)];
 	if (booleanKeys.includes(k)) return [k, v === 'true'];
-	if (numericKeys.includes(k)) return [k, +v];
+	if (numericKeys.includes(k)) return [k, +v || 0];
 	return [k, v];
       })
   );
