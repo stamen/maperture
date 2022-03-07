@@ -1,6 +1,6 @@
-# mapbox-gl-compare
+# map-compare
 
-A web application for comparing Mapbox GL styles.
+A web application for comparing webmap GL styles.
 
 ## Get started
 
