@@ -10,6 +10,7 @@
   export let id;
   export let pitch;
   export let showCollisions;
+  export let showBoundaries;
   export let url;
   export let zoom;
 
@@ -28,6 +29,9 @@
 
   // Show collisions on the map as desired
   $: if (map) map.showCollisionBoxes = showCollisions;
+
+  // Show tile boundaries on the map as desired
+  $: if (map) map.showTileBoundaries = showBoundaries;
 
   const getCurrentMapView = () => {
     return {

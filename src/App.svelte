@@ -19,8 +19,8 @@
   $: if (settings && mapState) throttledWriteHash();
 
   $: {
-    const { bearing, center, pitch, showCollisions, zoom } = settings;
-    mapState = { bearing, center, pitch, showCollisions, zoom };
+    const { bearing, center, pitch, showCollisions, showBoundaries, zoom } = settings;
+    mapState = { bearing, center, pitch, showCollisions, showBoundaries, zoom };
   }
 
   $: {
