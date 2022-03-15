@@ -1,14 +1,16 @@
 <script>
-  // TODO in follow-up issue (add style changer)
-  // import MapStyleInput from './MapStyleInput.svelte';
+  import MapStyleInput from './MapStyleInput.svelte';
 
   export let name;
   export let url;
+  export let handleChangeMap;
+
+  let activeUrl = url;
 </script>
 
 <div class="map-label">
   <div class="map-name">{name}</div>
-  <!-- <MapStyleInput style={style} /> -->
+  <MapStyleInput {activeUrl} on:mapChange={handleChangeMap} />
 </div>
 
 <style>

@@ -7,6 +7,7 @@
   export let sliderPosition;
   export let type;
   export let url;
+  export let handleChangeMap;
 
   let width;
   let height;
@@ -33,7 +34,7 @@
   />
 
   <div class={`map-label-container map-label-container-${index}`}>
-    <MapLabel {name} {url} />
+    <MapLabel {name} {url} {handleChangeMap} />
   </div>
 </div>
 

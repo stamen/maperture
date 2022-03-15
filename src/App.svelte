@@ -4,6 +4,7 @@
   import { writeHash } from './query';
   import { getInitialSettings } from './settings';
   import { mapboxGlAccessToken } from './config';
+  import { fetchUrl } from './fetch-url';
   import throttle from 'lodash.throttle';
 
   let mapState = {};
@@ -27,6 +28,35 @@
     maps = settings.maps.map((map, index) => ({ ...map, index }));
   }
 
+  const isMapboxUrl = url => {
+    if (typeof url !== 'string') return false;
+    const hasMapboxFormat = url.startsWith('mapbox://styles/') && url.split('/').length === 5;
+    return hasMapboxFormat;
+  }
+
+  const handleChangeMap = event => {
+    const { prevUrl, nextUrl } = event.detail;
+    let nextMap;
+    const index = maps.findIndex(m => m.url === prevUrl);
+    let nextMaps = maps;
+    let url = nextUrl;
+    
+    if (isMapboxUrl(nextUrl)) {
+      const [ , , , userName, styleId ] = nextUrl.split('/');
+      url = `https://api.mapbox.com/styles/v1/${userName}/${styleId}?title=true&access_token=${mapboxGlAccessToken}`;
+    }
+
+    fetchUrl(url).then(data => {
+      // TODO make a better check that it is style and not arbitrary object
+      if (data && typeof data === 'object') {
+        // TODO create checks by type for non-mapbox maps
+        nextMap = { id: data.id, index, name: data.name, type: 'mapbox-gl', url: isMapboxUrl(nextUrl) ? nextUrl : data };
+        nextMaps.splice(index, 1, nextMap);
+        maps = nextMaps;
+      }
+    });
+  }
+
   const handleMapState = event => {
     mapState = {
       ...mapState,
@@ -36,7 +66,7 @@
 </script>
 
 <main>
-  <Maps {maps} {mapState} on:mapState={handleMapState} />
+  <Maps {maps} {mapState} on:mapState={handleMapState} {handleChangeMap} />
 
   <div class="map-controls-container">
     <MapControls

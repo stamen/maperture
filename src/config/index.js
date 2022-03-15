@@ -1,4 +1,4 @@
-import * as localConfig from './local';
+import * as localConfig from './local.example';
 
 const config = {
   defaultMaps: [
