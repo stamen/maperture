@@ -17,11 +17,12 @@
 
   const submitUrl = () => {
     localUrl = textInput;
-    onChangeUrl(localUrl).then(err => {
+    onChangeUrl(localUrl).then(data => {
+      const { url, error: err } = data;
       if (err) {
         error = err;
       } else {
-        activeStyleUrl = localUrl;
+        activeStyleUrl = url;
       }
     });
   };

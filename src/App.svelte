@@ -41,9 +41,10 @@
         nextMap = { id: data.id, index, name: data.name, type: 'mapbox-gl', url: data };
         nextMaps.splice(index, 1, nextMap);
         maps = nextMaps;
+        return { url: nextUrl };
       }
     }).catch(() => {
-      return new Error('Style was not found.')
+      return { url: nextUrl, error: new Error('Style was not found.') };
     });
   }
 
