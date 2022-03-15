@@ -9,6 +9,7 @@
   export let sliderPosition;
   export let type;
   export let url;
+  export let handleChangeMap;
 
   let width;
   let height;
@@ -23,7 +24,7 @@
 
   const onChangeUrl = (nextUrl) => {
     if (url === nextUrl) return;
-    dispatch('mapChange', { nextUrl, prevUrl: url, index });
+    return handleChangeMap({ nextUrl, prevUrl: url, index });
   };
 </script>
 
@@ -40,7 +41,7 @@
   />
 
   <div class={`map-label-container map-label-container-${index}`}>
-    <MapLabel {name} {url} {onChangeUrl} />
+    <MapLabel {name} {onChangeUrl} />
   </div>
 </div>
 

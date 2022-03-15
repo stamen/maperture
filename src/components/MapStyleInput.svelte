@@ -1,11 +1,11 @@
 <script>
-  import { fetchErrorStore } from '../stores/fetch-error-store';
   import { shortcut } from '../shortcut.js'
   export let onChangeUrl;
 
   let selected = null;
   let textInput = '';
   let localUrl = '';
+  let activeStyleUrl = '';
   let focused = false;
   let error = null;
 
@@ -17,7 +17,13 @@
 
   const submitUrl = () => {
     localUrl = textInput;
-    onChangeUrl(localUrl);
+    onChangeUrl(localUrl).then(err => {
+      if (err) {
+        error = err;
+      } else {
+        activeStyleUrl = localUrl;
+      }
+    });
   };
 
   const handleOnFocus = () => {
@@ -26,22 +32,11 @@
 
   const handleOnBlur = () => {
     setTimeout(() => {
+      textInput = activeStyleUrl;
       focused = false;
       error = null;
-      fetchErrorStore.set(null);
     }, 100);
   };
-
-  $: {
-    fetchErrorStore.subscribe(value => {
-      if (value && typeof value === 'object') {
-        const url = Object.keys(value)[0];
-        if (localUrl !== url) return;
-        const message = value[url];
-        error = message;
-      }
-    });
-  }
 
   $: {
     if (textInput !== localUrl && error) {

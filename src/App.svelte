@@ -1,5 +1,4 @@
 <script>
-  import { fetchErrorStore } from './stores/fetch-error-store';
   import Maps from './components/Maps.svelte';
   import MapControls from './components/MapControls.svelte';
   import { writeHash } from './query';
@@ -29,36 +28,22 @@
     maps = settings.maps.map((map, index) => ({ ...map, index }));
   }
 
-  const isMapboxUrl = url => {
-    if (typeof url !== 'string') return false;
-    const hasMapboxFormat = url.startsWith('mapbox://styles/') && url.split('/').length === 5;
-    return hasMapboxFormat;
-  }
-
   const handleChangeMap = event => {
-    const { prevUrl, nextUrl, index } = event.detail;
+    const { prevUrl, nextUrl, index } = event;
     let nextMap;
     if (maps[index].url !== prevUrl) return;
     let nextMaps = maps;
-    let url = nextUrl;
     
-    if (isMapboxUrl(nextUrl)) {
-      const [ , , , userName, styleId ] = nextUrl.split('/');
-      url = `https://api.mapbox.com/styles/v1/${userName}/${styleId}?title=true&access_token=${mapboxGlAccessToken}`;
-    }
-
-    fetchUrl(url).then(data => {
-      // Special handling to error on Mapbox style url since it returns successfully with an error
-      if (isMapboxUrl(nextUrl) && data.message) throw new Error(data.message);
+    return fetchUrl(nextUrl).then(data => {
       // TODO make a better check that it is style and not arbitrary object
       if (data && typeof data === 'object') {
         // TODO create checks by type for non-mapbox maps
-        nextMap = { id: data.id, index, name: data.name, type: 'mapbox-gl', url: isMapboxUrl(nextUrl) ? nextUrl : data };
+        nextMap = { id: data.id, index, name: data.name, type: 'mapbox-gl', url: data };
         nextMaps.splice(index, 1, nextMap);
         maps = nextMaps;
       }
     }).catch(() => {
-      fetchErrorStore.set({ [nextUrl]: 'Style was not found.' });
+      return new Error('Style was not found.')
     });
   }
 
@@ -71,7 +56,7 @@
 </script>
 
 <main>
-  <Maps {maps} {mapState} on:mapState={handleMapState} on:mapChange={handleChangeMap} />
+  <Maps {maps} {mapState} on:mapState={handleMapState} {handleChangeMap} />
 
   <div class="map-controls-container">
     <MapControls
