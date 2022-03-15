@@ -41,6 +41,12 @@
         nextMap = { id: data.id, index, name: data.name, type: 'mapbox-gl', url: data };
         nextMaps.splice(index, 1, nextMap);
         maps = nextMaps;
+
+        // Simple polling for any style on localhost
+        if (nextUrl.includes('localhost')) {
+          setTimeout(() => handleChangeMap({ prevUrl: data, nextUrl, index }), 5000)
+        }
+
         return { url: nextUrl };
       }
     }).catch(() => {
