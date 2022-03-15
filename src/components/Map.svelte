@@ -1,13 +1,14 @@
 <script>
+  import { createEventDispatcher } from 'svelte';
   import MapboxGlMap from './MapboxGlMap.svelte';
   import MapLabel from './MapLabel.svelte';
+  const dispatch = createEventDispatcher();
 
   export let index;
   export let name;
   export let sliderPosition;
   export let type;
   export let url;
-  export let handleChangeMap;
 
   let width;
   let height;
@@ -19,6 +20,11 @@
       // This is currently the only map component implemented
       MapComponent = MapboxGlMap;
   }
+
+  const onChangeUrl = (nextUrl) => {
+    if (url === nextUrl) return;
+    dispatch('mapChange', { nextUrl, prevUrl: url, index });
+  };
 </script>
 
 <div class="map-container" 
@@ -34,7 +40,7 @@
   />
 
   <div class={`map-label-container map-label-container-${index}`}>
-    <MapLabel {name} {url} {handleChangeMap} />
+    <MapLabel {name} {url} {onChangeUrl} />
   </div>
 </div>
 

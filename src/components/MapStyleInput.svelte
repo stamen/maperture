@@ -1,13 +1,13 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
+  import { fetchErrorStore } from '../stores/fetch-error-store';
   import { shortcut } from '../shortcut.js'
-  const dispatch = createEventDispatcher();
-  export let activeUrl;
+  export let onChangeUrl;
 
-  let selected = 'custom'; // null;
+  let selected = null;
   let textInput = '';
   let localUrl = null;
   let focused = false;
+  let error = null;
 
   const onKeySubmit = () => {
     if (focused) {
@@ -16,14 +16,8 @@
   }
 
   const submitUrl = () => {
-    if (activeUrl !== textInput) {
-      localUrl = textInput;
-      handleMapChange(localUrl);
-    }
-  };
-
-  const handleMapChange = nextUrl => {
-    dispatch('mapChange', { nextUrl, prevUrl: activeUrl });
+    localUrl = textInput;
+    onChangeUrl(localUrl);
   };
 
   const handleOnFocus = () => {
@@ -32,10 +26,21 @@
 
   const handleOnBlur = () => {
     setTimeout(() => {
-      textInput = activeUrl;
+      textInput = error ? '' : localUrl;
       focused = false;
+      error = null;
+      fetchErrorStore.set(null);
     }, 100);
   };
+
+  $: fetchErrorStore.subscribe(value => {
+    if (value && typeof value === 'object') {
+      const url = Object.keys(value)[0];
+      if (localUrl !== url) return;
+      const message = value[url];
+      error = message;
+    }
+	});
 </script>
 
 <div class="map-style-input">
@@ -45,8 +50,13 @@
 
   {#if selected === 'custom'}
   <div class='custom-input'>
-    <input bind:value={textInput} on:focus={handleOnFocus} on:blur={handleOnBlur} placeholder="enter a url to a style"/>
-    <button use:shortcut={{code: 'Enter', callback: onKeySubmit }} on:click={submitUrl}>Submit</button>
+    <input class={`${error && 'input-error'}`} bind:value={textInput} on:focus={handleOnFocus} on:blur={handleOnBlur} placeholder="enter a url to a style"/>
+    <button class='' use:shortcut={{code: 'Enter', callback: onKeySubmit }} on:click={submitUrl}>Submit</button>
+  </div>
+  {/if}
+  {#if !!error}
+  <div class='error-message'>
+    {error}
   </div>
   {/if}
 </div>
@@ -58,5 +68,20 @@
 
   .custom-input {
     margin-top: 0px;
+  }
+
+  .input-error:focus {
+    outline: none;
+    border-color: red;
+  }
+
+  .error-message {
+    background-color: lightcoral;
+    border-style: solid;
+    border-color: red;
+    border-width: 1px;
+    border-radius: 4px;
+    padding: 6px;
+    color: white;
   }
 </style>

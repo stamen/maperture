@@ -1,4 +1,5 @@
 <script>
+  import { fetchErrorStore } from './stores/fetch-error-store';
   import Maps from './components/Maps.svelte';
   import MapControls from './components/MapControls.svelte';
   import { writeHash } from './query';
@@ -35,9 +36,9 @@
   }
 
   const handleChangeMap = event => {
-    const { prevUrl, nextUrl } = event.detail;
+    const { prevUrl, nextUrl, index } = event.detail;
     let nextMap;
-    const index = maps.findIndex(m => m.url === prevUrl);
+    if (maps[index].url !== prevUrl) return;
     let nextMaps = maps;
     let url = nextUrl;
     
@@ -47,6 +48,8 @@
     }
 
     fetchUrl(url).then(data => {
+      // Special handling to error on Mapbox style url since it returns successfully with an error
+      if (isMapboxUrl(nextUrl) && data.message) throw new Error(data.message);
       // TODO make a better check that it is style and not arbitrary object
       if (data && typeof data === 'object') {
         // TODO create checks by type for non-mapbox maps
@@ -54,6 +57,8 @@
         nextMaps.splice(index, 1, nextMap);
         maps = nextMaps;
       }
+    }).catch(() => {
+      fetchErrorStore.set({ [nextUrl]: 'Style was not found.' });
     });
   }
 
@@ -66,7 +71,7 @@
 </script>
 
 <main>
-  <Maps {maps} {mapState} on:mapState={handleMapState} {handleChangeMap} />
+  <Maps {maps} {mapState} on:mapState={handleMapState} on:mapChange={handleChangeMap} />
 
   <div class="map-controls-container">
     <MapControls

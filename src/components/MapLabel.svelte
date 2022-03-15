@@ -2,15 +2,12 @@
   import MapStyleInput from './MapStyleInput.svelte';
 
   export let name;
-  export let url;
-  export let handleChangeMap;
-
-  let activeUrl = url;
+  export let onChangeUrl;
 </script>
 
 <div class="map-label">
   <div class="map-name">{name}</div>
-  <MapStyleInput {activeUrl} on:mapChange={handleChangeMap} />
+  <MapStyleInput {onChangeUrl} />
 </div>
 
 <style>
@@ -20,6 +17,7 @@
     padding: 1em;
     display: flex;
     flex-direction: column;
+    min-width:240px;
   }
 
   .map-name {

@@ -4,7 +4,6 @@
 
   export let maps;
   export let mapState;
-  export let handleChangeMap;
 
   const dispatch = createEventDispatcher();
   const sliderWidth = 5;
@@ -42,7 +41,7 @@
         {...mapState}
         sliderPosition={map.index > 0 ? sliderPosition : null}
         on:mapMove={handleMapMove}
-        {handleChangeMap}
+        on:mapChange
       />
     {/each}
   </div>
