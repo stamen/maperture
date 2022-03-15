@@ -32,15 +32,15 @@
   }
 
   const handleOnBlur = () => {
-    setTimeout(() => {
+    focused = false;
+    if (error) {
       textInput = activeStyleUrl;
-      focused = false;
-      error = null;
-    }, 100);
+    }
   };
 
   $: {
     if (textInput !== localUrl && error) {
+      localUrl = '';
       error = null;
     }
   }
