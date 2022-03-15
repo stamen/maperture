@@ -5,7 +5,7 @@
 
   let selected = null;
   let textInput = '';
-  let localUrl = null;
+  let localUrl = '';
   let focused = false;
   let error = null;
 
@@ -26,21 +26,28 @@
 
   const handleOnBlur = () => {
     setTimeout(() => {
-      textInput = error ? '' : localUrl;
       focused = false;
       error = null;
       fetchErrorStore.set(null);
     }, 100);
   };
 
-  $: fetchErrorStore.subscribe(value => {
-    if (value && typeof value === 'object') {
-      const url = Object.keys(value)[0];
-      if (localUrl !== url) return;
-      const message = value[url];
-      error = message;
+  $: {
+    fetchErrorStore.subscribe(value => {
+      if (value && typeof value === 'object') {
+        const url = Object.keys(value)[0];
+        if (localUrl !== url) return;
+        const message = value[url];
+        error = message;
+      }
+    });
+  }
+
+  $: {
+    if (textInput !== localUrl && error) {
+      error = null;
     }
-	});
+  }
 </script>
 
 <div class="map-style-input">
