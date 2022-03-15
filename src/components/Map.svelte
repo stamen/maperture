@@ -1,8 +1,6 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
   import MapboxGlMap from './MapboxGlMap.svelte';
   import MapLabel from './MapLabel.svelte';
-  const dispatch = createEventDispatcher();
 
   export let index;
   export let name;
