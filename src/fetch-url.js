@@ -7,7 +7,7 @@ const isMapboxUrl = url => {
   return hasMapboxFormat;
 };
 
-const fetchUrl = async function (url) {
+const fetchUrl = async (url) => {
   const urlIsMapbox = isMapboxUrl(url);
   let nextUrl = url;
   if (urlIsMapbox) {

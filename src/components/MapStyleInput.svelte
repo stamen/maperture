@@ -22,7 +22,7 @@
     }
   }
 
-  const fetchStyle = async function (url) {
+  const fetchStyle = async (url) => {
     let style;
     try {
       const data = await fetchUrl(url);
