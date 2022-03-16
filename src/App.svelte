@@ -28,13 +28,14 @@
     maps = settings.maps.map((map, index) => ({ ...map, index }));
   }
 
-  const handleChangeMap = event => {
+  const handleChangeMap = async function (event) {
     const { prevUrl, nextUrl, index } = event;
     let nextMap;
     if (maps[index].url !== prevUrl) return;
     let nextMaps = maps;
     
-    return fetchUrl(nextUrl).then(data => {
+    try {
+      const data = await fetchUrl(nextUrl);
       // TODO make a better check that it is style and not arbitrary object
       if (data && typeof data === 'object') {
         // TODO create checks by type for non-mapbox maps
@@ -49,9 +50,9 @@
 
         return { url: nextUrl };
       }
-    }).catch(() => {
+    } catch (err) {
       return { url: nextUrl, error: new Error('Style was not found.') };
-    });
+    }
   }
 
   const handleMapState = event => {
