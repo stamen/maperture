@@ -1,13 +1,15 @@
 <script>
+  import { createEventDispatcher } from 'svelte';
   import MapboxGlMap from './MapboxGlMap.svelte';
   import MapLabel from './MapLabel.svelte';
+
+  const dispatch = createEventDispatcher();
 
   export let index;
   export let name;
   export let sliderPosition;
   export let type;
   export let url;
-  export let handleChangeMap;
 
   let width;
   let height;
@@ -20,9 +22,9 @@
       MapComponent = MapboxGlMap;
   }
 
-  const onChangeUrl = (nextUrl) => {
-    if (url === nextUrl) return;
-    return handleChangeMap({ nextUrl, prevUrl: url, index });
+  const handleMapStyleUpdate = (event) => {
+    const { url, style } = event.detail;
+    dispatch('mapStyleState', { url, style, index });
   };
 </script>
 
@@ -39,7 +41,7 @@
   />
 
   <div class={`map-label-container map-label-container-${index}`}>
-    <MapLabel {name} {onChangeUrl} />
+    <MapLabel {name} on:mapStyleUpdate={handleMapStyleUpdate} />
   </div>
 </div>
 

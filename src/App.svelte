@@ -4,7 +4,7 @@
   import { writeHash } from './query';
   import { getInitialSettings } from './settings';
   import { mapboxGlAccessToken } from './config';
-  import { fetchUrl } from './fetch-url';
+  import { isMapboxUrl } from './fetch-url';
   import throttle from 'lodash.throttle';
 
   let mapState = {};
@@ -28,32 +28,15 @@
     maps = settings.maps.map((map, index) => ({ ...map, index }));
   }
 
-  const handleChangeMap = async function (event) {
-    const { prevUrl, nextUrl, index } = event;
+  const handleChangeMap = (event) => {
+    const { url, style, index } = event.detail;
     let nextMap;
-    if (maps[index].url !== prevUrl) return;
     let nextMaps = maps;
-    
-    try {
-      const data = await fetchUrl(nextUrl);
-      // TODO make a better check that it is style and not arbitrary object
-      if (data && typeof data === 'object') {
-        // TODO create checks by type for non-mapbox maps
-        nextMap = { id: data.id, index, name: data.name, type: 'mapbox-gl', url: data };
-        nextMaps.splice(index, 1, nextMap);
-        maps = nextMaps;
 
-        // Simple polling for any style on localhost
-        if (nextUrl.includes('localhost')) {
-          setTimeout(() => handleChangeMap({ prevUrl: data, nextUrl, index }), 5000)
-        }
-
-        return { url: nextUrl };
-      }
-    } catch (err) {
-      return { url: nextUrl, error: new Error('Style was not found.') };
-    }
-  }
+    nextMap = { id: style.id, index, name: style.name, type: 'mapbox-gl', url: isMapboxUrl(url) ? url : style };
+    nextMaps.splice(index, 1, nextMap);
+    maps = nextMaps;
+  };
 
   const handleMapState = event => {
     mapState = {
@@ -64,7 +47,7 @@
 </script>
 
 <main>
-  <Maps {maps} {mapState} on:mapState={handleMapState} {handleChangeMap} />
+  <Maps {maps} {mapState} on:mapState={handleMapState} on:mapStyleState={handleChangeMap} />
 
   <div class="map-controls-container">
     <MapControls

@@ -22,4 +22,4 @@ const fetchUrl = async function (url) {
   return data;
 };
 
-export { fetchUrl };
+export { fetchUrl, isMapboxUrl };
