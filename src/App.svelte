@@ -4,7 +4,6 @@
   import { writeHash } from './query';
   import { getInitialSettings } from './settings';
   import { mapboxGlAccessToken } from './config';
-  import { isMapboxUrl } from './fetch-url';
   import throttle from 'lodash.throttle';
 
   let mapState = {};
@@ -33,9 +32,11 @@
     let nextMap;
     let nextMaps = maps;
 
-    nextMap = { id: style.id, index, name: style.name, type: 'mapbox-gl', url: isMapboxUrl(url) ? url : style };
+    nextMap = { id: style.id, index, name: style.name, type: 'mapbox-gl', url: url };
     nextMaps.splice(index, 1, nextMap);
     maps = nextMaps;
+
+    writeHash({ ...{...settings, maps}, ...mapState });
   };
 
   const handleMapState = event => {

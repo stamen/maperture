@@ -30,4 +30,4 @@ const fetchUrl = async function (url) {
   return data;
 };
 
-export { fetchUrl, isMapboxUrl };
+export { fetchUrl };
