@@ -32,11 +32,17 @@
     let nextMap;
     let nextMaps = maps;
 
-    nextMap = { id: style.id, index, name: style.name, type: 'mapbox-gl', url: url };
+    // Pass the stylesheet directly into state so we can detect local changes
+    nextMap = { id: style.id, index, name: style.name, type: 'mapbox-gl', url, style };
     nextMaps.splice(index, 1, nextMap);
     maps = nextMaps;
+    // Remove the stylesheet for a more concise hash
+    const mapsHash = JSON.parse(JSON.stringify(maps)).map(m => {
+      delete m.style;
+      return m;
+    });
 
-    writeHash({ ...settings, maps, ...mapState });
+    writeHash({ ...settings, maps: mapsHash, ...mapState });
   };
 
   const handleMapState = event => {

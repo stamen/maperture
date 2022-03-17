@@ -10,6 +10,7 @@
   export let sliderPosition;
   export let type;
   export let url;
+  export let style;
 
   let width;
   let height;
@@ -35,7 +36,7 @@
 >
   <svelte:component
     this={MapComponent}
-    {url}
+    url={style || url}
     {...$$restProps}
     on:mapMove
   />
