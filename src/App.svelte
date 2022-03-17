@@ -36,7 +36,7 @@
     nextMaps.splice(index, 1, nextMap);
     maps = nextMaps;
 
-    writeHash({ ...{...settings, maps}, ...mapState });
+    writeHash({ ...settings, maps, ...mapState });
   };
 
   const handleMapState = event => {
