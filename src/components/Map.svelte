@@ -42,7 +42,7 @@
   />
 
   <div class={`map-label-container map-label-container-${index}`}>
-    <MapLabel {name} on:mapStyleUpdate={handleMapStyleUpdate} />
+    <MapLabel {name} {url} on:mapStyleUpdate={handleMapStyleUpdate} />
   </div>
 </div>
 

@@ -5,6 +5,8 @@
 
   const dispatch = createEventDispatcher();
 
+  export let url;
+
   let selected = null;
   let textInput = '';
   let localUrl = '';
@@ -80,6 +82,14 @@
     if (textInput !== localUrl && error) {
       localUrl = '';
       error = null;
+    }
+  }
+
+  $: {
+    // This runs only on mount to check for localhost in url
+    if (!activeStyleUrl) {
+      activeStyleUrl = url;
+      poll(url);
     }
   }
 </script>

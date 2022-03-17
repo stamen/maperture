@@ -2,11 +2,12 @@
   import MapStyleInput from './MapStyleInput.svelte';
 
   export let name;
+  export let url;
 </script>
 
 <div class="map-label">
   <div class="map-name">{name}</div>
-  <MapStyleInput on:mapStyleUpdate />
+  <MapStyleInput {url} on:mapStyleUpdate />
 </div>
 
 <style>
