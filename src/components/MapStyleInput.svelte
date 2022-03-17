@@ -43,6 +43,14 @@
   const submitUrl = async () => {
     localUrl = textInput;
     if (activeStyleUrl === localUrl) return;
+    if (localUrl.includes('localhost')) {
+      const [preface, address] = localUrl.split('localhost');
+      // Fetch doesn't accept localhost unless prefaced with http://
+      // This adds the preface if not present
+      if (!preface) {
+        localUrl = `http://localhost${address}`;
+      }
+    }
     const { status } = await fetchStyle(localUrl);
     if (status === '200') {
       activeStyleUrl = localUrl;

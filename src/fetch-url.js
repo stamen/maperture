@@ -7,20 +7,12 @@ const isMapboxUrl = url => {
   return hasMapboxFormat;
 };
 
-const fetchUrl = async (url) => {
+const fetchUrl = async url => {
   const urlIsMapbox = isMapboxUrl(url);
   let nextUrl = url;
   if (urlIsMapbox) {
     const [, , , userName, styleId] = nextUrl.split('/');
     nextUrl = `https://api.mapbox.com/styles/v1/${userName}/${styleId}?title=true&access_token=${mapboxGlAccessToken}`;
-  }
-  if (nextUrl.includes('localhost')) {
-    const [preface, address] = nextUrl.split('localhost');
-    // Fetch doesn't accept localhost unless prefaced with http://
-    // This adds the preface if not present
-    if (!preface) {
-      nextUrl = `http://localhost${address}`;
-    }
   }
   const response = await fetch(nextUrl);
 
