@@ -1,10 +1,10 @@
 import { readHash } from './query';
-import { defaultMapState, defaultMaps } from './config';
+import { mapState, maps } from './config';
 
 export const getInitialSettings = () => {
   return {
-    ...defaultMapState,
-    maps: defaultMaps,
+    ...mapState,
+    maps,
     ...readHash(window.location.hash)
   };
-}
+};

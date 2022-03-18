@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
+  import { styles } from '../config';
   import { shortcut } from '../shortcut'
   import { fetchUrl } from '../fetch-url';
 
@@ -7,12 +8,39 @@
 
   export let url;
 
-  let selected = null;
-  let textInput = '';
+  const selectedIsStyleOption = styles.some(s => s.url === url);
+
+  let selected = selectedIsStyleOption ? url : 'custom';
+  let textInput = selectedIsStyleOption ? '' : url;
   let localUrl = '';
   let activeStyleUrl = '';
   let focused = false;
   let error = null;
+
+  $: {
+    // This runs only on mount to check for localhost in url
+    if (!activeStyleUrl) {
+      activeStyleUrl = url;
+      poll(url);
+    }
+  };
+
+  $: {
+    if (textInput !== localUrl && error) {
+      localUrl = '';
+      error = null;
+    }
+  };
+
+  $: {
+    if (selected && selected !== 'custom') {
+      textInput = '';
+      onChangeUrl(selected);
+    }
+    if (selected === 'custom') {
+      textInput = url;
+    }
+  };
 
   const poll = (url) => {
     const pollCondition = (str) => str.includes('localhost') && activeStyleUrl === str;
@@ -41,6 +69,15 @@
       return { status: '404' };
     }
   };
+  
+  const onChangeUrl = async (url) => {
+    const { status } = await fetchStyle(url);
+    if (status === '200') {
+      activeStyleUrl = url;
+      // Call poll after setting activeStyleUrl on success
+      poll(url);
+    }
+  };
 
   const submitUrl = async () => {
     localUrl = textInput;
@@ -53,23 +90,18 @@
         localUrl = `http://localhost${address}`;
       }
     }
-    const { status } = await fetchStyle(localUrl);
-    if (status === '200') {
-      activeStyleUrl = localUrl;
-      // Call poll after setting activeStyleUrl on success
-      poll(localUrl);
-    }
+    onChangeUrl(localUrl);
   };
 
   const onKeySubmit = () => {
     if (focused) {
       submitUrl();
     }
-  }
+  };
 
   const handleOnFocus = () => {
     focused = true;
-  }
+  };
 
   const handleOnBlur = () => {
     focused = false;
@@ -77,25 +109,13 @@
       textInput = activeStyleUrl;
     }
   };
-
-  $: {
-    if (textInput !== localUrl && error) {
-      localUrl = '';
-      error = null;
-    }
-  }
-
-  $: {
-    // This runs only on mount to check for localhost in url
-    if (!activeStyleUrl) {
-      activeStyleUrl = url;
-      poll(url);
-    }
-  }
 </script>
 
 <div class="map-style-input">
   <select id="styles" bind:value={selected}>
+    {#each styles as style}
+      <option value={style.url}>{style.name}</option>
+    {/each}
     <option value="custom">Custom</option>
   </select>
 
