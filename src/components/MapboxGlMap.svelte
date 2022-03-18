@@ -18,7 +18,6 @@
 
   let map;
   let mapViewProps = {};
-  let activeUrl = url;
 
   // We group map-view props here as they are useful in a few contexts
   $: mapViewProps = { bearing, center, pitch, zoom };
@@ -27,7 +26,7 @@
   // either
   $: if (map && mapViewProps) updateMapFromProps();
 
-  $: if (map && url) updateMapFromProps();
+  $: if (map && url) updateMapStyle();
 
   // Show collisions on the map as desired
   $: if (map) map.showCollisionBoxes = showCollisions;
@@ -45,30 +44,12 @@
     return !deepEqual(getCurrentMapView(), mapViewProps);
   };
 
-  const shouldUpdateMap = () => {
-    const hasStyleChanged = () => {
-      if (typeof url === 'string') {
-        return activeUrl !== url;
-      }
-      const style = map.getStyle();
-      return !deepEqual(style, url);
-    }
-
-    if (map.isStyleLoaded()) {
-      return hasStyleChanged()
-    } else {
-      map.once('styledata', () => {
-        return hasStyleChanged()
-      });
-    }    
+  const updateMapStyle = () => {
+    map.setStyle(url);
   };
 
   const updateMapFromProps = () => {
     if (shouldUpdateMapView(mapViewProps)) map.jumpTo(mapViewProps);
-    if (shouldUpdateMap()) {
-      map.setStyle(url);
-      activeUrl = url;
-    }
   };
 
   onMount(() => {
