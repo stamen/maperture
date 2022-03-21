@@ -44,6 +44,7 @@
   };
 
   $: {
+    // Only run onChangeUrl from here if the user does not need to input a value
     if (selected === 'custom') {
       textInput = url;
     } else if (selected.includes('branchStyle-')) {
@@ -90,7 +91,7 @@
     }
     const { status } = await fetchStyle(nextUrl);
     if (status === '200') {
-      // Don't use the altered url for activeStyleUrl since we want branch names here
+      // Don't use the generated url for activeStyleUrl since this should reflect what we called this fn with
       activeStyleUrl = url;
       // Call poll after setting activeStyleUrl on success
       poll(nextUrl);
@@ -154,7 +155,7 @@
 <div class="map-style-input">
   <select id="styles" bind:value={selected}>
     {#each Object.keys(getDropdownOptions()) as group}
-      <optgroup label={group}>
+      <optgroup value={group} label={group}>
         {#each getDropdownOptions()[group] as style}
           <option value={style.url}>{style.name}</option>
         {/each}

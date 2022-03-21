@@ -11,6 +11,7 @@
   export let type;
   export let url;
   export let style;
+  export let id;
 
   let width;
   let height;
@@ -37,6 +38,7 @@
   <svelte:component
     this={MapComponent}
     url={style || url}
+    id={`${id}-${index}`}
     {...$$restProps}
     on:mapMove
   />
