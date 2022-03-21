@@ -24,7 +24,7 @@ const defaultMapState = {
 };
 
 const defaultMaps = defaultStyles.map(
-  (style, i) => localConfig.styles[i] || style
+  (style, i) => localConfig.stylePresets[i] || style
 );
 
 const config = {
@@ -34,5 +34,10 @@ const config = {
   ...localConfig
 };
 
-export const { mapState, maps, styles, mapboxGlAccessToken, branchPattern } =
-  config;
+export const {
+  mapState,
+  maps,
+  stylePresets,
+  mapboxGlAccessToken,
+  branchPattern
+} = config;

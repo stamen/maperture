@@ -1,6 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
-  import { styles, branchPattern } from '../config';
+  import { stylePresets, branchPattern } from '../config';
+  import { isBranchUrl, parseBranchUrl, createBranchUrl } from '../branch-utils';
   import { shortcut } from '../shortcut'
   import { fetchUrl } from '../fetch-url';
 
@@ -8,38 +9,7 @@
 
   export let url;
 
-  const isBranchUrl = (url) => {
-    const { pattern, styles } = branchPattern;
-    const sections = pattern.split('{branch}');
-    const knownUrl = sections.find(s => !s.includes('{style}'));
-    const unknownUrl = sections.find(s => s.includes('{style}'));
-
-    return url.includes(knownUrl) && styles.some(s => url.includes(unknownUrl.replace('{style}', s)));
-  }
-
-  const parseBranchUrl = (url) => {
-    const { pattern } = branchPattern;
-    if (!isBranchUrl(url)) return null;
-    let branch = '';
-    let styleId = '';
-    const urlPath = url.split('/');
-    pattern.split('/').forEach((section, i) => {
-      if (section === '{branch}') {
-        branch = urlPath[i];
-        return;
-      }
-      if (section === '{style}') {
-        styleId = urlPath[i];
-        return;
-      }
-      if (section !== urlPath[i]) {
-        console.error('Problem parsing url.')
-      }
-    });
-    return { styleId, branch };
-  }
-
-  const selectedIsStyleOption = styles.some(s => s.url === url);
+  const selectedIsStyleOption = stylePresets.some(s => s.url === url);
   const selectedIsBranchOption = isBranchUrl(url);
   
   let selected = 'custom';
@@ -74,12 +44,13 @@
   };
 
   $: {
-    if (selected !== 'custom' && !selected.includes('branchStyle-')) {
-      textInput = '';
-      onChangeUrl(selected);
-    }
     if (selected === 'custom') {
       textInput = url;
+    } else if (selected.includes('branchStyle-')) {
+      textInput = '';
+    } else if (selected) {
+      textInput = '';
+      onChangeUrl(selected);
     }
   };
 
@@ -110,11 +81,6 @@
       return { status: '404' };
     }
   };
-
-  const createBranchUrl = (branchName, selectedStyle) => {
-    const { pattern } = branchPattern;
-    return pattern.replace('{branch}', branchName).replace('{style}', selectedStyle);
-  }
   
   const onChangeUrl = async (url) => {
     let nextUrl = url;
@@ -164,8 +130,8 @@
 
   const getDropdownOptions = () => {
     const options = {};
-    if (styles.length) {
-      options['Presets'] = styles;
+    if (stylePresets.length) {
+      options['Presets'] = stylePresets;
     }
     if (branchPattern?.styles) {
       options['Styles on a branch'] = branchPattern?.styles.map(s => {
