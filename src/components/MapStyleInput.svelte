@@ -48,7 +48,8 @@
     if (selected === 'custom') {
       textInput = url;
     } else if (selected.includes('branchStyle-')) {
-      textInput = '';
+      const { branch } = parseBranchUrl(url);
+      textInput = branch;
     } else if (selected) {
       textInput = '';
       onChangeUrl(selected);
