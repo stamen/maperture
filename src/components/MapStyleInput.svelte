@@ -1,6 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
-  import { styles } from '../config';
+  import { styles, branchPattern } from '../config';
   import { shortcut } from '../shortcut'
   import { fetchUrl } from '../fetch-url';
 
@@ -8,10 +8,34 @@
 
   export let url;
 
-  const selectedIsStyleOption = styles.some(s => s.url === url);
+  const isBranchUrl = (url) => {
+    const { baseUrl, path, styles } = branchPattern;
+    return url.includes(baseUrl) && url.includes(path) && styles.some(styleId => url.includes(styleId));
+  }
 
-  let selected = selectedIsStyleOption ? url : 'custom';
-  let textInput = selectedIsStyleOption ? '' : url;
+  const parseBranchUrl = (url) => {
+    const { baseUrl } = branchPattern;
+    if (!isBranchUrl(url)) return null;
+    const urlSuffix = url.split(baseUrl)[1].split('/');
+    const branch = urlSuffix[0];
+    const styleId = urlSuffix.slice(urlSuffix.length - 2, urlSuffix.length - 1);
+    return { styleId, branch };
+  }
+
+  const selectedIsStyleOption = styles.some(s => s.url === url);
+  const selectedIsBranchOption = isBranchUrl(url);
+  
+  let selected = 'custom';
+  let textInput = url;
+  if (selectedIsStyleOption) {
+    selected = url
+    textInput = '';
+  }
+  if (selectedIsBranchOption) {
+    const { styleId, branch } = parseBranchUrl(url)
+    selected = `branchStyle-${styleId}`;
+    textInput = branch;
+  }
   let localUrl = '';
   let activeStyleUrl = '';
   let focused = false;
@@ -33,7 +57,7 @@
   };
 
   $: {
-    if (selected && selected !== 'custom') {
+    if (selected !== 'custom' && !selected.includes('branchStyle-')) {
       textInput = '';
       onChangeUrl(selected);
     }
@@ -69,13 +93,25 @@
       return { status: '404' };
     }
   };
+
+  const createBranchUrl = (branchName, selectedStyle) => {
+    const { baseUrl, path } = branchPattern;
+    const styleId = selectedStyle.split('branchStyle-')[1];
+    const trailingSlash = (str) => str.endsWith('/') ? str : `${str}/`;
+    return `${trailingSlash(baseUrl)}${trailingSlash(branchName)}${trailingSlash(path)}${trailingSlash(styleId)}style.json`;
+  }
   
   const onChangeUrl = async (url) => {
-    const { status } = await fetchStyle(url);
+    let nextUrl = url;
+    if (selected.includes('branchStyle-')) {
+      nextUrl = createBranchUrl(url, selected);
+    }
+    const { status } = await fetchStyle(nextUrl);
     if (status === '200') {
+      // Don't use the altered url for activeStyleUrl since we want branch names here
       activeStyleUrl = url;
       // Call poll after setting activeStyleUrl on success
-      poll(url);
+      poll(nextUrl);
     }
   };
 
@@ -109,21 +145,46 @@
       textInput = activeStyleUrl;
     }
   };
+
+  const getDropdownOptions = () => {
+    const options = {};
+    if (styles.length) {
+      options['Presets'] = styles;
+    }
+    if (branchPattern?.styles) {
+      options['Styles on a branch'] = branchPattern?.styles.map(s => {
+        return {
+          name: `${s.charAt(0).toUpperCase() + s.slice(1)} on...`,
+          url: `branchStyle-${s}`
+        }
+      });
+    }
+    options['custom'] = [
+      {
+        name: 'Fetch URL at...',
+        url: 'custom'
+      }
+    ];
+    return options;
+  };
 </script>
 
 <div class="map-style-input">
   <select id="styles" bind:value={selected}>
-    {#each styles as style}
-      <option value={style.url}>{style.name}</option>
+    {#each Object.keys(getDropdownOptions()) as group}
+      <optgroup label={group}>
+        {#each getDropdownOptions()[group] as style}
+          <option value={style.url}>{style.name}</option>
+        {/each}
+      </optgroup>
     {/each}
-    <option value="custom">Custom</option>
   </select>
 
-  {#if selected === 'custom'}
-  <div class='custom-input'>
-    <input class:input-error={error} bind:value={textInput} on:focus={handleOnFocus} on:blur={handleOnBlur} placeholder="enter a url to a style"/>
-    <button class='' use:shortcut={{code: 'Enter', callback: onKeySubmit }} on:click={submitUrl}>Submit</button>
-  </div>
+  {#if selected === 'custom' || selected.includes('branchStyle-')}
+    <div class='custom-input'>
+      <input class:input-error={error} bind:value={textInput} on:focus={handleOnFocus} on:blur={handleOnBlur} placeholder="enter a url to a style"/>
+      <button class='' use:shortcut={{code: 'Enter', callback: onKeySubmit }} on:click={submitUrl}>Submit</button>
+    </div>
   {/if}
   {#if !!error}
   <div class='error-message'>

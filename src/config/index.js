@@ -34,4 +34,5 @@ const config = {
   ...localConfig
 };
 
-export const { mapState, maps, styles, mapboxGlAccessToken } = config;
+export const { mapState, maps, styles, mapboxGlAccessToken, branchPattern } =
+  config;
