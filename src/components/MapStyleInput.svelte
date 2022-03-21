@@ -9,16 +9,33 @@
   export let url;
 
   const isBranchUrl = (url) => {
-    const { baseUrl, path, styles } = branchPattern;
-    return url.includes(baseUrl) && url.includes(path) && styles.some(styleId => url.includes(styleId));
+    const { pattern, styles } = branchPattern;
+    const sections = pattern.split('{branch}');
+    const knownUrl = sections.find(s => !s.includes('{style}'));
+    const unknownUrl = sections.find(s => s.includes('{style}'));
+
+    return url.includes(knownUrl) && styles.some(s => url.includes(unknownUrl.replace('{style}', s)));
   }
 
   const parseBranchUrl = (url) => {
-    const { baseUrl } = branchPattern;
+    const { pattern } = branchPattern;
     if (!isBranchUrl(url)) return null;
-    const urlSuffix = url.split(baseUrl)[1].split('/');
-    const branch = urlSuffix[0];
-    const styleId = urlSuffix.slice(urlSuffix.length - 2, urlSuffix.length - 1);
+    let branch = '';
+    let styleId = '';
+    const urlPath = url.split('/');
+    pattern.split('/').forEach((section, i) => {
+      if (section === '{branch}') {
+        branch = urlPath[i];
+        return;
+      }
+      if (section === '{style}') {
+        styleId = urlPath[i];
+        return;
+      }
+      if (section !== urlPath[i]) {
+        console.error('Problem parsing url.')
+      }
+    });
     return { styleId, branch };
   }
 
@@ -95,16 +112,15 @@
   };
 
   const createBranchUrl = (branchName, selectedStyle) => {
-    const { baseUrl, path } = branchPattern;
-    const styleId = selectedStyle.split('branchStyle-')[1];
-    const trailingSlash = (str) => str.endsWith('/') ? str : `${str}/`;
-    return `${trailingSlash(baseUrl)}${trailingSlash(branchName)}${trailingSlash(path)}${trailingSlash(styleId)}style.json`;
+    const { pattern } = branchPattern;
+    return pattern.replace('{branch}', branchName).replace('{style}', selectedStyle);
   }
   
   const onChangeUrl = async (url) => {
     let nextUrl = url;
     if (selected.includes('branchStyle-')) {
-      nextUrl = createBranchUrl(url, selected);
+      const styleId = selected.replace('branchStyle-', '');
+      nextUrl = createBranchUrl(url, styleId);
     }
     const { status } = await fetchStyle(nextUrl);
     if (status === '200') {
