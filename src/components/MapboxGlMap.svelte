@@ -27,6 +27,8 @@
   // either
   $: if (map && mapViewProps) updateMapFromProps();
 
+  $: if (map && url) updateMapStyle();
+
   // Show collisions on the map as desired
   $: if (map) map.showCollisionBoxes = showCollisions;
 
@@ -42,12 +44,16 @@
     };
   }
 
-  const shouldUpdate = () => {
+  const shouldUpdateMapView = () => {
     return !deepEqual(getCurrentMapView(), mapViewProps);
   };
 
+  const updateMapStyle = () => {
+    map.setStyle(url);
+  };
+
   const updateMapFromProps = () => {
-    if (shouldUpdate(mapViewProps)) map.jumpTo(mapViewProps);
+    if (shouldUpdateMapView(mapViewProps)) map.jumpTo(mapViewProps);
   };
 
   onMount(() => {

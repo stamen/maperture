@@ -41,6 +41,7 @@
         {...mapState}
         sliderPosition={map.index > 0 ? sliderPosition : null}
         on:mapMove={handleMapMove}
+        on:mapStyleState
       />
     {/each}
   </div>

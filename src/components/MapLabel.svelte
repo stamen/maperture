@@ -1,6 +1,5 @@
 <script>
-  // TODO in follow-up issue (add style changer)
-  // import MapStyleInput from './MapStyleInput.svelte';
+  import MapStyleInput from './MapStyleInput.svelte';
 
   export let name;
   export let url;
@@ -8,7 +7,7 @@
 
 <div class="map-label">
   <div class="map-name">{name}</div>
-  <!-- <MapStyleInput style={style} /> -->
+  <MapStyleInput {url} on:mapStyleUpdate />
 </div>
 
 <style>
@@ -18,6 +17,7 @@
     padding: 1em;
     display: flex;
     flex-direction: column;
+    min-width:240px;
   }
 
   .map-name {
