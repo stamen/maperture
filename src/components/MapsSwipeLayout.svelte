@@ -30,20 +30,18 @@
   bind:clientWidth={width}
 >
 
-  <div class="maps-container">
-    {#each maps as map }
-      <div class="map-container" 
-        style={map.index === 1 && sliderPosition ? `clip: rect(0px, ${width}px, ${height}px, ${sliderPosition}px)` : null}
-      >
-        <Map
-          {...map}
-          {...mapState}
-          on:mapMove
-          on:mapStyleState
-        />
-      </div>
-    {/each}
-  </div>
+  {#each maps as map }
+    <div class="map-container" 
+      style={map.index === 1 && sliderPosition ? `clip: rect(0px, ${width}px, ${height}px, ${sliderPosition}px)` : null}
+    >
+      <Map
+        {...map}
+        {...mapState}
+        on:mapMove
+        on:mapStyleState
+      />
+    </div>
+  {/each}
 
   <div
     class="slider"
@@ -57,7 +55,7 @@
     height: 100%;
   }
 
-  .maps.dragging .maps-container {
+  .maps.dragging .map-container {
     /* Avoid selecting text in maps / map label sections when dragging */
     user-select: none;
   }

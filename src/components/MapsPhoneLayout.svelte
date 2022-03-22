@@ -6,34 +6,25 @@
 </script>
 
 <div class="maps phone">
-  <div class="maps-container">
-    {#each maps as map }
-      <div class="map-container">
-        <Map
-          {...map}
-          {...mapState}
-          on:mapMove
-          on:mapStyleState
-        />
-      </div>
-    {/each}
-  </div>
+  {#each maps as map }
+    <div class="map-container">
+      <Map
+        {...map}
+        {...mapState}
+        on:mapMove
+        on:mapStyleState
+      />
+    </div>
+  {/each}
 </div>
 
 <style>
   .maps {
-    display: flex;
-    flex-grow: 1;
-    height: 100%;
-    position: relative;
-  }
-
-  .maps .maps-container {
     align-items: center;
     display: flex;
+    flex-grow: 1;
     flex-direction: row;
     justify-content: space-around;
-    width: 100%;
   }
 
   .maps .map-container {
