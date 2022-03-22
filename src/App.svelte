@@ -53,7 +53,11 @@
   };
 
   const handleViewMode = event => {
-    settings = { ...settings, viewMode: event.detail.mode };
+    settings = {
+      ...settings,
+      ...mapState,
+      viewMode: event.detail.mode,
+    };
   };
 </script>
 
