@@ -2,6 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import { Geocoder } from '@beyonk/svelte-mapbox';
   import MapLocationControl from './MapLocationControl.svelte';
+  import { gazetteer } from '../config';
 
   export let bearing;
   export let center;
@@ -29,6 +30,13 @@
     }
     dispatch('mapState', { options });
   };
+
+  const handleChangeLocation = (e) => {
+    const value = JSON.parse(e.target.value);
+    const label = Object.keys(value)[0];
+    const options = value[label];
+    dispatch('mapState', { options });
+  };
 </script>
 
 <div class="map-controls">
@@ -43,6 +51,20 @@
       on:result={handleGeocoderResult}
     />
   </div>
+
+  {#if gazetteer}
+    <div class="control-section">
+      <select id="locations" on:change={handleChangeLocation}>
+        {#each Object.keys(gazetteer) as locationHeader}
+          <optgroup label={locationHeader}>
+            {#each gazetteer[locationHeader] as location}
+              <option value={JSON.stringify(location)}>{Object.keys(location)[0]}</option>
+            {/each}
+          </optgroup>
+        {/each}
+      </select>
+    </div>
+  {/if}
 
   <div class="control-section">
     <label>
@@ -67,5 +89,6 @@
 
   .control-section {
     margin: 0 1em;
+    display: flex;
   }
 </style>
