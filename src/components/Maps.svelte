@@ -4,6 +4,7 @@
 
   export let maps;
   export let mapState;
+  export let viewMode;
 
   const dispatch = createEventDispatcher();
   const sliderWidth = 5;
@@ -11,6 +12,7 @@
   let dragging = false;
   let sliderPosition = 0;
   let width;
+  let height;
 
   $: sliderPosition = width / 2;
 
@@ -27,30 +29,36 @@
   };
 </script>
 
-<div class="maps"
+<div class="maps {viewMode}"
   class:dragging
   on:mousemove={handleSliderMouseMove}
   on:mouseup={handleSliderMouseUp}
+  bind:clientHeight={height}
   bind:clientWidth={width}
 >
 
   <div class="maps-container">
     {#each maps as map }
-      <Map
-        {...map}
-        {...mapState}
-        sliderPosition={map.index > 0 ? sliderPosition : null}
-        on:mapMove={handleMapMove}
-        on:mapStyleState
-      />
+      <div class="map-container" 
+        style={viewMode === 'swipe' && map.index === 1 && sliderPosition ? `clip: rect(0px, ${width}px, ${height}px, ${sliderPosition}px)` : null}
+      >
+        <Map
+          {...map}
+          {...mapState}
+          on:mapMove={handleMapMove}
+          on:mapStyleState
+        />
+      </div>
     {/each}
   </div>
 
-  <div
-    class="slider"
-    style="left: {sliderPosition}px; width: {sliderWidth}px;"
-    on:mousedown={handleSliderMouseDown}
-  />
+  {#if viewMode === 'swipe'}
+    <div
+      class="slider"
+      style="left: {sliderPosition}px; width: {sliderWidth}px;"
+      on:mousedown={handleSliderMouseDown}
+    />
+  {/if}
 </div>
 
 <style>
@@ -63,6 +71,35 @@
   .maps.dragging .maps-container {
     /* Avoid selecting text in maps / map label sections when dragging */
     user-select: none;
+  }
+
+  .maps.swipe .map-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  .maps.phone .maps-container {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+  }
+
+  .maps.phone .map-container {
+    border: 20px solid #333;
+    border-radius: 30px;
+    box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
+    height: 620px;
+    margin: 20px;
+    width: 300px;
+  }
+
+  :global(.maps.phone .mapboxgl-map) {
+    border-radius: 30px;
   }
 
   .slider {

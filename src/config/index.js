@@ -22,11 +22,13 @@ const config = {
     showCollisions: false,
     zoom: 13.25
   },
+  defaultViewMode: 'swipe',
   ...localConfig
 };
 
 export const {
   defaultMapState,
   defaultMaps,
+  defaultViewMode,
   mapboxGlAccessToken
 } = config;

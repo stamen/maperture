@@ -51,16 +51,28 @@
       ...event.detail.options
     };
   };
+
+  const handleViewMode = event => {
+    settings = { ...settings, viewMode: event.detail.mode };
+  };
 </script>
 
 <main>
-  <Maps {maps} {mapState} on:mapState={handleMapState} on:mapStyleState={handleChangeMap} />
+  <Maps 
+    {maps} 
+    {mapState} 
+    viewMode={settings.viewMode}
+    on:mapState={handleMapState}
+    on:mapStyleState={handleChangeMap}
+  />
 
   <div class="map-controls-container">
     <MapControls
       mapboxGlAccessToken={mapboxGlAccessToken}
       {...mapState}
+      viewMode={settings.viewMode}
       on:mapState={handleMapState}
+      on:viewMode={handleViewMode}
     />
   </div>
 </main>
