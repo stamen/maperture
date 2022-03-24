@@ -1,5 +1,5 @@
 <script>
-  import MapStyleInput from './MapStyleInput.svelte';
+  import MapStyleInput from "./MapStyleInput.svelte";
 
   export let name;
   export let url;
@@ -17,7 +17,7 @@
     padding: 1em;
     display: flex;
     flex-direction: column;
-    min-width:240px;
+    min-width: 240px;
   }
 
   .map-name {

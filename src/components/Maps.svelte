@@ -1,6 +1,6 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
-  import Map from './Map.svelte';
+  import { createEventDispatcher } from "svelte";
+  import Map from "./Map.svelte";
 
   export let maps;
   export let mapState;
@@ -14,28 +14,28 @@
 
   $: sliderPosition = width / 2;
 
-  const handleSliderMouseDown = () => dragging = true;
-  const handleSliderMouseUp = () => dragging = false;
+  const handleSliderMouseDown = () => (dragging = true);
+  const handleSliderMouseUp = () => (dragging = false);
 
-  const handleSliderMouseMove = e => {
+  const handleSliderMouseMove = (e) => {
     if (!dragging || e.clientX === 0) return;
     sliderPosition = e.clientX - sliderWidth / 2;
   };
 
-  const handleMapMove = event => {
-    dispatch('mapState', { options: event.detail.options });
+  const handleMapMove = (event) => {
+    dispatch("mapState", { options: event.detail.options });
   };
 </script>
 
-<div class="maps"
+<div
+  class="maps"
   class:dragging
   on:mousemove={handleSliderMouseMove}
   on:mouseup={handleSliderMouseUp}
   bind:clientWidth={width}
 >
-
   <div class="maps-container">
-    {#each maps as map }
+    {#each maps as map}
       <Map
         {...map}
         {...mapState}

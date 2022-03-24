@@ -1,9 +1,9 @@
 <script>
-  import deepEqual from 'deep-equal';
-  import { createEventDispatcher, onMount } from 'svelte';
-  import mapboxgl from 'mapbox-gl';
+  import deepEqual from "deep-equal";
+  import { createEventDispatcher, onMount } from "svelte";
+  import mapboxgl from "mapbox-gl";
   import "mapbox-gl/dist/mapbox-gl.css";
-  import { mapboxGlAccessToken } from '../config';
+  import { mapboxGlAccessToken } from "../config";
 
   export let bearing;
   export let center;
@@ -38,7 +38,7 @@
       pitch: map.getPitch(),
       zoom: map.getZoom(),
     };
-  }
+  };
 
   const shouldUpdateMapView = () => {
     return !deepEqual(getCurrentMapView(), mapViewProps);
@@ -60,14 +60,14 @@
     });
 
     const handleMove = ({ origin }) => {
-      dispatch('mapMove', { options: getCurrentMapView() });
-    }
+      dispatch("mapMove", { options: getCurrentMapView() });
+    };
 
-    map.on('move', handleMove);
+    map.on("move", handleMove);
   });
 </script>
 
-<div id={id} class="map"></div>
+<div {id} class="map" />
 
 <style>
   .map {
