@@ -1,13 +1,16 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
-  import { Geocoder } from '@beyonk/svelte-mapbox';
-  import MapLocationControl from './MapLocationControl.svelte';
+  import { createEventDispatcher } from "svelte";
+  import { Geocoder } from "@beyonk/svelte-mapbox";
+  import MapLocationControl from "./MapLocationControl.svelte";
+  import ViewModeControl from "./ViewModeControl.svelte";
 
   export let bearing;
   export let center;
   export let mapboxGlAccessToken;
   export let pitch;
   export let showCollisions;
+  export let viewMode;
+  export let showBoundaries;
   export let zoom;
 
   const dispatch = createEventDispatcher();
@@ -15,25 +18,29 @@
 
   $: mapLocation = { bearing, center, pitch, zoom };
 
-  // When showCollisions changes, update map state
-  $: dispatch('mapState', { options: { showCollisions } });
+  // When showCollisions or showBoundaries changes, update map state
+  $: dispatch("mapState", { options: { showCollisions, showBoundaries } });
 
   const handleGeocoderResult = ({ detail }) => {
     const { result } = detail;
     const options = {
       center: result.center,
-      zoom: 17
+      zoom: 17,
     };
     if (result.bbox) {
       options.zoom = 14;
     }
-    dispatch('mapState', { options });
+    dispatch("mapState", { options });
   };
 </script>
 
 <div class="map-controls">
   <div class="control-section">
     <MapLocationControl on:mapState {...mapLocation} />
+  </div>
+
+  <div class="control-section">
+    <ViewModeControl on:viewMode mode={viewMode} />
   </div>
 
   <div class="control-section">
@@ -46,8 +53,12 @@
 
   <div class="control-section">
     <label>
-      <span>show label collisions?</span>
+      <span>Label Collisions</span>
       <input type="checkbox" bind:checked={showCollisions} />
+    </label>
+    <label>
+      <span>Tile Boundaries</span>
+      <input type="checkbox" bind:checked={showBoundaries} />
     </label>
   </div>
 </div>

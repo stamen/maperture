@@ -1,14 +1,14 @@
 <script>
   import { createEventDispatcher } from 'svelte';
-  import { styles } from '../config';
-  import { shortcut } from '../shortcut'
+  import { stylePresets } from '../config';
+  import { shortcut } from '../shortcut';
   import { fetchUrl } from '../fetch-url';
 
   const dispatch = createEventDispatcher();
 
   export let url;
 
-  const selectedIsStyleOption = styles.some(s => s.url === url);
+  const selectedIsStyleOption = stylePresets.some(s => s.url === url);
 
   let selected = selectedIsStyleOption ? url : 'custom';
   let textInput = selectedIsStyleOption ? '' : url;
@@ -23,14 +23,14 @@
       activeStyleUrl = url;
       poll(url);
     }
-  };
+  }
 
   $: {
     if (textInput !== localUrl && error) {
       localUrl = '';
       error = null;
     }
-  };
+  }
 
   $: {
     if (selected && selected !== 'custom') {
@@ -40,19 +40,20 @@
     if (selected === 'custom') {
       textInput = url;
     }
-  };
+  }
 
-  const poll = (url) => {
-    const pollCondition = (str) => str.includes('localhost') && activeStyleUrl === str;
+  const poll = url => {
+    const pollCondition = str =>
+      str.includes('localhost') && activeStyleUrl === str;
     // Simple polling for any style on localhost
     // Check that should poll to set timer
     if (pollCondition(url)) {
       // Check poll condition again to cancel action for a url
-      setTimeout(() => pollCondition(url) && fetchStyle(url), 3000)
+      setTimeout(() => pollCondition(url) && fetchStyle(url), 3000);
     }
-  }
+  };
 
-  const fetchStyle = async (url) => {
+  const fetchStyle = async url => {
     let style;
     try {
       const data = await fetchUrl(url);
@@ -69,8 +70,8 @@
       return { status: '404' };
     }
   };
-  
-  const onChangeUrl = async (url) => {
+
+  const onChangeUrl = async url => {
     const { status } = await fetchStyle(url);
     if (status === '200') {
       activeStyleUrl = url;
@@ -90,7 +91,12 @@
         localUrl = `http://localhost${address}`;
       }
     }
-    onChangeUrl(localUrl);
+    const { status } = await fetchStyle(localUrl);
+    if (status === '200') {
+      activeStyleUrl = localUrl;
+      // Call poll after setting activeStyleUrl on success
+      poll(localUrl);
+    }
   };
 
   const onKeySubmit = () => {
@@ -109,26 +115,51 @@
       textInput = activeStyleUrl;
     }
   };
+
+  $: {
+    if (textInput !== localUrl && error) {
+      localUrl = '';
+      error = null;
+    }
+  }
+
+  $: {
+    // This runs only on mount to check for localhost in url
+    if (!activeStyleUrl) {
+      activeStyleUrl = url;
+      poll(url);
+    }
+  }
 </script>
 
 <div class="map-style-input">
   <select id="styles" bind:value={selected}>
-    {#each styles as style}
+    {#each stylePresets as style}
       <option value={style.url}>{style.name}</option>
     {/each}
     <option value="custom">Custom</option>
   </select>
 
   {#if selected === 'custom'}
-  <div class='custom-input'>
-    <input class:input-error={error} bind:value={textInput} on:focus={handleOnFocus} on:blur={handleOnBlur} placeholder="enter a url to a style"/>
-    <button class='' use:shortcut={{code: 'Enter', callback: onKeySubmit }} on:click={submitUrl}>Submit</button>
-  </div>
+    <div class="custom-input">
+      <input
+        class:input-error={error}
+        bind:value={textInput}
+        on:focus={handleOnFocus}
+        on:blur={handleOnBlur}
+        placeholder="enter a url to a style"
+      />
+      <button
+        class=""
+        use:shortcut={{ code: 'Enter', callback: onKeySubmit }}
+        on:click={submitUrl}>Submit</button
+      >
+    </div>
   {/if}
   {#if !!error}
-  <div class='error-message'>
-    {error}
-  </div>
+    <div class="error-message">
+      {error}
+    </div>
   {/if}
 </div>
 

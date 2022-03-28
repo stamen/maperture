@@ -1,4 +1,5 @@
 import * as localConfig from './local';
+import { VIEW_MODES } from '../constants';
 
 const defaultStyles = [
   {
@@ -24,14 +25,17 @@ const defaultMapState = {
 };
 
 const defaultMaps = defaultStyles.map(
-  (style, i) => localConfig.styles[i] || style
+  (style, i) => localConfig.stylePresets[i] || style
 );
 
+const defaultViewMode = VIEW_MODES[0];
+
 const config = {
-  styles: defaultStyles,
-  mapState: defaultMapState,
   maps: defaultMaps,
+  mapState: defaultMapState,
+  viewMode: defaultViewMode,
   ...localConfig
 };
 
-export const { mapState, maps, styles, mapboxGlAccessToken } = config;
+export const { mapState, maps, viewMode, stylePresets, mapboxGlAccessToken } =
+  config;

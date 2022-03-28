@@ -1,15 +1,16 @@
 <script>
-  import deepEqual from 'deep-equal';
-  import { createEventDispatcher, onMount } from 'svelte';
-  import mapboxgl from 'mapbox-gl';
+  import deepEqual from "deep-equal";
+  import { createEventDispatcher, onMount } from "svelte";
+  import mapboxgl from "mapbox-gl";
   import "mapbox-gl/dist/mapbox-gl.css";
-  import { mapboxGlAccessToken } from '../config';
+  import { mapboxGlAccessToken } from "../config";
 
   export let bearing;
   export let center;
   export let id;
   export let pitch;
   export let showCollisions;
+  export let showBoundaries;
   export let url;
   export let zoom;
 
@@ -31,6 +32,9 @@
   // Show collisions on the map as desired
   $: if (map) map.showCollisionBoxes = showCollisions;
 
+  // Show tile boundaries on the map as desired
+  $: if (map) map.showTileBoundaries = showBoundaries;
+
   const getCurrentMapView = () => {
     return {
       bearing: map.getBearing(),
@@ -38,7 +42,7 @@
       pitch: map.getPitch(),
       zoom: map.getZoom(),
     };
-  }
+  };
 
   const shouldUpdateMapView = () => {
     return !deepEqual(getCurrentMapView(), mapViewProps);
@@ -60,14 +64,14 @@
     });
 
     const handleMove = ({ origin }) => {
-      dispatch('mapMove', { options: getCurrentMapView() });
-    }
+      dispatch("mapMove", { options: getCurrentMapView() });
+    };
 
-    map.on('move', handleMove);
+    map.on("move", handleMove);
   });
 </script>
 
-<div id={id} class="map"></div>
+<div {id} class="map" />
 
 <style>
   .map {
