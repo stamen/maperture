@@ -1,19 +1,14 @@
 <script>
-  import Map from './Map.svelte';
+  import Map from "./Map.svelte";
 
   export let maps;
   export let mapState;
 </script>
 
 <div class="maps phone">
-  {#each maps as map }
+  {#each maps as map}
     <div class="map-container">
-      <Map
-        {...map}
-        {...mapState}
-        on:mapMove
-        on:mapStyleState
-      />
+      <Map {...map} {...mapState} on:mapMove on:mapStyleState />
     </div>
   {/each}
 </div>
@@ -37,6 +32,6 @@
   }
 
   :global(.maps.phone .mapboxgl-map) {
-    border-radius: 30px;
+    border-radius: 10px;
   }
 </style>
