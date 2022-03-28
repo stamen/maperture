@@ -86,9 +86,9 @@
 
 {#if gazetteer}
   <select id="locations" bind:value={selected}>
-    <optgroup label="Go to..." />
     {#each Object.keys(gazetteer) as locationHeader}
       <optgroup label={locationHeader}>
+        <option value="" disabled selected hidden>Go to...</option>
         {#each gazetteer[locationHeader] as location}
           <option value={JSON.stringify(location)}
             >{Object.keys(location)[0]}</option
