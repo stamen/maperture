@@ -1,10 +1,11 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher } from "svelte";
+  import { VIEW_MODES } from "../constants";
+
   export let mode;
 
   const dispatch = createEventDispatcher();
-  const modes = ['swipe', 'phone'];
-  let selectedMode = '';
+  let selectedMode = "";
 
   $: selectedMode = mode;
 
@@ -13,13 +14,13 @@
   }
 
   const handleChange = () => {
-    dispatch('viewMode', { mode: selectedMode });
-  }
+    dispatch("viewMode", { mode: selectedMode });
+  };
 </script>
 
 <div>
   <select bind:value={selectedMode}>
-    {#each modes as mode}
+    {#each VIEW_MODES as mode}
       <option>{mode}</option>
     {/each}
   </select>
