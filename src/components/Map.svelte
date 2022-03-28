@@ -1,7 +1,7 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
-  import MapboxGlMap from './MapboxGlMap.svelte';
-  import MapLabel from './MapLabel.svelte';
+  import { createEventDispatcher } from "svelte";
+  import MapboxGlMap from "./MapboxGlMap.svelte";
+  import MapLabel from "./MapLabel.svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -17,7 +17,7 @@
   let MapComponent;
 
   switch (type) {
-    case 'mapbox-gl':
+    case "mapbox-gl":
     default:
       // This is currently the only map component implemented
       MapComponent = MapboxGlMap;
@@ -25,14 +25,17 @@
 
   const handleMapStyleUpdate = (event) => {
     const { url, style } = event.detail;
-    dispatch('mapStyleState', { url, style, index });
+    dispatch("mapStyleState", { url, style, index });
   };
 </script>
 
-<div class="map-container" 
+<div
+  class="map-container"
   bind:clientHeight={height}
   bind:clientWidth={width}
-  style={sliderPosition ? `clip: rect(0px, ${width}px, ${height}px, ${sliderPosition}px)` : null}
+  style={sliderPosition
+    ? `clip: rect(0px, ${width}px, ${height}px, ${sliderPosition}px)`
+    : null}
 >
   <svelte:component
     this={MapComponent}

@@ -1,10 +1,10 @@
 <script>
-  import Maps from './components/Maps.svelte';
-  import MapControls from './components/MapControls.svelte';
-  import { writeHash } from './query';
-  import { getInitialSettings } from './settings';
-  import { mapboxGlAccessToken } from './config';
-  import throttle from 'lodash.throttle';
+  import Maps from "./components/Maps.svelte";
+  import MapControls from "./components/MapControls.svelte";
+  import { writeHash } from "./query";
+  import { getInitialSettings } from "./settings";
+  import { mapboxGlAccessToken } from "./config";
+  import throttle from "lodash.throttle";
 
   let mapState = {};
   let maps = [];
@@ -19,7 +19,8 @@
   $: if (settings && mapState) throttledWriteHash();
 
   $: {
-    const { bearing, center, pitch, showCollisions, showBoundaries, zoom } = settings;
+    const { bearing, center, pitch, showCollisions, showBoundaries, zoom } =
+      settings;
     mapState = { bearing, center, pitch, showCollisions, showBoundaries, zoom };
   }
 
@@ -33,11 +34,18 @@
     let nextMaps = maps;
 
     // Pass the stylesheet directly into state so we can detect local changes
-    nextMap = { id: style.id, index, name: style.name, type: 'mapbox-gl', url, style };
+    nextMap = {
+      id: style.id,
+      index,
+      name: style.name,
+      type: "mapbox-gl",
+      url,
+      style,
+    };
     nextMaps.splice(index, 1, nextMap);
     maps = nextMaps;
     // Remove the stylesheet for a more concise hash
-    const mapsHash = JSON.parse(JSON.stringify(maps)).map(m => {
+    const mapsHash = JSON.parse(JSON.stringify(maps)).map((m) => {
       delete m.style;
       return m;
     });
@@ -45,20 +53,25 @@
     writeHash({ ...settings, maps: mapsHash, ...mapState });
   };
 
-  const handleMapState = event => {
+  const handleMapState = (event) => {
     mapState = {
       ...mapState,
-      ...event.detail.options
+      ...event.detail.options,
     };
   };
 </script>
 
 <main>
-  <Maps {maps} {mapState} on:mapState={handleMapState} on:mapStyleState={handleChangeMap} />
+  <Maps
+    {maps}
+    {mapState}
+    on:mapState={handleMapState}
+    on:mapStyleState={handleChangeMap}
+  />
 
   <div class="map-controls-container">
     <MapControls
-      mapboxGlAccessToken={mapboxGlAccessToken}
+      {mapboxGlAccessToken}
       {...mapState}
       on:mapState={handleMapState}
     />

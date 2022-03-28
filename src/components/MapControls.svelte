@@ -1,7 +1,7 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
-  import { Geocoder } from '@beyonk/svelte-mapbox';
-  import MapLocationControl from './MapLocationControl.svelte';
+  import { createEventDispatcher } from "svelte";
+  import { Geocoder } from "@beyonk/svelte-mapbox";
+  import MapLocationControl from "./MapLocationControl.svelte";
 
   export let bearing;
   export let center;
@@ -17,19 +17,18 @@
   $: mapLocation = { bearing, center, pitch, zoom };
 
   // When showCollisions or showBoundaries changes, update map state
-  $: dispatch('mapState', { options: { showCollisions, showBoundaries } });
-
+  $: dispatch("mapState", { options: { showCollisions, showBoundaries } });
 
   const handleGeocoderResult = ({ detail }) => {
     const { result } = detail;
     const options = {
       center: result.center,
-      zoom: 17
+      zoom: 17,
     };
     if (result.bbox) {
       options.zoom = 14;
     }
-    dispatch('mapState', { options });
+    dispatch("mapState", { options });
   };
 </script>
 
