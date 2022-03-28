@@ -2,7 +2,7 @@
 </script>
 
 <button on:click>
-  <slot></slot>
+  <slot />
 </button>
 
 <style>
@@ -16,4 +16,3 @@
     margin: 0;
   }
 </style>
-

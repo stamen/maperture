@@ -1,7 +1,7 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
-  import Button from './inputs/Button.svelte';
-  import { round } from '../math';
+  import { createEventDispatcher } from "svelte";
+  import Button from "./inputs/Button.svelte";
+  import { round } from "../math";
 
   export let bearing;
   export let center;
@@ -11,21 +11,21 @@
   const dispatch = createEventDispatcher();
   let copied = false;
   let changingState = false;
-  let formattedLocation = '';
-  let stateInput = '';
+  let formattedLocation = "";
+  let stateInput = "";
 
   $: {
     let locationParts = [
       round(zoom, 2),
       round(center.lat, 3),
-      round(center.lng, 3)
+      round(center.lng, 3),
     ];
 
     if (pitch || bearing) {
       locationParts.push(round(pitch, 1));
       locationParts.push(round(bearing, 1));
     }
-    formattedLocation = locationParts.join('/');
+    formattedLocation = locationParts.join("/");
   }
 
   // Reset copied when location changes
@@ -52,16 +52,17 @@
     changingState = false;
     copied = false;
 
-    const [zoom, lat, lng, pitch, bearing] = stateInput.split('/');
-    const options = { mapStateUpdateOrigin: 'controls' };
+    const [zoom, lat, lng, pitch, bearing] = stateInput.split("/");
+    const options = { mapStateUpdateOrigin: "controls" };
     if (zoom !== undefined) options.zoom = +zoom;
-    if (lat !== undefined && lng !== undefined) options.center = {
-      lng: +lng,
-      lat: +lat
-    };
+    if (lat !== undefined && lng !== undefined)
+      options.center = {
+        lng: +lng,
+        lat: +lat,
+      };
     if (pitch !== undefined) options.pitch = +pitch;
     if (bearing !== undefined) options.bearing = +bearing;
-    dispatch('mapState', { options });
+    dispatch("mapState", { options });
   };
 </script>
 
@@ -69,11 +70,12 @@
   {#if changingState}
     <div class="state-record">
       <label>enter zoom/lat/lng[/pitch/bearing]</label>
-      <input type="text"
+      <input
+        type="text"
         bind:value={stateInput}
-        on:keydown={e => {
-          if (e.key === 'Enter') handleChangeEnd()
-          if (e.key === 'Escape') handleChangeCancel()
+        on:keydown={(e) => {
+          if (e.key === "Enter") handleChangeEnd();
+          if (e.key === "Escape") handleChangeCancel();
         }}
       />
     </div>
@@ -82,9 +84,7 @@
       <div class="map-state">{formattedLocation}</div>
       <div class="location-actions">
         <div>
-          <Button on:click={handleChangeStart}>
-            change
-          </Button>
+          <Button on:click={handleChangeStart}>change</Button>
         </div>
         <div>
           <Button on:click={handleCopy}>
