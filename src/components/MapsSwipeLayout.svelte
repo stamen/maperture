@@ -1,5 +1,5 @@
 <script>
-  import Map from './Map.svelte';
+  import Map from "./Map.svelte";
 
   export let maps;
   export let mapState;
@@ -13,33 +13,31 @@
 
   $: sliderPosition = width / 2;
 
-  const handleSliderMouseDown = () => dragging = true;
-  const handleSliderMouseUp = () => dragging = false;
+  const handleSliderMouseDown = () => (dragging = true);
+  const handleSliderMouseUp = () => (dragging = false);
 
-  const handleSliderMouseMove = e => {
+  const handleSliderMouseMove = (e) => {
     if (!dragging || e.clientX === 0) return;
     sliderPosition = e.clientX - sliderWidth / 2;
   };
 </script>
 
-<div class="maps"
+<div
+  class="maps"
   class:dragging
   on:mousemove={handleSliderMouseMove}
   on:mouseup={handleSliderMouseUp}
   bind:clientHeight={height}
   bind:clientWidth={width}
 >
-
-  {#each maps as map }
-    <div class="map-container" 
-      style={map.index === 1 && sliderPosition ? `clip: rect(0px, ${width}px, ${height}px, ${sliderPosition}px)` : null}
+  {#each maps as map}
+    <div
+      class="map-container"
+      style={map.index === 1 && sliderPosition
+        ? `clip: rect(0px, ${width}px, ${height}px, ${sliderPosition}px)`
+        : null}
     >
-      <Map
-        {...map}
-        {...mapState}
-        on:mapMove
-        on:mapStyleState
-      />
+      <Map {...map} {...mapState} on:mapMove on:mapStyleState />
     </div>
   {/each}
 
