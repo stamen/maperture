@@ -1,36 +1,41 @@
 import * as localConfig from "./local";
 import { VIEW_MODES } from "../constants";
 
-const config = {
-  defaultMaps: [
-    {
-      id: "mapbox-streets",
-      name: "Mapbox Streets",
-      type: "mapbox-gl",
-      url: "mapbox://styles/mapbox/streets-v11",
-    },
-    {
-      id: "mapbox-light",
-      name: "Mapbox Light",
-      type: "mapbox-gl",
-      url: "mapbox://styles/mapbox/light-v10",
-    },
-  ],
-  defaultMapState: {
-    bearing: 0,
-    center: { lng: -73.92169, lat: 40.83962 },
-    pitch: 0,
-    showCollisions: false,
-    showBoundaries: false,
-    zoom: 13.25,
+const defaultStyles = [
+  {
+    id: "mapbox-streets",
+    name: "Mapbox Streets",
+    type: "mapbox-gl",
+    url: "mapbox://styles/mapbox/streets-v11",
   },
-  defaultViewMode: VIEW_MODES[0],
+  {
+    id: "mapbox-light",
+    name: "Mapbox Light",
+    type: "mapbox-gl",
+    url: "mapbox://styles/mapbox/light-v10",
+  },
+];
+
+const defaultMapState = {
+  bearing: 0,
+  center: { lng: -73.92169, lat: 40.83962 },
+  pitch: 0,
+  showCollisions: false,
+  zoom: 13.25,
+};
+
+const defaultMaps = defaultStyles.map(
+  (style, i) => localConfig?.styles?.[i] ?? style
+);
+
+const defaultViewMode = VIEW_MODES[0];
+
+const config = {
+  maps: defaultMaps,
+  mapState: defaultMapState,
+  viewMode: defaultViewMode,
   ...localConfig,
 };
 
-export const {
-  defaultMapState,
-  defaultMaps,
-  defaultViewMode,
-  mapboxGlAccessToken,
-} = config;
+export const { mapState, maps, viewMode, stylePresets, mapboxGlAccessToken } =
+  config;
