@@ -1,8 +1,8 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
-  import Map from './Map.svelte';
-  import MapsPhoneLayout from './MapsPhoneLayout.svelte';
-  import MapsSwipeLayout from './MapsSwipeLayout.svelte';
+  import { createEventDispatcher } from "svelte";
+  import Map from "./Map.svelte";
+  import MapsPhoneLayout from "./MapsPhoneLayout.svelte";
+  import MapsSwipeLayout from "./MapsSwipeLayout.svelte";
 
   export let maps;
   export let mapState;
@@ -14,17 +14,23 @@
   let LayoutComponent;
 
   $: switch (viewMode) {
-    case 'phone':
+    case "phone":
       LayoutComponent = MapsPhoneLayout;
       break;
-    case 'swipe':
+    case "swipe":
     default:
       LayoutComponent = MapsSwipeLayout;
   }
 
-  const handleMapMove = event => {
-    dispatch('mapState', { options: event.detail.options });
+  const handleMapMove = (event) => {
+    dispatch("mapState", { options: event.detail.options });
   };
 </script>
 
-<svelte:component this={LayoutComponent} {maps} {mapState} on:mapMove={handleMapMove} on:mapStyleState />
+<svelte:component
+  this={LayoutComponent}
+  {maps}
+  {mapState}
+  on:mapMove={handleMapMove}
+  on:mapStyleState
+/>

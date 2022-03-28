@@ -1,19 +1,19 @@
-import * as localConfig from './local';
+import * as localConfig from "./local";
 
 const config = {
   defaultMaps: [
     {
-      id: 'mapbox-streets',
-      name: 'Mapbox Streets',
-      type: 'mapbox-gl',
-      url: 'mapbox://styles/mapbox/streets-v11',
+      id: "mapbox-streets",
+      name: "Mapbox Streets",
+      type: "mapbox-gl",
+      url: "mapbox://styles/mapbox/streets-v11",
     },
     {
-      id: 'mapbox-light',
-      name: 'Mapbox Light',
-      type: 'mapbox-gl',
-      url: 'mapbox://styles/mapbox/light-v10',
-    }
+      id: "mapbox-light",
+      name: "Mapbox Light",
+      type: "mapbox-gl",
+      url: "mapbox://styles/mapbox/light-v10",
+    },
   ],
   defaultMapState: {
     bearing: 0,
@@ -21,15 +21,15 @@ const config = {
     pitch: 0,
     showCollisions: false,
     showBoundaries: false,
-    zoom: 13.25
+    zoom: 13.25,
   },
-  defaultViewMode: 'swipe',
-  ...localConfig
+  defaultViewMode: "swipe",
+  ...localConfig,
 };
 
 export const {
   defaultMapState,
   defaultMaps,
   defaultViewMode,
-  mapboxGlAccessToken
+  mapboxGlAccessToken,
 } = config;
