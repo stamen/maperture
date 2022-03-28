@@ -1,30 +1,35 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
-  import { stylePresets, branchPattern } from '../config';
-  import { isBranchUrl, parseBranchUrl, createBranchUrl } from '../branch-utils';
-  import { shortcut } from '../shortcut'
-  import { fetchUrl } from '../fetch-url';
+  import { createEventDispatcher } from "svelte";
+  import { stylePresets, branchPattern } from "../config";
+  import {
+    isBranchUrl,
+    parseBranchUrl,
+    createBranchUrl,
+  } from "../branch-utils";
+  import { shortcut } from "../shortcut";
+  import { fetchUrl } from "../fetch-url";
 
   const dispatch = createEventDispatcher();
 
   export let url;
 
-  const selectedIsStyleOption = stylePresets.some(s => s.url === url);
+  const selectedIsStyleOption = stylePresets.some((s) => s.url === url);
   const selectedIsBranchOption = isBranchUrl(url);
-  
-  let selected = 'custom';
+
+  let selected = "custom";
   let textInput = url;
   if (selectedIsStyleOption) {
-    selected = url
-    textInput = '';
+    selected = url;
+    textInput = "";
   }
   if (selectedIsBranchOption) {
-    const { styleId, branch } = parseBranchUrl(url)
+    const { styleId, branch } = parseBranchUrl(url);
     selected = `branchStyle-${styleId}`;
     textInput = branch;
   }
-  let localUrl = '';
-  let activeStyleUrl = '';
+
+  let localUrl = "";
+  let activeStyleUrl = "";
   let focused = false;
   let error = null;
 
@@ -34,64 +39,65 @@
       activeStyleUrl = url;
       poll(url);
     }
-  };
+  }
 
   $: {
     if (textInput !== localUrl && error) {
-      localUrl = '';
+      localUrl = "";
       error = null;
     }
-  };
+  }
 
   $: {
     // Only run onChangeUrl from here if the user does not need to input a value
-    if (selected === 'custom') {
+    if (selected === "custom") {
       textInput = url;
-    } else if (selected.includes('branchStyle-')) {
+    } else if (selected.includes("branchStyle-")) {
       const { branch } = parseBranchUrl(url);
       textInput = branch;
     } else if (selected) {
-      textInput = '';
+      textInput = "";
       onChangeUrl(selected);
     }
-  };
+  }
 
   const poll = (url) => {
-    const pollCondition = (str) => str.includes('localhost') && activeStyleUrl === str;
+    const pollCondition = (str) =>
+      str.includes("localhost") && activeStyleUrl === str;
     // Simple polling for any style on localhost
     // Check that should poll to set timer
     if (pollCondition(url)) {
       // Check poll condition again to cancel action for a url
-      setTimeout(() => pollCondition(url) && fetchStyle(url), 3000)
+      setTimeout(() => pollCondition(url) && fetchStyle(url), 3000);
     }
-  }
+  };
 
   const fetchStyle = async (url) => {
     let style;
     try {
       const data = await fetchUrl(url);
       // TODO make a better check that it is style and not arbitrary object
-      if (data && typeof data === 'object') {
+      if (data && typeof data === "object") {
         // TODO create checks by type for non-mapbox maps
         style = data;
         poll(url);
-        dispatch('mapStyleUpdate', { style, url });
-        return { status: '200' };
+        dispatch("mapStyleUpdate", { style, url });
+        return { status: "200" };
       }
     } catch (err) {
-      error = new Error('Style was not found.');
-      return { status: '404' };
+      error = new Error("Style was not found.");
+      return { status: "404" };
     }
   };
-  
+
   const onChangeUrl = async (url) => {
     let nextUrl = url;
-    if (selected.includes('branchStyle-')) {
-      const styleId = selected.replace('branchStyle-', '');
+    if (selected.includes("branchStyle-")) {
+      const styleId = selected.replace("branchStyle-", "");
       nextUrl = createBranchUrl(url, styleId);
     }
     const { status } = await fetchStyle(nextUrl);
-    if (status === '200') {
+    if (status === "200") {
       // Don't use the generated url for activeStyleUrl since this should reflect what we called this fn with
       activeStyleUrl = url;
       // Call poll after setting activeStyleUrl on success
@@ -102,8 +108,8 @@
   const submitUrl = async () => {
     localUrl = textInput;
     if (activeStyleUrl === localUrl) return;
-    if (localUrl.includes('localhost')) {
-      const [preface, address] = localUrl.split('localhost');
+    if (localUrl.includes("localhost")) {
+      const [preface, address] = localUrl.split("localhost");
       // Fetch doesn't accept localhost unless prefaced with http://
       // This adds the preface if not present
       if (!preface) {
@@ -133,21 +139,21 @@
   const getDropdownOptions = () => {
     const options = {};
     if (stylePresets.length) {
-      options['Presets'] = stylePresets;
+      options["Presets"] = stylePresets;
     }
     if (branchPattern?.styles) {
-      options['Styles on a branch'] = branchPattern?.styles.map(s => {
+      options["Styles on a branch"] = branchPattern?.styles.map((s) => {
         return {
           name: `${s.charAt(0).toUpperCase() + s.slice(1)} on...`,
-          url: `branchStyle-${s}`
-        }
+          url: `branchStyle-${s}`,
+        };
       });
     }
-    options['custom'] = [
+    options["custom"] = [
       {
-        name: 'Fetch URL at...',
-        url: 'custom'
-      }
+        name: "Fetch URL at...",
+        url: "custom",
+      },
     ];
     return options;
   };
@@ -164,16 +170,26 @@
     {/each}
   </select>
 
-  {#if selected === 'custom' || selected.includes('branchStyle-')}
-    <div class='custom-input'>
-      <input class:input-error={error} bind:value={textInput} on:focus={handleOnFocus} on:blur={handleOnBlur} placeholder="enter a url to a style"/>
-      <button class='' use:shortcut={{code: 'Enter', callback: onKeySubmit }} on:click={submitUrl}>Submit</button>
+  {#if selected === "custom" || selected.includes("branchStyle-")}
+    <div class="custom-input">
+      <input
+        class:input-error={error}
+        bind:value={textInput}
+        on:focus={handleOnFocus}
+        on:blur={handleOnBlur}
+        placeholder="enter a url to a style"
+      />
+      <button
+        class=""
+        use:shortcut={{ code: "Enter", callback: onKeySubmit }}
+        on:click={submitUrl}>Submit</button
+      >
     </div>
   {/if}
   {#if !!error}
-  <div class='error-message'>
-    {error}
-  </div>
+    <div class="error-message">
+      {error}
+    </div>
   {/if}
 </div>
 
