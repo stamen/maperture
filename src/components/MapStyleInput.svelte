@@ -50,12 +50,22 @@
 
   $: {
     // Only run onChangeUrl from here if the user does not need to input a value
+    // Custom
     if (selected === "custom") {
       textInput = url;
-    } else if (selected.includes("branchStyle-")) {
-      const { branch } = parseBranchUrl(url);
-      textInput = branch;
-    } else if (selected) {
+    }
+    // Branch styles
+    else if (selected.includes("branchStyle-")) {
+      if (isBranchUrl(url)) {
+        const { styleId, branch } = parseBranchUrl(url);
+        const selectedStyleId = selected.replace("branchStyle-", "");
+        textInput = styleId === selectedStyleId ? branch : "";
+      } else {
+        textInput = "";
+      }
+    }
+    // Preset locations
+    else if (selected) {
       textInput = "";
       onChangeUrl(selected);
     }
@@ -90,16 +100,20 @@
     }
   };
 
-  const onChangeUrl = async (url) => {
+  const handleUrlSelectedIsBranch = (url, selectedOption) => {
     let nextUrl = url;
-    if (selected.includes("branchStyle-")) {
-      const styleId = selected.replace("branchStyle-", "");
+    if (selectedOption.includes("branchStyle-")) {
+      const styleId = selectedOption.replace("branchStyle-", "");
       nextUrl = createBranchUrl(url, styleId);
     }
+    return nextUrl;
+  };
+
+  const onChangeUrl = async (url) => {
+    let nextUrl = handleUrlSelectedIsBranch(url, selected);
     const { status } = await fetchStyle(nextUrl);
     if (status === "200") {
-      // Don't use the generated url for activeStyleUrl since this should reflect what we called this fn with
-      activeStyleUrl = url;
+      activeStyleUrl = nextUrl;
       // Call poll after setting activeStyleUrl on success
       poll(nextUrl);
     }
@@ -107,7 +121,8 @@
 
   const submitUrl = async () => {
     localUrl = textInput;
-    if (activeStyleUrl === localUrl) return;
+    let nextLocalUrl = handleUrlSelectedIsBranch(localUrl, selected);
+    if (activeStyleUrl === nextLocalUrl) return;
     if (localUrl.includes("localhost")) {
       const [preface, address] = localUrl.split("localhost");
       // Fetch doesn't accept localhost unless prefaced with http://
@@ -132,7 +147,11 @@
   const handleOnBlur = () => {
     focused = false;
     if (error) {
-      textInput = activeStyleUrl;
+      let nextUrl = activeStyleUrl;
+      if (isBranchUrl(nextUrl)) {
+        nextUrl = parseBranchUrl(nextUrl).branch;
+      }
+      textInput = nextUrl;
     }
   };
 
