@@ -59,12 +59,21 @@
       ...event.detail.options,
     };
   };
+
+  const handleViewMode = (event) => {
+    settings = {
+      ...settings,
+      ...mapState,
+      viewMode: event.detail.mode,
+    };
+  };
 </script>
 
 <main>
   <Maps
     {maps}
     {mapState}
+    viewMode={settings.viewMode}
     on:mapState={handleMapState}
     on:mapStyleState={handleChangeMap}
   />
@@ -73,7 +82,9 @@
     <MapControls
       {mapboxGlAccessToken}
       {...mapState}
+      viewMode={settings.viewMode}
       on:mapState={handleMapState}
+      on:viewMode={handleViewMode}
     />
   </div>
 </main>

@@ -1,4 +1,5 @@
 import * as localConfig from "./local";
+import { VIEW_MODES } from "../constants";
 
 const config = {
   defaultMaps: [
@@ -23,7 +24,13 @@ const config = {
     showBoundaries: false,
     zoom: 13.25,
   },
+  defaultViewMode: VIEW_MODES[0],
   ...localConfig,
 };
 
-export const { defaultMapState, defaultMaps, mapboxGlAccessToken } = config;
+export const {
+  defaultMapState,
+  defaultMaps,
+  defaultViewMode,
+  mapboxGlAccessToken,
+} = config;

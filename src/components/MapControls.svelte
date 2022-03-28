@@ -2,12 +2,14 @@
   import { createEventDispatcher } from "svelte";
   import { Geocoder } from "@beyonk/svelte-mapbox";
   import MapLocationControl from "./MapLocationControl.svelte";
+  import ViewModeControl from "./ViewModeControl.svelte";
 
   export let bearing;
   export let center;
   export let mapboxGlAccessToken;
   export let pitch;
   export let showCollisions;
+  export let viewMode;
   export let showBoundaries;
   export let zoom;
 
@@ -35,6 +37,10 @@
 <div class="map-controls">
   <div class="control-section">
     <MapLocationControl on:mapState {...mapLocation} />
+  </div>
+
+  <div class="control-section">
+    <ViewModeControl on:viewMode mode={viewMode} />
   </div>
 
   <div class="control-section">
