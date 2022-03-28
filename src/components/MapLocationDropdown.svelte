@@ -9,8 +9,8 @@
 
   const dispatch = createEventDispatcher();
 
-  const setDecimal = (num) => {
-    return Number.parseFloat(num).toFixed(2);
+  const setDecimal = (num, len) => {
+    return Number.parseFloat(num).toFixed(len);
   };
 
   const findSelectedFromProps = (props) => {
@@ -27,11 +27,11 @@
           const { lng: optionLng, lat: optionLat } = optionLoc.center;
           const { lng, lat } = props.center;
           return (
-            setDecimal(optionLng) === setDecimal(lng) &&
-            setDecimal(optionLat) === setDecimal(lat)
+            setDecimal(optionLng, 4) === setDecimal(lng, 4) &&
+            setDecimal(optionLat, 4) === setDecimal(lat, 4)
           );
         }
-        return setDecimal(optionLoc[k]) === setDecimal(props[k]);
+        return setDecimal(optionLoc[k], 2) === setDecimal(props[k], 2);
       });
     });
 
@@ -41,25 +41,6 @@
   };
 
   let selected = findSelectedFromProps({ zoom, center, pitch, bearing });
-
-  const checkSelectedValue = (props) => {
-    if (!selected) return;
-
-    const nextSelected = findSelectedFromProps(props);
-    if (selected !== nextSelected) {
-      selected = "";
-    }
-  };
-
-  // Broke checkSelectedValue into its own fn so this just runs on prop change only
-  $: {
-    const props = { zoom, center, pitch, bearing };
-    checkSelectedValue(props);
-  }
-
-  $: {
-    handleChangeLocation(selected);
-  }
 
   const parseSelected = (selectedValue) => {
     if (!selectedValue) return {};
@@ -82,6 +63,24 @@
       dispatch("mapState", { options });
     }
   };
+
+  const checkSelectedValue = (props) => {
+    if (!selected) return;
+    const nextSelected = findSelectedFromProps(props);
+    if (selected !== nextSelected) {
+      selected = "";
+    }
+  };
+
+  // Broke checkSelectedValue into its own fn so this just runs on prop change only
+  $: {
+    const props = { zoom, center, pitch, bearing };
+    checkSelectedValue(props);
+  }
+
+  $: {
+    handleChangeLocation(selected);
+  }
 </script>
 
 {#if gazetteer}
