@@ -22,4 +22,4 @@ Here, you can customize the following options:
 - `mapboxGlAccessToken`: Your Mapbox GL token to allow style reads
 - `stylePresets`: A list of styles with urls to show in the dropdowns
 
-For more details on how these should look, see the example in `src/config/local.example.js`.
+For more details on how these should look, see the example in [`src/config/local.example.js`](./src/config/local.example.js).
