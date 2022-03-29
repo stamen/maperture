@@ -13,6 +13,8 @@
 
   export let url;
 
+  const selectedBranchStylePrefix = "branchStyle-";
+
   const selectedIsStyleOption = stylePresets.some((s) => s.url === url);
   const selectedIsBranchOption = isBranchUrl(url);
 
@@ -24,7 +26,7 @@
   }
   if (selectedIsBranchOption) {
     const { styleId, branch } = parseBranchUrl(url);
-    selected = `branchStyle-${styleId}`;
+    selected = `${selectedBranchStylePrefix}${styleId}`;
     textInput = branch;
   }
 
@@ -55,10 +57,10 @@
       textInput = url;
     }
     // Branch styles
-    else if (selected.includes("branchStyle-")) {
+    else if (selected.includes(selectedBranchStylePrefix)) {
       if (isBranchUrl(url)) {
         const { styleId, branch } = parseBranchUrl(url);
-        const selectedStyleId = selected.replace("branchStyle-", "");
+        const selectedStyleId = selected.replace(selectedBranchStylePrefix, "");
         textInput = styleId === selectedStyleId ? branch : "";
       } else {
         textInput = "";
@@ -102,8 +104,8 @@
 
   const handleUrlSelectedIsBranch = (url, selectedOption) => {
     let nextUrl = url;
-    if (selectedOption.includes("branchStyle-")) {
-      const styleId = selectedOption.replace("branchStyle-", "");
+    if (selectedOption.includes(selectedBranchStylePrefix)) {
+      const styleId = selectedOption.replace(selectedBranchStylePrefix, "");
       nextUrl = createBranchUrl(url, styleId);
     }
     return nextUrl;
@@ -164,7 +166,7 @@
       options["Styles on a branch"] = branchPattern?.styles.map((s) => {
         return {
           name: `${s.charAt(0).toUpperCase() + s.slice(1)} on...`,
-          url: `branchStyle-${s}`,
+          url: `${selectedBranchStylePrefix}${s}`,
         };
       });
     }
@@ -189,7 +191,7 @@
     {/each}
   </select>
 
-  {#if selected === "custom" || selected.includes("branchStyle-")}
+  {#if selected === "custom" || selected.includes(selectedBranchStylePrefix)}
     <div class="custom-input">
       <input
         class:input-error={error}
