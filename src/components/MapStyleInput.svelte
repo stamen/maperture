@@ -1,28 +1,28 @@
 <script>
-  import { createEventDispatcher } from "svelte";
-  import { stylePresets, branchPattern } from "../config";
+  import { createEventDispatcher } from 'svelte';
+  import { stylePresets, branchPattern } from '../config';
   import {
     isBranchUrl,
     parseBranchUrl,
-    createBranchUrl,
-  } from "../branch-utils";
-  import { shortcut } from "../shortcut";
-  import { fetchUrl } from "../fetch-url";
+    createBranchUrl
+  } from '../branch-utils';
+  import { shortcut } from '../shortcut';
+  import { fetchUrl } from '../fetch-url';
 
   const dispatch = createEventDispatcher();
 
   export let url;
 
-  const selectedBranchStylePrefix = "branchStyle-";
+  const selectedBranchStylePrefix = 'branchStyle-';
 
-  const selectedIsStyleOption = stylePresets.some((s) => s.url === url);
+  const selectedIsStyleOption = stylePresets.some(s => s.url === url);
   const selectedIsBranchOption = isBranchUrl(url);
 
-  let selected = "custom";
+  let selected = 'custom';
   let textInput = url;
   if (selectedIsStyleOption) {
     selected = url;
-    textInput = "";
+    textInput = '';
   }
   if (selectedIsBranchOption) {
     const { styleId, branch } = parseBranchUrl(url);
@@ -30,8 +30,8 @@
     textInput = branch;
   }
 
-  let localUrl = "";
-  let activeStyleUrl = "";
+  let localUrl = '';
+  let activeStyleUrl = '';
   let focused = false;
   let error = null;
 
@@ -45,7 +45,7 @@
 
   $: {
     if (textInput !== localUrl && error) {
-      localUrl = "";
+      localUrl = '';
       error = null;
     }
   }
@@ -53,32 +53,32 @@
   $: {
     // Only run onChangeUrl from here if the user does not need to input a value
     // Custom
-    if (selected === "custom") {
+    if (selected === 'custom') {
       textInput = url;
     }
     // Branch styles where prev was a branch url
     else if (selected.includes(selectedBranchStylePrefix) && isBranchUrl(url)) {
       const { styleId, branch } = parseBranchUrl(url);
-      const selectedStyleId = selected.replace(selectedBranchStylePrefix, "");
-      textInput = styleId === selectedStyleId ? branch : "";
+      const selectedStyleId = selected.replace(selectedBranchStylePrefix, '');
+      textInput = styleId === selectedStyleId ? branch : '';
     }
     // Branch styles where prev was not branch url
     else if (
       selected.includes(selectedBranchStylePrefix) &&
       !isBranchUrl(url)
     ) {
-      textInput = "";
+      textInput = '';
     }
     // Preset locations
     else if (selected && !selected.includes(selectedBranchStylePrefix)) {
-      textInput = "";
+      textInput = '';
       onChangeUrl(selected);
     }
   }
 
-  const poll = (url) => {
-    const pollCondition = (str) =>
-      str.includes("localhost") && activeStyleUrl === str;
+  const poll = url => {
+    const pollCondition = str =>
+      str.includes('localhost') && activeStyleUrl === str;
     // Simple polling for any style on localhost
     // Check that should poll to set timer
     if (pollCondition(url)) {
@@ -87,37 +87,37 @@
     }
   };
 
-  const fetchStyle = async (url) => {
+  const fetchStyle = async url => {
     let style;
     try {
       const data = await fetchUrl(url);
       // TODO make a better check that it is style and not arbitrary object
-      if (data && typeof data === "object") {
+      if (data && typeof data === 'object') {
         // TODO create checks by type for non-mapbox maps
         style = data;
         poll(url);
-        dispatch("mapStyleUpdate", { style, url });
-        return { status: "200" };
+        dispatch('mapStyleUpdate', { style, url });
+        return { status: '200' };
       }
     } catch (err) {
-      error = new Error("Style was not found.");
-      return { status: "404" };
+      error = new Error('Style was not found.');
+      return { status: '404' };
     }
   };
 
   const handleUrlSelectedIsBranch = (url, selectedOption) => {
     let nextUrl = url;
     if (selectedOption.includes(selectedBranchStylePrefix)) {
-      const styleId = selectedOption.replace(selectedBranchStylePrefix, "");
+      const styleId = selectedOption.replace(selectedBranchStylePrefix, '');
       nextUrl = createBranchUrl(url, styleId);
     }
     return nextUrl;
   };
 
-  const onChangeUrl = async (url) => {
+  const onChangeUrl = async url => {
     let nextUrl = handleUrlSelectedIsBranch(url, selected);
     const { status } = await fetchStyle(nextUrl);
-    if (status === "200") {
+    if (status === '200') {
       activeStyleUrl = nextUrl;
       // Call poll after setting activeStyleUrl on success
       poll(nextUrl);
@@ -128,8 +128,8 @@
     localUrl = textInput;
     let nextLocalUrl = handleUrlSelectedIsBranch(localUrl, selected);
     if (activeStyleUrl === nextLocalUrl) return;
-    if (localUrl.includes("localhost")) {
-      const [preface, address] = localUrl.split("localhost");
+    if (localUrl.includes('localhost')) {
+      const [preface, address] = localUrl.split('localhost');
       // Fetch doesn't accept localhost unless prefaced with http://
       // This adds the preface if not present
       if (!preface) {
@@ -163,21 +163,21 @@
   const getDropdownOptions = () => {
     const options = {};
     if (stylePresets.length) {
-      options["Presets"] = stylePresets;
+      options['Presets'] = stylePresets;
     }
     if (branchPattern?.styles) {
-      options["Styles on a branch"] = branchPattern?.styles.map((s) => {
+      options['Styles on a branch'] = branchPattern?.styles.map(s => {
         return {
           name: `${s.charAt(0).toUpperCase() + s.slice(1)} on...`,
-          url: `${selectedBranchStylePrefix}${s}`,
+          url: `${selectedBranchStylePrefix}${s}`
         };
       });
     }
-    options["custom"] = [
+    options['custom'] = [
       {
-        name: "Fetch URL at...",
-        url: "custom",
-      },
+        name: 'Fetch URL at...',
+        url: 'custom'
+      }
     ];
     return options;
   };
@@ -194,7 +194,7 @@
     {/each}
   </select>
 
-  {#if selected === "custom" || selected.includes(selectedBranchStylePrefix)}
+  {#if selected === 'custom' || selected.includes(selectedBranchStylePrefix)}
     <div class="custom-input">
       <input
         class:input-error={error}
@@ -205,7 +205,7 @@
       />
       <button
         class=""
-        use:shortcut={{ code: "Enter", callback: onKeySubmit }}
+        use:shortcut={{ code: 'Enter', callback: onKeySubmit }}
         on:click={submitUrl}>Submit</button
       >
     </div>
