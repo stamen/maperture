@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from "svelte";
+  import { stylePresets } from "../config";
   import { shortcut } from "../shortcut";
   import { fetchUrl } from "../fetch-url";
 
@@ -7,12 +8,39 @@
 
   export let url;
 
-  let selected = null;
-  let textInput = "";
+  const selectedIsStyleOption = stylePresets.some((s) => s.url === url);
+
+  let selected = selectedIsStyleOption ? url : "custom";
+  let textInput = selectedIsStyleOption ? "" : url;
   let localUrl = "";
   let activeStyleUrl = "";
   let focused = false;
   let error = null;
+
+  $: {
+    // This runs only on mount to check for localhost in url
+    if (!activeStyleUrl) {
+      activeStyleUrl = url;
+      poll(url);
+    }
+  }
+
+  $: {
+    if (textInput !== localUrl && error) {
+      localUrl = "";
+      error = null;
+    }
+  }
+
+  $: {
+    if (selected && selected !== "custom") {
+      textInput = "";
+      onChangeUrl(selected);
+    }
+    if (selected === "custom") {
+      textInput = url;
+    }
+  }
 
   const poll = (url) => {
     const pollCondition = (str) =>
@@ -40,6 +68,15 @@
     } catch (err) {
       error = new Error("Style was not found.");
       return { status: "404" };
+    }
+  };
+
+  const onChangeUrl = async (url) => {
+    const { status } = await fetchStyle(url);
+    if (status === "200") {
+      activeStyleUrl = url;
+      // Call poll after setting activeStyleUrl on success
+      poll(url);
     }
   };
 
@@ -97,6 +134,9 @@
 
 <div class="map-style-input">
   <select id="styles" bind:value={selected}>
+    {#each stylePresets as style}
+      <option value={style.url}>{style.name}</option>
+    {/each}
     <option value="custom">Custom</option>
   </select>
 

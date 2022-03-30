@@ -17,38 +17,48 @@ const defaultGazetteer = {
   ],
 };
 
-const config = {
-  defaultMaps: [
-    {
-      id: "mapbox-streets",
-      name: "Mapbox Streets",
-      type: "mapbox-gl",
-      url: "mapbox://styles/mapbox/streets-v11",
-    },
-    {
-      id: "mapbox-light",
-      name: "Mapbox Light",
-      type: "mapbox-gl",
-      url: "mapbox://styles/mapbox/light-v10",
-    },
-  ],
-  defaultMapState: {
-    bearing: 0,
-    center: { lng: -73.92169, lat: 40.83962 },
-    pitch: 0,
-    showCollisions: false,
-    showBoundaries: false,
-    zoom: 13.25,
+const defaultStyles = [
+  {
+    id: "mapbox-streets",
+    name: "Mapbox Streets",
+    type: "mapbox-gl",
+    url: "mapbox://styles/mapbox/streets-v11",
   },
+  {
+    id: "mapbox-light",
+    name: "Mapbox Light",
+    type: "mapbox-gl",
+    url: "mapbox://styles/mapbox/light-v10",
+  },
+];
+
+const defaultMapState = {
+  bearing: 0,
+  center: { lng: -73.92169, lat: 40.83962 },
+  pitch: 0,
+  showCollisions: false,
+  zoom: 13.25,
+};
+
+const defaultMaps = defaultStyles.map(
+  (style, i) => localConfig?.styles?.[i] ?? style
+);
+
+const defaultViewMode = VIEW_MODES[0];
+
+const config = {
+  maps: defaultMaps,
+  mapState: defaultMapState,
+  viewMode: defaultViewMode,
   gazetteer: defaultGazetteer,
-  defaultViewMode: VIEW_MODES[0],
   ...localConfig,
 };
 
 export const {
-  defaultMapState,
-  defaultMaps,
-  defaultViewMode,
+  mapState,
+  maps,
+  viewMode,
+  stylePresets,
   gazetteer,
   mapboxGlAccessToken,
 } = config;
