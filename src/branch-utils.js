@@ -1,22 +1,25 @@
 import { branchPattern } from "./config";
 
+const branchToken = "{branch}";
+const styleToken = "{style}";
+
 const isBranchUrl = (url) => {
   const { pattern, styles } = branchPattern;
-  const sections = pattern.split("{branch}").filter(Boolean);
-  const knownUrlParts = sections.filter((s) => !s.includes("{style}"));
-  const unknownUrlParts = sections.filter((s) => s.includes("{style}"));
+  const sections = pattern.split(branchToken).filter(Boolean);
+  const knownUrlParts = sections.filter((s) => !s.includes(styleToken));
+  const unknownUrlParts = sections.filter((s) => s.includes(styleToken));
 
   return (
     knownUrlParts.every((part) => url.includes(part)) &&
     unknownUrlParts.every((part) =>
-      styles.some((s) => url.includes(part.replace("{style}", s)))
+      styles.some((s) => url.includes(part.replace(styleToken, s)))
     )
   );
 };
 
 const parseBranchUrl = (url) => {
-  const { pattern } = branchPattern;
   if (!isBranchUrl(url)) return null;
+  const { pattern } = branchPattern;
 
   const splitToken = (str, token) => {
     const arr = str.split(token);
@@ -28,12 +31,12 @@ const parseBranchUrl = (url) => {
     return arr;
   };
 
-  let patternParts = splitToken(pattern, "{branch}");
+  let patternParts = splitToken(pattern, branchToken);
   patternParts = patternParts
     .map((section) => {
       let nextSection = section;
-      if (section.includes("{style}")) {
-        nextSection = splitToken(section, "{style}");
+      if (section.includes(styleToken)) {
+        nextSection = splitToken(section, styleToken);
       }
       return nextSection;
     })
@@ -73,8 +76,8 @@ const parseBranchUrl = (url) => {
 const createBranchUrl = (branchName, selectedStyle) => {
   const { pattern } = branchPattern;
   return pattern
-    .replace("{branch}", branchName)
-    .replace("{style}", selectedStyle);
+    .replace(branchToken, branchName)
+    .replace(styleToken, selectedStyle);
 };
 
 export { isBranchUrl, parseBranchUrl, createBranchUrl };
