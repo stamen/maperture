@@ -130,7 +130,7 @@
     } else if (selected.dropdownType === 'branch' && !selected.url) {
       textInput = '';
     } else {
-      textInput = selected.url;
+      textInput = url;
     }
   };
 
@@ -209,7 +209,9 @@
         bind:value={textInput}
         on:focus={handleOnFocus}
         on:blur={handleOnBlur}
-        placeholder="enter a url to a style"
+        placeholder={selected.dropdownType === 'branch'
+          ? 'enter a branch name'
+          : 'enter a url to a style'}
       />
       <button
         use:shortcut={{ code: 'Enter', callback: onKeySubmit }}
