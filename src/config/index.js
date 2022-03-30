@@ -30,10 +30,16 @@ const defaultMaps = defaultStyles.map(
 
 const defaultViewMode = VIEW_MODES[0];
 
+const defaultBranchPattern = {
+  pattern: "",
+  styles: [],
+};
+
 const config = {
   maps: defaultMaps,
   mapState: defaultMapState,
   viewMode: defaultViewMode,
+  branchPattern: defaultBranchPattern,
   ...localConfig,
 };
 

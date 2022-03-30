@@ -4,7 +4,8 @@ const branchToken = "{branch}";
 const styleToken = "{style}";
 
 const isBranchUrl = (url) => {
-  const { pattern, styles } = branchPattern;
+  const { pattern, styles } = branchPattern || {};
+  if (!pattern || !styles) return false;
   const sections = pattern.split(branchToken).filter(Boolean);
   const knownUrlParts = sections.filter((s) => !s.includes(styleToken));
   const unknownUrlParts = sections.filter((s) => s.includes(styleToken));
