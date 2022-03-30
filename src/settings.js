@@ -1,12 +1,12 @@
-import { readHash } from "./query";
-import { mapState, maps, viewMode, stylePresets } from "./config";
+import { readHash } from './query';
+import { mapState, maps, viewMode, stylePresets } from './config';
 
 export const getInitialSettings = () => {
   return {
+    ...mapState,
     viewMode,
     maps,
     stylePresets,
-    ...mapState,
-    ...readHash(window.location.hash),
+    ...readHash(window.location.hash)
   };
 };
