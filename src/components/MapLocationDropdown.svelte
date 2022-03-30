@@ -1,6 +1,6 @@
 <script>
-  import { createEventDispatcher } from "svelte";
-  import { gazetteer } from "../config";
+  import { createEventDispatcher } from 'svelte';
+  import { gazetteer } from '../config';
 
   export let bearing;
   export let center;
@@ -13,17 +13,17 @@
     return Number.parseFloat(num).toFixed(len);
   };
 
-  const findSelectedFromProps = (props) => {
-    if (!gazetteer) return "";
+  const findSelectedFromProps = props => {
+    if (!gazetteer) return '';
     const options = Object.keys(gazetteer).reduce((acc, heading) => {
       acc = acc.concat(gazetteer[heading]);
       return acc;
     }, []);
 
-    const selectedValue = options.find((v) => {
+    const selectedValue = options.find(v => {
       const optionLoc = Object.values(v)[0];
-      return Object.keys(optionLoc).every((k) => {
-        if (k === "center" && props.center) {
+      return Object.keys(optionLoc).every(k => {
+        if (k === 'center' && props.center) {
           const { lng: optionLng, lat: optionLat } = optionLoc.center;
           const { lng, lat } = props.center;
           return (
@@ -35,20 +35,20 @@
       });
     });
 
-    const nextValue = selectedValue ? JSON.stringify(selectedValue) : "";
+    const nextValue = selectedValue ? JSON.stringify(selectedValue) : '';
 
     return nextValue;
   };
 
   let selected = findSelectedFromProps({ zoom, center, pitch, bearing });
 
-  const parseSelected = (selectedValue) => {
+  const parseSelected = selectedValue => {
     if (!selectedValue) return {};
     try {
       const value = JSON.parse(selectedValue);
       const label = Object.keys(value)[0];
       const options = value[label];
-      dispatch("mapState", { options });
+      dispatch('mapState', { options });
       return { label, options };
     } catch (err) {
       console.error(err);
@@ -60,15 +60,15 @@
     const { options } = parseSelected(selected);
 
     if (options) {
-      dispatch("mapState", { options });
+      dispatch('mapState', { options });
     }
   };
 
-  const checkSelectedValue = (props) => {
+  const checkSelectedValue = props => {
     if (!selected) return;
     const nextSelected = findSelectedFromProps(props);
     if (selected !== nextSelected) {
-      selected = "";
+      selected = '';
     }
   };
 
