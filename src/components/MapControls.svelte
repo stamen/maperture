@@ -26,7 +26,7 @@
     const { result } = detail;
     const options = {
       center: result.center,
-      zoom: 17
+      zoom: 17,
     };
     if (result.bbox) {
       options.zoom = 14;

@@ -1,7 +1,7 @@
 <script>
-  import { createEventDispatcher } from "svelte";
-  import Button from "./inputs/Button.svelte";
-  import { round } from "../math";
+  import { createEventDispatcher } from 'svelte';
+  import Button from './inputs/Button.svelte';
+  import { round } from '../math';
 
   export let bearing;
   export let center;
@@ -11,8 +11,8 @@
   const dispatch = createEventDispatcher();
   let copied = false;
   let changingState = false;
-  let formattedLocation = "";
-  let stateInput = "";
+  let formattedLocation = '';
+  let stateInput = '';
 
   $: {
     let locationParts = [
@@ -25,7 +25,7 @@
       locationParts.push(round(pitch, 1));
       locationParts.push(round(bearing, 1));
     }
-    formattedLocation = locationParts.join("/");
+    formattedLocation = locationParts.join('/');
   }
 
   // Reset copied when location changes
@@ -52,8 +52,8 @@
     changingState = false;
     copied = false;
 
-    const [zoom, lat, lng, pitch, bearing] = stateInput.split("/");
-    const options = { mapStateUpdateOrigin: "controls" };
+    const [zoom, lat, lng, pitch, bearing] = stateInput.split('/');
+    const options = { mapStateUpdateOrigin: 'controls' };
     if (zoom !== undefined) options.zoom = +zoom;
     if (lat !== undefined && lng !== undefined)
       options.center = {
@@ -62,7 +62,7 @@
       };
     if (pitch !== undefined) options.pitch = +pitch;
     if (bearing !== undefined) options.bearing = +bearing;
-    dispatch("mapState", { options });
+    dispatch('mapState', { options });
   };
 </script>
 
@@ -73,9 +73,9 @@
       <input
         type="text"
         bind:value={stateInput}
-        on:keydown={(e) => {
-          if (e.key === "Enter") handleChangeEnd();
-          if (e.key === "Escape") handleChangeCancel();
+        on:keydown={e => {
+          if (e.key === 'Enter') handleChangeEnd();
+          if (e.key === 'Escape') handleChangeCancel();
         }}
       />
     </div>
@@ -88,7 +88,7 @@
         </div>
         <div>
           <Button on:click={handleCopy}>
-            {copied ? "copied" : "copy"}
+            {copied ? 'copied' : 'copy'}
           </Button>
         </div>
       </div>
