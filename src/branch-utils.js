@@ -1,7 +1,7 @@
-import { branchPattern } from "./config";
+import { branchPattern } from './config';
 
-const branchToken = "{branch}";
-const styleToken = "{style}";
+const branchToken = '{branch}';
+const styleToken = '{style}';
 
 const createBranchUrl = (branchName, selectedStyle) => {
   const { pattern } = branchPattern;

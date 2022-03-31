@@ -1,5 +1,5 @@
 <script>
-  import MapStyleInput from "./MapStyleInput.svelte";
+  import MapStyleInput from './MapStyleInput.svelte';
 
   export let name;
   export let url;

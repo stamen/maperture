@@ -16,7 +16,7 @@
   let selected = {
     name,
     dropdownType: 'custom',
-    url
+    url,
   };
   let textInput = url;
 
@@ -28,7 +28,7 @@
     selected = {
       name,
       dropdownType: 'branch',
-      url
+      url,
     };
     textInput = branch;
   }
@@ -162,7 +162,7 @@
         ...item,
         dropdownType: 'preset',
         selected:
-          selected.dropdownType === 'preset' && selected.url === item.url
+          selected.dropdownType === 'preset' && selected.url === item.url,
       }));
     }
     if (branchPattern?.styles?.length) {
@@ -171,7 +171,7 @@
           name: `${s.charAt(0).toUpperCase() + s.slice(1)} on...`,
           id: `${s}`,
           dropdownType: 'branch',
-          selected: branch && createBranchUrl(branch, s) === selected.url
+          selected: branch && createBranchUrl(branch, s) === selected.url,
         };
       });
     }
@@ -179,8 +179,8 @@
       {
         name: 'Fetch URL at...',
         dropdownType: 'custom',
-        selected: selected.dropdownType === 'custom'
-      }
+        selected: selected.dropdownType === 'custom',
+      },
     ];
     return options;
   };

@@ -1,7 +1,7 @@
 <script>
-  import { createEventDispatcher } from "svelte";
-  import MapboxGlMap from "./MapboxGlMap.svelte";
-  import MapLabel from "./MapLabel.svelte";
+  import { createEventDispatcher } from 'svelte';
+  import MapboxGlMap from './MapboxGlMap.svelte';
+  import MapLabel from './MapLabel.svelte';
 
   const dispatch = createEventDispatcher();
 
@@ -16,14 +16,14 @@
   let MapComponent;
 
   switch (type) {
-    case "mapbox-gl":
+    case 'mapbox-gl':
     default:
       // This is currently the only map component implemented
       MapComponent = MapboxGlMap;
   }
 
-  const handleMapStyleUpdate = (event) => {
-    dispatch("mapStyleState", { ...event.detail, index });
+  const handleMapStyleUpdate = event => {
+    dispatch('mapStyleState', { ...event.detail, index });
   };
 </script>
 

@@ -1,1 +1,1 @@
-export const VIEW_MODES = ["swipe", "phone"];
+export const VIEW_MODES = ['swipe', 'phone'];
