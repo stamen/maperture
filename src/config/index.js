@@ -1,18 +1,18 @@
-import * as localConfig from "./local";
-import { VIEW_MODES } from "../constants";
+import * as localConfig from './local';
+import { VIEW_MODES } from '../constants';
 
 const defaultStyles = [
   {
-    id: "mapbox-streets",
-    name: "Mapbox Streets",
-    type: "mapbox-gl",
-    url: "mapbox://styles/mapbox/streets-v11",
+    id: 'mapbox-streets',
+    name: 'Mapbox Streets',
+    type: 'mapbox-gl',
+    url: 'mapbox://styles/mapbox/streets-v11',
   },
   {
-    id: "mapbox-light",
-    name: "Mapbox Light",
-    type: "mapbox-gl",
-    url: "mapbox://styles/mapbox/light-v10",
+    id: 'mapbox-light',
+    name: 'Mapbox Light',
+    type: 'mapbox-gl',
+    url: 'mapbox://styles/mapbox/light-v10',
   },
 ];
 

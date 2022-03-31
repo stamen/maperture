@@ -1,10 +1,10 @@
 <script>
-  import Maps from "./components/Maps.svelte";
-  import MapControls from "./components/MapControls.svelte";
-  import { writeHash } from "./query";
-  import { getInitialSettings } from "./settings";
-  import { mapboxGlAccessToken } from "./config";
-  import throttle from "lodash.throttle";
+  import Maps from './components/Maps.svelte';
+  import MapControls from './components/MapControls.svelte';
+  import { writeHash } from './query';
+  import { getInitialSettings } from './settings';
+  import { mapboxGlAccessToken } from './config';
+  import throttle from 'lodash.throttle';
 
   let mapState = {};
   let maps = [];
@@ -28,7 +28,7 @@
     maps = settings.maps.map((map, index) => ({ ...map, index }));
   }
 
-  const handleChangeMap = (event) => {
+  const handleChangeMap = event => {
     const { url, style, index } = event.detail;
     let nextMap;
     let nextMaps = maps;
@@ -38,14 +38,14 @@
       id: style.id,
       index,
       name: style.name,
-      type: "mapbox-gl",
+      type: 'mapbox-gl',
       url,
       style,
     };
     nextMaps.splice(index, 1, nextMap);
     maps = nextMaps;
     // Remove the stylesheet for a more concise hash
-    const mapsHash = JSON.parse(JSON.stringify(maps)).map((m) => {
+    const mapsHash = JSON.parse(JSON.stringify(maps)).map(m => {
       delete m.style;
       return m;
     });
@@ -53,14 +53,14 @@
     writeHash({ ...settings, maps: mapsHash, ...mapState });
   };
 
-  const handleMapState = (event) => {
+  const handleMapState = event => {
     mapState = {
       ...mapState,
       ...event.detail.options,
     };
   };
 
-  const handleViewMode = (event) => {
+  const handleViewMode = event => {
     settings = {
       ...settings,
       ...mapState,

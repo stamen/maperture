@@ -7,6 +7,6 @@ export const getInitialSettings = () => {
     viewMode,
     maps,
     stylePresets,
-    ...readHash(window.location.hash)
+    ...readHash(window.location.hash),
   };
 };

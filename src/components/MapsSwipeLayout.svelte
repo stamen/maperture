@@ -1,5 +1,5 @@
 <script>
-  import Map from "./Map.svelte";
+  import Map from './Map.svelte';
 
   export let maps;
   export let mapState;
@@ -16,7 +16,7 @@
   const handleSliderMouseDown = () => (dragging = true);
   const handleSliderMouseUp = () => (dragging = false);
 
-  const handleSliderMouseMove = (e) => {
+  const handleSliderMouseMove = e => {
     if (!dragging || e.clientX === 0) return;
     sliderPosition = e.clientX - sliderWidth / 2;
   };

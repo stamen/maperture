@@ -1,5 +1,5 @@
 <script>
-  import Map from "./Map.svelte";
+  import Map from './Map.svelte';
 
   export let maps;
   export let mapState;

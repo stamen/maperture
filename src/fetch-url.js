@@ -1,17 +1,17 @@
-import { mapboxGlAccessToken } from "./config";
+import { mapboxGlAccessToken } from './config';
 
-const isMapboxUrl = (url) => {
-  if (typeof url !== "string") return false;
+const isMapboxUrl = url => {
+  if (typeof url !== 'string') return false;
   const hasMapboxFormat =
-    url.startsWith("mapbox://styles/") && url.split("/").length === 5;
+    url.startsWith('mapbox://styles/') && url.split('/').length === 5;
   return hasMapboxFormat;
 };
 
-const fetchUrl = async (url) => {
+const fetchUrl = async url => {
   const urlIsMapbox = isMapboxUrl(url);
   let nextUrl = url;
   if (urlIsMapbox) {
-    const [, , , userName, styleId] = nextUrl.split("/");
+    const [, , , userName, styleId] = nextUrl.split('/');
     nextUrl = `https://api.mapbox.com/styles/v1/${userName}/${styleId}?title=true&access_token=${mapboxGlAccessToken}`;
   }
   const response = await fetch(nextUrl);

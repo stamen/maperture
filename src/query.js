@@ -1,36 +1,36 @@
-import { round } from "./math";
+import { round } from './math';
 
 // Keys that should be encoded/decoded as arrays
-const jsonKeys = ["maps"];
+const jsonKeys = ['maps'];
 
 // Keys that should be encoded/decoded as boolean values
-const booleanKeys = ["showCollisions", "showBoundaries"];
+const booleanKeys = ['showCollisions', 'showBoundaries'];
 
 // Keys that should be encoded (not decoded) encoded as one map param
-const mapLocationKeys = ["bearing", "center", "pitch", "zoom"];
+const mapLocationKeys = ['bearing', 'center', 'pitch', 'zoom'];
 
 // Keys that should be decoded as numbers
-const numericKeys = ["bearing", "lat", "lng", "pitch", "zoom"];
+const numericKeys = ['bearing', 'lat', 'lng', 'pitch', 'zoom'];
 
 function toQueryString(obj) {
-  let qs = obj.map ? `map=${obj.map}` : "";
+  let qs = obj.map ? `map=${obj.map}` : '';
 
   Object.entries(obj).forEach(([key, value], i) => {
-    if (key === "map") return;
+    if (key === 'map') return;
     let encodedValue = encodeURIComponent(value);
-    qs = `${qs}${qs !== "" ? "&" : ""}${key}=${encodedValue}`;
+    qs = `${qs}${qs !== '' ? '&' : ''}${key}=${encodedValue}`;
   });
   return qs;
 }
 
 function fromQueryString(qs) {
-  const paramString = qs.split("#")[1];
+  const paramString = qs.split('#')[1];
   if (!paramString) return {};
   let params = Object.fromEntries(
-    paramString.split("&").map((e) => e.split("=").map(decodeURIComponent))
+    paramString.split('&').map(e => e.split('=').map(decodeURIComponent))
   );
   if (params.map) {
-    const [zoom, lat, lng, pitch, bearing] = params.map.split("/");
+    const [zoom, lat, lng, pitch, bearing] = params.map.split('/');
     params = {
       ...params,
       bearing,
@@ -56,7 +56,7 @@ export function writeHash(mapSettings) {
       round(mapSettings.center.lng, 4),
       round(mapSettings.pitch, 1),
       round(mapSettings.bearing, 1),
-    ].join("/"),
+    ].join('/'),
     ...nonMapSettings,
   });
 }
@@ -68,7 +68,7 @@ export function readHash(qs) {
       .filter(([k, v]) => !!v)
       .map(([k, v]) => {
         if (jsonKeys.includes(k)) return [k, JSON.parse(v)];
-        if (booleanKeys.includes(k)) return [k, v === "true"];
+        if (booleanKeys.includes(k)) return [k, v === 'true'];
         if (numericKeys.includes(k)) return [k, +v || 0];
         return [k, v];
       })
