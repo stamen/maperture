@@ -25,17 +25,29 @@ const defaultMapState = {
 };
 
 const defaultMaps = defaultStyles.map(
-  (style, i) => localConfig?.styles?.[i] ?? style
+  (style, i) => localConfig?.stylePresets?.[i] ?? style
 );
 
 const defaultViewMode = VIEW_MODES[0];
+
+const defaultBranchPattern = {
+  pattern: "",
+  styles: [],
+};
 
 const config = {
   maps: defaultMaps,
   mapState: defaultMapState,
   viewMode: defaultViewMode,
+  branchPattern: defaultBranchPattern,
   ...localConfig,
 };
 
-export const { mapState, maps, viewMode, stylePresets, mapboxGlAccessToken } =
-  config;
+export const {
+  mapState,
+  maps,
+  viewMode,
+  stylePresets,
+  branchPattern,
+  mapboxGlAccessToken,
+} = config;

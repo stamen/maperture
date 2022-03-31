@@ -10,6 +10,8 @@
   export let type;
   export let url;
   export let style;
+  export let id;
+  export let branch;
 
   let MapComponent;
 
@@ -21,8 +23,7 @@
   }
 
   const handleMapStyleUpdate = (event) => {
-    const { url, style } = event.detail;
-    dispatch("mapStyleState", { url, style, index });
+    dispatch("mapStyleState", { ...event.detail, index });
   };
 </script>
 
@@ -30,12 +31,13 @@
   <svelte:component
     this={MapComponent}
     url={style || url}
+    id={`${id}-${index}`}
     {...$$restProps}
     on:mapMove
   />
 
   <div class={`map-label-container map-label-container-${index}`}>
-    <MapLabel {name} {url} on:mapStyleUpdate={handleMapStyleUpdate} />
+    <MapLabel {name} {url} {branch} on:mapStyleUpdate={handleMapStyleUpdate} />
   </div>
 </div>
 

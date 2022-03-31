@@ -3,11 +3,12 @@
 
   export let name;
   export let url;
+  export let branch;
 </script>
 
 <div class="map-label">
   <div class="map-name">{name}</div>
-  <MapStyleInput {url} on:mapStyleUpdate />
+  <MapStyleInput {url} {name} {branch} on:mapStyleUpdate />
 </div>
 
 <style>
