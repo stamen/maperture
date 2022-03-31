@@ -25,7 +25,7 @@ const defaultMapState = {
 };
 
 const defaultMaps = defaultStyles.map(
-  (style, i) => localConfig?.styles?.[i] ?? style
+  (style, i) => localConfig?.stylePresets?.[i] ?? style
 );
 
 const defaultViewMode = VIEW_MODES[0];
