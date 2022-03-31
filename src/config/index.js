@@ -1,6 +1,22 @@
 import * as localConfig from './local';
 import { VIEW_MODES } from '../constants';
 
+const defaultGazetteer = {
+  Scenarios: [
+    { 'Zoomed out': { pitch: 0, zoom: 10 } },
+    { 'Zoomed in/Tilted': { pitch: 45, zoom: 16 } },
+  ],
+  Locations: [
+    {
+      'San Francisco, CA': {
+        zoom: 18,
+        center: { lng: -122.4193, lat: 37.7648 },
+      },
+    },
+    { 'Washington DC': { zoom: 12, center: { lng: -77.0435, lat: 38.9098 } } },
+  ],
+};
+
 const defaultStyles = [
   {
     id: 'mapbox-streets',
@@ -39,6 +55,7 @@ const config = {
   maps: defaultMaps,
   mapState: defaultMapState,
   viewMode: defaultViewMode,
+  gazetteer: defaultGazetteer,
   branchPattern: defaultBranchPattern,
   ...localConfig,
 };
@@ -48,6 +65,7 @@ export const {
   maps,
   viewMode,
   stylePresets,
+  gazetteer,
   branchPattern,
   mapboxGlAccessToken,
 } = config;

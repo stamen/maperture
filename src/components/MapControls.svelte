@@ -3,6 +3,7 @@
   import { Geocoder } from '@beyonk/svelte-mapbox';
   import MapLocationControl from './MapLocationControl.svelte';
   import ViewModeControl from './ViewModeControl.svelte';
+  import MapLocationDropdown from './MapLocationDropdown.svelte';
 
   export let bearing;
   export let center;
@@ -52,14 +53,20 @@
   </div>
 
   <div class="control-section">
-    <label>
-      <span>Label Collisions</span>
-      <input type="checkbox" bind:checked={showCollisions} />
-    </label>
-    <label>
-      <span>Tile Boundaries</span>
-      <input type="checkbox" bind:checked={showBoundaries} />
-    </label>
+    <MapLocationDropdown on:mapState {...mapLocation} />
+  </div>
+
+  <div class="control-section">
+    <div class="checkboxes">
+      <label>
+        <span>Label Collisions</span>
+        <input type="checkbox" bind:checked={showCollisions} />
+      </label>
+      <label>
+        <span>Tile Boundaries</span>
+        <input type="checkbox" bind:checked={showBoundaries} />
+      </label>
+    </div>
   </div>
 </div>
 
@@ -78,5 +85,10 @@
 
   .control-section {
     margin: 0 1em;
+    display: flex;
+  }
+
+  .checkboxes {
+    text-align: right;
   }
 </style>
