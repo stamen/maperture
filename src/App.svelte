@@ -29,10 +29,9 @@
   }
 
   const handleChangeMap = event => {
-    const { url, style, index } = event.detail;
+    const { url, style, index, branch } = event.detail;
     let nextMap;
     let nextMaps = maps;
-
     // Pass the stylesheet directly into state so we can detect local changes
     nextMap = {
       id: style.id,
@@ -41,7 +40,10 @@
       type: 'mapbox-gl',
       url,
       style,
+      // branch is only defined for branch styles
+      branch,
     };
+
     nextMaps.splice(index, 1, nextMap);
     maps = nextMaps;
     // Remove the stylesheet for a more concise hash
