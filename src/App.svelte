@@ -71,6 +71,9 @@
   };
 </script>
 
+<svelte:head>
+  <base href="process.env.BASE_PATH" />
+</svelte:head>
 <main>
   <Maps
     {maps}
