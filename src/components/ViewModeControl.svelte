@@ -1,11 +1,11 @@
 <script>
-  import { createEventDispatcher } from "svelte";
-  import { VIEW_MODES } from "../constants";
+  import { createEventDispatcher } from 'svelte';
+  import { VIEW_MODES } from '../constants';
 
   export let mode;
 
   const dispatch = createEventDispatcher();
-  let selectedMode = "";
+  let selectedMode = '';
 
   $: selectedMode = mode;
 
@@ -14,7 +14,7 @@
   }
 
   const handleChange = () => {
-    dispatch("viewMode", { mode: selectedMode });
+    dispatch('viewMode', { mode: selectedMode });
   };
 </script>
 

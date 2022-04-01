@@ -21,5 +21,8 @@ Here, you can customize the following options:
 
 - `mapboxGlAccessToken`: Your Mapbox GL token to allow style reads
 - `stylePresets`: A list of styles with urls to show in the dropdowns
+- `branchPattern`: An object that specifies how to build a URL to fetch a style living on a branch with the following keys:
+  - `pattern`: a tokenized url pattern using `{branch}` and `{style}` tokens
+  - `styles`: an array specifying specific styles you can view on the specified branch
 
 For more details on how these should look, see the example in [`src/config/local.example.js`](./src/config/local.example.js).
