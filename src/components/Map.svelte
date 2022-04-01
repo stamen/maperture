@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
+  import GoogleMap from './GoogleMap.svelte';
   import MapboxGlMap from './MapboxGlMap.svelte';
   import MapLabel from './MapLabel.svelte';
 
@@ -15,10 +16,14 @@
 
   let MapComponent;
 
-  switch (type) {
+  console.log(id, type, style);
+
+  $: switch (type) {
+    case 'google':
+      MapComponent = GoogleMap;
+      break;
     case 'mapbox-gl':
     default:
-      // This is currently the only map component implemented
       MapComponent = MapboxGlMap;
   }
 

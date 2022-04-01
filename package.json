@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@beyonk/svelte-mapbox": "^8.1.4",
+    "@googlemaps/js-api-loader": "^1.13.10",
     "@mapbox/mapbox-gl-geocoder": "^4.7.4",
     "deep-equal": "^2.0.5",
     "lodash.throttle": "^4.1.1",

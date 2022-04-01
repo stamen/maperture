@@ -68,4 +68,6 @@ export const {
   gazetteer,
   branchPattern,
   mapboxGlAccessToken,
+  googleMapsAPIKey,
+  googleMapId,
 } = config;

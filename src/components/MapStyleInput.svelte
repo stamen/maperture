@@ -46,7 +46,7 @@
 
   const poll = url => {
     const pollCondition = str =>
-      str.includes('localhost') && selected.url === str;
+      str && str.includes('localhost') && selected.url === str;
     // Simple polling for any style on localhost
     // Check that should poll to set timer
     if (pollCondition(url)) {
@@ -55,12 +55,12 @@
     }
   };
 
-  const dispatchMapStyleUpdate = (style, url) => {
-    let value = { style, url };
+  const dispatchMapStyleUpdate = opts => {
+    let value = { ...opts };
     if (selected.dropdownType === 'branch') {
       value.branch = localUrl;
     }
-    dispatch('mapStyleUpdate', value);
+    dispatch('mapStyleUpdate', opts);
   };
 
   const fetchStyle = async url => {
@@ -72,7 +72,7 @@
         // TODO create checks by type for non-mapbox maps
         style = data;
         poll(url);
-        dispatchMapStyleUpdate(style, url);
+        dispatchMapStyleUpdate({ ...selected, style, url });
         return { status: '200' };
       }
     } catch (err) {
@@ -139,7 +139,11 @@
     const { dropdownType } = val;
     switch (dropdownType) {
       case 'preset': {
-        const { url } = val;
+        const { type, url } = val;
+        if (type === 'google') {
+          dispatchMapStyleUpdate(val);
+          break;
+        }
         textInput = '';
         onChangeUrl(url);
         break;
@@ -175,6 +179,14 @@
         };
       });
     }
+    options['Google Maps'] = [
+      {
+        id: 'google',
+        type: 'google',
+        name: 'Google',
+        dropdownType: 'preset',
+      },
+    ];
     options['Custom'] = [
       {
         name: 'Fetch URL at...',

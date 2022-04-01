@@ -29,15 +29,20 @@
   }
 
   const handleChangeMap = event => {
-    const { url, style, index, branch } = event.detail;
+    const { id, name, url, style, index, branch, type } = event.detail;
     let nextMap;
     let nextMaps = maps;
+
+    // TODO split these properties up since some are options (url, style,
+    // branch, googleMapId)
+    console.log(event.detail);
+
     // Pass the stylesheet directly into state so we can detect local changes
     nextMap = {
-      id: style.id,
+      id: style ? style.id : id,
       index,
-      name: style.name,
-      type: 'mapbox-gl',
+      name: style ? style.name : name,
+      type,
       url,
       style,
       // branch is only defined for branch styles
