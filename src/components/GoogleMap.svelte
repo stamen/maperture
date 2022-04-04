@@ -70,13 +70,15 @@
 
   const updateMapFromProps = () => {
     if (shouldUpdateMapView(mapViewProps)) {
-      // TODO use moveCamera instead to reduce number of events generated
-      map.panTo({
-        lat: center.lat,
-        lng: center.lng,
+      map.moveCamera({
+        center: {
+          lat: center.lat,
+          lng: center.lng,
+        },
+        zoom: zoom + 1,
+        tilt: pitch,
       });
-      map.setZoom(zoom + 1);
-      map.setTilt(pitch); // TODO restrict when google map enabled
+      //map.setTilt(pitch); // TODO restrict when google map enabled
       // heading: bearing, // TODO also update heading
     }
   };
@@ -92,6 +94,11 @@
         zoomControl: false,
       });
 
+      document.getElementById(id).addEventListener('wheel', () => {
+        // TODO make something more robust/universal
+        document.getElementById(id).querySelector('div[tabindex="0"]').focus();
+      });
+
       map.addListener('center_changed', handleMove);
       map.addListener('heading_changed', handleMove);
       map.addListener('tilt_changed', handleMove);
@@ -99,7 +106,10 @@
     });
 
     const handleMove = () => {
-      if (shouldUpdateMapView()) {
+      const focused = document
+        .getElementById(id)
+        .contains(document.activeElement);
+      if (focused && shouldUpdateMapView()) {
         dispatch('mapMove', { options: getCurrentMapView() });
       }
     };
