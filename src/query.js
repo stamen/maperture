@@ -14,9 +14,10 @@ const numericKeys = ['bearing', 'lat', 'lng', 'pitch', 'zoom'];
 
 function toQueryString(obj) {
   let qs = obj.map ? `map=${obj.map}` : '';
+  const excludedKeys = ['map', 'stylePresets'];
 
   Object.entries(obj).forEach(([key, value], i) => {
-    if (key === 'map') return;
+    if (excludedKeys.includes(key)) return;
     let encodedValue = encodeURIComponent(value);
     qs = `${qs}${qs !== '' ? '&' : ''}${key}=${encodedValue}`;
   });
