@@ -179,14 +179,6 @@
         };
       });
     }
-    options['Google Maps'] = [
-      {
-        id: 'google',
-        type: 'google',
-        name: 'Google',
-        dropdownType: 'preset',
-      },
-    ];
     options['Custom'] = [
       {
         name: 'Fetch URL at...',
