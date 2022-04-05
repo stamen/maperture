@@ -26,7 +26,8 @@ const stylePresets = [
 // const branchPattern = {
 //   pattern:
 //     'https://website.com/dist/{branch}/path/to/{style}.json',
-//   styles: ['style_1', 'style_2']
+//   styles: ['style_1', 'style_2'],
+//   type: 'mapbox-gl',
 // };
 
 export { mapboxGlAccessToken, stylePresets };

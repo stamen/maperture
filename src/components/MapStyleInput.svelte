@@ -194,9 +194,11 @@
         return {
           name: `${s.charAt(0).toUpperCase() + s.slice(1)} on...`,
           id: `${s}`,
+          type: branchPattern.type,
           dropdownType: 'branch',
           selected:
             branch && createBranchUrl(branch, s) === selected.options.url,
+          options: {},
         };
       });
     }
