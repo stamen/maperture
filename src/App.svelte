@@ -4,6 +4,7 @@
   import { writeHash } from './query';
   import { getInitialSettings } from './settings';
   import { mapboxGlAccessToken } from './config';
+  import { GOOGLE_MAP_MAX_PITCH } from './constants';
   import throttle from 'lodash.throttle';
 
   let mapState = {};
@@ -42,10 +43,17 @@
   };
 
   const handleMapState = event => {
-    mapState = {
+    let newMapState = {
       ...mapState,
       ...event.detail.options,
     };
+
+    if (maps.some(({ type }) => type === 'google')) {
+      if (newMapState.pitch > GOOGLE_MAP_MAX_PITCH) {
+        newMapState.pitch = GOOGLE_MAP_MAX_PITCH;
+      }
+    }
+    mapState = newMapState;
   };
 
   const handleViewMode = event => {

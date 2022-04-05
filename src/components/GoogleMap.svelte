@@ -13,6 +13,8 @@
   export let url;
   export let zoom;
   export let options;
+  export let showCollisions;
+  export let showBoundaries;
 
   let googleMapId;
   $: googleMapId = options.googleMapId;
@@ -84,7 +86,6 @@
         heading: bearing,
         tilt: pitch,
       });
-      // TODO consider restricting tilt/pitch when Google Map in use
     }
   };
 
