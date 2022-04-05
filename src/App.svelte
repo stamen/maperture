@@ -1,9 +1,12 @@
 <script>
+  import { onMount } from 'svelte';
+  import { stylePresets as stylePresetsStore } from './stores';
+  import { loadPresetsFromUrl } from './presets-utils';
   import Maps from './components/Maps.svelte';
   import MapControls from './components/MapControls.svelte';
   import { writeHash } from './query';
   import { getInitialSettings } from './settings';
-  import { mapboxGlAccessToken } from './config';
+  import { mapboxGlAccessToken, stylePresetUrls } from './config';
   import throttle from 'lodash.throttle';
 
   let mapState = {};
@@ -15,6 +18,19 @@
   const throttledWriteHash = throttle(() => {
     writeHash({ ...settings, ...mapState });
   }, 250);
+
+  onMount(() => {
+    // Set presets initially using settings
+    stylePresetsStore.set(settings.stylePresets);
+
+    // If we have URLs for preset files, get them and update presets
+    if (stylePresetUrls.length > 0) {
+      stylePresetUrls.forEach(async url => {
+        const presets = await loadPresetsFromUrl(url);
+        stylePresetsStore.update(current => [...current, ...presets]);
+      });
+    }
+  });
 
   $: if (settings && mapState) throttledWriteHash();
 
