@@ -10,7 +10,6 @@
   export let center;
   export let id;
   export let pitch;
-  export let url;
   export let zoom;
   export let options;
   export let showCollisions;
@@ -35,8 +34,6 @@
   // We check map and mapViewProps here to ensure this reacts to changes to
   // either
   $: if (map && mapViewProps) updateMapFromProps();
-
-  $: if (map && url) updateMapStyle();
 
   const getCurrentMapView = () => {
     return {
@@ -69,10 +66,6 @@
       },
       zoom: round(mapView.zoom, 2),
     };
-  };
-
-  const updateMapStyle = () => {
-    map.setStyle(url);
   };
 
   const updateMapFromProps = () => {
@@ -108,7 +101,7 @@
       // Also focus map on wheel (automatically focused on click)
       document
         .getElementById(id)
-        .addEventListener('wheel', throttledWheelHandler);
+        .addEventListener('wheel', throttledWheelHandler, { passive: true });
 
       map.addListener('center_changed', handleMove);
       map.addListener('heading_changed', handleMove);
