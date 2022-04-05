@@ -24,5 +24,6 @@ Here, you can customize the following options:
 - `branchPattern`: An object that specifies how to build a URL to fetch a style living on a branch with the following keys:
   - `pattern`: a tokenized url pattern using `{branch}` and `{style}` tokens
   - `styles`: an array specifying specific styles you can view on the specified branch
+- `stylePresetUrls`: An array of URLs pointing to additional presets. URLs must point to JSON arrays containing objects of the same shape as those in `stylePresets`.
 
 For more details on how these should look, see the example in [`src/config/local.example.js`](./src/config/local.example.js).
