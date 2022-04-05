@@ -73,7 +73,7 @@
     }, 250);
     document
       .getElementById(id)
-      .addEventListener('wheel', throttledWheelHandler);
+      .addEventListener('wheel', throttledWheelHandler, { passive: true });
 
     const handleMove = ({ origin }) => {
       const isFocused = document
