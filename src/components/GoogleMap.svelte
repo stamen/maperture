@@ -1,9 +1,10 @@
 <script>
   import { round } from '../math';
+  import throttle from 'lodash.throttle';
   import deepEqual from 'deep-equal';
   import { Loader } from '@googlemaps/js-api-loader';
   import { createEventDispatcher, onMount } from 'svelte';
-  import { googleMapId, googleMapsAPIKey } from '../config';
+  import { googleMapsAPIKey } from '../config';
 
   export let bearing;
   export let center;
@@ -11,6 +12,10 @@
   export let pitch;
   export let url;
   export let zoom;
+  export let options;
+
+  let googleMapId;
+  $: googleMapId = options.googleMapId;
 
   const dispatch = createEventDispatcher();
 
@@ -76,10 +81,10 @@
           lng: center.lng,
         },
         zoom: zoom + 1,
+        heading: bearing,
         tilt: pitch,
       });
-      //map.setTilt(pitch); // TODO restrict when google map enabled
-      // heading: bearing, // TODO also update heading
+      // TODO consider restricting tilt/pitch when Google Map in use
     }
   };
 
@@ -88,16 +93,21 @@
       map = new google.maps.Map(document.getElementById(id), {
         center: mapViewProps.center,
         zoom: mapViewProps.zoom,
-        mapId: googleMapId, // TODO from map props
+        mapId: googleMapId,
+        disableDefaultUI: true,
         isFractionalZoomEnabled: true,
         fullscreenControl: false,
         zoomControl: false,
       });
 
-      document.getElementById(id).addEventListener('wheel', () => {
-        // TODO make something more robust/universal
+      const throttledWheelHandler = throttle(() => {
         document.getElementById(id).querySelector('div[tabindex="0"]').focus();
-      });
+      }, 250);
+
+      // Also focus map on wheel (automatically focused on click)
+      document
+        .getElementById(id)
+        .addEventListener('wheel', throttledWheelHandler);
 
       map.addListener('center_changed', handleMove);
       map.addListener('heading_changed', handleMove);
@@ -106,10 +116,10 @@
     });
 
     const handleMove = () => {
-      const focused = document
+      const isFocused = document
         .getElementById(id)
         .contains(document.activeElement);
-      if (focused && shouldUpdateMapView()) {
+      if (isFocused && shouldUpdateMapView()) {
         dispatch('mapMove', { options: getCurrentMapView() });
       }
     };

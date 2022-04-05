@@ -11,12 +11,12 @@
   export let name;
   export let branch;
 
-  const stylePresetOption = stylePresets.find(s => s.url === url);
+  const stylePresetOption = stylePresets.find(s => s.options.url === url);
 
   let selected = {
     name,
     dropdownType: 'custom',
-    url,
+    options: { url },
   };
   let textInput = url;
 
@@ -28,7 +28,7 @@
     selected = {
       name,
       dropdownType: 'branch',
-      url,
+      options: { url },
     };
     textInput = branch;
   }
@@ -46,7 +46,7 @@
 
   const poll = url => {
     const pollCondition = str =>
-      str && str.includes('localhost') && selected.url === str;
+      str && str.includes('localhost') && selected.options.url === str;
     // Simple polling for any style on localhost
     // Check that should poll to set timer
     if (pollCondition(url)) {
@@ -55,12 +55,30 @@
     }
   };
 
-  const dispatchMapStyleUpdate = opts => {
-    let value = { ...opts };
+  const dispatchMapStyleUpdate = (style, options) => {
+    // Clean up style before dispatching
+    const excludedKeys = [
+      'dropdownType',
+      'selected',
+      'style',
+      'url',
+      'googleMapId',
+    ];
+    let value = {
+      ...Object.fromEntries(
+        Object.entries(style).filter(([k, v]) => !excludedKeys.includes(k))
+      ),
+      options,
+    };
     if (selected.dropdownType === 'branch') {
-      value.branch = localUrl;
+      value.options.branch = localUrl;
     }
-    dispatch('mapStyleUpdate', opts);
+    if (options.style) {
+      value.id = options.style.id;
+      value.name = options.style.name;
+    }
+
+    dispatch('mapStyleUpdate', value);
   };
 
   const fetchStyle = async url => {
@@ -72,7 +90,7 @@
         // TODO create checks by type for non-mapbox maps
         style = data;
         poll(url);
-        dispatchMapStyleUpdate({ ...selected, style, url });
+        dispatchMapStyleUpdate(selected, { style, url });
         return { status: '200' };
       }
     } catch (err) {
@@ -84,7 +102,7 @@
   const onChangeUrl = async url => {
     const { status } = await fetchStyle(url);
     if (status === '200') {
-      selected.url = url;
+      selected.options.url = url;
       // Call poll after setting selected.url on success
       poll(url);
     }
@@ -97,7 +115,7 @@
       dropdownType === 'branch'
         ? createBranchUrl(localUrl, selected.id)
         : localUrl;
-    if (selected.url === nextLocalUrl) return;
+    if (selected?.options?.url === nextLocalUrl) return;
     if (nextLocalUrl.includes('localhost')) {
       const [preface, address] = nextLocalUrl.split('localhost');
       // Fetch doesn't accept localhost unless prefaced with http://
@@ -125,9 +143,9 @@
     if (!error) return;
 
     // If there's an error, reset textInput
-    if (selected.dropdownType === 'branch' && selected.url) {
+    if (selected.dropdownType === 'branch' && selected.options.url) {
       textInput = branch;
-    } else if (selected.dropdownType === 'branch' && !selected.url) {
+    } else if (selected.dropdownType === 'branch' && !selected.options.url) {
       textInput = '';
     } else {
       textInput = url;
@@ -139,9 +157,10 @@
     const { dropdownType } = val;
     switch (dropdownType) {
       case 'preset': {
-        const { type, url } = val;
+        const { type } = val;
+        const { url } = val.options;
         if (type === 'google') {
-          dispatchMapStyleUpdate(val);
+          dispatchMapStyleUpdate(val, val.options);
           break;
         }
         textInput = '';
@@ -166,7 +185,8 @@
         ...item,
         dropdownType: 'preset',
         selected:
-          selected.dropdownType === 'preset' && selected.url === item.url,
+          selected.dropdownType === 'preset' &&
+          selected.options.url === item.options.url,
       }));
     }
     if (branchPattern?.styles?.length) {
@@ -175,7 +195,8 @@
           name: `${s.charAt(0).toUpperCase() + s.slice(1)} on...`,
           id: `${s}`,
           dropdownType: 'branch',
-          selected: branch && createBranchUrl(branch, s) === selected.url,
+          selected:
+            branch && createBranchUrl(branch, s) === selected.options.url,
         };
       });
     }

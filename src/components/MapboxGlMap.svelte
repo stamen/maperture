@@ -1,5 +1,6 @@
 <script>
   import deepEqual from 'deep-equal';
+  import throttle from 'lodash.throttle';
   import { createEventDispatcher, onMount } from 'svelte';
   import mapboxgl from 'mapbox-gl';
   import 'mapbox-gl/dist/mapbox-gl.css';
@@ -11,8 +12,11 @@
   export let pitch;
   export let showCollisions;
   export let showBoundaries;
-  export let url;
+  export let options;
   export let zoom;
+
+  let url;
+  $: url = options.url;
 
   const dispatch = createEventDispatcher();
   mapboxgl.accessToken = mapboxGlAccessToken;
@@ -63,8 +67,21 @@
       ...mapViewProps,
     });
 
+    // Also focus map on wheel (automatically focused on click)
+    const throttledWheelHandler = throttle(() => {
+      document.getElementById(id).querySelector('canvas[tabindex="0"]').focus();
+    }, 250);
+    document
+      .getElementById(id)
+      .addEventListener('wheel', throttledWheelHandler);
+
     const handleMove = ({ origin }) => {
-      dispatch('mapMove', { options: getCurrentMapView() });
+      const isFocused = document
+        .getElementById(id)
+        .contains(document.activeElement);
+      if (isFocused) {
+        dispatch('mapMove', { options: getCurrentMapView() });
+      }
     };
 
     map.on('move', handleMove);

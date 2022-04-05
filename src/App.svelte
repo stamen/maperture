@@ -29,31 +29,12 @@
   }
 
   const handleChangeMap = event => {
-    const { id, name, url, style, index, branch, type } = event.detail;
-    let nextMap;
-    let nextMaps = maps;
+    const { id, name, index, type, options } = event.detail;
+    maps[index] = { id, name, index, type, options };
 
-    // TODO split these properties up since some are options (url, style,
-    // branch, googleMapId)
-    console.log(event.detail);
-
-    // Pass the stylesheet directly into state so we can detect local changes
-    nextMap = {
-      id: style ? style.id : id,
-      index,
-      name: style ? style.name : name,
-      type,
-      url,
-      style,
-      // branch is only defined for branch styles
-      branch,
-    };
-
-    nextMaps.splice(index, 1, nextMap);
-    maps = nextMaps;
     // Remove the stylesheet for a more concise hash
     const mapsHash = JSON.parse(JSON.stringify(maps)).map(m => {
-      delete m.style;
+      delete m.options.style;
       return m;
     });
 

@@ -6,17 +6,13 @@
 
   const dispatch = createEventDispatcher();
 
+  export let id;
   export let index;
   export let name;
   export let type;
-  export let url;
-  export let style;
-  export let id;
-  export let branch;
+  export let options;
 
   let MapComponent;
-
-  console.log(id, type, style);
 
   $: switch (type) {
     case 'google':
@@ -35,14 +31,19 @@
 <div class="map">
   <svelte:component
     this={MapComponent}
-    url={style || url}
+    {options}
     id={`${id}-${index}`}
     {...$$restProps}
     on:mapMove
   />
 
   <div class={`map-label-container map-label-container-${index}`}>
-    <MapLabel {name} {url} {branch} on:mapStyleUpdate={handleMapStyleUpdate} />
+    <MapLabel
+      {name}
+      url={options.url}
+      branch={options.branch}
+      on:mapStyleUpdate={handleMapStyleUpdate}
+    />
   </div>
 </div>
 

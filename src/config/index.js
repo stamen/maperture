@@ -22,13 +22,17 @@ const defaultStyles = [
     id: 'mapbox-streets',
     name: 'Mapbox Streets',
     type: 'mapbox-gl',
-    url: 'mapbox://styles/mapbox/streets-v11',
+    options: {
+      url: 'mapbox://styles/mapbox/streets-v11',
+    },
   },
   {
     id: 'mapbox-light',
     name: 'Mapbox Light',
     type: 'mapbox-gl',
-    url: 'mapbox://styles/mapbox/light-v10',
+    options: {
+      url: 'mapbox://styles/mapbox/light-v10',
+    },
   },
 ];
 
@@ -69,5 +73,4 @@ export const {
   branchPattern,
   mapboxGlAccessToken,
   googleMapsAPIKey,
-  googleMapId,
 } = config;
