@@ -1,6 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import Map from './Map.svelte';
+  import MapsMirrorLayout from './MapsMirrorLayout.svelte';
   import MapsPhoneLayout from './MapsPhoneLayout.svelte';
   import MapsSwipeLayout from './MapsSwipeLayout.svelte';
 
@@ -16,6 +17,9 @@
   $: switch (viewMode) {
     case 'phone':
       LayoutComponent = MapsPhoneLayout;
+      break;
+    case 'mirror':
+      LayoutComponent = MapsMirrorLayout;
       break;
     case 'swipe':
     default:

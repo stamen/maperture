@@ -62,6 +62,7 @@ const config = {
   viewMode: defaultViewMode,
   gazetteer: defaultGazetteer,
   branchPattern: defaultBranchPattern,
+  stylePresetUrls: [],
   ...localConfig,
 };
 
@@ -74,4 +75,5 @@ export const {
   branchPattern,
   mapboxGlAccessToken,
   googleMapsAPIKey,
+  stylePresetUrls,
 } = config;

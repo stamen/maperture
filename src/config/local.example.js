@@ -30,4 +30,7 @@ const stylePresets = [
 //   type: 'mapbox-gl',
 // };
 
+// Example of stylePresetUrls
+// const stylePresetUrls = ['./presets/example.json'];
+
 export { mapboxGlAccessToken, stylePresets };

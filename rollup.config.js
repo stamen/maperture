@@ -4,6 +4,7 @@ import resolve from '@rollup/plugin-node-resolve';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import css from 'rollup-plugin-css-only';
+import replace from '@rollup/plugin-replace';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -41,6 +42,12 @@ export default {
     file: 'public/build/bundle.js',
   },
   plugins: [
+    replace({
+      preventAssignment: true,
+      'process.env.BASE_PATH': process.env.BASE_PATH
+        ? process.env.BASE_PATH
+        : '/',
+    }),
     svelte({
       compilerOptions: {
         // enable run-time checks when not in production
