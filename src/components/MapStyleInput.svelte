@@ -199,7 +199,7 @@
         dropdownType: 'preset',
         selected:
           selected.dropdownType === 'preset' &&
-          selected.options.url === item.options.url,
+          selected?.options?.url === item?.options?.url,
       }));
     }
     if (branchPattern?.styles?.length) {
