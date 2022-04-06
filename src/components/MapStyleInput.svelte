@@ -207,6 +207,7 @@
         name: 'Fetch URL at...',
         dropdownType: 'custom',
         selected: selected.dropdownType === 'custom',
+        options: {},
       },
     ];
     return options;
