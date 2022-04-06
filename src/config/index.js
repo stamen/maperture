@@ -53,6 +53,7 @@ const defaultViewMode = VIEW_MODES[0];
 const defaultBranchPattern = {
   pattern: '',
   styles: [],
+  type: 'mapbox-gl',
 };
 
 const config = {
