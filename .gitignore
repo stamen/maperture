@@ -1,5 +1,6 @@
 /node_modules/
 /public/build/
+/public/presets/
 /src/config/local.js
 
 .DS_Store

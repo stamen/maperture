@@ -1,6 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
-  import { stylePresets, branchPattern } from '../config';
+  import { stylePresets as stylePresetsStore } from '../stores';
+  import { branchPattern } from '../config';
   import { createBranchUrl } from '../branch-utils';
   import { shortcut } from '../shortcut';
   import { fetchUrl } from '../fetch-url';
@@ -11,7 +12,12 @@
   export let name;
   export let branch;
 
-  const stylePresetOption = stylePresets.find(s => s.url === url);
+  let stylePresets;
+
+  stylePresetsStore.subscribe(value => (stylePresets = value));
+
+  let stylePresetOption = {};
+  $: stylePresetOption = stylePresets && stylePresets.find(s => s.url === url);
 
   let selected = {
     name,
@@ -20,18 +26,22 @@
   };
   let textInput = url;
 
-  if (stylePresetOption) {
-    selected = { ...stylePresetOption, dropdownType: 'preset' };
-    textInput = '';
-  }
-  if (branch) {
-    selected = {
-      name,
-      dropdownType: 'branch',
-      url,
-    };
-    textInput = branch;
-  }
+  const setSelected = () => {
+    if (stylePresetOption) {
+      selected = { ...stylePresetOption, dropdownType: 'preset' };
+      textInput = '';
+    }
+    if (branch) {
+      selected = {
+        name,
+        dropdownType: 'branch',
+        url,
+      };
+      textInput = branch;
+    }
+  };
+
+  $: if (stylePresets) setSelected();
 
   let localUrl = '';
   let focused = false;
@@ -155,6 +165,8 @@
     }
   };
 
+  let dropdownOptions = {};
+
   const getDropdownOptions = () => {
     const options = {};
     if (stylePresets.length) {
@@ -185,15 +197,17 @@
     return options;
   };
 
+  $: if (stylePresets) dropdownOptions = getDropdownOptions();
+
   // This runs only on mount to check for localhost in url
   poll(url);
 </script>
 
 <div class="map-style-input">
   <select id="styles" on:change={e => handleSelect(JSON.parse(e.target.value))}>
-    {#each Object.keys(getDropdownOptions()) as group}
+    {#each Object.keys(dropdownOptions) as group}
       <optgroup value={group} label={group}>
-        {#each getDropdownOptions()[group] as style}
+        {#each dropdownOptions[group] as style}
           <option value={JSON.stringify(style)} selected={style.selected}
             >{style.name}</option
           >

@@ -29,4 +29,7 @@ const stylePresets = [
 //   styles: ['style_1', 'style_2']
 // };
 
+// Example of stylePresetUrls
+// const stylePresetUrls = ['./presets/example.json'];
+
 export { mapboxGlAccessToken, stylePresets };
