@@ -16,7 +16,10 @@
   export let zoom;
 
   let url;
+  let style;
+
   $: url = options.url;
+  $: style = options.style;
 
   const dispatch = createEventDispatcher();
   mapboxgl.accessToken = mapboxGlAccessToken;
@@ -31,7 +34,7 @@
   // either
   $: if (map && mapViewProps) updateMapFromProps();
 
-  $: if (map && url) updateMapStyle();
+  $: if (map && (url || style)) updateMapStyle();
 
   // Show collisions on the map as desired
   $: if (map) map.showCollisionBoxes = showCollisions;
