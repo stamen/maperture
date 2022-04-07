@@ -37,14 +37,12 @@
 
   const getCurrentMapView = () => {
     return {
-      // bearing: map.getHeading() || 0,
-      bearing: 0,
+      bearing: map.getHeading(),
       center: {
         lng: map.getCenter().lng(),
         lat: map.getCenter().lat(),
       },
-      //pitch: map.getTilt(),
-      pitch: 0,
+      pitch: map.getTilt(),
       zoom: map.getZoom() - 1,
     };
   };
