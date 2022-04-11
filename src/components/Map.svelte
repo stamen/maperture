@@ -1,10 +1,7 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
   import GoogleMap from './GoogleMap.svelte';
   import MapboxGlMap from './MapboxGlMap.svelte';
   import MapLabel from './MapLabel.svelte';
-
-  const dispatch = createEventDispatcher();
 
   export let id;
   export let index;
@@ -22,10 +19,6 @@
     default:
       MapComponent = MapboxGlMap;
   }
-
-  const handleMapStyleUpdate = event => {
-    dispatch('mapStyleState', { ...event.detail, index });
-  };
 </script>
 
 <div class="map">
@@ -38,12 +31,7 @@
   />
 
   <div class={`map-label-container map-label-container-${index}`}>
-    <MapLabel
-      {name}
-      url={options.url}
-      branch={options.branch}
-      on:mapStyleUpdate={handleMapStyleUpdate}
-    />
+    <MapLabel {index} {name} url={options.url} branch={options.branch} />
   </div>
 </div>
 

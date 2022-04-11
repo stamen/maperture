@@ -1,6 +1,9 @@
 <script>
   import { onMount } from 'svelte';
-  import { stylePresets as stylePresetsStore } from './stores';
+  import {
+    maps as mapsStore,
+    stylePresets as stylePresetsStore,
+  } from './stores';
   import { loadPresetsFromUrl } from './presets-utils';
   import Maps from './components/Maps.svelte';
   import MapControls from './components/MapControls.svelte';
@@ -14,6 +17,8 @@
   let maps = [];
   let settings = getInitialSettings();
 
+  mapsStore.subscribe(value => (maps = value));
+
   // Throttle writing to the hash since this can get invoked many times when
   // moving the map around
   const throttledWriteHash = throttle(() => {
@@ -21,7 +26,8 @@
   }, 250);
 
   onMount(() => {
-    // Set presets initially using settings
+    // Set maps and presets initially using settings
+    mapsStore.set(settings.maps.map((map, index) => ({ ...map, index })));
     stylePresetsStore.set(settings.stylePresets);
 
     // If we have URLs for preset files, get them and update presets
@@ -34,21 +40,7 @@
   });
 
   $: if (settings && mapState) throttledWriteHash();
-
-  $: {
-    const { bearing, center, pitch, showCollisions, showBoundaries, zoom } =
-      settings;
-    mapState = { bearing, center, pitch, showCollisions, showBoundaries, zoom };
-  }
-
-  $: {
-    maps = settings.maps.map((map, index) => ({ ...map, index }));
-  }
-
-  const handleChangeMap = event => {
-    const { id, name, index, type, options } = event.detail;
-    maps[index] = { id, name, index, type, options };
-
+  $: if (maps) {
     // Remove the stylesheet for a more concise hash
     const mapsHash = JSON.parse(JSON.stringify(maps)).map(m => {
       delete m.options.style;
@@ -56,7 +48,13 @@
     });
 
     writeHash({ ...settings, maps: mapsHash, ...mapState });
-  };
+  }
+
+  $: {
+    const { bearing, center, pitch, showCollisions, showBoundaries, zoom } =
+      settings;
+    mapState = { bearing, center, pitch, showCollisions, showBoundaries, zoom };
+  }
 
   const handleMapState = event => {
     let newMapState = {
@@ -90,7 +88,6 @@
     {mapState}
     viewMode={settings.viewMode}
     on:mapState={handleMapState}
-    on:mapStyleState={handleChangeMap}
   />
 
   <div class="map-controls-container">

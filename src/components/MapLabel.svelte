@@ -1,6 +1,7 @@
 <script>
   import MapStyleInput from './MapStyleInput.svelte';
 
+  export let index;
   export let name;
   export let url;
   export let branch;
@@ -8,7 +9,7 @@
 
 <div class="map-label">
   <div class="map-name">{name}</div>
-  <MapStyleInput {url} {name} {branch} on:mapStyleUpdate />
+  <MapStyleInput {index} {url} {name} {branch} />
 </div>
 
 <style>

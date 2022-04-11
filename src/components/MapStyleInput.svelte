@@ -1,13 +1,14 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
-  import { stylePresets as stylePresetsStore } from '../stores';
+  import {
+    maps as mapsStore,
+    stylePresets as stylePresetsStore,
+  } from '../stores';
   import { branchPattern } from '../config';
   import { createBranchUrl } from '../branch-utils';
   import { shortcut } from '../shortcut';
   import { fetchUrl } from '../fetch-url';
 
-  const dispatch = createEventDispatcher();
-
+  export let index;
   export let url;
   export let name;
   export let branch;
@@ -79,6 +80,7 @@
       ...Object.fromEntries(
         Object.entries(style).filter(([k, v]) => !excludedKeys.includes(k))
       ),
+      index,
       options,
     };
     if (selected.dropdownType === 'branch') {
@@ -89,7 +91,9 @@
       value.name = options.style.name;
     }
 
-    dispatch('mapStyleUpdate', value);
+    mapsStore.update(current => {
+      return current.map((m, i) => (i === index ? value : m));
+    });
   };
 
   const fetchStyle = async url => {
