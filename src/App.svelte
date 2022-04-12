@@ -9,6 +9,8 @@
   import { mapboxGlAccessToken, stylePresetUrls } from './config';
   import throttle from 'lodash.throttle';
 
+  export let parentAppTitle;
+
   let mapState = {};
   let maps = [];
   let settings = getInitialSettings();
@@ -91,6 +93,7 @@
   <base href="process.env.BASE_PATH" />
 </svelte:head>
 <main>
+  <div>{parentAppTitle}</div>
   <Maps
     {maps}
     {mapState}

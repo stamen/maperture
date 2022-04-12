@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "rollup -c",
+    "build-package": "rm -rf dist && rollup -c rollup.config.package.js && cp public/global.css dist/global.css",
     "dev": "rollup -c -w",
     "start": "sirv public --no-clear",
     "prepare": "husky install"
@@ -30,5 +31,6 @@
     "lodash.throttle": "^4.1.1",
     "mapbox-gl": "^1.13.1",
     "sirv-cli": "^1.0.0"
-  }
+  },
+  "main": "dist/bundle.js"
 }
