@@ -93,7 +93,9 @@
   <base href="process.env.BASE_PATH" />
 </svelte:head>
 <main>
-  <div>{parentAppTitle}</div>
+  {#if parentAppTitle}
+    <div>{parentAppTitle}</div>
+  {/if}
   <Maps
     {maps}
     {mapState}

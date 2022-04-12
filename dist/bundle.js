@@ -44571,78 +44571,106 @@ var hl = function (t, e, r) {
   );
 };
 function fl(t) {
-  let r, i, n, o, a, s, l, u, c, d, v;
-  (l = new hs({
+  let e, r;
+  return {
+    c() {
+      (e = m('div')), (r = y(t[0]));
+    },
+    m(t, i) {
+      h(t, e, i), p(e, r);
+    },
+    p(t, e) {
+      1 & e && b(r, t[0]);
+    },
+    d(t) {
+      t && f(e);
+    },
+  };
+}
+function dl(t) {
+  let r,
+    i,
+    n,
+    o,
+    a,
+    s,
+    l,
+    u,
+    c,
+    d = t[0] && fl(t);
+  (a = new hs({
     props: { maps: t[3], mapState: t[1], viewMode: t[2].viewMode },
   })),
-    l.$on('mapState', t[5]),
-    l.$on('mapStyleState', t[4]);
-  const _ = [{ mapboxGlAccessToken: Ta }, t[1], { viewMode: t[2].viewMode }];
-  let w = {};
-  for (let t = 0; t < _.length; t += 1) w = e(w, _[t]);
+    a.$on('mapState', t[5]),
+    a.$on('mapStyleState', t[4]);
+  const y = [{ mapboxGlAccessToken: Ta }, t[1], { viewMode: t[2].viewMode }];
+  let v = {};
+  for (let t = 0; t < y.length; t += 1) v = e(v, y[t]);
   return (
-    (d = new qs({ props: w })),
-    d.$on('mapState', t[5]),
-    d.$on('viewMode', t[6]),
+    (u = new qs({ props: v })),
+    u.$on('mapState', t[5]),
+    u.$on('viewMode', t[6]),
     {
       c() {
         (r = m('base')),
           (i = g()),
           (n = m('main')),
-          (o = m('div')),
-          (a = y(t[0])),
+          d && d.c(),
+          (o = g()),
+          tt(a.$$.fragment),
           (s = g()),
-          tt(l.$$.fragment),
-          (u = g()),
-          (c = m('div')),
-          tt(d.$$.fragment),
+          (l = m('div')),
+          tt(u.$$.fragment),
           x(r, 'href', '/'),
-          x(c, 'class', 'map-controls-container svelte-13vsfrg'),
+          x(l, 'class', 'map-controls-container svelte-13vsfrg'),
           x(n, 'class', 'svelte-13vsfrg');
       },
       m(t, e) {
         p(document.head, r),
           h(t, i, e),
           h(t, n, e),
+          d && d.m(n, null),
           p(n, o),
-          p(o, a),
+          et(a, n, null),
           p(n, s),
-          et(l, n, null),
-          p(n, u),
-          p(n, c),
-          et(d, c, null),
-          (v = !0);
+          p(n, l),
+          et(u, l, null),
+          (c = !0);
       },
       p(t, [e]) {
-        (!v || 1 & e) && b(a, t[0]);
+        t[0]
+          ? d
+            ? d.p(t, e)
+            : ((d = fl(t)), d.c(), d.m(n, o))
+          : d && (d.d(1), (d = null));
         const r = {};
         8 & e && (r.maps = t[3]),
           2 & e && (r.mapState = t[1]),
           4 & e && (r.viewMode = t[2].viewMode),
-          l.$set(r);
+          a.$set(r);
         const i =
           6 & e
-            ? Y(_, [
+            ? Y(y, [
                 0 & e && { mapboxGlAccessToken: Ta },
                 2 & e && Q(t[1]),
                 4 & e && { viewMode: t[2].viewMode },
               ])
             : {};
-        d.$set(i);
+        u.$set(i);
       },
       i(t) {
-        v || (H(l.$$.fragment, t), H(d.$$.fragment, t), (v = !0));
+        c || (H(a.$$.fragment, t), H(u.$$.fragment, t), (c = !0));
       },
       o(t) {
-        J(l.$$.fragment, t), J(d.$$.fragment, t), (v = !1);
+        J(a.$$.fragment, t), J(u.$$.fragment, t), (c = !1);
       },
       d(t) {
-        f(r), t && f(i), t && f(n), rt(l), rt(d);
+        f(r), t && f(i), t && f(n), d && d.d(), rt(a), rt(u);
       },
     }
   );
 }
-function dl(t, e, r) {
+function ml(t, e, r) {
   let { parentAppTitle: i } = e,
     n = {},
     o = [],
@@ -44729,11 +44757,11 @@ function dl(t, e, r) {
     ]
   );
 }
-class ml extends ot {
+class yl extends ot {
   constructor(t) {
-    super(), nt(this, t, dl, fl, a, { parentAppTitle: 0 });
+    super(), nt(this, t, ml, dl, a, { parentAppTitle: 0 });
   }
 }
-const yl = (t, e) => new ml({ target: t, props: e });
-export { yl as startApp };
+const gl = (t, e) => new yl({ target: t, props: e });
+export { gl as startApp };
 //# sourceMappingURL=bundle.js.map
