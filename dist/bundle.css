@@ -31,26 +31,26 @@ main.svelte-13vsfrg {
 .checkboxes.svelte-1xx5k5r {
   text-align: right;
 }
-.map-state-container.svelte-xc7hba.svelte-xc7hba {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
+.maps.svelte-yry985.svelte-yry985 {
+  height: 100%;
 }
-.map-state.svelte-xc7hba.svelte-xc7hba {
-  display: flex;
-  justify-content: space-around;
+.maps.dragging.svelte-yry985 .map-container.svelte-yry985 {
+  user-select: none;
 }
-.state-record.svelte-xc7hba.svelte-xc7hba {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.maps.svelte-yry985 .map-container.svelte-yry985 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
-.location-actions.svelte-xc7hba.svelte-xc7hba {
-  display: flex;
-  flex-direction: row;
-}
-.location-actions.svelte-xc7hba > div.svelte-xc7hba {
-  margin: 0 0.5em;
+.slider.svelte-yry985.svelte-yry985 {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  cursor: col-resize;
+  background: black;
+  z-index: 1000;
 }
 .map.svelte-1aet2lj {
   height: 100%;
@@ -106,39 +106,36 @@ main.svelte-13vsfrg {
 .map-container.svelte-1g37ixp:last-of-type {
   border-right: none;
 }
-.maps.svelte-yry985.svelte-yry985 {
-  height: 100%;
+.map-state-container.svelte-xc7hba.svelte-xc7hba {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
 }
-.maps.dragging.svelte-yry985 .map-container.svelte-yry985 {
-  user-select: none;
+.map-state.svelte-xc7hba.svelte-xc7hba {
+  display: flex;
+  justify-content: space-around;
 }
-.maps.svelte-yry985 .map-container.svelte-yry985 {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+.state-record.svelte-xc7hba.svelte-xc7hba {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.slider.svelte-yry985.svelte-yry985 {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  cursor: col-resize;
-  background: black;
-  z-index: 1000;
+.location-actions.svelte-xc7hba.svelte-xc7hba {
+  display: flex;
+  flex-direction: row;
+}
+.location-actions.svelte-xc7hba > div.svelte-xc7hba {
+  margin: 0 0.5em;
+}
+div.svelte-1k1b3t4 {
+  padding: 0;
 }
 div.svelte-1kuj9kb {
   width: 100%;
   height: 100%;
 }
-div.svelte-1k1b3t4 {
-  padding: 0;
-}
 div.svelte-1pfu5h6 {
   display: none;
-}
-.map.svelte-16c2pp7 {
-  height: 100%;
 }
 .map-label.svelte-70kotq {
   background: white;
@@ -151,6 +148,9 @@ div.svelte-1pfu5h6 {
 .map-name.svelte-70kotq {
   font-size: 1.25em;
   font-weight: bold;
+}
+.map.svelte-16c2pp7 {
+  height: 100%;
 }
 button.svelte-d9bm20 {
   background: none;

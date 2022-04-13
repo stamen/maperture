@@ -1,4 +1,4 @@
-import App from './src/App.svelte';
+import App from './App.svelte';
 
 const startApp = (target, props) =>
   new App({
