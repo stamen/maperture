@@ -31,6 +31,24 @@ main.svelte-13vsfrg {
 .checkboxes.svelte-1xx5k5r {
   text-align: right;
 }
+.maps.svelte-tipyab.svelte-tipyab {
+  align-items: center;
+  display: flex;
+  flex-grow: 1;
+  flex-direction: row;
+  justify-content: space-around;
+}
+.maps.svelte-tipyab .map-container.svelte-tipyab {
+  border: 20px solid #333;
+  border-radius: 30px;
+  box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
+  height: 620px;
+  margin: 20px;
+  width: 300px;
+}
+.maps.phone .mapboxgl-map {
+  border-radius: 10px;
+}
 .maps.svelte-yry985.svelte-yry985 {
   height: 100%;
 }
@@ -64,24 +82,6 @@ main.svelte-13vsfrg {
 .map-label-container-1.svelte-1aet2lj {
   left: unset;
   right: 1em;
-}
-.maps.svelte-tipyab.svelte-tipyab {
-  align-items: center;
-  display: flex;
-  flex-grow: 1;
-  flex-direction: row;
-  justify-content: space-around;
-}
-.maps.svelte-tipyab .map-container.svelte-tipyab {
-  border: 20px solid #333;
-  border-radius: 30px;
-  box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
-  height: 620px;
-  margin: 20px;
-  width: 300px;
-}
-.maps.phone .mapboxgl-map {
-  border-radius: 10px;
 }
 .maps.svelte-1g37ixp {
   display: flex;
@@ -137,6 +137,9 @@ div.svelte-1kuj9kb {
 div.svelte-1pfu5h6 {
   display: none;
 }
+.map.svelte-16c2pp7 {
+  height: 100%;
+}
 .map-label.svelte-70kotq {
   background: white;
   box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
@@ -148,9 +151,6 @@ div.svelte-1pfu5h6 {
 .map-name.svelte-70kotq {
   font-size: 1.25em;
   font-weight: bold;
-}
-.map.svelte-16c2pp7 {
-  height: 100%;
 }
 button.svelte-d9bm20 {
   background: none;
