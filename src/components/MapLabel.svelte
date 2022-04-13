@@ -3,13 +3,11 @@
 
   export let index;
   export let name;
-  export let url;
-  export let branch;
 </script>
 
 <div class="map-label">
   <div class="map-name">{name}</div>
-  <MapStyleInput {index} {url} {name} {branch} />
+  <MapStyleInput {index} />
 </div>
 
 <style>

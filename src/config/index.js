@@ -22,17 +22,13 @@ const defaultStyles = [
     id: 'mapbox-streets',
     name: 'Mapbox Streets',
     type: 'mapbox-gl',
-    options: {
-      url: 'mapbox://styles/mapbox/streets-v11',
-    },
+    url: 'mapbox://styles/mapbox/streets-v11',
   },
   {
     id: 'mapbox-light',
     name: 'Mapbox Light',
     type: 'mapbox-gl',
-    options: {
-      url: 'mapbox://styles/mapbox/light-v10',
-    },
+    url: 'mapbox://styles/mapbox/light-v10',
   },
 ];
 

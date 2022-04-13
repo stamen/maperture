@@ -6,17 +6,19 @@
   import { createEventDispatcher, onMount } from 'svelte';
   import { googleMapsAPIKey } from '../config';
 
+  export let index;
+  export let id;
   export let bearing;
   export let center;
-  export let id;
   export let pitch;
   export let zoom;
-  export let options;
   export let showCollisions;
   export let showBoundaries;
+  export let mapStyle;
 
-  let googleMapId;
-  $: googleMapId = options.googleMapId;
+  let mapId;
+
+  $: if (mapStyle) ({ mapId } = mapStyle);
 
   const dispatch = createEventDispatcher();
 
@@ -85,7 +87,7 @@
       map = new google.maps.Map(document.getElementById(id), {
         center: mapViewProps.center,
         zoom: mapViewProps.zoom,
-        mapId: googleMapId,
+        mapId,
         disableDefaultUI: true,
         isFractionalZoomEnabled: true,
         fullscreenControl: false,

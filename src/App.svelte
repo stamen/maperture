@@ -43,7 +43,7 @@
   $: if (maps) {
     // Remove the stylesheet for a more concise hash
     const mapsHash = JSON.parse(JSON.stringify(maps)).map(m => {
-      delete m.options.style;
+      delete m.style;
       return m;
     });
 

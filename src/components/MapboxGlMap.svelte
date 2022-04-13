@@ -6,20 +6,20 @@
   import 'mapbox-gl/dist/mapbox-gl.css';
   import { mapboxGlAccessToken } from '../config';
 
+  export let index;
+  export let id;
   export let bearing;
   export let center;
-  export let id;
   export let pitch;
   export let showCollisions;
   export let showBoundaries;
-  export let options;
   export let zoom;
+  export let mapStyle;
 
+  let style = {};
   let url;
-  let style;
 
-  $: url = options.url;
-  $: style = options.style;
+  $: if (mapStyle) ({ style, url } = mapStyle);
 
   const dispatch = createEventDispatcher();
   mapboxgl.accessToken = mapboxGlAccessToken;

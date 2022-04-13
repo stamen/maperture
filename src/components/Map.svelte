@@ -1,17 +1,17 @@
 <script>
+  import { maps as mapsStore } from '../stores';
   import GoogleMap from './GoogleMap.svelte';
   import MapboxGlMap from './MapboxGlMap.svelte';
   import MapLabel from './MapLabel.svelte';
 
-  export let id;
   export let index;
-  export let name;
-  export let type;
-  export let options;
 
+  let map;
   let MapComponent;
 
-  $: switch (type) {
+  mapsStore.subscribe(value => (map = value[index]));
+
+  $: switch (map.type) {
     case 'google':
       MapComponent = GoogleMap;
       break;
@@ -24,14 +24,15 @@
 <div class="map">
   <svelte:component
     this={MapComponent}
-    {options}
-    id={`${id}-${index}`}
+    {index}
+    id={`${map.id}-${index}`}
+    mapStyle={map}
     {...$$restProps}
     on:mapMove
   />
 
   <div class={`map-label-container map-label-container-${index}`}>
-    <MapLabel {index} {name} url={options.url} branch={options.branch} />
+    <MapLabel {index} name={map.name} />
   </div>
 </div>
 

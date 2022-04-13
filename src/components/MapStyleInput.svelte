@@ -9,22 +9,28 @@
   import { fetchUrl } from '../fetch-url';
 
   export let index;
-  export let url;
-  export let name;
-  export let branch;
+
+  let url;
+  let name;
+  let branch;
+
+  mapsStore.subscribe(maps => {
+    branch = maps[index].branch;
+    name = maps[index].name;
+    url = maps[index].url;
+  });
 
   let stylePresets;
 
   stylePresetsStore.subscribe(value => (stylePresets = value));
 
   let stylePresetOption = {};
-  $: stylePresetOption =
-    stylePresets && stylePresets.find(s => s.options.url === url);
+  $: stylePresetOption = stylePresets && stylePresets.find(s => s.url === url);
 
   let selected = {
     name,
     dropdownType: 'custom',
-    options: { url },
+    url,
   };
   let textInput = url;
 
@@ -37,7 +43,7 @@
       selected = {
         name,
         dropdownType: 'branch',
-        options: { url },
+        url,
       };
       textInput = branch;
     }
@@ -58,7 +64,7 @@
 
   const poll = url => {
     const pollCondition = str =>
-      str && str.includes('localhost') && selected.options.url === str;
+      str && str.includes('localhost') && selected.url === str;
     // Simple polling for any style on localhost
     // Check that should poll to set timer
     if (pollCondition(url)) {
@@ -67,28 +73,21 @@
     }
   };
 
-  const dispatchMapStyleUpdate = (style, options) => {
+  const handleMapStyleUpdate = style => {
     // Clean up style before dispatching
-    const excludedKeys = [
-      'dropdownType',
-      'selected',
-      'style',
-      'url',
-      'googleMapId',
-    ];
+    const excludedKeys = ['dropdownType', 'selected'];
     let value = {
       ...Object.fromEntries(
         Object.entries(style).filter(([k, v]) => !excludedKeys.includes(k))
       ),
       index,
-      options,
     };
     if (selected.dropdownType === 'branch') {
-      value.options.branch = localUrl;
+      value.branch = localUrl;
     }
-    if (options.style) {
-      value.id = options.style.id;
-      value.name = options.style.name;
+    if (style.style) {
+      value.id = style.style.id;
+      value.name = style.style.name;
     }
 
     mapsStore.update(current => {
@@ -105,7 +104,7 @@
         // TODO create checks by type for non-mapbox maps
         style = data;
         poll(url);
-        dispatchMapStyleUpdate(selected, { style, url });
+        handleMapStyleUpdate({ ...selected, style, url });
         return { status: '200' };
       }
     } catch (err) {
@@ -117,7 +116,7 @@
   const onChangeUrl = async url => {
     const { status } = await fetchStyle(url);
     if (status === '200') {
-      selected.options.url = url;
+      selected.url = url;
       // Call poll after setting selected.url on success
       poll(url);
     }
@@ -130,7 +129,7 @@
       dropdownType === 'branch'
         ? createBranchUrl(localUrl, selected.id)
         : localUrl;
-    if (selected?.options?.url === nextLocalUrl) return;
+    if (selected?.url === nextLocalUrl) return;
     if (nextLocalUrl.includes('localhost')) {
       const [preface, address] = nextLocalUrl.split('localhost');
       // Fetch doesn't accept localhost unless prefaced with http://
@@ -158,9 +157,9 @@
     if (!error) return;
 
     // If there's an error, reset textInput
-    if (selected.dropdownType === 'branch' && selected.options.url) {
+    if (selected.dropdownType === 'branch' && selected.url) {
       textInput = branch;
-    } else if (selected.dropdownType === 'branch' && !selected.options.url) {
+    } else if (selected.dropdownType === 'branch' && !selected.url) {
       textInput = '';
     } else {
       textInput = url;
@@ -172,10 +171,9 @@
     const { dropdownType } = val;
     switch (dropdownType) {
       case 'preset': {
-        const { type } = val;
-        const { url } = val.options;
+        const { type, url } = val;
         if (type === 'google') {
-          dispatchMapStyleUpdate(val, val.options);
+          handleMapStyleUpdate(val);
           break;
         }
         textInput = '';
@@ -202,20 +200,17 @@
         ...item,
         dropdownType: 'preset',
         selected:
-          selected.dropdownType === 'preset' &&
-          selected?.options?.url === item?.options?.url,
+          selected.dropdownType === 'preset' && selected?.url === item?.url,
       }));
     }
     if (branchPattern?.styles?.length) {
       options['Styles on a branch'] = branchPattern?.styles.map(s => {
         return {
           name: `${s.charAt(0).toUpperCase() + s.slice(1)} on...`,
-          id: `${s}`,
+          id: s,
           type: branchPattern.type,
           dropdownType: 'branch',
-          selected:
-            branch && createBranchUrl(branch, s) === selected.options.url,
-          options: {},
+          selected: branch && createBranchUrl(branch, s) === selected.url,
         };
       });
     }
@@ -224,7 +219,6 @@
         name: 'Fetch URL at...',
         dropdownType: 'custom',
         selected: selected.dropdownType === 'custom',
-        options: {},
       },
     ];
     return options;
