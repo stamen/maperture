@@ -10,7 +10,7 @@
   import { writeHash } from './query';
   import { getInitialSettings } from './settings';
   import { mapboxGlAccessToken, stylePresetUrls } from './config';
-  import { GOOGLE_MAP_MAX_PITCH } from './constants';
+  import { validateMapState } from './map-state-utils';
   import throttle from 'lodash.throttle';
 
   let mapState = {};
@@ -56,18 +56,16 @@
     mapState = { bearing, center, pitch, showCollisions, showBoundaries, zoom };
   }
 
+  // Validate map state when maps change too
+  $: mapState = validateMapState(mapState, maps);
+
   const handleMapState = event => {
     let newMapState = {
       ...mapState,
       ...event.detail.options,
     };
 
-    if (maps.some(({ type }) => type === 'google')) {
-      if (newMapState.pitch > GOOGLE_MAP_MAX_PITCH) {
-        newMapState.pitch = GOOGLE_MAP_MAX_PITCH;
-      }
-    }
-    mapState = newMapState;
+    mapState = validateMapState(newMapState, maps);
   };
 
   const handleViewMode = event => {
