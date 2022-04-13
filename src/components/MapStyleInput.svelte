@@ -73,21 +73,21 @@
     }
   };
 
-  const handleMapStyleUpdate = style => {
+  const handleMapStyleUpdate = mapStyle => {
     // Clean up style before dispatching
     const excludedKeys = ['dropdownType', 'selected'];
     let value = {
       ...Object.fromEntries(
-        Object.entries(style).filter(([k, v]) => !excludedKeys.includes(k))
+        Object.entries(mapStyle).filter(([k, v]) => !excludedKeys.includes(k))
       ),
       index,
     };
     if (selected.dropdownType === 'branch') {
       value.branch = localUrl;
     }
-    if (style.style) {
-      value.id = style.style.id;
-      value.name = style.style.name;
+    if (mapStyle.style) {
+      value.id = mapStyle.style.id;
+      value.name = mapStyle.style.name;
     }
 
     mapsStore.update(current => {
