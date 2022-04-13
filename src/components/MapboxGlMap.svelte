@@ -1,9 +1,9 @@
 <script>
   import deepEqual from 'deep-equal';
+  import { config as configStore } from '../stores';
   import { createEventDispatcher, onMount } from 'svelte';
   import mapboxgl from 'mapbox-gl';
   import 'mapbox-gl/dist/mapbox-gl.css';
-  import { mapboxGlAccessToken } from '../config';
 
   export let bearing;
   export let center;
@@ -13,6 +13,9 @@
   export let showBoundaries;
   export let url;
   export let zoom;
+
+  let mapboxGlAccessToken;
+  configStore.subscribe(value => ({ mapboxGlAccessToken } = value));
 
   const dispatch = createEventDispatcher();
   mapboxgl.accessToken = mapboxGlAccessToken;

@@ -1,4 +1,7 @@
-import { branchPattern } from './config';
+import { config as configStore } from './stores';
+
+let branchPattern;
+configStore.subscribe(value => ({ branchPattern } = value));
 
 const branchToken = '{branch}';
 const styleToken = '{style}';

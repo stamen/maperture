@@ -1,7 +1,9 @@
 <script>
   import { createEventDispatcher } from 'svelte';
-  import { stylePresets as stylePresetsStore } from '../stores';
-  import { branchPattern } from '../config';
+  import {
+    stylePresets as stylePresetsStore,
+    config as configStore,
+  } from '../stores';
   import { createBranchUrl } from '../branch-utils';
   import { shortcut } from '../shortcut';
   import { fetchUrl } from '../fetch-url';
@@ -13,8 +15,10 @@
   export let branch;
 
   let stylePresets;
+  let branchPattern;
 
   stylePresetsStore.subscribe(value => (stylePresets = value));
+  configStore.subscribe(value => ({ branchPattern } = value));
 
   let stylePresetOption = {};
   $: stylePresetOption = stylePresets && stylePresets.find(s => s.url === url);

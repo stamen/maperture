@@ -1,8 +1,9 @@
 import App from './App.svelte';
 
-const app = new App({
-  target: document.body,
-  props: {},
-});
+const startApp = (target, props) =>
+  new App({
+    target,
+    props,
+  });
 
-export default app;
+export { startApp };

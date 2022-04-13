@@ -1,19 +1,27 @@
 <script>
   import { onMount } from 'svelte';
-  import { stylePresets as stylePresetsStore } from './stores';
+  import {
+    stylePresets as stylePresetsStore,
+    config as configStore,
+  } from './stores';
+  import { makeConfig } from './make-config';
   import { loadPresetsFromUrl } from './presets-utils';
   import Maps from './components/Maps.svelte';
   import MapControls from './components/MapControls.svelte';
   import { writeHash } from './query';
   import { getInitialSettings } from './settings';
-  import { mapboxGlAccessToken, stylePresetUrls } from './config';
   import throttle from 'lodash.throttle';
 
-  export let parentAppTitle;
+  export let localConfig;
 
   let mapState = {};
   let maps = [];
-  let settings = getInitialSettings();
+  const config = makeConfig(localConfig);
+  let settings = getInitialSettings(config);
+  let mapboxGlAccessToken;
+  let stylePresetUrls;
+  configStore.set(config);
+  ({ mapboxGlAccessToken, stylePresetUrls } = config);
 
   // Throttle writing to the hash since this can get invoked many times when
   // moving the map around
@@ -93,9 +101,6 @@
   <base href="process.env.BASE_PATH" />
 </svelte:head>
 <main>
-  {#if parentAppTitle}
-    <div>{parentAppTitle}</div>
-  {/if}
   <Maps
     {maps}
     {mapState}

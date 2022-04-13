@@ -2,11 +2,8 @@ import rollupConfig from './rollup.config';
 
 const packageConfig = {
   ...rollupConfig,
-  input: 'src/index.js',
   output: {
-    sourcemap: true,
-    format: 'esm',
-    name: 'map-compare',
+    ...rollupConfig.output,
     file: 'dist/bundle.js',
   },
 };
