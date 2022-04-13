@@ -25,7 +25,10 @@
   const handleGeocoderResult = ({ detail }) => {
     const { result } = detail;
     const options = {
-      center: result.center,
+      center: {
+        lat: result.center[1],
+        lng: result.center[0],
+      },
       zoom: 17,
     };
     if (result.bbox) {
