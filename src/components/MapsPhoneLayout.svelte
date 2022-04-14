@@ -8,7 +8,7 @@
 <div class="maps phone">
   {#each maps as map}
     <div class="map-container">
-      <Map {...map} {...mapState} on:mapMove on:mapStyleState />
+      <Map {map} {...mapState} on:mapMove />
     </div>
   {/each}
 </div>

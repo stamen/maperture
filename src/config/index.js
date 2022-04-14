@@ -49,6 +49,7 @@ const defaultViewMode = VIEW_MODES[0];
 const defaultBranchPattern = {
   pattern: '',
   styles: [],
+  type: 'mapbox-gl',
 };
 
 const config = {
@@ -69,5 +70,6 @@ export const {
   gazetteer,
   branchPattern,
   mapboxGlAccessToken,
+  googleMapsAPIKey,
   stylePresetUrls,
 } = config;
