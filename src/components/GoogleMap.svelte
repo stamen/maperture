@@ -94,10 +94,6 @@
         zoomControl: false,
       });
 
-      google.maps.event.addListener(map, 'drag', e => {
-        console.log(e);
-      });
-
       const throttledWheelHandler = throttle(() => {
         document.getElementById(id).querySelector('div[tabindex="0"]').focus();
       }, 250);
