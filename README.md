@@ -27,3 +27,61 @@ Here, you can customize the following options:
 - `stylePresetUrls`: An array of URLs pointing to additional presets. URLs must point to JSON arrays containing objects of the same shape as those in `stylePresets`.
 
 For more details on how these should look, see the example in [`src/config/local.example.js`](./src/config/local.example.js).
+
+## Setting up the app in your repo
+
+### 1. Install this module into your repo.
+
+`npm i github:stamen/mapbox-gl-compare#<release>` or `yarn add github:stamen/mapbox-gl-compare#<release>`
+
+### 2. Set up files to serve app
+
+When setting up the app in your repo, you'll want to create a directory that can house:
+
+- An `index.html` file to serve the app
+- A local config file (specified above)
+- The copied over module files (see step 3)
+
+Your `index.html` file should look like the following:
+
+```
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+    <title>Map Compare</title>
+
+    <link rel="stylesheet" href="./dist/bundle.css" />
+  </head>
+
+  <script type="module">
+    import { startApp } from './dist/bundle.js';
+    import localConfig from './local.js';
+
+    startApp(document.body, { localConfig });
+  </script>
+
+  <body></body>
+</html>
+```
+
+### 3. In addition, prior to serving the compare tool in your repo, you'll want to add a simple build script to your package that will copy our module files into the appropriate directory where `tool/dir/path/` is the directory you've created to serve the app from:
+
+`"build-compare": "rm -rf tool/dir/path/dist && cp -r node_modules/mapbox-gl-compare/dist tool/dir/path/dist"`
+
+You will run this build script prior to serving the app from `index.html` or publishing the app anywhere to ensure files are up to date.
+
+The final directory structure should look like:
+
+```
+root/
+  - compare-tool/
+    - dist/
+      - bundle.js
+      - bundle.js.map
+      - bundle.css
+    - index.html
+    - local.js
+```
