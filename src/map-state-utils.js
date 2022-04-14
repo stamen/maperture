@@ -16,7 +16,7 @@ const getMaxPitch = (mapState, maps) => {
 
 const googleMapPresent = maps => maps.some(({ type }) => type === 'google');
 
-export const checkMapState = (mapState, maps) => {
+export const getMapStateMessages = (mapState, maps) => {
   const messages = [];
 
   if (googleMapPresent(maps)) {

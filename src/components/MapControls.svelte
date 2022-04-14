@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { Geocoder } from '@beyonk/svelte-mapbox';
-  import { checkMapState } from '../map-state-utils';
+  import { getMapStateMessages } from '../map-state-utils';
   import MapLocationControl from './MapLocationControl.svelte';
   import ViewModeControl from './ViewModeControl.svelte';
   import MapLocationDropdown from './MapLocationDropdown.svelte';
@@ -23,7 +23,7 @@
 
   mapsStore.subscribe(value => (maps = value));
   $: mapState = { bearing, center, pitch, zoom };
-  $: mapStateValidationMessages = checkMapState(mapState, maps);
+  $: mapStateValidationMessages = getMapStateMessages(mapState, maps);
 
   // When showCollisions or showBoundaries changes, update map state
   $: dispatch('mapState', { options: { showCollisions, showBoundaries } });
