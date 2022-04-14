@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "rollup -c",
-    "build-package": "rm -rf dist && rollup -c rollup.config.package.js && cp public/global.css dist/global.css",
+    "build-package": "rm -rf dist && rollup -c rollup.config.package.js",
     "dev": "rollup -c -w",
     "start": "sirv public --no-clear",
     "prepare": "husky install"
