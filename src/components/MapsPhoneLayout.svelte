@@ -8,7 +8,7 @@
 <div class="maps phone">
   {#each maps as map}
     <div class="map-container">
-      <Map index={map.index} {...mapState} on:mapMove />
+      <Map {map} {...mapState} on:mapMove />
     </div>
   {/each}
 </div>
