@@ -11,7 +11,7 @@
 
     <script type="module">
       import { startApp } from './build/bundle.js';
-      import localConfig from './config/local.js';
+      import * as localConfig from './config/local.js';
 
       startApp(document.body, { localConfig });
     </script>
