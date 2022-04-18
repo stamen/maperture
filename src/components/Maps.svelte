@@ -36,5 +36,4 @@
   {maps}
   {mapState}
   on:mapMove={handleMapMove}
-  on:mapStyleState
 />

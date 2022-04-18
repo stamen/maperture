@@ -1,6 +1,6 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
   import {
+    maps as mapsStore,
     stylePresets as stylePresetsStore,
     config as configStore,
   } from '../stores';
@@ -8,11 +8,17 @@
   import { shortcut } from '../shortcut';
   import { fetchUrl } from '../fetch-url';
 
-  const dispatch = createEventDispatcher();
+  export let index;
 
-  export let url;
-  export let name;
-  export let branch;
+  let url;
+  let name;
+  let branch;
+
+  mapsStore.subscribe(maps => {
+    branch = maps[index].branch;
+    name = maps[index].name;
+    url = maps[index].url;
+  });
 
   let stylePresets;
   let branchPattern;
@@ -60,7 +66,7 @@
 
   const poll = url => {
     const pollCondition = str =>
-      str.includes('localhost') && selected.url === str;
+      str && str.includes('localhost') && selected.url === str;
     // Simple polling for any style on localhost
     // Check that should poll to set timer
     if (pollCondition(url)) {
@@ -69,12 +75,26 @@
     }
   };
 
-  const dispatchMapStyleUpdate = (style, url) => {
-    let value = { style, url };
+  const handleMapStyleUpdate = mapStyle => {
+    // Clean up style before dispatching
+    const excludedKeys = ['dropdownType', 'selected'];
+    let value = {
+      ...Object.fromEntries(
+        Object.entries(mapStyle).filter(([k, v]) => !excludedKeys.includes(k))
+      ),
+      index,
+    };
     if (selected.dropdownType === 'branch') {
       value.branch = localUrl;
     }
-    dispatch('mapStyleUpdate', value);
+    if (mapStyle.style) {
+      value.id = mapStyle.style.id;
+      value.name = mapStyle.style.name;
+    }
+
+    mapsStore.update(current => {
+      return current.map((m, i) => (i === index ? value : m));
+    });
   };
 
   const fetchStyle = async url => {
@@ -86,7 +106,7 @@
         // TODO create checks by type for non-mapbox maps
         style = data;
         poll(url);
-        dispatchMapStyleUpdate(style, url);
+        handleMapStyleUpdate({ ...selected, style, url });
         return { status: '200' };
       }
     } catch (err) {
@@ -111,7 +131,7 @@
       dropdownType === 'branch'
         ? createBranchUrl(localUrl, selected.id)
         : localUrl;
-    if (selected.url === nextLocalUrl) return;
+    if (selected?.url === nextLocalUrl) return;
     if (nextLocalUrl.includes('localhost')) {
       const [preface, address] = nextLocalUrl.split('localhost');
       // Fetch doesn't accept localhost unless prefaced with http://
@@ -153,7 +173,11 @@
     const { dropdownType } = val;
     switch (dropdownType) {
       case 'preset': {
-        const { url } = val;
+        const { type, url } = val;
+        if (type === 'google') {
+          handleMapStyleUpdate(val);
+          break;
+        }
         textInput = '';
         onChangeUrl(url);
         break;
@@ -178,14 +202,15 @@
         ...item,
         dropdownType: 'preset',
         selected:
-          selected.dropdownType === 'preset' && selected.url === item.url,
+          selected.dropdownType === 'preset' && selected?.url === item?.url,
       }));
     }
     if (branchPattern?.styles?.length) {
       options['Styles on a branch'] = branchPattern?.styles.map(s => {
         return {
           name: `${s.charAt(0).toUpperCase() + s.slice(1)} on...`,
-          id: `${s}`,
+          id: s,
+          type: branchPattern.type,
           dropdownType: 'branch',
           selected: branch && createBranchUrl(branch, s) === selected.url,
         };

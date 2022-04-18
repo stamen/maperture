@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import {
+    maps as mapsStore,
     stylePresets as stylePresetsStore,
     config as configStore,
   } from './stores';
@@ -10,6 +11,7 @@
   import MapControls from './components/MapControls.svelte';
   import { writeHash } from './query';
   import { getInitialSettings } from './settings';
+  import { validateMapState } from './map-state-utils';
   import throttle from 'lodash.throttle';
 
   export let localConfig;
@@ -23,6 +25,8 @@
   configStore.set(config);
   ({ mapboxGlAccessToken, stylePresetUrls } = config);
 
+  mapsStore.subscribe(value => (maps = value));
+
   // Throttle writing to the hash since this can get invoked many times when
   // moving the map around
   const throttledWriteHash = throttle(() => {
@@ -30,7 +34,8 @@
   }, 250);
 
   onMount(() => {
-    // Set presets initially using settings
+    // Set maps and presets initially using settings
+    mapsStore.set(settings.maps.map((map, index) => ({ ...map, index })));
     stylePresetsStore.set(settings.stylePresets);
 
     // If we have URLs for preset files, get them and update presets
@@ -43,35 +48,7 @@
   });
 
   $: if (settings && mapState) throttledWriteHash();
-
-  $: {
-    const { bearing, center, pitch, showCollisions, showBoundaries, zoom } =
-      settings;
-    mapState = { bearing, center, pitch, showCollisions, showBoundaries, zoom };
-  }
-
-  $: {
-    maps = settings.maps.map((map, index) => ({ ...map, index }));
-  }
-
-  const handleChangeMap = event => {
-    const { url, style, index, branch } = event.detail;
-    let nextMap;
-    let nextMaps = maps;
-    // Pass the stylesheet directly into state so we can detect local changes
-    nextMap = {
-      id: style.id,
-      index,
-      name: style.name,
-      type: 'mapbox-gl',
-      url,
-      style,
-      // branch is only defined for branch styles
-      branch,
-    };
-
-    nextMaps.splice(index, 1, nextMap);
-    maps = nextMaps;
+  $: if (maps) {
     // Remove the stylesheet for a more concise hash
     const mapsHash = JSON.parse(JSON.stringify(maps)).map(m => {
       delete m.style;
@@ -79,13 +56,24 @@
     });
 
     writeHash({ ...settings, maps: mapsHash, ...mapState });
-  };
+  }
+
+  $: {
+    const { bearing, center, pitch, showCollisions, showBoundaries, zoom } =
+      settings;
+    mapState = { bearing, center, pitch, showCollisions, showBoundaries, zoom };
+  }
+
+  // Validate map state when maps change too
+  $: mapState = validateMapState(mapState, maps);
 
   const handleMapState = event => {
-    mapState = {
+    let newMapState = {
       ...mapState,
       ...event.detail.options,
     };
+
+    mapState = validateMapState(newMapState, maps);
   };
 
   const handleViewMode = event => {
@@ -106,7 +94,6 @@
     {mapState}
     viewMode={settings.viewMode}
     on:mapState={handleMapState}
-    on:mapStyleState={handleChangeMap}
   />
 
   <div class="map-controls-container">

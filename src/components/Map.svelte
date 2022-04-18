@@ -1,43 +1,33 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
+  import GoogleMap from './GoogleMap.svelte';
   import MapboxGlMap from './MapboxGlMap.svelte';
   import MapLabel from './MapLabel.svelte';
 
-  const dispatch = createEventDispatcher();
-
-  export let index;
-  export let name;
-  export let type;
-  export let url;
-  export let style;
-  export let id;
-  export let branch;
-
+  export let map;
   let MapComponent;
 
-  switch (type) {
+  $: switch (map.type) {
+    case 'google':
+      MapComponent = GoogleMap;
+      break;
     case 'mapbox-gl':
     default:
-      // This is currently the only map component implemented
       MapComponent = MapboxGlMap;
   }
-
-  const handleMapStyleUpdate = event => {
-    dispatch('mapStyleState', { ...event.detail, index });
-  };
 </script>
 
 <div class="map">
   <svelte:component
     this={MapComponent}
-    url={style || url}
-    id={`${id}-${index}`}
+    index={map.index}
+    id={`${map.id}-${map.index}`}
+    mapStyle={map}
     {...$$restProps}
     on:mapMove
   />
 
-  <div class={`map-label-container map-label-container-${index}`}>
-    <MapLabel {name} {url} {branch} on:mapStyleUpdate={handleMapStyleUpdate} />
+  <div class={`map-label-container map-label-container-${map.index}`}>
+    <MapLabel index={map.index} name={map.name} />
   </div>
 </div>
 
