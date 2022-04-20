@@ -65,7 +65,7 @@ Your `index.html` file should look like the following:
 
   <script type="module">
     import { startApp } from './dist/bundle.js';
-    import localConfig from './local.js';
+    import * as localConfig from './local.js';
 
     startApp(document.body, { localConfig });
   </script>
