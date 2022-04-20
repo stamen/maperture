@@ -1,6 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
-  import { gazetteer } from '../config';
+  import { config as configStore } from '../stores';
 
   export let bearing;
   export let center;
@@ -8,6 +8,9 @@
   export let zoom;
 
   const dispatch = createEventDispatcher();
+
+  let gazetteer;
+  configStore.subscribe(value => ({ gazetteer } = value));
 
   const setDecimal = (num, len) => {
     return Number.parseFloat(num).toFixed(len);

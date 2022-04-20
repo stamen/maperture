@@ -1,10 +1,10 @@
 <script>
   import deepEqual from 'deep-equal';
+  import { config as configStore } from '../stores';
   import throttle from 'lodash.throttle';
   import { createEventDispatcher, onMount } from 'svelte';
   import mapboxgl from 'mapbox-gl';
   import 'mapbox-gl/dist/mapbox-gl.css';
-  import { mapboxGlAccessToken } from '../config';
 
   export let index;
   export let id;
@@ -20,6 +20,9 @@
   let url;
 
   $: if (mapStyle) ({ style, url } = mapStyle);
+
+  let mapboxGlAccessToken;
+  configStore.subscribe(value => ({ mapboxGlAccessToken } = value));
 
   const dispatch = createEventDispatcher();
   mapboxgl.accessToken = mapboxGlAccessToken;

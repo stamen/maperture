@@ -1,4 +1,7 @@
-import { mapboxGlAccessToken } from './config';
+import { config as configStore } from './stores';
+
+let mapboxGlAccessToken;
+configStore.subscribe(value => ({ mapboxGlAccessToken } = value));
 
 const isMapboxUrl = url => {
   if (typeof url !== 'string') return false;

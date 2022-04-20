@@ -2,8 +2,8 @@
   import {
     maps as mapsStore,
     stylePresets as stylePresetsStore,
+    config as configStore,
   } from '../stores';
-  import { branchPattern } from '../config';
   import { createBranchUrl } from '../branch-utils';
   import { shortcut } from '../shortcut';
   import { fetchUrl } from '../fetch-url';
@@ -21,8 +21,10 @@
   });
 
   let stylePresets;
+  let branchPattern;
 
   stylePresetsStore.subscribe(value => (stylePresets = value));
+  configStore.subscribe(value => ({ branchPattern } = value));
 
   let stylePresetOption = {};
   $: stylePresetOption = stylePresets && stylePresets.find(s => s.url === url);

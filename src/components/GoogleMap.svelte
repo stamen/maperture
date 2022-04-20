@@ -1,10 +1,10 @@
 <script>
   import { round } from '../math';
+  import { config as configStore } from '../stores';
   import throttle from 'lodash.throttle';
   import deepEqual from 'deep-equal';
   import { Loader } from '@googlemaps/js-api-loader';
   import { createEventDispatcher, onMount } from 'svelte';
-  import { googleMapsAPIKey } from '../config';
 
   export let index;
   export let id;
@@ -17,6 +17,8 @@
   export let mapStyle;
 
   let mapId;
+  let googleMapsAPIKey;
+  configStore.subscribe(value => ({ googleMapsAPIKey } = value));
 
   $: if (mapStyle) ({ mapId } = mapStyle);
 

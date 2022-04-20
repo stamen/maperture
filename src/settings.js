@@ -1,7 +1,7 @@
 import { readHash } from './query';
-import { mapState, maps, viewMode, stylePresets } from './config';
 
-export const getInitialSettings = () => {
+export const getInitialSettings = config => {
+  const { mapState, maps, viewMode, stylePresets } = config;
   return {
     ...mapState,
     viewMode,

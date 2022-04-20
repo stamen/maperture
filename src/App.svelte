@@ -3,19 +3,27 @@
   import {
     maps as mapsStore,
     stylePresets as stylePresetsStore,
+    config as configStore,
   } from './stores';
+  import { makeConfig } from './make-config';
   import { loadPresetsFromUrl } from './presets-utils';
   import Maps from './components/Maps.svelte';
   import MapControls from './components/MapControls.svelte';
   import { writeHash } from './query';
   import { getInitialSettings } from './settings';
-  import { mapboxGlAccessToken, stylePresetUrls } from './config';
   import { validateMapState } from './map-state-utils';
   import throttle from 'lodash.throttle';
 
+  export let localConfig;
+
   let mapState = {};
   let maps = [];
-  let settings = getInitialSettings();
+  const config = makeConfig(localConfig);
+  let settings = getInitialSettings(config);
+  let mapboxGlAccessToken;
+  let stylePresetUrls;
+  configStore.set(config);
+  ({ mapboxGlAccessToken, stylePresetUrls } = config);
 
   mapsStore.subscribe(value => (maps = value));
 
