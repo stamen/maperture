@@ -82,36 +82,32 @@ main.svelte-13vsfrg {
   width: 100%;
   z-index: 2000;
 }
-.map-controls.svelte-1xx5k5r {
-  align-items: center;
+.map-controls.svelte-1firuir {
   background: white;
   border-bottom: 1px solid #eee;
   box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
   padding: 1em;
   pointer-events: all;
 }
-.control-section.svelte-1xx5k5r {
+.control-row.svelte-1firuir {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+.control-section.svelte-1firuir {
   margin: 0 1em;
   display: flex;
 }
-.checkboxes.svelte-1xx5k5r {
+.checkboxes.svelte-1firuir {
   text-align: right;
 }
-.map.svelte-1aet2lj {
-  height: 100%;
-  width: 100%;
+.validation-messages.svelte-1firuir {
+  font-size: 0.8em;
+  margin-top: 1.5em;
 }
-.map-label-container.svelte-1aet2lj {
-  position: absolute;
-  left: 1em;
-  bottom: 2em;
-}
-.map-label-container-1.svelte-1aet2lj {
-  left: unset;
-  right: 1em;
+.validation-message-warning.svelte-1firuir {
+  color: #c1810c;
 }
 .map-state-container.svelte-xc7hba.svelte-xc7hba {
   align-items: center;
@@ -133,6 +129,19 @@ main.svelte-13vsfrg {
 }
 .location-actions.svelte-xc7hba > div.svelte-xc7hba {
   margin: 0 0.5em;
+}
+.map.svelte-1aet2lj {
+  height: 100%;
+  width: 100%;
+}
+.map-label-container.svelte-1aet2lj {
+  position: absolute;
+  left: 1em;
+  bottom: 2em;
+}
+.map-label-container-1.svelte-1aet2lj {
+  left: unset;
+  right: 1em;
 }
 .maps.svelte-tipyab.svelte-tipyab {
   align-items: center;
@@ -220,6 +229,9 @@ div.svelte-1pfu5h6 {
 .map-name.svelte-70kotq {
   font-size: 1.25em;
   font-weight: bold;
+}
+.map.svelte-16c2pp7 {
+  height: 100%;
 }
 button.svelte-d9bm20 {
   background: none;
