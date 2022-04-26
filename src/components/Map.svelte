@@ -2,8 +2,10 @@
   import GoogleMap from './GoogleMap.svelte';
   import MapboxGlMap from './MapboxGlMap.svelte';
   import MapLabel from './MapLabel.svelte';
+  import { maps as mapsStore } from '../stores';
 
   export let map;
+  export let numberOfMaps;
   let MapComponent;
 
   $: switch (map.type) {
@@ -14,6 +16,15 @@
     default:
       MapComponent = MapboxGlMap;
   }
+
+  const removeMap = () => {
+    mapsStore.update(current => {
+      const next = current
+        .filter((m, i) => i !== map.index)
+        .map((item, i) => ({ ...item, index: i }));
+      return next;
+    });
+  };
 </script>
 
 <div class="map">
@@ -26,8 +37,18 @@
     on:mapMove
   />
 
-  <div class={`map-label-container map-label-container-${map.index}`}>
-    <MapLabel index={map.index} name={map.name} />
+  <div
+    id={map.id}
+    class={`map-label-container ${
+      numberOfMaps === 2 ? `map-label-container-${map.index}` : ''
+    }`}
+  >
+    <MapLabel
+      index={map.index}
+      name={map.name}
+      onClose={removeMap}
+      disableClose={numberOfMaps <= 2}
+    />
   </div>
 </div>
 
@@ -35,16 +56,17 @@
   .map {
     height: 100%;
     width: 100%;
+    position: relative;
   }
 
   .map-label-container {
     position: absolute;
-    left: 1em;
+    right: 1em;
     bottom: 2em;
   }
 
-  .map-label-container-1 {
-    left: unset;
-    right: 1em;
+  .map-label-container-0 {
+    right: unset;
+    left: 1em;
   }
 </style>

@@ -15,9 +15,11 @@
   export let showBoundaries;
   export let zoom;
   export let mapStyle;
+  export let numberOfMaps;
 
   let style = {};
   let url;
+  let currentNumberOfMaps = 0;
 
   $: if (mapStyle) ({ style, url } = mapStyle);
 
@@ -44,6 +46,21 @@
 
   // Show tile boundaries on the map as desired
   $: if (map) map.showTileBoundaries = showBoundaries;
+
+  $: {
+    if (map && currentNumberOfMaps !== numberOfMaps) {
+      map.once('render', () => {
+        const container = document.getElementById(id);
+        if (container) {
+          const resizeObserver = new ResizeObserver(entries => {
+            map.resize();
+            currentNumberOfMaps = numberOfMaps;
+          });
+          resizeObserver.observe(container);
+        }
+      });
+    }
+  }
 
   const getCurrentMapView = () => {
     return {

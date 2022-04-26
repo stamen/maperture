@@ -1,6 +1,5 @@
 <script>
   import { createEventDispatcher } from 'svelte';
-  import Map from './Map.svelte';
   import MapsMirrorLayout from './MapsMirrorLayout.svelte';
   import MapsPhoneLayout from './MapsPhoneLayout.svelte';
   import MapsSwipeLayout from './MapsSwipeLayout.svelte';
