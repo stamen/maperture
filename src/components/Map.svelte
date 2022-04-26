@@ -6,6 +6,8 @@
 
   export let map;
   export let numberOfMaps;
+  export let themeLabel = '';
+
   let MapComponent;
 
   $: switch (map.type) {
@@ -33,15 +35,15 @@
     index={map.index}
     id={`${map.id}-${map.index}`}
     mapStyle={map}
+    {numberOfMaps}
     {...$$restProps}
     on:mapMove
   />
-
   <div
     id={map.id}
     class={`map-label-container ${
       numberOfMaps === 2 ? `map-label-container-${map.index}` : ''
-    }`}
+    } ${themeLabel}`}
   >
     <MapLabel
       index={map.index}
@@ -68,5 +70,13 @@
   .map-label-container-0 {
     right: unset;
     left: 1em;
+  }
+
+  .map-label-offset {
+    position: absolute;
+    margin-top: 48px;
+    left: 0;
+    right: 0;
+    bottom: unset;
   }
 </style>

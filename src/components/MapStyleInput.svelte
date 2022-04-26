@@ -15,9 +15,11 @@
   let branch;
 
   mapsStore.subscribe(maps => {
-    branch = maps[index].branch;
-    name = maps[index].name;
-    url = maps[index].url;
+    if (maps[index]) {
+      branch = maps[index].branch;
+      name = maps[index].name;
+      url = maps[index].url;
+    }
   });
 
   let stylePresets;

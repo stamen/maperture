@@ -53,7 +53,7 @@
         const container = document.getElementById(id);
         if (container) {
           const resizeObserver = new ResizeObserver(entries => {
-            map.resize();
+            map.resize({ resize: true });
             currentNumberOfMaps = numberOfMaps;
           });
           resizeObserver.observe(container);
@@ -107,7 +107,11 @@
       }
     };
 
-    map.on('move', handleMove);
+    map.on('move', e => {
+      if (!e?.resize) {
+        handleMove(e);
+      }
+    });
   });
 </script>
 

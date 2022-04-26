@@ -8,7 +8,13 @@
 <div class="maps phone">
   {#each maps as map}
     <div class="map-container">
-      <Map {map} {...mapState} on:mapMove />
+      <Map
+        {map}
+        {...mapState}
+        themeLabel="map-label-offset"
+        numberOfMaps={maps.length}
+        on:mapMove
+      />
     </div>
   {/each}
 </div>
