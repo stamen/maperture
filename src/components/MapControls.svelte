@@ -87,13 +87,11 @@
         </label>
       </div>
     </div>
-    <!-- --------------------------------------------------------- -->
     <div class="control-section">
-      <!-- TODO better styling -->
-      <!-- MAX OUT AT 9? -->
-      <button on:click={addMapPane}> Add a pane </button>
+      <button on:click={addMapPane} disabled={maps.length >= 8}>
+        Add a map
+      </button>
     </div>
-    <!-- --------------------------------------------------------- -->
   </div>
   {#if mapStateValidationMessages.length > 0}
     <div class="validation-messages">

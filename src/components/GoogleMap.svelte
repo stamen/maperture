@@ -15,9 +15,11 @@
   export let showCollisions;
   export let showBoundaries;
   export let mapStyle;
+  export let numberOfMaps;
 
   let mapId;
   let googleMapsAPIKey;
+  let currentNumberOfMaps = 0;
   configStore.subscribe(value => ({ googleMapsAPIKey } = value));
 
   $: if (mapStyle) ({ mapId } = mapStyle);
@@ -38,6 +40,20 @@
   // We check map and mapViewProps here to ensure this reacts to changes to
   // either
   $: if (map && mapViewProps) updateMapFromProps();
+
+  // Resize the map when adding more maps and changing container size
+  $: {
+    if (map && currentNumberOfMaps !== numberOfMaps) {
+      const container = document.getElementById(id);
+      if (container) {
+        const resizeObserver = new ResizeObserver(() => {
+          google.maps.event.trigger(map, 'resize');
+          currentNumberOfMaps = numberOfMaps;
+        });
+        resizeObserver.observe(container);
+      }
+    }
+  }
 
   const getCurrentMapView = () => {
     return {
