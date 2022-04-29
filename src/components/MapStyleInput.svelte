@@ -10,12 +10,13 @@
 
   export let index;
 
+  let map;
   let url;
   let name;
   let branch;
 
   mapsStore.subscribe(maps => {
-    const map = maps.find(m => m.index === index);
+    map = maps.find(m => m.index === index);
     if (map) {
       branch = map.branch;
       name = map.name;
@@ -60,7 +61,7 @@
     dropdownOptions = getDropdownOptions();
   };
 
-  $: if (url) {
+  $: if (map) {
     setSelected();
   }
 
