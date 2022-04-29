@@ -10,14 +10,18 @@
 
   export let index;
 
+  let map;
   let url;
   let name;
   let branch;
 
   mapsStore.subscribe(maps => {
-    branch = maps[index].branch;
-    name = maps[index].name;
-    url = maps[index].url;
+    map = maps.find(m => m.index === index);
+    if (map) {
+      branch = map.branch;
+      name = map.name;
+      url = map.url;
+    }
   });
 
   let stylePresets;
@@ -26,32 +30,40 @@
   stylePresetsStore.subscribe(value => (stylePresets = value));
   configStore.subscribe(value => ({ branchPattern } = value));
 
-  let stylePresetOption = {};
-  $: stylePresetOption = stylePresets && stylePresets.find(s => s.url === url);
-
-  let selected = {
-    name,
-    dropdownType: 'custom',
-    url,
-  };
+  let selected;
   let textInput = url;
+  let dropdownOptions = {};
+
+  const getStylePresetOption = () => {
+    return stylePresets && stylePresets.find(s => s.url === url);
+  };
 
   const setSelected = () => {
+    const stylePresetOption = getStylePresetOption();
     if (stylePresetOption) {
       selected = { ...stylePresetOption, dropdownType: 'preset' };
       textInput = '';
-    }
-    if (branch) {
+    } else if (branch) {
       selected = {
         name,
         dropdownType: 'branch',
         url,
       };
       textInput = branch;
+    } else {
+      selected = {
+        name,
+        dropdownType: 'custom',
+        url,
+      };
+      textInput = url;
     }
+    dropdownOptions = getDropdownOptions();
   };
 
-  $: if (stylePresets) setSelected();
+  $: if (map) {
+    setSelected();
+  }
 
   let localUrl = '';
   let focused = false;
@@ -129,7 +141,8 @@
     const { dropdownType } = selected;
     let nextLocalUrl =
       dropdownType === 'branch'
-        ? createBranchUrl(localUrl, selected.id)
+        ? // TODO We should sort out selected.id and selected.name here, this works but isn't clear
+          createBranchUrl(localUrl, selected.id || selected.name)
         : localUrl;
     if (selected?.url === nextLocalUrl) return;
     if (nextLocalUrl.includes('localhost')) {
@@ -193,8 +206,6 @@
     }
   };
 
-  let dropdownOptions = {};
-
   const getDropdownOptions = () => {
     const options = {};
     if (stylePresets.length) {
@@ -225,8 +236,6 @@
     ];
     return options;
   };
-
-  $: if (stylePresets) dropdownOptions = getDropdownOptions();
 
   // This runs only on mount to check for localhost in url
   poll(url);

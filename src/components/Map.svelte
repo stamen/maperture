@@ -2,8 +2,12 @@
   import GoogleMap from './GoogleMap.svelte';
   import MapboxGlMap from './MapboxGlMap.svelte';
   import MapLabel from './MapLabel.svelte';
+  import { maps as mapsStore } from '../stores';
 
   export let map;
+  export let numberOfMaps;
+  export let themeLabel = '';
+
   let MapComponent;
 
   $: switch (map.type) {
@@ -14,37 +18,67 @@
     default:
       MapComponent = MapboxGlMap;
   }
+
+  const removeMap = () => {
+    mapsStore.update(current => {
+      const next = current
+        .filter((m, i) => i !== map.index)
+        .map((item, i) => ({ ...item, index: i }));
+      return next;
+    });
+  };
 </script>
 
-<div class="map">
-  <svelte:component
-    this={MapComponent}
-    index={map.index}
-    id={`${map.id}-${map.index}`}
-    mapStyle={map}
-    {...$$restProps}
-    on:mapMove
-  />
-
-  <div class={`map-label-container map-label-container-${map.index}`}>
-    <MapLabel index={map.index} name={map.name} />
+{#key `${map.id}-${map.index}`}
+  <div class="map">
+    <svelte:component
+      this={MapComponent}
+      index={map.index}
+      id={`${map.id}-${map.index}`}
+      mapStyle={map}
+      {numberOfMaps}
+      {...$$restProps}
+      on:mapMove
+    />
+    <div
+      id={map.id}
+      class={`map-label-container ${
+        numberOfMaps === 2 ? `map-label-container-${map.index}` : ''
+      } ${themeLabel}`}
+    >
+      <MapLabel
+        index={map.index}
+        name={map.name}
+        onClose={removeMap}
+        disableClose={numberOfMaps <= 2}
+      />
+    </div>
   </div>
-</div>
+{/key}
 
 <style>
   .map {
     height: 100%;
     width: 100%;
+    position: relative;
   }
 
   .map-label-container {
     position: absolute;
-    left: 1em;
+    right: 1em;
     bottom: 2em;
   }
 
-  .map-label-container-1 {
-    left: unset;
-    right: 1em;
+  .map-label-container-0 {
+    right: unset;
+    left: 1em;
+  }
+
+  .map-label-offset {
+    position: absolute;
+    margin-top: 48px;
+    left: 0;
+    right: 0;
+    bottom: unset;
   }
 </style>

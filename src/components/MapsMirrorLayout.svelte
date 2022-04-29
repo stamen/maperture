@@ -5,9 +5,25 @@
   export let mapState;
 
   let rows = [];
+  let numberOfMaps = 0;
 
-  // Just one row for now, will split into more rows once we can have more than two map panes
   $: rows = [maps];
+
+  $: numberOfMaps = maps.length;
+
+  $: {
+    if (maps.length) {
+      const numOfRows = Math.round(Math.sqrt(numberOfMaps));
+      const mapsPerRow = Math.floor(numberOfMaps / numOfRows);
+      let mapArr = JSON.parse(JSON.stringify(maps));
+      let nextRows = [];
+      while (mapArr.length) {
+        nextRows.push(mapArr.slice(0, mapsPerRow));
+        mapArr = mapArr.slice(mapsPerRow);
+      }
+      rows = nextRows;
+    }
+  }
 </script>
 
 <div class="maps mirror">
@@ -15,7 +31,7 @@
     <div class="row">
       {#each maps as map}
         <div class="map-container">
-          <Map {map} {...mapState} on:mapMove />
+          <Map {map} {...mapState} {numberOfMaps} on:mapMove />
         </div>
       {/each}
     </div>

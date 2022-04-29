@@ -42,6 +42,15 @@
     }
     dispatch('mapState', { options });
   };
+
+  const addMapPane = () => {
+    mapsStore.update(current => {
+      let lastMap = current[current.length - 1];
+      lastMap = { ...lastMap, index: lastMap.index + 1 };
+      const next = current.concat([lastMap]);
+      return next;
+    });
+  };
 </script>
 
 <div class="map-controls">
@@ -51,7 +60,7 @@
     </div>
 
     <div class="control-section">
-      <ViewModeControl on:viewMode mode={viewMode} />
+      <ViewModeControl on:viewMode mode={viewMode} mapsNum={maps.length} />
     </div>
 
     <div class="control-section">
@@ -77,6 +86,11 @@
           <input type="checkbox" bind:checked={showBoundaries} />
         </label>
       </div>
+    </div>
+    <div class="control-section">
+      <button on:click={addMapPane} disabled={maps.length >= 8}>
+        Add a map
+      </button>
     </div>
   </div>
   {#if mapStateValidationMessages.length > 0}

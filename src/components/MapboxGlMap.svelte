@@ -2,7 +2,7 @@
   import deepEqual from 'deep-equal';
   import { config as configStore } from '../stores';
   import throttle from 'lodash.throttle';
-  import { createEventDispatcher, onMount } from 'svelte';
+  import { createEventDispatcher, onMount, onDestroy } from 'svelte';
   import mapboxgl from 'mapbox-gl';
   import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -15,6 +15,7 @@
   export let showBoundaries;
   export let zoom;
   export let mapStyle;
+  export let numberOfMaps;
 
   let style = {};
   let url;
@@ -44,6 +45,21 @@
 
   // Show tile boundaries on the map as desired
   $: if (map) map.showTileBoundaries = showBoundaries;
+
+  // Resize the map when adding more maps and changing container size
+  $: {
+    if (map && numberOfMaps) {
+      map.once('render', () => {
+        const container = document.getElementById(id);
+        if (container) {
+          const resizeObserver = new ResizeObserver(() => {
+            map.resize({ resize: true });
+          });
+          resizeObserver.observe(container);
+        }
+      });
+    }
+  }
 
   const getCurrentMapView = () => {
     return {
@@ -90,7 +106,17 @@
       }
     };
 
-    map.on('move', handleMove);
+    map.on('move', e => {
+      if (!e?.resize) {
+        handleMove(e);
+      }
+    });
+  });
+
+  onDestroy(() => {
+    if (map) {
+      map.remove();
+    }
   });
 </script>
 
