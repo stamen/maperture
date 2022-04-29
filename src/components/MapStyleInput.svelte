@@ -140,7 +140,8 @@
     const { dropdownType } = selected;
     let nextLocalUrl =
       dropdownType === 'branch'
-        ? createBranchUrl(localUrl, selected.id)
+        ? // TODO We should sort out selected.id and selected.name here, this works but isn't clear
+          createBranchUrl(localUrl, selected.id || selected.name)
         : localUrl;
     if (selected?.url === nextLocalUrl) return;
     if (nextLocalUrl.includes('localhost')) {
