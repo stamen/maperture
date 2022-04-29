@@ -15,10 +15,11 @@
   let branch;
 
   mapsStore.subscribe(maps => {
-    if (maps[index]) {
-      branch = maps[index].branch;
-      name = maps[index].name;
-      url = maps[index].url;
+    const map = maps.find(m => m.index === index);
+    if (map) {
+      branch = map.branch;
+      name = map.name;
+      url = map.url;
     }
   });
 
@@ -28,32 +29,40 @@
   stylePresetsStore.subscribe(value => (stylePresets = value));
   configStore.subscribe(value => ({ branchPattern } = value));
 
-  let stylePresetOption = {};
-  $: stylePresetOption = stylePresets && stylePresets.find(s => s.url === url);
-
-  let selected = {
-    name,
-    dropdownType: 'custom',
-    url,
-  };
+  let selected;
   let textInput = url;
+  let dropdownOptions = {};
+
+  const getStylePresetOption = () => {
+    return stylePresets && stylePresets.find(s => s.url === url);
+  };
 
   const setSelected = () => {
+    const stylePresetOption = getStylePresetOption();
     if (stylePresetOption) {
       selected = { ...stylePresetOption, dropdownType: 'preset' };
       textInput = '';
-    }
-    if (branch) {
+    } else if (branch) {
       selected = {
         name,
         dropdownType: 'branch',
         url,
       };
       textInput = branch;
+    } else {
+      selected = {
+        name,
+        dropdownType: 'custom',
+        url,
+      };
+      textInput = url;
     }
+    dropdownOptions = getDropdownOptions();
   };
 
-  $: if (stylePresets) setSelected();
+  $: if (url) {
+    setSelected();
+  }
 
   let localUrl = '';
   let focused = false;
@@ -195,8 +204,6 @@
     }
   };
 
-  let dropdownOptions = {};
-
   const getDropdownOptions = () => {
     const options = {};
     if (stylePresets.length) {
@@ -227,8 +234,6 @@
     ];
     return options;
   };
-
-  $: if (stylePresets) dropdownOptions = getDropdownOptions();
 
   // This runs only on mount to check for localhost in url
   poll(url);

@@ -29,30 +29,32 @@
   };
 </script>
 
-<div class="map">
-  <svelte:component
-    this={MapComponent}
-    index={map.index}
-    id={`${map.id}-${map.index}`}
-    mapStyle={map}
-    {numberOfMaps}
-    {...$$restProps}
-    on:mapMove
-  />
-  <div
-    id={map.id}
-    class={`map-label-container ${
-      numberOfMaps === 2 ? `map-label-container-${map.index}` : ''
-    } ${themeLabel}`}
-  >
-    <MapLabel
+{#key `${map.id}-${map.index}`}
+  <div class="map">
+    <svelte:component
+      this={MapComponent}
       index={map.index}
-      name={map.name}
-      onClose={removeMap}
-      disableClose={numberOfMaps <= 2}
+      id={`${map.id}-${map.index}`}
+      mapStyle={map}
+      {numberOfMaps}
+      {...$$restProps}
+      on:mapMove
     />
+    <div
+      id={map.id}
+      class={`map-label-container ${
+        numberOfMaps === 2 ? `map-label-container-${map.index}` : ''
+      } ${themeLabel}`}
+    >
+      <MapLabel
+        index={map.index}
+        name={map.name}
+        onClose={removeMap}
+        disableClose={numberOfMaps <= 2}
+      />
+    </div>
   </div>
-</div>
+{/key}
 
 <style>
   .map {
