@@ -19,7 +19,6 @@
 
   let style = {};
   let url;
-  let currentNumberOfMaps = 0;
 
   $: if (mapStyle) ({ style, url } = mapStyle);
 
@@ -49,13 +48,12 @@
 
   // Resize the map when adding more maps and changing container size
   $: {
-    if (map && currentNumberOfMaps !== numberOfMaps) {
+    if (map && numberOfMaps) {
       map.once('render', () => {
         const container = document.getElementById(id);
         if (container) {
           const resizeObserver = new ResizeObserver(() => {
             map.resize({ resize: true });
-            currentNumberOfMaps = numberOfMaps;
           });
           resizeObserver.observe(container);
         }
