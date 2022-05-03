@@ -43836,7 +43836,7 @@ function Ua(t) {
         (r = d('div')),
           et(n.$$.fragment),
           (i = y()),
-          w(r, 'class', 'map-container svelte-hiz3o7');
+          w(r, 'class', 'map-container svelte-1hvjgnk');
       },
       m(t, e) {
         p(t, r, e), rt(n, r, null), c(r, i), (A = !0);
@@ -43880,8 +43880,8 @@ function Qa(t) {
     c() {
       (e = d('div')), (r = d('div'));
       for (let t = 0; t < A.length; t += 1) A[t].c();
-      w(r, 'class', 'maps phone svelte-hiz3o7'),
-        w(e, 'class', 'viewer-container svelte-hiz3o7');
+      w(r, 'class', 'maps phone svelte-1hvjgnk'),
+        w(e, 'class', 'viewer-container svelte-1hvjgnk');
     },
     m(t, i) {
       p(t, e, i), c(e, r);
@@ -44023,6 +44023,7 @@ function La(t) {
         w(n, 'class', 'slider svelte-yry985'),
         b(n, 'left', t[4] + 'px'),
         b(n, 'width', Ma + 'px'),
+        w(e, 'id', 'layout'),
         w(e, 'class', 'maps svelte-yry985'),
         K(() => t[10].call(e)),
         I(e, 'dragging', t[3]);
@@ -44235,159 +44236,8 @@ class za extends ot {
     super(), At(this, t, Ha, ka, o, { maps: 0, mapState: 1, viewMode: 4 });
   }
 }
-var Oa,
-  Ra = { exports: {} };
-(Oa = Ra),
-  (function () {
-    function t(t, e) {
-      return (
-        void 0 === e
-          ? (e = { autoBom: !1 })
-          : 'object' != typeof e &&
-            (console.warn('Deprecated: Expected third argument to be a object'),
-            (e = { autoBom: !e })),
-        e.autoBom &&
-        /^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(
-          t.type
-        )
-          ? new Blob(['\ufeff', t], { type: t.type })
-          : t
-      );
-    }
-    function e(t, e, r) {
-      var n = new XMLHttpRequest();
-      n.open('GET', t),
-        (n.responseType = 'blob'),
-        (n.onload = function () {
-          o(n.response, e, r);
-        }),
-        (n.onerror = function () {
-          console.error('could not download file');
-        }),
-        n.send();
-    }
-    function r(t) {
-      var e = new XMLHttpRequest();
-      e.open('HEAD', t, !1);
-      try {
-        e.send();
-      } catch (t) {}
-      return 200 <= e.status && 299 >= e.status;
-    }
-    function n(t) {
-      try {
-        t.dispatchEvent(new MouseEvent('click'));
-      } catch (r) {
-        var e = document.createEvent('MouseEvents');
-        e.initMouseEvent(
-          'click',
-          !0,
-          !0,
-          window,
-          0,
-          0,
-          0,
-          80,
-          20,
-          !1,
-          !1,
-          !1,
-          !1,
-          0,
-          null
-        ),
-          t.dispatchEvent(e);
-      }
-    }
-    var i =
-        'object' == typeof window && window.window === window
-          ? window
-          : 'object' == typeof self && self.self === self
-          ? self
-          : 'object' == typeof ft && ft.global === ft
-          ? ft
-          : void 0,
-      A =
-        i.navigator &&
-        /Macintosh/.test(navigator.userAgent) &&
-        /AppleWebKit/.test(navigator.userAgent) &&
-        !/Safari/.test(navigator.userAgent),
-      o =
-        i.saveAs ||
-        ('object' != typeof window || window !== i
-          ? function () {}
-          : 'download' in HTMLAnchorElement.prototype && !A
-          ? function (t, A, o) {
-              var a = i.URL || i.webkitURL,
-                s = document.createElement('a');
-              (A = A || t.name || 'download'),
-                (s.download = A),
-                (s.rel = 'noopener'),
-                'string' == typeof t
-                  ? ((s.href = t),
-                    s.origin === location.origin
-                      ? n(s)
-                      : r(s.href)
-                      ? e(t, A, o)
-                      : n(s, (s.target = '_blank')))
-                  : ((s.href = a.createObjectURL(t)),
-                    setTimeout(function () {
-                      a.revokeObjectURL(s.href);
-                    }, 4e4),
-                    setTimeout(function () {
-                      n(s);
-                    }, 0));
-            }
-          : 'msSaveOrOpenBlob' in navigator
-          ? function (i, A, o) {
-              if (((A = A || i.name || 'download'), 'string' != typeof i))
-                navigator.msSaveOrOpenBlob(t(i, o), A);
-              else if (r(i)) e(i, A, o);
-              else {
-                var a = document.createElement('a');
-                (a.href = i),
-                  (a.target = '_blank'),
-                  setTimeout(function () {
-                    n(a);
-                  });
-              }
-            }
-          : function (t, r, n, o) {
-              if (
-                ((o = o || open('', '_blank')) &&
-                  (o.document.title = o.document.body.innerText =
-                    'downloading...'),
-                'string' == typeof t)
-              )
-                return e(t, r, n);
-              var a = 'application/octet-stream' === t.type,
-                s = /constructor/i.test(i.HTMLElement) || i.safari,
-                l = /CriOS\/[\d]+/.test(navigator.userAgent);
-              if ((l || (a && s) || A) && 'undefined' != typeof FileReader) {
-                var u = new FileReader();
-                (u.onloadend = function () {
-                  var t = u.result;
-                  (t = l
-                    ? t
-                    : t.replace(/^data:[^;]*;/, 'data:attachment/file;')),
-                    o ? (o.location.href = t) : (location = t),
-                    (o = null);
-                }),
-                  u.readAsDataURL(t);
-              } else {
-                var c = i.URL || i.webkitURL,
-                  p = c.createObjectURL(t);
-                o ? (o.location = p) : (location.href = p),
-                  (o = null),
-                  setTimeout(function () {
-                    c.revokeObjectURL(p);
-                  }, 4e4);
-              }
-            });
-    (i.saveAs = o.saveAs = o), (Oa.exports = o);
-  })();
-var Ka = { exports: {} },
-  Va = (Ka.exports = (function () {
+var Oa = { exports: {} },
+  Ra = (Oa.exports = (function () {
     /*! *****************************************************************************
     Copyright (c) Microsoft Corporation.
 
@@ -52042,7 +51892,7 @@ var Ka = { exports: {} },
  * html2canvas 1.4.1 <https://html2canvas.hertzen.com>
  * Copyright (c) 2022 Niklas von Hertzen <https://hertzen.com>
  * Released under MIT License
- */ function Na(t, e = {}) {
+ */ function Ka(t, e = {}) {
   const r = [
       {
         type: 'script',
@@ -52088,7 +51938,7 @@ var Ka = { exports: {} },
           return () => {
             for (const [e, r] of i) t.off(e, r);
           };
-        })(r, Ga, !1, e);
+        })(r, Va, !1, e);
       })(e, t);
     }),
     {
@@ -52098,7 +51948,7 @@ var Ka = { exports: {} },
     }
   );
 }
-const Ga = {
+const Va = {
   results: (t, e) => ['results', e],
   result: (t, e) => ['result', e],
   loading: (t, e) => ['loading', e],
@@ -52106,7 +51956,7 @@ const Ga = {
   clear: (t, e) => ['clear', e],
   load: t => ['ready', { geocoder: t }],
 };
-function ja(e) {
+function Na(e) {
   let r, n, A;
   return {
     c() {
@@ -52116,7 +51966,7 @@ function ja(e) {
       p(t, r, i),
         n ||
           ((A = [
-            u(Na.call(null, r, e[1])),
+            u(Ka.call(null, r, e[1])),
             _(r, 'ready', e[2]),
             _(r, 'results', e[11]),
             _(r, 'result', e[12]),
@@ -52135,7 +51985,7 @@ function ja(e) {
     },
   };
 }
-function Xa(t, e, r) {
+function Ga(t, e, r) {
   let { accessToken: n } = e,
     { options: i = {} } = e,
     { version: A = 'v4.5.1' } = e,
@@ -52214,10 +52064,10 @@ function Xa(t, e, r) {
     ]
   );
 }
-class Za extends ot {
+class ja extends ot {
   constructor(t) {
     super(),
-      At(this, t, Xa, ja, o, {
+      At(this, t, Ga, Na, o, {
         accessToken: 4,
         options: 5,
         version: 6,
@@ -52229,18 +52079,18 @@ class Za extends ot {
       });
   }
 }
-const qa = ['swipe', 'mirror', 'phone'],
-  Wa = (t, e) =>
+const Xa = ['swipe', 'mirror', 'phone'],
+  Za = (t, e) =>
     e.some(({ type: t }) => 'google' === t) ? (t.zoom < 12 ? 35 : 45) : 60,
-  Ja = (t, e) => {
+  qa = (t, e) => {
     const r = { ...t };
     if ((t => t.some(({ type: t }) => 'google' === t))(e)) {
-      const n = Wa(t, e);
+      const n = Za(t, e);
       r.pitch > n && (r.pitch = n);
     }
     return r;
   };
-function $a(t) {
+function Wa(t) {
   let e, r, n, i;
   const A = t[1].default,
     o = (function (t, e, r, n) {
@@ -52311,7 +52161,7 @@ function $a(t) {
     },
   };
 }
-function Ya(t, e, r) {
+function Ja(t, e, r) {
   let { $$slots: n = {}, $$scope: i } = e;
   return (
     (t.$$set = t => {
@@ -52326,20 +52176,20 @@ function Ya(t, e, r) {
     ]
   );
 }
-class ts extends ot {
+class $a extends ot {
   constructor(t) {
-    super(), At(this, t, Ya, $a, o, {});
+    super(), At(this, t, Ja, Wa, o, {});
   }
 }
-function es(t) {
+function Ya(t) {
   let e, r, n, i, A, o, a, s, l, u, f;
   return (
-    (a = new ts({
-      props: { $$slots: { default: [ns] }, $$scope: { ctx: t } },
+    (a = new $a({
+      props: { $$slots: { default: [es] }, $$scope: { ctx: t } },
     })),
     a.$on('click', t[5]),
-    (u = new ts({
-      props: { $$slots: { default: [is] }, $$scope: { ctx: t } },
+    (u = new $a({
+      props: { $$slots: { default: [rs] }, $$scope: { ctx: t } },
     })),
     u.$on('click', t[4]),
     {
@@ -52392,7 +52242,7 @@ function es(t) {
     }
   );
 }
-function rs(e) {
+function ts(e) {
   let r, n, A, o, a, s;
   return {
     c() {
@@ -52422,7 +52272,7 @@ function rs(e) {
     },
   };
 }
-function ns(t) {
+function es(t) {
   let e;
   return {
     c() {
@@ -52436,7 +52286,7 @@ function ns(t) {
     },
   };
 }
-function is(t) {
+function rs(t) {
   let e,
     r = t[1] ? 'copied' : 'copy';
   return {
@@ -52454,9 +52304,9 @@ function is(t) {
     },
   };
 }
-function As(t) {
+function ns(t) {
   let e, r, n, i;
-  const A = [rs, es],
+  const A = [ts, Ya],
     o = [];
   function a(t, e) {
     return t[2] ? 0 : 1;
@@ -52498,7 +52348,7 @@ function As(t) {
     }
   );
 }
-function os(t, e, r) {
+function is(t, e, r) {
   let { bearing: n } = e,
     { center: i } = e,
     { pitch: A } = e,
@@ -52562,17 +52412,17 @@ function os(t, e, r) {
     ]
   );
 }
-class as extends ot {
+class As extends ot {
   constructor(t) {
     super(),
-      At(this, t, os, As, o, { bearing: 8, center: 9, pitch: 10, zoom: 11 });
+      At(this, t, is, ns, o, { bearing: 8, center: 9, pitch: 10, zoom: 11 });
   }
 }
-function ss(t, e, r) {
+function os(t, e, r) {
   const n = t.slice();
   return (n[0] = e[r]), n;
 }
-function ls(t) {
+function as(t) {
   let e,
     r,
     n,
@@ -52596,14 +52446,14 @@ function ls(t) {
     },
   };
 }
-function us(e) {
+function ss(e) {
   let r,
     n,
     i,
     A,
     o = e[2],
     a = [];
-  for (let t = 0; t < o.length; t += 1) a[t] = ls(ss(e, o, t));
+  for (let t = 0; t < o.length; t += 1) a[t] = as(os(e, o, t));
   return {
     c() {
       (r = d('div')), (n = d('select'));
@@ -52619,8 +52469,8 @@ function us(e) {
       if (4 & e) {
         let r;
         for (o = t[2], r = 0; r < o.length; r += 1) {
-          const i = ss(t, o, r);
-          a[r] ? a[r].p(i, e) : ((a[r] = ls(i)), a[r].c(), a[r].m(n, null));
+          const i = os(t, o, r);
+          a[r] ? a[r].p(i, e) : ((a[r] = as(i)), a[r].c(), a[r].m(n, null));
         }
         for (; r < a.length; r += 1) a[r].d(1);
         a.length = o.length;
@@ -52634,12 +52484,12 @@ function us(e) {
     },
   };
 }
-function cs(t, e, r) {
+function ls(t, e, r) {
   let { mode: n } = e,
     { mapsNum: i } = e;
   const A = M();
   let o = '',
-    a = qa;
+    a = Xa;
   return (
     (t.$$set = t => {
       'mode' in t && r(0, (n = t.mode)),
@@ -52648,9 +52498,9 @@ function cs(t, e, r) {
     (t.$$.update = () => {
       1 & t.$$.dirty && r(1, (o = n)),
         14 & t.$$.dirty &&
-          (2 === i && r(2, (a = qa)),
-          i > 2 && i <= 4 && r(2, (a = qa.filter(t => 'swipe' !== t))),
-          i > 4 && r(2, (a = qa.filter(t => 'swipe' !== t && 'phone' !== t))),
+          (2 === i && r(2, (a = Xa)),
+          i > 2 && i <= 4 && r(2, (a = Xa.filter(t => 'swipe' !== t))),
+          i > 4 && r(2, (a = Xa.filter(t => 'swipe' !== t && 'phone' !== t))),
           a.includes(o) || r(1, (o = a[0]))),
         2 & t.$$.dirty && o && A('viewMode', { mode: o });
     }),
@@ -52673,26 +52523,26 @@ function cs(t, e, r) {
     ]
   );
 }
-class ps extends ot {
+class us extends ot {
   constructor(t) {
-    super(), At(this, t, cs, us, o, { mode: 0, mapsNum: 3 });
+    super(), At(this, t, ls, ss, o, { mode: 0, mapsNum: 3 });
   }
 }
-function hs(t, e, r) {
+function cs(t, e, r) {
   const n = t.slice();
   return (n[13] = e[r]), n;
 }
-function fs(t, e, r) {
+function ps(t, e, r) {
   const n = t.slice();
   return (n[16] = e[r]), n;
 }
-function ds(t) {
+function hs(t) {
   let e,
     r,
     n,
     i = Object.keys(t[1]),
     A = [];
-  for (let e = 0; e < i.length; e += 1) A[e] = ms(hs(t, i, e));
+  for (let e = 0; e < i.length; e += 1) A[e] = ds(cs(t, i, e));
   return {
     c() {
       e = d('select');
@@ -52708,8 +52558,8 @@ function ds(t) {
       if (2 & r) {
         let n;
         for (i = Object.keys(t[1]), n = 0; n < i.length; n += 1) {
-          const o = hs(t, i, n);
-          A[n] ? A[n].p(o, r) : ((A[n] = ms(o)), A[n].c(), A[n].m(e, null));
+          const o = cs(t, i, n);
+          A[n] ? A[n].p(o, r) : ((A[n] = ds(o)), A[n].c(), A[n].m(e, null));
         }
         for (; n < A.length; n += 1) A[n].d(1);
         A.length = i.length;
@@ -52721,7 +52571,7 @@ function ds(t) {
     },
   };
 }
-function gs(t) {
+function fs(t) {
   let e,
     r,
     n,
@@ -52747,13 +52597,13 @@ function gs(t) {
     },
   };
 }
-function ms(t) {
+function ds(t) {
   let e,
     r,
     n,
     i = t[1][t[13]],
     A = [];
-  for (let e = 0; e < i.length; e += 1) A[e] = gs(fs(t, i, e));
+  for (let e = 0; e < i.length; e += 1) A[e] = fs(ps(t, i, e));
   return {
     c() {
       (e = d('optgroup')), (r = d('option')), (r.textContent = 'Go to...');
@@ -52773,8 +52623,8 @@ function ms(t) {
       if (2 & r) {
         let n;
         for (i = t[1][t[13]], n = 0; n < i.length; n += 1) {
-          const o = fs(t, i, n);
-          A[n] ? A[n].p(o, r) : ((A[n] = gs(o)), A[n].c(), A[n].m(e, null));
+          const o = ps(t, i, n);
+          A[n] ? A[n].p(o, r) : ((A[n] = fs(o)), A[n].c(), A[n].m(e, null));
         }
         for (; n < A.length; n += 1) A[n].d(1);
         A.length = i.length;
@@ -52786,9 +52636,9 @@ function ms(t) {
     },
   };
 }
-function ys(e) {
+function gs(e) {
   let r,
-    n = e[1] && ds(e);
+    n = e[1] && hs(e);
   return {
     c() {
       n && n.c(), (r = v());
@@ -52800,7 +52650,7 @@ function ys(e) {
       t[1]
         ? n
           ? n.p(t, e)
-          : ((n = ds(t)), n.c(), n.m(r.parentNode, r))
+          : ((n = hs(t)), n.c(), n.m(r.parentNode, r))
         : n && (n.d(1), (n = null));
     },
     i: t,
@@ -52810,7 +52660,7 @@ function ys(e) {
     },
   };
 }
-function vs(t, e, r) {
+function ms(t, e, r) {
   let { bearing: n } = e,
     { center: i } = e,
     { pitch: A } = e,
@@ -52881,21 +52731,21 @@ function vs(t, e, r) {
     ]
   );
 }
-class _s extends ot {
+class ys extends ot {
   constructor(t) {
     super(),
-      At(this, t, vs, ys, o, { bearing: 2, center: 3, pitch: 4, zoom: 5 });
+      At(this, t, ms, gs, o, { bearing: 2, center: 3, pitch: 4, zoom: 5 });
   }
 }
-function ws(t, e, r) {
+function vs(t, e, r) {
   const n = t.slice();
   return (n[20] = e[r]), n;
 }
-function Bs(t) {
+function _s(t) {
   let e,
     r = t[6],
     n = [];
-  for (let e = 0; e < r.length; e += 1) n[e] = xs(ws(t, r, e));
+  for (let e = 0; e < r.length; e += 1) n[e] = ws(vs(t, r, e));
   return {
     c() {
       e = d('div');
@@ -52910,8 +52760,8 @@ function Bs(t) {
       if (64 & i) {
         let A;
         for (r = t[6], A = 0; A < r.length; A += 1) {
-          const o = ws(t, r, A);
-          n[A] ? n[A].p(o, i) : ((n[A] = xs(o)), n[A].c(), n[A].m(e, null));
+          const o = vs(t, r, A);
+          n[A] ? n[A].p(o, i) : ((n[A] = ws(o)), n[A].c(), n[A].m(e, null));
         }
         for (; A < n.length; A += 1) n[A].d(1);
         n.length = r.length;
@@ -52922,7 +52772,7 @@ function Bs(t) {
     },
   };
 }
-function xs(t) {
+function ws(t) {
   let e,
     r,
     n,
@@ -52952,7 +52802,7 @@ function xs(t) {
     },
   };
 }
-function bs(t) {
+function Bs(t) {
   let r,
     n,
     A,
@@ -52999,20 +52849,20 @@ function bs(t) {
   const st = [t[5]];
   let lt = {};
   for (let t = 0; t < st.length; t += 1) lt = e(lt, st[t]);
-  (o = new as({ props: lt })),
+  (o = new As({ props: lt })),
     o.$on('mapState', t[14]),
-    (l = new ps({ props: { mode: t[3], mapsNum: t[4].length } })),
+    (l = new us({ props: { mode: t[3], mapsNum: t[4].length } })),
     l.$on('viewMode', t[15]),
-    (g = new Za({ props: { accessToken: t[2], geocoder: null } })),
+    (g = new ja({ props: { accessToken: t[2], geocoder: null } })),
     g.$on('result', t[7]);
   const ut = [t[5]];
   let ct = {};
   for (let t = 0; t < ut.length; t += 1) ct = e(ct, ut[t]);
-  (x = new _s({ props: ct })),
+  (x = new ys({ props: ct })),
     x.$on('mapState', t[16]),
     (R = new Yo({ props: { icon: No } })),
     (X = new Yo({ props: { icon: Vo } }));
-  let pt = t[6].length > 0 && Bs(t);
+  let pt = t[6].length > 0 && _s(t);
   return {
     c() {
       (r = d('div')),
@@ -53051,7 +52901,7 @@ function bs(t) {
         (G = y()),
         (j = d('button')),
         et(X.$$.fragment),
-        (Z = m(' Screenshot')),
+        (Z = m('\n          Copy image')),
         (it = y()),
         pt && pt.c(),
         w(A, 'class', 'control-section svelte-v9dmm4'),
@@ -53076,7 +52926,7 @@ function bs(t) {
           (W =
             'swipe' === t[3]
               ? 'Must be in phone or mirror mode to screenshot.'
-              : '')
+              : 'Copy image to clipboard')
         ),
         w(z, 'class', 'buttons svelte-v9dmm4'),
         w(H, 'class', 'control-section svelte-v9dmm4'),
@@ -53157,12 +53007,12 @@ function bs(t) {
               (W =
                 'swipe' === t[3]
                   ? 'Must be in phone or mirror mode to screenshot.'
-                  : ''))) &&
+                  : 'Copy image to clipboard'))) &&
           w(j, 'title', W),
         t[6].length > 0
           ? pt
             ? pt.p(t, e)
-            : ((pt = Bs(t)), pt.c(), pt.m(r, null))
+            : ((pt = _s(t)), pt.c(), pt.m(r, null))
           : pt && (pt.d(1), (pt = null));
     },
     i(t) {
@@ -53198,7 +53048,7 @@ function bs(t) {
     },
   };
 }
-function Cs(t, e, r) {
+function xs(t, e, r) {
   let { bearing: n } = e,
     { center: i } = e,
     { mapboxGlAccessToken: A } = e,
@@ -53231,7 +53081,7 @@ function Cs(t, e, r) {
             6,
             (f = ((t, e) => {
               const r = [],
-                n = Wa(t, e);
+                n = Za(t, e);
               return (
                 t.pitch >= n &&
                   r.push({
@@ -53266,14 +53116,15 @@ function Cs(t, e, r) {
         });
       },
       () => {
-        const t = h.map(t => (t.id ? t.id : t.name)).join('-'),
-          e = document.getElementById('maps-view');
-        Va(e, {
+        const t = document.getElementsByClassName('maps')[0];
+        Ra(t, {
           ignoreElements: t =>
             !(!t.className || 'string' != typeof t.className) &&
             t.className.includes('map-label'),
-        }).then(e => {
-          Ra.exports.saveAs(e.toDataURL(), `${t}.png`);
+        }).then(t => {
+          t.toBlob(t =>
+            navigator.clipboard.write([new ClipboardItem({ 'image/png': t })])
+          );
         });
       },
       n,
@@ -53298,10 +53149,10 @@ function Cs(t, e, r) {
     ]
   );
 }
-class Fs extends ot {
+class bs extends ot {
   constructor(t) {
     super(),
-      At(this, t, Cs, bs, o, {
+      At(this, t, xs, Bs, o, {
         bearing: 10,
         center: 11,
         mapboxGlAccessToken: 2,
@@ -53313,15 +53164,15 @@ class Fs extends ot {
       });
   }
 }
-const Us = ['maps'],
-  Qs = ['showCollisions', 'showBoundaries'],
-  Es = ['bearing', 'center', 'pitch', 'zoom'],
-  Is = ['bearing', 'lat', 'lng', 'pitch', 'zoom'];
-function Ss(t) {
+const Cs = ['maps'],
+  Fs = ['showCollisions', 'showBoundaries'],
+  Us = ['bearing', 'center', 'pitch', 'zoom'],
+  Qs = ['bearing', 'lat', 'lng', 'pitch', 'zoom'];
+function Es(t) {
   const e = Object.fromEntries(
     Object.entries(t)
-      .filter(([t, e]) => !Es.includes(t))
-      .map(([t, e]) => [t, Us.includes(t) ? JSON.stringify(e) : e])
+      .filter(([t, e]) => !Us.includes(t))
+      .map(([t, e]) => [t, Cs.includes(t) ? JSON.stringify(e) : e])
   );
   window.location.hash = (function (t) {
     let e = t.map ? `map=${t.map}` : '';
@@ -53345,7 +53196,7 @@ function Ss(t) {
     ...e,
   });
 }
-function Ts(t) {
+function Is(t) {
   let e = Object.fromEntries(
     Object.entries(
       (function (t) {
@@ -53363,11 +53214,11 @@ function Ts(t) {
     )
       .filter(([t, e]) => !!e)
       .map(([t, e]) =>
-        Us.includes(t)
+        Cs.includes(t)
           ? [t, JSON.parse(e)]
-          : Qs.includes(t)
+          : Fs.includes(t)
           ? [t, 'true' === e]
-          : Is.includes(t)
+          : Qs.includes(t)
           ? [t, +e || 0]
           : [t, e]
       )
@@ -53378,75 +53229,71 @@ function Ts(t) {
   }
   return e.map && delete e.map, e;
 }
-function Ls(t) {
-  let r, n, i, A, o, a, s, l, u;
-  (o = new za({
+function Ss(t) {
+  let r, n, i, A, o, a, s, l;
+  (A = new za({
     props: { maps: t[1], mapState: t[0], viewMode: t[2].viewMode },
   })),
-    o.$on('mapState', t[4]);
-  const f = [{ mapboxGlAccessToken: t[3] }, t[0], { viewMode: t[2].viewMode }];
-  let g = {};
-  for (let t = 0; t < f.length; t += 1) g = e(g, f[t]);
+    A.$on('mapState', t[4]);
+  const u = [{ mapboxGlAccessToken: t[3] }, t[0], { viewMode: t[2].viewMode }];
+  let f = {};
+  for (let t = 0; t < u.length; t += 1) f = e(f, u[t]);
   return (
-    (l = new Fs({ props: g })),
-    l.$on('mapState', t[4]),
-    l.$on('viewMode', t[5]),
+    (s = new bs({ props: f })),
+    s.$on('mapState', t[4]),
+    s.$on('viewMode', t[5]),
     {
       c() {
         (r = d('base')),
           (n = y()),
           (i = d('main')),
-          (A = d('div')),
-          et(o.$$.fragment),
-          (a = y()),
-          (s = d('div')),
-          et(l.$$.fragment),
+          et(A.$$.fragment),
+          (o = y()),
+          (a = d('div')),
+          et(s.$$.fragment),
           w(r, 'href', '/'),
-          w(A, 'id', 'maps-view'),
-          w(A, 'class', 'svelte-101323n'),
-          w(s, 'class', 'map-controls-container svelte-101323n'),
-          w(i, 'class', 'svelte-101323n');
+          w(a, 'class', 'map-controls-container svelte-13vsfrg'),
+          w(i, 'class', 'svelte-13vsfrg');
       },
       m(t, e) {
         c(document.head, r),
           p(t, n, e),
           p(t, i, e),
-          c(i, A),
-          rt(o, A, null),
+          rt(A, i, null),
+          c(i, o),
           c(i, a),
-          c(i, s),
-          rt(l, s, null),
-          (u = !0);
+          rt(s, a, null),
+          (l = !0);
       },
       p(t, [e]) {
         const r = {};
         2 & e && (r.maps = t[1]),
           1 & e && (r.mapState = t[0]),
           4 & e && (r.viewMode = t[2].viewMode),
-          o.$set(r);
+          A.$set(r);
         const n =
           13 & e
-            ? Y(f, [
+            ? Y(u, [
                 8 & e && { mapboxGlAccessToken: t[3] },
                 1 & e && tt(t[0]),
                 4 & e && { viewMode: t[2].viewMode },
               ])
             : {};
-        l.$set(n);
+        s.$set(n);
       },
       i(t) {
-        u || (J(o.$$.fragment, t), J(l.$$.fragment, t), (u = !0));
+        l || (J(A.$$.fragment, t), J(s.$$.fragment, t), (l = !0));
       },
       o(t) {
-        $(o.$$.fragment, t), $(l.$$.fragment, t), (u = !1);
+        $(A.$$.fragment, t), $(s.$$.fragment, t), (l = !1);
       },
       d(t) {
-        h(r), t && h(n), t && h(i), nt(o), nt(l);
+        h(r), t && h(n), t && h(i), nt(A), nt(s);
       },
     }
   );
 }
-function Ms(t, e, r) {
+function Ts(t, e, r) {
   let { localConfig: n } = e,
     i = {},
     A = [];
@@ -53506,14 +53353,14 @@ function Ms(t, e, r) {
         viewMode: n,
         maps: r,
         stylePresets: i,
-        ...Ts(window.location.hash),
+        ...Is(window.location.hash),
       };
     })(o);
   ct.set(o),
     ({ mapboxGlAccessToken: a, stylePresetUrls: s } = o),
     lt.subscribe(t => r(1, (A = t)));
   const u = Tt(() => {
-    Ss({ ...l, ...i });
+    Es({ ...l, ...i });
   }, 250);
   L(() => {
     lt.set(l.maps.map((t, e) => ({ ...t, index: e }))),
@@ -53560,12 +53407,12 @@ function Ms(t, e, r) {
         );
       }
       if (
-        (3 & t.$$.dirty && r(0, (i = Ja(i, A))),
+        (3 & t.$$.dirty && r(0, (i = qa(i, A))),
         5 & t.$$.dirty && l && i && u(),
         7 & t.$$.dirty && A)
       ) {
         const t = JSON.parse(JSON.stringify(A)).map(t => (delete t.style, t));
-        Ss({ ...l, maps: t, ...i });
+        Es({ ...l, maps: t, ...i });
       }
     }),
     [
@@ -53575,7 +53422,7 @@ function Ms(t, e, r) {
       a,
       t => {
         let e = { ...i, ...t.detail.options };
-        r(0, (i = Ja(e, A)));
+        r(0, (i = qa(e, A)));
       },
       t => {
         r(2, (l = { ...l, ...i, viewMode: t.detail.mode }));
@@ -53584,11 +53431,11 @@ function Ms(t, e, r) {
     ]
   );
 }
-class Ds extends ot {
+class Ls extends ot {
   constructor(t) {
-    super(), At(this, t, Ms, Ls, o, { localConfig: 6 });
+    super(), At(this, t, Ts, Ss, o, { localConfig: 6 });
   }
 }
-const Ps = (t, e) => new Ds({ target: t, props: e });
-export { Ps as startApp };
+const Ms = (t, e) => new Ls({ target: t, props: e });
+export { Ms as startApp };
 //# sourceMappingURL=bundle.js.map
