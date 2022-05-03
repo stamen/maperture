@@ -1,6 +1,8 @@
 <script>
   import { saveAs } from 'file-saver';
   import html2canvas from 'html2canvas';
+  import { faCamera, faPlus } from '@fortawesome/free-solid-svg-icons';
+  import Fa from 'svelte-fa/src/fa.svelte';
   import { createEventDispatcher } from 'svelte';
   import { Geocoder } from '@beyonk/svelte-mapbox';
   import { getMapStateMessages } from '../map-state-utils';
@@ -55,7 +57,7 @@
   };
 
   const downloadScreenshot = () => {
-    const fileName = maps.map(m => m.id).join('-');
+    const fileName = maps.map(m => (m.id ? m.id : m.name)).join('-');
     const mapsView = document.getElementById('maps-view');
 
     const ignoreElements = el => {
@@ -107,11 +109,22 @@
     </div>
     <div class="control-section">
       <div class="buttons">
-        <button on:click={addMapPane} disabled={maps.length >= 8}>
-          Add a map
+        <button
+          style="margin-right: 6px"
+          on:click={addMapPane}
+          disabled={maps.length >= 8}
+          title={maps.length >= 8 ? 'Maximum of 8 maps allowed.' : ''}
+        >
+          <Fa icon={faPlus} /> Add map
         </button>
-        <button on:click={downloadScreenshot} disabled={viewMode === 'swipe'}>
-          Download screenshot
+        <button
+          on:click={downloadScreenshot}
+          disabled={viewMode === 'swipe'}
+          title={viewMode === 'swipe'
+            ? 'Must be in phone or mirror mode to screenshot.'
+            : ''}
+        >
+          <Fa icon={faCamera} /> Screenshot
         </button>
       </div>
     </div>
@@ -148,7 +161,7 @@
 
   .buttons {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
   }
 
   .checkboxes {
