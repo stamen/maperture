@@ -44023,7 +44023,6 @@ function La(t) {
         w(n, 'class', 'slider svelte-yry985'),
         b(n, 'left', t[4] + 'px'),
         b(n, 'width', Ma + 'px'),
-        w(e, 'id', 'layout'),
         w(e, 'class', 'maps svelte-yry985'),
         K(() => t[10].call(e)),
         I(e, 'dragging', t[3]);

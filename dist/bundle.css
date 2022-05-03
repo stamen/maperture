@@ -1,3 +1,18 @@
+main.svelte-13vsfrg {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.map-controls-container.svelte-13vsfrg {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  pointer-events: none;
+  position: absolute;
+  top: 1em;
+  width: 100%;
+  z-index: 2000;
+}
 html,
 body {
   position: relative;
@@ -66,21 +81,6 @@ button:not(:disabled):active {
 
 button:focus {
   border-color: #666;
-}
-main.svelte-13vsfrg {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-.map-controls-container.svelte-13vsfrg {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  pointer-events: none;
-  position: absolute;
-  top: 1em;
-  width: 100%;
-  z-index: 2000;
 }
 .map-controls.svelte-v9dmm4 {
   background: white;
