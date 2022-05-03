@@ -42885,13 +42885,8 @@ var Ja = class extends at {
       });
   }
 };
-let Ya;
-pt.subscribe(t => ({ branchPattern: Ya } = t));
-const Qa = (t, e) => {
-    const { pattern: r } = Ya;
-    return r.replace('{branch}', t).replace('{style}', e);
-  },
-  ts = (t, e) => {
+const Ya = (t, e, r) => t.replace('{branch}', e).replace('{style}', r),
+  Qa = (t, e) => {
     let r;
     const i = () => window.removeEventListener('keydown', r),
       n = () => {
@@ -42908,57 +42903,57 @@ const Qa = (t, e) => {
       };
     return n(), { update: n, destroy: i };
   };
-let es;
-pt.subscribe(t => ({ mapboxGlAccessToken: es } = t));
+let ts;
+pt.subscribe(t => ({ mapboxGlAccessToken: ts } = t));
+function es(t, e, r) {
+  const i = t.slice();
+  return (i[28] = e[r]), i;
+}
 function rs(t, e, r) {
   const i = t.slice();
-  return (i[27] = e[r]), i;
+  return (i[31] = e[r]), i;
 }
-function is(t, e, r) {
-  const i = t.slice();
-  return (i[30] = e[r]), i;
-}
-function ns(t) {
+function is(t) {
   let e,
     r,
     i,
     n,
-    o = t[30].name + '';
+    o = t[31].name + '';
   return {
     c() {
       (e = m('option')),
         (r = g(o)),
-        (e.__value = i = JSON.stringify(t[30])),
+        (e.__value = i = JSON.stringify(t[31])),
         (e.value = e.__value),
-        (e.selected = n = t[30].selected);
+        (e.selected = n = t[31].selected);
     },
     m(t, i) {
       h(t, e, i), p(e, r);
     },
     p(t, a) {
-      8 & a[0] && o !== (o = t[30].name + '') && w(r, o),
+      8 & a[0] && o !== (o = t[31].name + '') && w(r, o),
         8 & a[0] &&
-          i !== (i = JSON.stringify(t[30])) &&
+          i !== (i = JSON.stringify(t[31])) &&
           ((e.__value = i), (e.value = e.__value)),
-        8 & a[0] && n !== (n = t[30].selected) && (e.selected = n);
+        8 & a[0] && n !== (n = t[31].selected) && (e.selected = n);
     },
     d(t) {
       t && f(e);
     },
   };
 }
-function os(t) {
+function ns(t) {
   let e,
     r,
     i,
-    n = t[3][t[27]],
+    n = t[3][t[28]],
     o = [];
-  for (let e = 0; e < n.length; e += 1) o[e] = ns(is(t, n, e));
+  for (let e = 0; e < n.length; e += 1) o[e] = is(rs(t, n, e));
   return {
     c() {
       e = m('optgroup');
       for (let t = 0; t < o.length; t += 1) o[t].c();
-      b(e, 'value', (r = t[27])), b(e, 'label', (i = t[27]));
+      b(e, 'value', (r = t[28])), b(e, 'label', (i = t[28]));
     },
     m(t, r) {
       h(t, e, r);
@@ -42967,22 +42962,22 @@ function os(t) {
     p(t, a) {
       if (8 & a[0]) {
         let r;
-        for (n = t[3][t[27]], r = 0; r < n.length; r += 1) {
-          const i = is(t, n, r);
-          o[r] ? o[r].p(i, a) : ((o[r] = ns(i)), o[r].c(), o[r].m(e, null));
+        for (n = t[3][t[28]], r = 0; r < n.length; r += 1) {
+          const i = rs(t, n, r);
+          o[r] ? o[r].p(i, a) : ((o[r] = is(i)), o[r].c(), o[r].m(e, null));
         }
         for (; r < o.length; r += 1) o[r].d(1);
         o.length = n.length;
       }
-      8 & a[0] && r !== (r = t[27]) && b(e, 'value', r),
-        8 & a[0] && i !== (i = t[27]) && b(e, 'label', i);
+      8 & a[0] && r !== (r = t[28]) && b(e, 'value', r),
+        8 & a[0] && i !== (i = t[28]) && b(e, 'label', i);
     },
     d(t) {
       t && f(e), d(o, t);
     },
   };
 }
-function as(t) {
+function os(t) {
   let e, r, i, o, a, s, l, u;
   return {
     c() {
@@ -43014,7 +43009,7 @@ function as(t) {
             x(r, 'input', t[13]),
             x(r, 'focus', t[6]),
             x(r, 'blur', t[7]),
-            c((s = ts.call(null, a, { code: 'Enter', callback: t[5] }))),
+            c((s = Qa.call(null, a, { code: 'Enter', callback: t[5] }))),
             x(a, 'click', t[4]),
           ]),
           (l = !0));
@@ -43035,7 +43030,7 @@ function as(t) {
     },
   };
 }
-function ss(t) {
+function as(t) {
   let e, r;
   return {
     c() {
@@ -43054,7 +43049,7 @@ function ss(t) {
     },
   };
 }
-function ls(e) {
+function ss(e) {
   let r,
     i,
     n,
@@ -43063,11 +43058,11 @@ function ls(e) {
     s,
     l = Object.keys(e[3]),
     u = [];
-  for (let t = 0; t < l.length; t += 1) u[t] = os(rs(e, l, t));
+  for (let t = 0; t < l.length; t += 1) u[t] = ns(es(e, l, t));
   let c =
       ('custom' === e[2].dropdownType || 'branch' === e[2].dropdownType) &&
-      as(e),
-    y = !!e[1] && ss(e);
+      os(e),
+    y = !!e[1] && as(e);
   return {
     c() {
       (r = m('div')), (i = m('select'));
@@ -43092,8 +43087,8 @@ function ls(e) {
       if (8 & e[0]) {
         let r;
         for (l = Object.keys(t[3]), r = 0; r < l.length; r += 1) {
-          const n = rs(t, l, r);
-          u[r] ? u[r].p(n, e) : ((u[r] = os(n)), u[r].c(), u[r].m(i, null));
+          const n = es(t, l, r);
+          u[r] ? u[r].p(n, e) : ((u[r] = ns(n)), u[r].c(), u[r].m(i, null));
         }
         for (; r < u.length; r += 1) u[r].d(1);
         u.length = l.length;
@@ -43101,12 +43096,12 @@ function ls(e) {
       'custom' === t[2].dropdownType || 'branch' === t[2].dropdownType
         ? c
           ? c.p(t, e)
-          : ((c = as(t)), c.c(), c.m(r, o))
+          : ((c = os(t)), c.c(), c.m(r, o))
         : c && (c.d(1), (c = null)),
         t[1]
           ? y
             ? y.p(t, e)
-            : ((y = ss(t)), y.c(), y.m(r, null))
+            : ((y = as(t)), y.c(), y.m(r, null))
           : y && (y.d(1), (y = null));
     },
     i: t,
@@ -43116,7 +43111,7 @@ function ls(e) {
     },
   };
 }
-function us(t, e, r) {
+function ls(t, e, r) {
   let i,
     n,
     o,
@@ -43124,45 +43119,47 @@ function us(t, e, r) {
     s,
     l,
     u,
-    { index: c } = e;
+    c,
+    { index: p } = e;
   ut.subscribe(t => {
-    r(10, (i = t.find(t => t.index === c))),
-      i && ((a = i.branch), (o = i.name), (n = i.url));
+    r(10, (i = t.find(t => t.index === p))),
+      i && ((a = i.branch), (s = i.pattern), (o = i.name), (n = i.url));
   }),
-    ct.subscribe(t => (s = t)),
-    pt.subscribe(t => ({ branchPattern: l } = t));
-  let p = n,
-    h = {};
-  const f = () => {
-    const t = s && s.find(t => t.url === n);
+    ct.subscribe(t => (l = t)),
+    pt.subscribe(t => ({ branchPatterns: u } = t));
+  let h = n,
+    f = {};
+  const d = () => {
+    const t = l && l.find(t => t.url === n);
     t
-      ? (r(2, (u = { ...t, dropdownType: 'preset' })), r(0, (p = '')))
+      ? (r(2, (c = { ...t, dropdownType: 'preset' })), r(0, (h = '')))
       : a
-      ? (r(2, (u = { name: o, dropdownType: 'branch', url: n })), r(0, (p = a)))
-      : (r(2, (u = { name: o, dropdownType: 'custom', url: n })),
-        r(0, (p = n))),
-      r(3, (h = S()));
+      ? (r(2, (c = { name: o, dropdownType: 'branch', url: n, pattern: s })),
+        r(0, (h = a)))
+      : (r(2, (c = { name: o, dropdownType: 'custom', url: n })),
+        r(0, (h = n))),
+      r(3, (f = E()));
   };
-  let d = '',
-    m = !1,
-    y = null;
-  const g = t => {
-      const e = t => t && t.includes('localhost') && u.url === t;
-      e(t) && setTimeout(() => e(t) && _(t), 3e3);
+  let m = '',
+    y = !1,
+    g = null;
+  const v = t => {
+      const e = t => t && t.includes('localhost') && c.url === t;
+      e(t) && setTimeout(() => e(t) && x(t), 3e3);
     },
-    v = t => {
+    _ = t => {
       const e = ['dropdownType', 'selected'];
       let r = {
         ...Object.fromEntries(
           Object.entries(t).filter(([t, r]) => !e.includes(t))
         ),
-        index: c,
+        index: p,
       };
-      'branch' === u.dropdownType && (r.branch = d),
+      'branch' === c.dropdownType && (r.branch = m),
         t.style && ((r.id = t.style.id), (r.name = t.style.name)),
-        ut.update(t => t.map((t, e) => (e === c ? r : t)));
+        ut.update(t => t.map((t, e) => (e === p ? r : t)));
     },
-    _ = async t => {
+    x = async t => {
       let e;
       try {
         const r = await (async t => {
@@ -43173,7 +43170,7 @@ function us(t, e, r) {
           let r = t;
           if (e) {
             const [, , , t, e] = r.split('/');
-            r = `https://api.mapbox.com/styles/v1/${t}/${e}?title=true&access_token=${es}`;
+            r = `https://api.mapbox.com/styles/v1/${t}/${e}?title=true&access_token=${ts}`;
           }
           const i = await fetch(r),
             n = await i.json();
@@ -43182,129 +43179,135 @@ function us(t, e, r) {
         })(t);
         if (r && 'object' == typeof r)
           return (
-            (e = r), g(t), v({ ...u, style: e, url: t }), { status: '200' }
+            (e = r), v(t), _({ ...c, style: e, url: t }), { status: '200' }
           );
       } catch (t) {
-        return r(1, (y = new Error('Style was not found.'))), { status: '404' };
+        return r(1, (g = new Error('Style was not found.'))), { status: '404' };
       }
     },
-    x = async t => {
-      const { status: e } = await _(t);
-      '200' === e && (r(2, (u.url = t), u), g(t));
+    b = async t => {
+      const { status: e } = await x(t);
+      '200' === e && (r(2, (c.url = t), c), v(t));
     },
-    b = async () => {
-      r(11, (d = p));
-      const { dropdownType: t } = u;
-      let e = 'branch' === t ? Qa(d, u.id || u.name) : d;
-      if (u?.url !== e) {
-        if (e.includes('localhost')) {
-          const [t, r] = e.split('localhost');
-          t || (e = `http://localhost${r}`);
+    w = async () => {
+      r(11, (m = h));
+      const { dropdownType: t, pattern: e } = c;
+      let i = 'branch' === t ? Ya(e, m, c.id || c.name) : m;
+      if (c?.url !== i) {
+        if (i.includes('localhost')) {
+          const [t, e] = i.split('localhost');
+          t || (i = `http://localhost${e}`);
         }
-        x(e);
+        b(i);
       }
     },
-    w = t => {
-      r(2, (u = t));
+    S = t => {
+      r(2, (c = t));
       const { dropdownType: e } = t;
       switch (e) {
         case 'preset': {
           const { type: e, url: i } = t;
           if ('google' === e) {
-            v(t);
+            _(t);
             break;
           }
-          r(0, (p = '')), x(i);
+          r(0, (h = '')), b(i);
           break;
         }
         case 'branch':
-          r(0, (p = ''));
+          r(0, (h = ''));
           break;
         case 'custom':
-          r(0, (p = n));
+          r(0, (h = n));
       }
     },
-    S = () => {
+    E = () => {
       const t = {};
-      return (
-        s.length &&
-          (t.Presets = s.map(t => ({
+      if (
+        (l.length &&
+          (t.Presets = l.map(t => ({
             ...t,
             dropdownType: 'preset',
-            selected: 'preset' === u.dropdownType && u?.url === t?.url,
+            selected: 'preset' === c.dropdownType && c?.url === t?.url,
           }))),
-        l?.styles?.length &&
-          (t['Styles on a branch'] = l?.styles.map(t => ({
-            name: `${t.charAt(0).toUpperCase() + t.slice(1)} on...`,
-            id: t,
-            type: l.type,
-            dropdownType: 'branch',
-            selected: a && Qa(a, t) === u.url,
-          }))),
+        u)
+      )
+        for (const e of u)
+          e?.styles?.length &&
+            (t['Styles on a branch' + (e.name ? `: ${e.name}` : '')] =
+              e?.styles.map(t => ({
+                name: `${t.charAt(0).toUpperCase() + t.slice(1)} on...`,
+                id: t,
+                type: e.type,
+                dropdownType: 'branch',
+                selected: !(!a || Ya(e.pattern, a, t) !== c.url),
+                pattern: e.pattern,
+              })));
+      return (
         (t.Custom = [
           {
             name: 'Fetch URL at...',
             dropdownType: 'custom',
-            selected: 'custom' === u.dropdownType,
+            selected: 'custom' === c.dropdownType,
           },
         ]),
         t
       );
     };
-  g(n);
+  v(n);
   return (
     (t.$$set = t => {
-      'index' in t && r(9, (c = t.index));
+      'index' in t && r(9, (p = t.index));
     }),
     (t.$$.update = () => {
-      1024 & t.$$.dirty[0] && i && f(),
+      1024 & t.$$.dirty[0] && i && d(),
         2051 & t.$$.dirty[0] &&
-          p !== d &&
-          y &&
-          (r(11, (d = '')), r(1, (y = null)));
+          h !== m &&
+          g &&
+          (r(11, (m = '')), r(1, (g = null)));
     }),
     [
-      p,
-      y,
-      u,
       h,
-      b,
-      () => {
-        m && b();
-      },
-      () => {
-        m = !0;
-      },
-      () => {
-        (m = !1),
-          y &&
-            ('branch' === u.dropdownType && u.url
-              ? r(0, (p = a))
-              : 'branch' !== u.dropdownType || u.url
-              ? r(0, (p = n))
-              : r(0, (p = '')));
-      },
-      w,
+      g,
       c,
+      f,
+      w,
+      () => {
+        y && w();
+      },
+      () => {
+        y = !0;
+      },
+      () => {
+        (y = !1),
+          g &&
+            ('branch' === c.dropdownType && c.url
+              ? r(0, (h = a))
+              : 'branch' !== c.dropdownType || c.url
+              ? r(0, (h = n))
+              : r(0, (h = '')));
+      },
+      S,
+      p,
       i,
-      d,
-      t => w(JSON.parse(t.target.value)),
+      m,
+      t => S(JSON.parse(t.target.value)),
       function () {
-        (p = this.value), r(0, p);
+        (h = this.value), r(0, h);
       },
     ]
   );
 }
-class cs extends at {
+class us extends at {
   constructor(t) {
-    super(), ot(this, t, us, ls, a, { index: 9 }, null, [-1, -1]);
+    super(), ot(this, t, ls, ss, a, { index: 9 }, null, [-1, -1]);
   }
 }
-function ps(t) {
+function cs(t) {
   let e, r, i, n, a, s, l, u, c, d, y;
   return (
     (i = new Ja({ props: { icon: qa } })),
-    (u = new cs({ props: { index: t[0] } })),
+    (u = new us({ props: { index: t[0] } })),
     {
       c() {
         (e = m('div')),
@@ -43355,7 +43358,7 @@ function ps(t) {
     }
   );
 }
-function hs(t, e, r) {
+function ps(t, e, r) {
   let { index: i } = e,
     { name: n } = e,
     { onClose: o } = e,
@@ -43370,10 +43373,10 @@ function hs(t, e, r) {
     [i, n, o, a]
   );
 }
-class fs extends at {
+class hs extends at {
   constructor(t) {
     super(),
-      ot(this, t, hs, ps, a, {
+      ot(this, t, ps, cs, a, {
         index: 0,
         name: 1,
         onClose: 2,
@@ -43381,7 +43384,7 @@ class fs extends at {
       });
   }
 }
-function ds(t) {
+function fs(t) {
   let r, i, n, o, a, s, l, c;
   const d = [
     { index: t[0].index },
@@ -43398,7 +43401,7 @@ function ds(t) {
   }
   return (
     y && ((i = new y(g())), i.$on('mapMove', t[6])),
-    (a = new fs({
+    (a = new hs({
       props: {
         index: t[0].index,
         name: t[0].name,
@@ -43491,11 +43494,11 @@ function ds(t) {
     }
   );
 }
-function ms(e) {
+function ds(e) {
   let r,
     i,
     n = `${e[0].id}-${e[0].index}`,
-    o = ds(e);
+    o = fs(e);
   return {
     c() {
       o.c(), (r = _());
@@ -43508,7 +43511,7 @@ function ms(e) {
         ? (K(),
           Y(o, 1, 1, t),
           H(),
-          (o = ds(e)),
+          (o = fs(e)),
           o.c(),
           J(o),
           o.m(r.parentNode, r))
@@ -43525,7 +43528,7 @@ function ms(e) {
     },
   };
 }
-function ys(t, r, i) {
+function ms(t, r, i) {
   const n = ['map', 'numberOfMaps', 'themeLabel'];
   let o,
     a = l(r, n),
@@ -43569,26 +43572,26 @@ function ys(t, r, i) {
     ]
   );
 }
-class gs extends at {
+class ys extends at {
   constructor(t) {
-    super(), ot(this, t, ys, ms, a, { map: 0, numberOfMaps: 1, themeLabel: 2 });
+    super(), ot(this, t, ms, ds, a, { map: 0, numberOfMaps: 1, themeLabel: 2 });
   }
 }
-function vs(t, e, r) {
+function gs(t, e, r) {
   const i = t.slice();
   return (i[1] = e[r]), i;
 }
-function _s(t, e, r) {
+function vs(t, e, r) {
   const i = t.slice();
   return (i[7] = e[r]), i;
 }
-function xs(t) {
+function _s(t) {
   let r, i, n;
   const o = [{ map: t[7] }, t[0], { numberOfMaps: t[2] }];
   let a = {};
   for (let t = 0; t < o.length; t += 1) a = e(a, o[t]);
   return (
-    (i = new gs({ props: a })),
+    (i = new ys({ props: a })),
     i.$on('mapMove', t[4]),
     {
       c() {
@@ -43622,13 +43625,13 @@ function xs(t) {
     }
   );
 }
-function bs(t) {
+function xs(t) {
   let e,
     r,
     i,
     n = t[1],
     o = [];
-  for (let e = 0; e < n.length; e += 1) o[e] = xs(_s(t, n, e));
+  for (let e = 0; e < n.length; e += 1) o[e] = _s(vs(t, n, e));
   const a = t =>
     Y(o[t], 1, 1, () => {
       o[t] = null;
@@ -43648,10 +43651,10 @@ function bs(t) {
       if (13 & i) {
         let s;
         for (n = t[1], s = 0; s < n.length; s += 1) {
-          const a = _s(t, n, s);
+          const a = vs(t, n, s);
           o[s]
             ? (o[s].p(a, i), J(o[s], 1))
-            : ((o[s] = xs(a)), o[s].c(), J(o[s], 1), o[s].m(e, r));
+            : ((o[s] = _s(a)), o[s].c(), J(o[s], 1), o[s].m(e, r));
         }
         for (K(), s = n.length; s < o.length; s += 1) a(s);
         H();
@@ -43673,12 +43676,12 @@ function bs(t) {
     },
   };
 }
-function ws(t) {
+function bs(t) {
   let e,
     r,
     i = t[3],
     n = [];
-  for (let e = 0; e < i.length; e += 1) n[e] = bs(vs(t, i, e));
+  for (let e = 0; e < i.length; e += 1) n[e] = xs(gs(t, i, e));
   const o = t =>
     Y(n[t], 1, 1, () => {
       n[t] = null;
@@ -43698,10 +43701,10 @@ function ws(t) {
       if (13 & r) {
         let a;
         for (i = t[3], a = 0; a < i.length; a += 1) {
-          const o = vs(t, i, a);
+          const o = gs(t, i, a);
           n[a]
             ? (n[a].p(o, r), J(n[a], 1))
-            : ((n[a] = bs(o)), n[a].c(), J(n[a], 1), n[a].m(e, null));
+            : ((n[a] = xs(o)), n[a].c(), J(n[a], 1), n[a].m(e, null));
         }
         for (K(), a = i.length; a < n.length; a += 1) o(a);
         H();
@@ -43723,7 +43726,7 @@ function ws(t) {
     },
   };
 }
-function Ss(t, e, r) {
+function ws(t, e, r) {
   let { maps: i } = e,
     { mapState: n } = e,
     o = [],
@@ -43758,16 +43761,16 @@ function Ss(t, e, r) {
     ]
   );
 }
-class Es extends at {
+class Ss extends at {
   constructor(t) {
-    super(), ot(this, t, Ss, ws, a, { maps: 1, mapState: 0 });
+    super(), ot(this, t, ws, bs, a, { maps: 1, mapState: 0 });
   }
 }
-function Ts(t, e, r) {
+function Es(t, e, r) {
   const i = t.slice();
   return (i[3] = e[r]), i;
 }
-function Is(t) {
+function Ts(t) {
   let r, i, n, o;
   const a = [
     { map: t[3] },
@@ -43778,7 +43781,7 @@ function Is(t) {
   let s = {};
   for (let t = 0; t < a.length; t += 1) s = e(s, a[t]);
   return (
-    (i = new gs({ props: s })),
+    (i = new ys({ props: s })),
     i.$on('mapMove', t[2]),
     {
       c() {
@@ -43814,12 +43817,12 @@ function Is(t) {
     }
   );
 }
-function As(t) {
+function Is(t) {
   let e,
     r,
     i = t[0],
     n = [];
-  for (let e = 0; e < i.length; e += 1) n[e] = Is(Ts(t, i, e));
+  for (let e = 0; e < i.length; e += 1) n[e] = Ts(Es(t, i, e));
   const o = t =>
     Y(n[t], 1, 1, () => {
       n[t] = null;
@@ -43839,10 +43842,10 @@ function As(t) {
       if (3 & r) {
         let a;
         for (i = t[0], a = 0; a < i.length; a += 1) {
-          const o = Ts(t, i, a);
+          const o = Es(t, i, a);
           n[a]
             ? (n[a].p(o, r), J(n[a], 1))
-            : ((n[a] = Is(o)), n[a].c(), J(n[a], 1), n[a].m(e, null));
+            : ((n[a] = Ts(o)), n[a].c(), J(n[a], 1), n[a].m(e, null));
         }
         for (K(), a = i.length; a < n.length; a += 1) o(a);
         H();
@@ -43864,7 +43867,7 @@ function As(t) {
     },
   };
 }
-function Ps(t, e, r) {
+function As(t, e, r) {
   let { maps: i } = e,
     { mapState: n } = e;
   return (
@@ -43881,22 +43884,22 @@ function Ps(t, e, r) {
     ]
   );
 }
-class zs extends at {
+class Ps extends at {
   constructor(t) {
-    super(), ot(this, t, Ps, As, a, { maps: 0, mapState: 1 });
+    super(), ot(this, t, As, Is, a, { maps: 0, mapState: 1 });
   }
 }
-function ks(t, e, r) {
+function zs(t, e, r) {
   const i = t.slice();
   return (i[11] = e[r]), i;
 }
-function Cs(t) {
+function ks(t) {
   let r, i, n, o;
   const a = [{ map: t[11] }, t[1], { numberOfMaps: t[0].length }];
   let s = {};
   for (let t = 0; t < a.length; t += 1) s = e(s, a[t]);
   return (
-    (i = new gs({ props: s })),
+    (i = new ys({ props: s })),
     i.$on('mapMove', t[9]),
     {
       c() {
@@ -43946,7 +43949,7 @@ function Cs(t) {
     }
   );
 }
-function Ms(t) {
+function Cs(t) {
   let e,
     r,
     i,
@@ -43956,7 +43959,7 @@ function Ms(t) {
     l,
     u = t[0],
     c = [];
-  for (let e = 0; e < u.length; e += 1) c[e] = Cs(ks(t, u, e));
+  for (let e = 0; e < u.length; e += 1) c[e] = ks(zs(t, u, e));
   const y = t =>
     Y(c[t], 1, 1, () => {
       c[t] = null;
@@ -43969,7 +43972,7 @@ function Ms(t) {
         (i = m('div')),
         b(i, 'class', 'slider svelte-yry985'),
         E(i, 'left', t[4] + 'px'),
-        E(i, 'width', Ds + 'px'),
+        E(i, 'width', Ms + 'px'),
         b(e, 'class', 'maps svelte-yry985'),
         N(() => t[10].call(e)),
         k(e, 'dragging', t[3]);
@@ -44021,10 +44024,10 @@ function Ms(t) {
       if (55 & n) {
         let i;
         for (u = t[0], i = 0; i < u.length; i += 1) {
-          const o = ks(t, u, i);
+          const o = zs(t, u, i);
           c[i]
             ? (c[i].p(o, n), J(c[i], 1))
-            : ((c[i] = Cs(o)), c[i].c(), J(c[i], 1), c[i].m(e, r));
+            : ((c[i] = ks(o)), c[i].c(), J(c[i], 1), c[i].m(e, r));
         }
         for (K(), i = u.length; i < c.length; i += 1) y(i);
         H();
@@ -44048,8 +44051,8 @@ function Ms(t) {
     },
   };
 }
-const Ds = 5;
-function Ls(t, e, r) {
+const Ms = 5;
+function Ds(t, e, r) {
   let i,
     n,
     { maps: o } = e,
@@ -44074,7 +44077,7 @@ function Ls(t, e, r) {
       () => r(3, (s = !0)),
       () => r(3, (s = !1)),
       t => {
-        s && 0 !== t.clientX && r(4, (l = t.clientX - Ds / 2));
+        s && 0 !== t.clientX && r(4, (l = t.clientX - Ms / 2));
       },
       function (e) {
         O.call(this, t, e);
@@ -44085,12 +44088,12 @@ function Ls(t, e, r) {
     ]
   );
 }
-class Os extends at {
+class Ls extends at {
   constructor(t) {
-    super(), ot(this, t, Ls, Ms, a, { maps: 0, mapState: 1 });
+    super(), ot(this, t, Ds, Cs, a, { maps: 0, mapState: 1 });
   }
 }
-function Bs(t) {
+function Os(t) {
   let e, r, i;
   var n = t[2];
   function o(t) {
@@ -44141,7 +44144,7 @@ function Bs(t) {
     }
   );
 }
-function Rs(t, e, r) {
+function Bs(t, e, r) {
   let { maps: i } = e,
     { mapState: n } = e,
     { viewMode: o } = e;
@@ -44157,13 +44160,13 @@ function Rs(t, e, r) {
       if (16 & t.$$.dirty)
         switch (o) {
           case 'phone':
-            r(2, (s = zs));
+            r(2, (s = Ps));
             break;
           case 'mirror':
-            r(2, (s = Es));
+            r(2, (s = Ss));
             break;
           default:
-            r(2, (s = Os));
+            r(2, (s = Ls));
         }
     }),
     [
@@ -44177,12 +44180,12 @@ function Rs(t, e, r) {
     ]
   );
 }
-class Fs extends at {
+class Rs extends at {
   constructor(t) {
-    super(), ot(this, t, Rs, Bs, a, { maps: 0, mapState: 1, viewMode: 4 });
+    super(), ot(this, t, Bs, Os, a, { maps: 0, mapState: 1, viewMode: 4 });
   }
 }
-function Us(t, e = {}) {
+function Fs(t, e = {}) {
   const r = [
       {
         type: 'script',
@@ -44228,7 +44231,7 @@ function Us(t, e = {}) {
           return () => {
             for (const [e, r] of n) t.off(e, r);
           };
-        })(r, js, !1, e);
+        })(r, Us, !1, e);
       })(e, t);
     }),
     {
@@ -44238,7 +44241,7 @@ function Us(t, e = {}) {
     }
   );
 }
-const js = {
+const Us = {
   results: (t, e) => ['results', e],
   result: (t, e) => ['result', e],
   loading: (t, e) => ['loading', e],
@@ -44246,7 +44249,7 @@ const js = {
   clear: (t, e) => ['clear', e],
   load: t => ['ready', { geocoder: t }],
 };
-function Vs(e) {
+function js(e) {
   let r, i, o;
   return {
     c() {
@@ -44256,7 +44259,7 @@ function Vs(e) {
       h(t, r, n),
         i ||
           ((o = [
-            c(Us.call(null, r, e[1])),
+            c(Fs.call(null, r, e[1])),
             x(r, 'ready', e[2]),
             x(r, 'results', e[11]),
             x(r, 'result', e[12]),
@@ -44275,7 +44278,7 @@ function Vs(e) {
     },
   };
 }
-function Ns(t, e, r) {
+function Vs(t, e, r) {
   let { accessToken: i } = e,
     { options: n = {} } = e,
     { version: o = 'v4.5.1' } = e,
@@ -44354,10 +44357,10 @@ function Ns(t, e, r) {
     ]
   );
 }
-class qs extends at {
+class Ns extends at {
   constructor(t) {
     super(),
-      ot(this, t, Ns, Vs, a, {
+      ot(this, t, Vs, js, a, {
         accessToken: 4,
         options: 5,
         version: 6,
@@ -44369,18 +44372,18 @@ class qs extends at {
       });
   }
 }
-const $s = ['swipe', 'mirror', 'phone'],
-  Zs = (t, e) =>
+const qs = ['swipe', 'mirror', 'phone'],
+  $s = (t, e) =>
     e.some(({ type: t }) => 'google' === t) ? (t.zoom < 12 ? 35 : 45) : 60,
-  Gs = (t, e) => {
+  Zs = (t, e) => {
     const r = { ...t };
     if ((t => t.some(({ type: t }) => 'google' === t))(e)) {
-      const i = Zs(t, e);
+      const i = $s(t, e);
       r.pitch > i && (r.pitch = i);
     }
     return r;
   };
-function Ws(t) {
+function Gs(t) {
   let e, r, i, n;
   const o = t[1].default,
     a = (function (t, e, r, i) {
@@ -44451,7 +44454,7 @@ function Ws(t) {
     },
   };
 }
-function Xs(t, e, r) {
+function Ws(t, e, r) {
   let { $$slots: i = {}, $$scope: n } = e;
   return (
     (t.$$set = t => {
@@ -44466,20 +44469,20 @@ function Xs(t, e, r) {
     ]
   );
 }
-class Ks extends at {
+class Xs extends at {
   constructor(t) {
-    super(), ot(this, t, Xs, Ws, a, {});
+    super(), ot(this, t, Ws, Gs, a, {});
   }
 }
-function Hs(t) {
+function Ks(t) {
   let e, r, i, n, o, a, s, l, u, c, d;
   return (
-    (s = new Ks({
-      props: { $$slots: { default: [Ys] }, $$scope: { ctx: t } },
+    (s = new Xs({
+      props: { $$slots: { default: [Js] }, $$scope: { ctx: t } },
     })),
     s.$on('click', t[5]),
-    (c = new Ks({
-      props: { $$slots: { default: [Qs] }, $$scope: { ctx: t } },
+    (c = new Xs({
+      props: { $$slots: { default: [Ys] }, $$scope: { ctx: t } },
     })),
     c.$on('click', t[4]),
     {
@@ -44532,7 +44535,7 @@ function Hs(t) {
     }
   );
 }
-function Js(e) {
+function Hs(e) {
   let r, i, o, a, s, l;
   return {
     c() {
@@ -44562,7 +44565,7 @@ function Js(e) {
     },
   };
 }
-function Ys(t) {
+function Js(t) {
   let e;
   return {
     c() {
@@ -44576,7 +44579,7 @@ function Ys(t) {
     },
   };
 }
-function Qs(t) {
+function Ys(t) {
   let e,
     r = t[1] ? 'copied' : 'copy';
   return {
@@ -44594,9 +44597,9 @@ function Qs(t) {
     },
   };
 }
-function tl(t) {
+function Qs(t) {
   let e, r, i, n;
-  const o = [Js, Hs],
+  const o = [Hs, Ks],
     a = [];
   function s(t, e) {
     return t[2] ? 0 : 1;
@@ -44638,7 +44641,7 @@ function tl(t) {
     }
   );
 }
-function el(t, e, r) {
+function tl(t, e, r) {
   let { bearing: i } = e,
     { center: n } = e,
     { pitch: o } = e,
@@ -44702,17 +44705,17 @@ function el(t, e, r) {
     ]
   );
 }
-class rl extends at {
+class el extends at {
   constructor(t) {
     super(),
-      ot(this, t, el, tl, a, { bearing: 8, center: 9, pitch: 10, zoom: 11 });
+      ot(this, t, tl, Qs, a, { bearing: 8, center: 9, pitch: 10, zoom: 11 });
   }
 }
-function il(t, e, r) {
+function rl(t, e, r) {
   const i = t.slice();
   return (i[0] = e[r]), i;
 }
-function nl(t) {
+function il(t) {
   let e,
     r,
     i,
@@ -44736,14 +44739,14 @@ function nl(t) {
     },
   };
 }
-function ol(e) {
+function nl(e) {
   let r,
     i,
     n,
     o,
     a = e[2],
     s = [];
-  for (let t = 0; t < a.length; t += 1) s[t] = nl(il(e, a, t));
+  for (let t = 0; t < a.length; t += 1) s[t] = il(rl(e, a, t));
   return {
     c() {
       (r = m('div')), (i = m('select'));
@@ -44759,8 +44762,8 @@ function ol(e) {
       if (4 & e) {
         let r;
         for (a = t[2], r = 0; r < a.length; r += 1) {
-          const n = il(t, a, r);
-          s[r] ? s[r].p(n, e) : ((s[r] = nl(n)), s[r].c(), s[r].m(i, null));
+          const n = rl(t, a, r);
+          s[r] ? s[r].p(n, e) : ((s[r] = il(n)), s[r].c(), s[r].m(i, null));
         }
         for (; r < s.length; r += 1) s[r].d(1);
         s.length = a.length;
@@ -44774,12 +44777,12 @@ function ol(e) {
     },
   };
 }
-function al(t, e, r) {
+function ol(t, e, r) {
   let { mode: i } = e,
     { mapsNum: n } = e;
   const o = L();
   let a = '',
-    s = $s;
+    s = qs;
   return (
     (t.$$set = t => {
       'mode' in t && r(0, (i = t.mode)),
@@ -44788,9 +44791,9 @@ function al(t, e, r) {
     (t.$$.update = () => {
       1 & t.$$.dirty && r(1, (a = i)),
         14 & t.$$.dirty &&
-          (2 === n && r(2, (s = $s)),
-          n > 2 && n <= 4 && r(2, (s = $s.filter(t => 'swipe' !== t))),
-          n > 4 && r(2, (s = $s.filter(t => 'swipe' !== t && 'phone' !== t))),
+          (2 === n && r(2, (s = qs)),
+          n > 2 && n <= 4 && r(2, (s = qs.filter(t => 'swipe' !== t))),
+          n > 4 && r(2, (s = qs.filter(t => 'swipe' !== t && 'phone' !== t))),
           s.includes(a) || r(1, (a = s[0]))),
         2 & t.$$.dirty && a && o('viewMode', { mode: a });
     }),
@@ -44813,26 +44816,26 @@ function al(t, e, r) {
     ]
   );
 }
-class sl extends at {
+class al extends at {
   constructor(t) {
-    super(), ot(this, t, al, ol, a, { mode: 0, mapsNum: 3 });
+    super(), ot(this, t, ol, nl, a, { mode: 0, mapsNum: 3 });
   }
 }
-function ll(t, e, r) {
+function sl(t, e, r) {
   const i = t.slice();
   return (i[13] = e[r]), i;
 }
-function ul(t, e, r) {
+function ll(t, e, r) {
   const i = t.slice();
   return (i[16] = e[r]), i;
 }
-function cl(t) {
+function ul(t) {
   let e,
     r,
     i,
     n = Object.keys(t[1]),
     o = [];
-  for (let e = 0; e < n.length; e += 1) o[e] = hl(ll(t, n, e));
+  for (let e = 0; e < n.length; e += 1) o[e] = pl(sl(t, n, e));
   return {
     c() {
       e = m('select');
@@ -44848,8 +44851,8 @@ function cl(t) {
       if (2 & r) {
         let i;
         for (n = Object.keys(t[1]), i = 0; i < n.length; i += 1) {
-          const a = ll(t, n, i);
-          o[i] ? o[i].p(a, r) : ((o[i] = hl(a)), o[i].c(), o[i].m(e, null));
+          const a = sl(t, n, i);
+          o[i] ? o[i].p(a, r) : ((o[i] = pl(a)), o[i].c(), o[i].m(e, null));
         }
         for (; i < o.length; i += 1) o[i].d(1);
         o.length = n.length;
@@ -44861,7 +44864,7 @@ function cl(t) {
     },
   };
 }
-function pl(t) {
+function cl(t) {
   let e,
     r,
     i,
@@ -44887,13 +44890,13 @@ function pl(t) {
     },
   };
 }
-function hl(t) {
+function pl(t) {
   let e,
     r,
     i,
     n = t[1][t[13]],
     o = [];
-  for (let e = 0; e < n.length; e += 1) o[e] = pl(ul(t, n, e));
+  for (let e = 0; e < n.length; e += 1) o[e] = cl(ll(t, n, e));
   return {
     c() {
       (e = m('optgroup')), (r = m('option')), (r.textContent = 'Go to...');
@@ -44913,8 +44916,8 @@ function hl(t) {
       if (2 & r) {
         let i;
         for (n = t[1][t[13]], i = 0; i < n.length; i += 1) {
-          const a = ul(t, n, i);
-          o[i] ? o[i].p(a, r) : ((o[i] = pl(a)), o[i].c(), o[i].m(e, null));
+          const a = ll(t, n, i);
+          o[i] ? o[i].p(a, r) : ((o[i] = cl(a)), o[i].c(), o[i].m(e, null));
         }
         for (; i < o.length; i += 1) o[i].d(1);
         o.length = n.length;
@@ -44926,9 +44929,9 @@ function hl(t) {
     },
   };
 }
-function fl(e) {
+function hl(e) {
   let r,
-    i = e[1] && cl(e);
+    i = e[1] && ul(e);
   return {
     c() {
       i && i.c(), (r = _());
@@ -44940,7 +44943,7 @@ function fl(e) {
       t[1]
         ? i
           ? i.p(t, e)
-          : ((i = cl(t)), i.c(), i.m(r.parentNode, r))
+          : ((i = ul(t)), i.c(), i.m(r.parentNode, r))
         : i && (i.d(1), (i = null));
     },
     i: t,
@@ -44950,7 +44953,7 @@ function fl(e) {
     },
   };
 }
-function dl(t, e, r) {
+function fl(t, e, r) {
   let { bearing: i } = e,
     { center: n } = e,
     { pitch: o } = e,
@@ -45021,21 +45024,21 @@ function dl(t, e, r) {
     ]
   );
 }
-class ml extends at {
+class dl extends at {
   constructor(t) {
     super(),
-      ot(this, t, dl, fl, a, { bearing: 2, center: 3, pitch: 4, zoom: 5 });
+      ot(this, t, fl, hl, a, { bearing: 2, center: 3, pitch: 4, zoom: 5 });
   }
 }
-function yl(t, e, r) {
+function ml(t, e, r) {
   const i = t.slice();
   return (i[19] = e[r]), i;
 }
-function gl(t) {
+function yl(t) {
   let e,
     r = t[6],
     i = [];
-  for (let e = 0; e < r.length; e += 1) i[e] = vl(yl(t, r, e));
+  for (let e = 0; e < r.length; e += 1) i[e] = gl(ml(t, r, e));
   return {
     c() {
       e = m('div');
@@ -45050,8 +45053,8 @@ function gl(t) {
       if (64 & n) {
         let o;
         for (r = t[6], o = 0; o < r.length; o += 1) {
-          const a = yl(t, r, o);
-          i[o] ? i[o].p(a, n) : ((i[o] = vl(a)), i[o].c(), i[o].m(e, null));
+          const a = ml(t, r, o);
+          i[o] ? i[o].p(a, n) : ((i[o] = gl(a)), i[o].c(), i[o].m(e, null));
         }
         for (; o < i.length; o += 1) i[o].d(1);
         i.length = r.length;
@@ -45062,7 +45065,7 @@ function gl(t) {
     },
   };
 }
-function vl(t) {
+function gl(t) {
   let e,
     r,
     i,
@@ -45092,7 +45095,7 @@ function vl(t) {
     },
   };
 }
-function _l(t) {
+function vl(t) {
   let r,
     i,
     o,
@@ -45130,17 +45133,17 @@ function _l(t) {
   const Z = [t[5]];
   let G = {};
   for (let t = 0; t < Z.length; t += 1) G = e(G, Z[t]);
-  (a = new rl({ props: G })),
+  (a = new el({ props: G })),
     a.$on('mapState', t[13]),
-    (u = new sl({ props: { mode: t[3], mapsNum: t[4].length } })),
+    (u = new al({ props: { mode: t[3], mapsNum: t[4].length } })),
     u.$on('viewMode', t[14]),
-    (y = new qs({ props: { accessToken: t[2], geocoder: null } })),
+    (y = new Ns({ props: { accessToken: t[2], geocoder: null } })),
     y.$on('result', t[7]);
   const W = [t[5]];
   let X = {};
   for (let t = 0; t < W.length; t += 1) X = e(X, W[t]);
-  (S = new ml({ props: X })), S.$on('mapState', t[15]);
-  let K = t[6].length > 0 && gl(t);
+  (S = new dl({ props: X })), S.$on('mapState', t[15]);
+  let K = t[6].length > 0 && yl(t);
   return {
     c() {
       (r = m('div')),
@@ -45247,7 +45250,7 @@ function _l(t) {
         t[6].length > 0
           ? K
             ? K.p(t, e)
-            : ((K = gl(t)), K.c(), K.m(r, null))
+            : ((K = yl(t)), K.c(), K.m(r, null))
           : K && (K.d(1), (K = null));
     },
     i(t) {
@@ -45270,7 +45273,7 @@ function _l(t) {
     },
   };
 }
-function xl(t, e, r) {
+function _l(t, e, r) {
   let { bearing: i } = e,
     { center: n } = e,
     { mapboxGlAccessToken: o } = e,
@@ -45303,7 +45306,7 @@ function xl(t, e, r) {
             6,
             (d = ((t, e) => {
               const r = [],
-                i = Zs(t, e);
+                i = $s(t, e);
               return (
                 t.pitch >= i &&
                   r.push({
@@ -45359,10 +45362,10 @@ function xl(t, e, r) {
     ]
   );
 }
-class bl extends at {
+class xl extends at {
   constructor(t) {
     super(),
-      ot(this, t, xl, _l, a, {
+      ot(this, t, _l, vl, a, {
         bearing: 9,
         center: 10,
         mapboxGlAccessToken: 2,
@@ -45374,15 +45377,15 @@ class bl extends at {
       });
   }
 }
-const wl = ['maps'],
-  Sl = ['showCollisions', 'showBoundaries'],
-  El = ['bearing', 'center', 'pitch', 'zoom'],
-  Tl = ['bearing', 'lat', 'lng', 'pitch', 'zoom'];
-function Il(t) {
+const bl = ['maps'],
+  wl = ['showCollisions', 'showBoundaries'],
+  Sl = ['bearing', 'center', 'pitch', 'zoom'],
+  El = ['bearing', 'lat', 'lng', 'pitch', 'zoom'];
+function Tl(t) {
   const e = Object.fromEntries(
     Object.entries(t)
-      .filter(([t, e]) => !El.includes(t))
-      .map(([t, e]) => [t, wl.includes(t) ? JSON.stringify(e) : e])
+      .filter(([t, e]) => !Sl.includes(t))
+      .map(([t, e]) => [t, bl.includes(t) ? JSON.stringify(e) : e])
   );
   window.location.hash = (function (t) {
     let e = t.map ? `map=${t.map}` : '';
@@ -45406,7 +45409,7 @@ function Il(t) {
     ...e,
   });
 }
-function Al(t) {
+function Il(t) {
   let e = Object.fromEntries(
     Object.entries(
       (function (t) {
@@ -45424,11 +45427,11 @@ function Al(t) {
     )
       .filter(([t, e]) => !!e)
       .map(([t, e]) =>
-        wl.includes(t)
+        bl.includes(t)
           ? [t, JSON.parse(e)]
-          : Sl.includes(t)
+          : wl.includes(t)
           ? [t, 'true' === e]
-          : Tl.includes(t)
+          : El.includes(t)
           ? [t, +e || 0]
           : [t, e]
       )
@@ -45439,9 +45442,9 @@ function Al(t) {
   }
   return e.map && delete e.map, e;
 }
-function Pl(t) {
+function Al(t) {
   let r, i, n, o, a, s, l, u;
-  (o = new Fs({
+  (o = new Rs({
     props: { maps: t[1], mapState: t[0], viewMode: t[2].viewMode },
   })),
     o.$on('mapState', t[4]);
@@ -45449,7 +45452,7 @@ function Pl(t) {
   let d = {};
   for (let t = 0; t < c.length; t += 1) d = e(d, c[t]);
   return (
-    (l = new bl({ props: d })),
+    (l = new xl({ props: d })),
     l.$on('mapState', t[4]),
     l.$on('viewMode', t[5]),
     {
@@ -45503,7 +45506,7 @@ function Pl(t) {
     }
   );
 }
-function zl(t, e, r) {
+function Pl(t, e, r) {
   let { localConfig: i } = e,
     n = {},
     o = [];
@@ -45550,7 +45553,7 @@ function zl(t, e, r) {
         },
       ],
     },
-    branchPattern: { pattern: '', styles: [] },
+    branchPatterns: [{ pattern: '', styles: [] }],
     stylePresetUrls: [],
     ...t,
   }))(i);
@@ -45563,14 +45566,14 @@ function zl(t, e, r) {
         viewMode: i,
         maps: r,
         stylePresets: n,
-        ...Al(window.location.hash),
+        ...Il(window.location.hash),
       };
     })(a);
   pt.set(a),
     ({ mapboxGlAccessToken: s, stylePresetUrls: l } = a),
     ut.subscribe(t => r(1, (o = t)));
   const c = Mt(() => {
-    Il({ ...u, ...n });
+    Tl({ ...u, ...n });
   }, 250);
   D(() => {
     ut.set(u.maps.map((t, e) => ({ ...t, index: e }))),
@@ -45617,12 +45620,12 @@ function zl(t, e, r) {
         );
       }
       if (
-        (3 & t.$$.dirty && r(0, (n = Gs(n, o))),
+        (3 & t.$$.dirty && r(0, (n = Zs(n, o))),
         5 & t.$$.dirty && u && n && c(),
         7 & t.$$.dirty && o)
       ) {
         const t = JSON.parse(JSON.stringify(o)).map(t => (delete t.style, t));
-        Il({ ...u, maps: t, ...n });
+        Tl({ ...u, maps: t, ...n });
       }
     }),
     [
@@ -45632,7 +45635,7 @@ function zl(t, e, r) {
       s,
       t => {
         let e = { ...n, ...t.detail.options };
-        r(0, (n = Gs(e, o)));
+        r(0, (n = Zs(e, o)));
       },
       t => {
         r(2, (u = { ...u, ...n, viewMode: t.detail.mode }));
@@ -45641,11 +45644,11 @@ function zl(t, e, r) {
     ]
   );
 }
-class kl extends at {
+class zl extends at {
   constructor(t) {
-    super(), ot(this, t, zl, Pl, a, { localConfig: 6 });
+    super(), ot(this, t, Pl, Al, a, { localConfig: 6 });
   }
 }
-const Cl = (t, e) => new kl({ target: t, props: e });
-export { Cl as startApp };
+const kl = (t, e) => new zl({ target: t, props: e });
+export { kl as startApp };
 //# sourceMappingURL=bundle.js.map

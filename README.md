@@ -27,7 +27,7 @@ Here, you can customize the following options:
   - `type`: the type of map (`mapbox-gl`, `google`)
   - `url`: (currently `mapbox-gl` only) the style's url
   - `mapId`: (currently `google` only) the style's id
-- `branchPattern`: An object that specifies how to build a URL to fetch a style living on a branch with the following keys:
+- `branchPatterns`: An array of objects that specify how to build a URL to fetch a style living on a branch with the following keys:
   - `pattern`: a tokenized url pattern using `{branch}` and `{style}` tokens
   - `styles`: an array specifying specific styles you can view on the specified branch
   - `type`: the type of map (`mapbox-gl`, `google`)

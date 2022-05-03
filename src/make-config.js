@@ -46,17 +46,19 @@ const makeConfig = localConfig => {
 
   const defaultViewMode = 'swipe';
 
-  const defaultBranchPattern = {
-    pattern: '',
-    styles: [],
-  };
+  const defaultBranchPatterns = [
+    {
+      pattern: '',
+      styles: [],
+    },
+  ];
 
   const config = {
     maps: defaultMaps,
     mapState: defaultMapState,
     viewMode: defaultViewMode,
     gazetteer: defaultGazetteer,
-    branchPattern: defaultBranchPattern,
+    branchPatterns: defaultBranchPatterns,
     stylePresetUrls: [],
     ...localConfig,
   };

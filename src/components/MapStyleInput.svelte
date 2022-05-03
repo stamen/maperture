@@ -14,21 +14,23 @@
   let url;
   let name;
   let branch;
+  let pattern;
 
   mapsStore.subscribe(maps => {
     map = maps.find(m => m.index === index);
     if (map) {
       branch = map.branch;
+      pattern = map.pattern;
       name = map.name;
       url = map.url;
     }
   });
 
   let stylePresets;
-  let branchPattern;
+  let branchPatterns;
 
   stylePresetsStore.subscribe(value => (stylePresets = value));
-  configStore.subscribe(value => ({ branchPattern } = value));
+  configStore.subscribe(value => ({ branchPatterns } = value));
 
   let selected;
   let textInput = url;
@@ -48,6 +50,7 @@
         name,
         dropdownType: 'branch',
         url,
+        pattern,
       };
       textInput = branch;
     } else {
@@ -138,11 +141,12 @@
 
   const submitUrl = async () => {
     localUrl = textInput;
-    const { dropdownType } = selected;
+    const { dropdownType, pattern } = selected;
+
     let nextLocalUrl =
       dropdownType === 'branch'
         ? // TODO We should sort out selected.id and selected.name here, this works but isn't clear
-          createBranchUrl(localUrl, selected.id || selected.name)
+          createBranchUrl(pattern, localUrl, selected.id || selected.name)
         : localUrl;
     if (selected?.url === nextLocalUrl) return;
     if (nextLocalUrl.includes('localhost')) {
@@ -216,16 +220,26 @@
           selected.dropdownType === 'preset' && selected?.url === item?.url,
       }));
     }
-    if (branchPattern?.styles?.length) {
-      options['Styles on a branch'] = branchPattern?.styles.map(s => {
-        return {
-          name: `${s.charAt(0).toUpperCase() + s.slice(1)} on...`,
-          id: s,
-          type: branchPattern.type,
-          dropdownType: 'branch',
-          selected: branch && createBranchUrl(branch, s) === selected.url,
-        };
-      });
+    if (branchPatterns) {
+      for (const pattern of branchPatterns) {
+        if (pattern?.styles?.length) {
+          options[
+            `Styles on a branch${pattern.name ? `: ${pattern.name}` : ''}`
+          ] = pattern?.styles.map(s => {
+            return {
+              name: `${s.charAt(0).toUpperCase() + s.slice(1)} on...`,
+              id: s,
+              type: pattern.type,
+              dropdownType: 'branch',
+              selected: !!(
+                branch &&
+                createBranchUrl(pattern.pattern, branch, s) === selected.url
+              ),
+              pattern: pattern.pattern,
+            };
+          });
+        }
+      }
     }
     options['Custom'] = [
       {
@@ -234,6 +248,7 @@
         selected: selected.dropdownType === 'custom',
       },
     ];
+
     return options;
   };
 
