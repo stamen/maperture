@@ -89,14 +89,13 @@
   <base href="process.env.BASE_PATH" />
 </svelte:head>
 <main>
-  <div id="maps-view">
-    <Maps
-      {maps}
-      {mapState}
-      viewMode={settings.viewMode}
-      on:mapState={handleMapState}
-    />
-  </div>
+  <Maps
+    {maps}
+    {mapState}
+    viewMode={settings.viewMode}
+    on:mapState={handleMapState}
+  />
+
   <div class="map-controls-container">
     <MapControls
       {mapboxGlAccessToken}
@@ -113,11 +112,6 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-  }
-
-  #maps-view {
-    height: 100%;
-    width: 100%;
   }
 
   .map-controls-container {

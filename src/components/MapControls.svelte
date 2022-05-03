@@ -1,5 +1,4 @@
 <script>
-  import { saveAs } from 'file-saver';
   import html2canvas from 'html2canvas';
   import { faCamera, faPlus } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa/src/fa.svelte';
@@ -57,8 +56,7 @@
   };
 
   const downloadScreenshot = () => {
-    const fileName = maps.map(m => (m.id ? m.id : m.name)).join('-');
-    const mapsView = document.getElementById('maps-view');
+    const mapsView = document.getElementsByClassName('maps')[0];
 
     const ignoreElements = el => {
       if (el.className && typeof el.className === 'string') {
@@ -68,7 +66,9 @@
     };
 
     html2canvas(mapsView, { ignoreElements }).then(canvas => {
-      saveAs(canvas.toDataURL(), `${fileName}.png`);
+      canvas.toBlob(blob =>
+        navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
+      );
     });
   };
 </script>
@@ -122,9 +122,10 @@
           disabled={viewMode === 'swipe'}
           title={viewMode === 'swipe'
             ? 'Must be in phone or mirror mode to screenshot.'
-            : ''}
+            : 'Copy image to clipboard'}
         >
-          <Fa icon={faCamera} /> Screenshot
+          <Fa icon={faCamera} />
+          Copy image
         </button>
       </div>
     </div>

@@ -25,14 +25,14 @@
   .viewer-container {
     display: flex;
     height: 100%;
+    justify-content: space-around;
   }
 
   .maps {
     align-items: center;
     display: flex;
-    flex-grow: 1;
     flex-direction: row;
-    justify-content: space-around;
+    align-self: center;
   }
 
   .maps .map-container {

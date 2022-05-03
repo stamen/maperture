@@ -23,6 +23,7 @@
 </script>
 
 <div
+  id="layout"
   class="maps"
   class:dragging
   on:mousemove={handleSliderMouseMove}
