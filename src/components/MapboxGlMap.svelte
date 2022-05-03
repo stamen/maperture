@@ -86,6 +86,7 @@
     map = new mapboxgl.Map({
       container: id,
       style: url,
+      preserveDrawingBuffer: true,
       ...mapViewProps,
     });
 

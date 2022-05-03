@@ -102,6 +102,14 @@
 
   onMount(() => {
     loader.load().then(() => {
+      // Preserve drawing buffer for google map
+      HTMLCanvasElement.prototype.getContext = (function (origFn) {
+        return function (type, attribs) {
+          attribs = attribs || {};
+          attribs.preserveDrawingBuffer = true;
+          return origFn.call(this, type, attribs);
+        };
+      })(HTMLCanvasElement.prototype.getContext);
       map = new google.maps.Map(document.getElementById(id), {
         center: mapViewProps.center,
         zoom: mapViewProps.zoom,

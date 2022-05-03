@@ -1,4 +1,7 @@
 <script>
+  import html2canvas from 'html2canvas';
+  import { faCamera, faPlus } from '@fortawesome/free-solid-svg-icons';
+  import Fa from 'svelte-fa/src/fa.svelte';
   import { createEventDispatcher } from 'svelte';
   import { Geocoder } from '@beyonk/svelte-mapbox';
   import { getMapStateMessages } from '../map-state-utils';
@@ -51,6 +54,23 @@
       return next;
     });
   };
+
+  const downloadScreenshot = () => {
+    const mapsView = document.getElementsByClassName('maps')[0];
+
+    const ignoreElements = el => {
+      if (el.className && typeof el.className === 'string') {
+        return el.className.includes('map-label');
+      }
+      return false;
+    };
+
+    html2canvas(mapsView, { ignoreElements }).then(canvas => {
+      canvas.toBlob(blob =>
+        navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
+      );
+    });
+  };
 </script>
 
 <div class="map-controls">
@@ -88,9 +108,26 @@
       </div>
     </div>
     <div class="control-section">
-      <button on:click={addMapPane} disabled={maps.length >= 8}>
-        Add a map
-      </button>
+      <div class="buttons">
+        <button
+          style="margin-right: 6px"
+          on:click={addMapPane}
+          disabled={maps.length >= 8}
+          title={maps.length >= 8 ? 'Maximum of 8 maps allowed.' : ''}
+        >
+          <Fa icon={faPlus} /> Add map
+        </button>
+        <button
+          on:click={downloadScreenshot}
+          disabled={viewMode === 'swipe'}
+          title={viewMode === 'swipe'
+            ? 'Must be in phone or mirror mode to screenshot.'
+            : 'Copy image to clipboard'}
+        >
+          <Fa icon={faCamera} />
+          Copy image
+        </button>
+      </div>
     </div>
   </div>
   {#if mapStateValidationMessages.length > 0}
@@ -121,6 +158,11 @@
   .control-section {
     margin: 0 1em;
     display: flex;
+  }
+
+  .buttons {
+    display: flex;
+    flex-direction: row;
   }
 
   .checkboxes {
