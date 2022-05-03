@@ -23,12 +23,18 @@ const stylePresets = [
 ];
 
 // Commented out example for branchpattern
-// const branchPattern = {
-//   pattern:
-//     'https://website.com/dist/{branch}/path/to/{style}.json',
-//   styles: ['style_1', 'style_2'],
-//   type: 'mapbox-gl',
-// };
+// const branchPatterns = [
+//   {
+//     pattern: 'https://website.com/dist/{branch}/dir-a/path/to/{style}.json',
+//     styles: ['style_1', 'style_2'],
+//     type: 'mapbox-gl',
+//   },
+//   {
+//     pattern: 'https://website.com/dist/{branch}/dir-b/path/to/{style}.json',
+//     styles: ['style_3', 'style_4'],
+//     type: 'mapbox-gl',
+//   },
+// ];
 
 // Example of stylePresetUrls
 // const stylePresetUrls = ['./presets/example.json'];
