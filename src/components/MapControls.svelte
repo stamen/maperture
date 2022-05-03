@@ -110,7 +110,9 @@
         <button on:click={addMapPane} disabled={maps.length >= 8}>
           Add a map
         </button>
-        <button on:click={downloadScreenshot}> Download screenshot </button>
+        <button on:click={downloadScreenshot} disabled={viewMode === 'swipe'}>
+          Download screenshot
+        </button>
       </div>
     </div>
   </div>

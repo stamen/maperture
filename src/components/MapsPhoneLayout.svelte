@@ -5,21 +5,28 @@
   export let mapState;
 </script>
 
-<div class="maps phone">
-  {#each maps as map}
-    <div class="map-container">
-      <Map
-        {map}
-        {...mapState}
-        themeLabel="map-label-offset"
-        numberOfMaps={maps.length}
-        on:mapMove
-      />
-    </div>
-  {/each}
+<div class="viewer-container">
+  <div class="maps phone">
+    {#each maps as map}
+      <div class="map-container">
+        <Map
+          {map}
+          {...mapState}
+          themeLabel="map-label-offset"
+          numberOfMaps={maps.length}
+          on:mapMove
+        />
+      </div>
+    {/each}
+  </div>
 </div>
 
 <style>
+  .viewer-container {
+    display: flex;
+    height: 100%;
+  }
+
   .maps {
     align-items: center;
     display: flex;
