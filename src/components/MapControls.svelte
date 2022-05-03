@@ -1,4 +1,6 @@
 <script>
+  import { saveAs } from 'file-saver';
+  import html2canvas from 'html2canvas';
   import { createEventDispatcher } from 'svelte';
   import { Geocoder } from '@beyonk/svelte-mapbox';
   import { getMapStateMessages } from '../map-state-utils';
@@ -51,6 +53,22 @@
       return next;
     });
   };
+
+  const downloadScreenshot = () => {
+    const fileName = maps.map(m => m.id).join('-');
+    const mapsView = document.getElementById('maps-view');
+
+    const ignoreElements = el => {
+      if (el.className && typeof el.className === 'string') {
+        return el.className.includes('map-label');
+      }
+      return false;
+    };
+
+    html2canvas(mapsView, { ignoreElements }).then(canvas => {
+      saveAs(canvas.toDataURL(), `${fileName}.png`);
+    });
+  };
 </script>
 
 <div class="map-controls">
@@ -88,9 +106,12 @@
       </div>
     </div>
     <div class="control-section">
-      <button on:click={addMapPane} disabled={maps.length >= 8}>
-        Add a map
-      </button>
+      <div class="buttons">
+        <button on:click={addMapPane} disabled={maps.length >= 8}>
+          Add a map
+        </button>
+        <button on:click={downloadScreenshot}> Download screenshot </button>
+      </div>
     </div>
   </div>
   {#if mapStateValidationMessages.length > 0}
@@ -121,6 +142,11 @@
   .control-section {
     margin: 0 1em;
     display: flex;
+  }
+
+  .buttons {
+    display: flex;
+    flex-direction: column;
   }
 
   .checkboxes {
