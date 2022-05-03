@@ -81,7 +81,7 @@
 
   const poll = url => {
     const pollCondition = str =>
-      str && str.includes('localhost') && selected.url === str;
+      str && str.includes('localhost') && selected?.url === str;
     // Simple polling for any style on localhost
     // Check that should poll to set timer
     if (pollCondition(url)) {
