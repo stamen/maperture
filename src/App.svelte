@@ -1,4 +1,5 @@
 <script>
+  import mapboxgl from 'mapbox-gl';
   import { onMount } from 'svelte';
   import {
     maps as mapsStore,
@@ -83,6 +84,11 @@
       viewMode: event.detail.mode,
     };
   };
+
+  // Set RTL plugin once rather than per map
+  mapboxgl.setRTLTextPlugin(
+    'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.0/mapbox-gl-rtl-text.js'
+  );
 </script>
 
 <svelte:head>
