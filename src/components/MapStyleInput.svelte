@@ -64,7 +64,7 @@
     dropdownOptions = getDropdownOptions();
   };
 
-  $: if (map) {
+  $: if (map || stylePresets) {
     setSelected();
   }
 
