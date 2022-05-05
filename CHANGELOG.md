@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Fix: Remote style presets now update dropdown
+
 ## 0.3.0
 
 - Allow multiple branch patterns in local config as an array
