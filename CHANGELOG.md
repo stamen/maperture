@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.3.1
+
 - Fix: Remote style presets now update dropdown
 
 ## 0.3.0
