@@ -43054,7 +43054,7 @@ function aa(t) {
         c(e, o),
         s ||
           ((l = [
-            _(r, 'input', t[13]),
+            _(r, 'input', t[14]),
             _(r, 'focus', t[6]),
             _(r, 'blur', t[7]),
             u((a = ea.call(null, o, { code: 'Enter', callback: t[5] }))),
@@ -43129,7 +43129,7 @@ function la(e) {
         u && u.m(r, null),
         c(r, A),
         g && g.m(r, null),
-        o || ((a = _(n, 'change', e[12])), (o = !0));
+        o || ((a = _(n, 'change', e[13])), (o = !0));
     },
     p(t, e) {
       if (8 & e[0]) {
@@ -43173,7 +43173,7 @@ function ua(t, e, r) {
     r(10, (n = t.find(t => t.index === c))),
       n && ((o = n.branch), (a = n.pattern), (A = n.name), (i = n.url));
   }),
-    ft.subscribe(t => (s = t)),
+    ft.subscribe(t => r(11, (s = t))),
     dt.subscribe(t => ({ branchPatterns: l } = t));
   let p = i,
     h = {};
@@ -43238,7 +43238,7 @@ function ua(t, e, r) {
       '200' === e && (r(2, (u.url = t), u), y(t));
     },
     B = async () => {
-      r(11, (d = p));
+      r(12, (d = p));
       const { dropdownType: t, pattern: e } = u;
       let n = 'branch' === t ? ta(e, d, u.id || u.name) : d;
       if (u?.url !== n) {
@@ -43308,11 +43308,11 @@ function ua(t, e, r) {
       'index' in t && r(9, (c = t.index));
     }),
     (t.$$.update = () => {
-      1024 & t.$$.dirty[0] && n && f(),
-        2051 & t.$$.dirty[0] &&
+      3072 & t.$$.dirty[0] && (n || s) && f(),
+        4099 & t.$$.dirty[0] &&
           p !== d &&
           m &&
-          (r(11, (d = '')), r(1, (m = null)));
+          (r(12, (d = '')), r(1, (m = null)));
     }),
     [
       p,
@@ -43338,6 +43338,7 @@ function ua(t, e, r) {
       x,
       c,
       n,
+      s,
       d,
       t => x(JSON.parse(t.target.value)),
       function () {
