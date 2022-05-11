@@ -8,7 +8,7 @@
     "dev": "rollup -c -w",
     "start": "sirv public --no-clear",
     "prepare": "husky install",
-    "deploy": "gh-pages -d public -s ['**/*', '!**/config/*']"
+    "deploy": "yarn build && gh-pages -d public -s ['**/*', '!**/config/*']"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^21.0.2",
