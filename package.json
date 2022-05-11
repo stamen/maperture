@@ -7,12 +7,14 @@
     "build-package": "rm -rf dist && rollup -c rollup.config.package.js",
     "dev": "rollup -c -w",
     "start": "sirv public --no-clear",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "deploy": "gh-pages -d public -s ['**/*', '!**/config/*']"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^21.0.2",
     "@rollup/plugin-node-resolve": "^11.0.0",
     "@rollup/plugin-replace": "^4.0.0",
+    "gh-pages": "^4.0.0",
     "husky": "^7.0.0",
     "prettier": "^2.6.0",
     "prettier-plugin-svelte": "^2.6.0",
