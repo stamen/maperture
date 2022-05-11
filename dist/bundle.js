@@ -42979,11 +42979,11 @@ function Aa(t) {
       p(t, e, n), c(e, r);
     },
     p(t, o) {
-      8 & o[0] && A !== (A = t[31].name + '') && B(r, A),
-        8 & o[0] &&
+      16 & o[0] && A !== (A = t[31].name + '') && B(r, A),
+        16 & o[0] &&
           n !== (n = JSON.stringify(t[31])) &&
           ((e.__value = n), (e.value = e.__value)),
-        8 & o[0] && i !== (i = t[31].selected) && (e.selected = i);
+        16 & o[0] && i !== (i = t[31].selected) && (e.selected = i);
     },
     d(t) {
       t && h(e);
@@ -42994,7 +42994,7 @@ function oa(t) {
   let e,
     r,
     n,
-    i = t[3][t[28]],
+    i = t[4][t[28]],
     A = [];
   for (let e = 0; e < i.length; e += 1) A[e] = Aa(ia(t, i, e));
   return {
@@ -43008,17 +43008,17 @@ function oa(t) {
       for (let t = 0; t < A.length; t += 1) A[t].m(e, null);
     },
     p(t, o) {
-      if (8 & o[0]) {
+      if (16 & o[0]) {
         let r;
-        for (i = t[3][t[28]], r = 0; r < i.length; r += 1) {
+        for (i = t[4][t[28]], r = 0; r < i.length; r += 1) {
           const n = ia(t, i, r);
           A[r] ? A[r].p(n, o) : ((A[r] = Aa(n)), A[r].c(), A[r].m(e, null));
         }
         for (; r < A.length; r += 1) A[r].d(1);
         A.length = i.length;
       }
-      8 & o[0] && r !== (r = t[28]) && w(e, 'value', r),
-        8 & o[0] && n !== (n = t[28]) && w(e, 'label', n);
+      16 & o[0] && r !== (r = t[28]) && w(e, 'value', r),
+        16 & o[0] && n !== (n = t[28]) && w(e, 'label', n);
     },
     d(t) {
       t && h(e), f(A, t);
@@ -43026,24 +43026,25 @@ function oa(t) {
   };
 }
 function aa(t) {
-  let e, r, n, A, o, a, s, l;
+  let e, r, n, A, o, a, s, l, f, g;
   return {
     c() {
       (e = d('div')),
         (r = d('input')),
         (A = y()),
         (o = d('button')),
-        (o.textContent = 'Submit'),
+        (a = m('Submit')),
         w(
           r,
           'placeholder',
           (n =
-            'branch' === t[2].dropdownType
+            'branch' === t[3].dropdownType
               ? 'enter a branch name'
               : 'enter a url to a style')
         ),
         w(r, 'class', 'svelte-1qgw420'),
         I(r, 'input-error', t[1]),
+        (o.disabled = s = t[2] === t[0]),
         w(e, 'class', 'custom-input svelte-1qgw420');
     },
     m(n, i) {
@@ -43052,29 +43053,31 @@ function aa(t) {
         x(r, t[0]),
         c(e, A),
         c(e, o),
-        s ||
-          ((l = [
+        c(o, a),
+        f ||
+          ((g = [
             _(r, 'input', t[14]),
-            _(r, 'focus', t[6]),
-            _(r, 'blur', t[7]),
-            u((a = ea.call(null, o, { code: 'Enter', callback: t[5] }))),
-            _(o, 'click', t[4]),
+            _(r, 'focus', t[7]),
+            _(r, 'blur', t[8]),
+            u((l = ea.call(null, o, { code: 'Enter', callback: t[6] }))),
+            _(o, 'click', t[5]),
           ]),
-          (s = !0));
+          (f = !0));
     },
     p(t, e) {
-      4 & e[0] &&
+      8 & e[0] &&
         n !==
           (n =
-            'branch' === t[2].dropdownType
+            'branch' === t[3].dropdownType
               ? 'enter a branch name'
               : 'enter a url to a style') &&
         w(r, 'placeholder', n),
         1 & e[0] && r.value !== t[0] && x(r, t[0]),
-        2 & e[0] && I(r, 'input-error', t[1]);
+        2 & e[0] && I(r, 'input-error', t[1]),
+        5 & e[0] && s !== (s = t[2] === t[0]) && (o.disabled = s);
     },
     d(t) {
-      t && h(e), (s = !1), i(l);
+      t && h(e), (f = !1), i(g);
     },
   };
 }
@@ -43104,11 +43107,11 @@ function la(e) {
     A,
     o,
     a,
-    s = Object.keys(e[3]),
+    s = Object.keys(e[4]),
     l = [];
   for (let t = 0; t < s.length; t += 1) l[t] = oa(na(e, s, t));
   let u =
-      ('custom' === e[2].dropdownType || 'branch' === e[2].dropdownType) &&
+      ('custom' === e[3].dropdownType || 'branch' === e[3].dropdownType) &&
       aa(e),
     g = !!e[1] && sa(e);
   return {
@@ -43132,16 +43135,16 @@ function la(e) {
         o || ((a = _(n, 'change', e[13])), (o = !0));
     },
     p(t, e) {
-      if (8 & e[0]) {
+      if (16 & e[0]) {
         let r;
-        for (s = Object.keys(t[3]), r = 0; r < s.length; r += 1) {
+        for (s = Object.keys(t[4]), r = 0; r < s.length; r += 1) {
           const i = na(t, s, r);
           l[r] ? l[r].p(i, e) : ((l[r] = oa(i)), l[r].c(), l[r].m(n, null));
         }
         for (; r < l.length; r += 1) l[r].d(1);
         l.length = s.length;
       }
-      'custom' === t[2].dropdownType || 'branch' === t[2].dropdownType
+      'custom' === t[3].dropdownType || 'branch' === t[3].dropdownType
         ? u
           ? u.p(t, e)
           : ((u = aa(t)), u.c(), u.m(r, A))
@@ -43170,8 +43173,8 @@ function ua(t, e, r) {
     u,
     { index: c } = e;
   ht.subscribe(t => {
-    r(10, (n = t.find(t => t.index === c))),
-      n && ((o = n.branch), (a = n.pattern), (A = n.name), (i = n.url));
+    (n = t.find(t => t.index === c)),
+      n && ((o = n.branch), (a = n.pattern), (A = n.name), r(2, (i = n.url)));
   }),
     ft.subscribe(t => r(11, (s = t))),
     dt.subscribe(t => ({ branchPatterns: l } = t));
@@ -43180,13 +43183,13 @@ function ua(t, e, r) {
   const f = () => {
     const t = s && s.find(t => t.url === i);
     t
-      ? (r(2, (u = { ...t, dropdownType: 'preset' })), r(0, (p = '')))
+      ? (r(3, (u = { ...t, dropdownType: 'preset' })), r(0, (p = '')))
       : o
-      ? (r(2, (u = { name: A, dropdownType: 'branch', url: i, pattern: a })),
+      ? (r(3, (u = { name: A, dropdownType: 'branch', url: i, pattern: a })),
         r(0, (p = o)))
-      : (r(2, (u = { name: A, dropdownType: 'custom', url: i })),
+      : (r(3, (u = { name: A, dropdownType: 'custom', url: i })),
         r(0, (p = i))),
-      r(3, (h = b()));
+      r(4, (h = b()));
   };
   let d = '',
     g = !1,
@@ -43235,13 +43238,13 @@ function ua(t, e, r) {
     },
     w = async t => {
       const { status: e } = await _(t);
-      '200' === e && (r(2, (u.url = t), u), y(t));
+      '200' === e && (r(3, (u.url = t), u), y(t));
     },
     B = async () => {
       r(12, (d = p));
       const { dropdownType: t, pattern: e } = u;
       let n = 'branch' === t ? ta(e, d, u.id || u.name) : d;
-      if (u?.url !== n) {
+      if (i !== n) {
         if (n.includes('localhost')) {
           const [t, e] = n.split('localhost');
           t || (n = `http://localhost${e}`);
@@ -43250,7 +43253,7 @@ function ua(t, e, r) {
       }
     },
     x = t => {
-      r(2, (u = t));
+      r(3, (u = t));
       const { dropdownType: e } = t;
       switch (e) {
         case 'preset': {
@@ -43268,6 +43271,7 @@ function ua(t, e, r) {
         case 'custom':
           r(0, (p = i));
       }
+      r(4, (h = b()));
     },
     b = () => {
       const t = {};
@@ -43305,10 +43309,10 @@ function ua(t, e, r) {
   y(i);
   return (
     (t.$$set = t => {
-      'index' in t && r(9, (c = t.index));
+      'index' in t && r(10, (c = t.index));
     }),
     (t.$$.update = () => {
-      3072 & t.$$.dirty[0] && (n || s) && f(),
+      2048 & t.$$.dirty[0] && s && f(),
         4099 & t.$$.dirty[0] &&
           p !== d &&
           m &&
@@ -43317,6 +43321,7 @@ function ua(t, e, r) {
     [
       p,
       m,
+      i,
       u,
       h,
       B,
@@ -43337,7 +43342,6 @@ function ua(t, e, r) {
       },
       x,
       c,
-      n,
       s,
       d,
       t => x(JSON.parse(t.target.value)),
@@ -43349,7 +43353,7 @@ function ua(t, e, r) {
 }
 class ca extends ot {
   constructor(t) {
-    super(), At(this, t, ua, la, o, { index: 9 }, null, [-1, -1]);
+    super(), At(this, t, ua, la, o, { index: 10 }, null, [-1, -1]);
   }
 }
 function pa(t) {
