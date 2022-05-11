@@ -64,7 +64,7 @@
     dropdownOptions = getDropdownOptions();
   };
 
-  $: if (map || stylePresets) {
+  $: if (stylePresets) {
     setSelected();
   }
 
@@ -148,7 +148,7 @@
         ? // TODO We should sort out selected.id and selected.name here, this works but isn't clear
           createBranchUrl(pattern, localUrl, selected.id || selected.name)
         : localUrl;
-    if (selected?.url === nextLocalUrl) return;
+    if (url === nextLocalUrl) return;
     if (nextLocalUrl.includes('localhost')) {
       const [preface, address] = nextLocalUrl.split('localhost');
       // Fetch doesn't accept localhost unless prefaced with http://
@@ -208,6 +208,7 @@
         break;
       }
     }
+    dropdownOptions = getDropdownOptions();
   };
 
   const getDropdownOptions = () => {
@@ -282,7 +283,8 @@
       />
       <button
         use:shortcut={{ code: 'Enter', callback: onKeySubmit }}
-        on:click={submitUrl}>Submit</button
+        on:click={submitUrl}
+        disabled={url === textInput}>Submit</button
       >
     </div>
   {/if}
