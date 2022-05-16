@@ -29,7 +29,9 @@
   };
 </script>
 
-{#key `${map.id}-${map.index}`}
+<!-- Use the number of maps and index to reset map on adding and removing maps -->
+<!-- We don't want to use the map id here or we'll unnecessarily remount the component for every new style -->
+{#key `${numberOfMaps}-${map.index}`}
   <div class="map">
     <svelte:component
       this={MapComponent}
