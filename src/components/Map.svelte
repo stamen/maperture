@@ -29,19 +29,19 @@
   };
 </script>
 
-<!-- Use the number of maps and index to reset map on adding and removing maps -->
-<!-- We don't want to use the map id here or we'll unnecessarily remount the component for every new style -->
-{#key `${numberOfMaps}-${map.index}`}
-  <div class="map">
-    <svelte:component
-      this={MapComponent}
-      index={map.index}
-      id={`${map.id}-${map.index}`}
-      mapStyle={map}
-      {numberOfMaps}
-      {...$$restProps}
-      on:mapMove
-    />
+<div class="map">
+  <svelte:component
+    this={MapComponent}
+    index={map.index}
+    id={`${map.id}-${map.index}`}
+    mapStyle={map}
+    {numberOfMaps}
+    {...$$restProps}
+    on:mapMove
+  />
+  <!-- Use the number of maps and index to reset map on adding and removing maps -->
+  <!-- We don't want to use the map id here or we'll unnecessarily remount the component for every new style -->
+  {#key `${numberOfMaps}-${map.index}`}
     <div
       id={map.id}
       class={`map-label-container ${
@@ -55,8 +55,8 @@
         disableClose={numberOfMaps <= 2}
       />
     </div>
-  </div>
-{/key}
+  {/key}
+</div>
 
 <style>
   .map {
