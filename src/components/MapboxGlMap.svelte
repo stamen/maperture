@@ -19,6 +19,8 @@
 
   let style = {};
   let url;
+  let popup = null;
+  let isPopupOpen = false;
 
   $: if (mapStyle) ({ style, url } = mapStyle);
 
@@ -82,6 +84,25 @@
     if (shouldUpdateMapView(mapViewProps)) map.jumpTo(mapViewProps);
   };
 
+  // The Mapbox popup requires HTML as a string
+  // This means class names for the popup need to live in global.css
+  // because Svelte won't compile unused CSS classes that live in this component
+  const getPopupHtmlString = features => {
+    let html = '<div class="popup">';
+    for (const feature of features) {
+      const { properties } = feature;
+      html += `<h2 class="popup-source-layer">${feature.sourceLayer}</h2>`;
+      if (properties) {
+        Object.keys(properties).forEach(key => {
+          const propertyValue = properties[key];
+          html += `<p class="popup-property"><span class="popup-property-id">${key}:</span> <span class="popup-property-value">${propertyValue}</span></p>`;
+        });
+      }
+    }
+    html += '</div>';
+    return html;
+  };
+
   onMount(() => {
     map = new mapboxgl.Map({
       container: id,
@@ -111,6 +132,21 @@
       if (!e?.resize) {
         handleMove(e);
       }
+    });
+
+    map.on('click', e => {
+      const renderedFeatures = map.queryRenderedFeatures(e.point);
+
+      if (!isPopupOpen) {
+        popup = new mapboxgl.Popup()
+          .setLngLat(e.lngLat)
+          .setHTML(getPopupHtmlString(renderedFeatures))
+          .addTo(map);
+      } else {
+        popup.remove();
+        popup = null;
+      }
+      isPopupOpen = !isPopupOpen;
     });
   });
 
