@@ -141,6 +141,7 @@
         popup = new mapboxgl.Popup()
           .setLngLat(e.lngLat)
           .setHTML(getPopupHtmlString(renderedFeatures))
+          .setMaxWidth(360)
           .addTo(map);
       } else {
         popup.remove();
