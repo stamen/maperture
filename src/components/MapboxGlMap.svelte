@@ -91,7 +91,7 @@
     let html = '<div class="popup">';
     for (const feature of features) {
       const { properties } = feature;
-      html += `<h2 class="popup-source-layer">${feature.sourceLayer}</h2>`;
+      html += `<h2 class="popup-source-layer">${feature.source}: ${feature.sourceLayer}</h2>`;
       if (properties) {
         Object.keys(properties).forEach(key => {
           const propertyValue = properties[key];
