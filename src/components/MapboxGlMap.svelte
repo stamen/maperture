@@ -88,15 +88,34 @@
   // This means class names for the popup need to live in global.css
   // because Svelte won't compile unused CSS classes that live in this component
   const getPopupHtmlString = features => {
+    const dedupedFeatures = features.reduce((acc, feature) => {
+      const { source, sourceLayer, properties } = feature;
+      const isDuplicate = acc.some(f => {
+        const isSameSource =
+          f.source === source && f.sourceLayer === sourceLayer;
+        const hasSameProperties = Object.keys(properties).every(
+          p => properties[p] === f.properties[p]
+        );
+        return isSameSource && hasSameProperties;
+      });
+
+      if (!isDuplicate) {
+        acc.push(feature);
+      }
+      return acc;
+    }, []);
+
     let html = '<div class="popup">';
-    for (const feature of features) {
+    for (const feature of dedupedFeatures) {
       const { properties } = feature;
       html += `<h2 class="popup-source-layer">${feature.source}: ${feature.sourceLayer}</h2>`;
-      if (properties) {
+      if (properties && Object.keys(properties).length) {
         Object.keys(properties).forEach(key => {
           const propertyValue = properties[key];
           html += `<p class="popup-property"><span class="popup-property-id">${key}:</span> <span class="popup-property-value">${propertyValue}</span></p>`;
         });
+      } else {
+        html += `<p class="popup-no-properties">No properties</p>`;
       }
     }
     html += '</div>';
@@ -135,7 +154,8 @@
     });
 
     map.on('click', e => {
-      const renderedFeatures = map.queryRenderedFeatures(e.point);
+      let renderedFeatures = map.queryRenderedFeatures(e.point);
+      if (!renderedFeatures.length) return;
 
       if (!isPopupOpen) {
         popup = new mapboxgl.Popup()
@@ -143,11 +163,16 @@
           .setHTML(getPopupHtmlString(renderedFeatures))
           .setMaxWidth(360)
           .addTo(map);
+
+        isPopupOpen = true;
+
+        popup.on('close', () => {
+          isPopupOpen = false;
+        });
       } else {
         popup.remove();
         popup = null;
       }
-      isPopupOpen = !isPopupOpen;
     });
   });
 

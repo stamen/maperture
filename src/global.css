@@ -89,6 +89,11 @@ button:focus {
   border-bottom: 1px solid lightgray;
 }
 
+.popup-no-properties {
+  border-bottom: 0px !important;
+  color: lightgray;
+}
+
 .popup-property-id {
   font-weight: bold;
 }
