@@ -106,6 +106,7 @@
     settings = {
       ...settings,
       ...mapState,
+      // contains width and height
       ...event.detail,
     };
   };
