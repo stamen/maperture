@@ -32,6 +32,10 @@
   const handleMapMove = event => {
     dispatch('mapState', { options: event.detail.options });
   };
+
+  const handleSetDimensions = event => {
+    dispatch('setDimensions', { ...event.detail.options });
+  };
 </script>
 
 <svelte:component
@@ -39,4 +43,5 @@
   {maps}
   {mapState}
   on:mapMove={handleMapMove}
+  on:mapSetDimensions={handleSetDimensions}
 />

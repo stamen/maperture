@@ -1,13 +1,16 @@
 <script>
+  import { createEventDispatcher } from 'svelte';
   import Map from './Map.svelte';
 
   export let maps;
   export let mapState;
 
+  const dispatch = createEventDispatcher();
+
   let numberOfMaps = 0;
   let map;
-  let height = '100%';
-  let width = '100%';
+  let height = mapState.height || '100%';
+  let width = mapState.width || '100%';
   let heightInput = '';
   let widthInput = '';
 
@@ -22,11 +25,15 @@
   const setDimensions = () => {
     height = heightInput;
     width = widthInput;
+    dispatch('mapSetDimensions', { options: { height, width } });
   };
 
   const resetDimensions = () => {
     height = '100%';
     width = '100%';
+    heightInput = '';
+    widthInput = '';
+    dispatch('mapSetDimensions', { options: { height: null, width: null } });
   };
 </script>
 
@@ -56,8 +63,13 @@
       </div>
     </div>
     <div class="buttons">
-      <button on:click={setDimensions}>Set Dimensions</button>
-      <button on:click={resetDimensions}>Reset</button>
+      <button on:click={setDimensions} disabled={!widthInput || !heightInput}
+        >Set Dimensions</button
+      >
+      <button
+        on:click={resetDimensions}
+        disabled={height === '100%' && width === '100%'}>Reset</button
+      >
     </div>
   </div>
 </div>

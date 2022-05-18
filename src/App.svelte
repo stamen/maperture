@@ -60,9 +60,22 @@
   }
 
   $: {
-    const { bearing, center, pitch, showCollisions, showBoundaries, zoom } =
-      settings;
+    const {
+      bearing,
+      center,
+      pitch,
+      showCollisions,
+      showBoundaries,
+      zoom,
+      height,
+      width,
+    } = settings;
+    // Required to be set in state
     mapState = { bearing, center, pitch, showCollisions, showBoundaries, zoom };
+    // May be undefined
+    if (height || width) {
+      mapState = { ...mapState, height, width };
+    }
   }
 
   // Validate map state when maps change too
@@ -85,6 +98,15 @@
     };
   };
 
+  const handleDimensions = event => {
+    console.log(event.detail);
+    settings = {
+      ...settings,
+      ...mapState,
+      ...event.detail,
+    };
+  };
+
   // Set RTL plugin once rather than per map
   mapboxgl.setRTLTextPlugin(
     'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.0/mapbox-gl-rtl-text.js'
@@ -100,6 +122,7 @@
     {mapState}
     viewMode={settings.viewMode}
     on:mapState={handleMapState}
+    on:setDimensions={handleDimensions}
   />
 
   <div class="map-controls-container">
