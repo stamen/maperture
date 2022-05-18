@@ -1,6 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import Map from './Map.svelte';
+  import { shortcut } from '../shortcut';
 
   export let maps;
   export let mapState;
@@ -13,6 +14,8 @@
   let width = mapState.width || '100%';
   let heightInput = mapState.height || '';
   let widthInput = mapState.width || '';
+  let heightInputFocused = false;
+  let widthInputFocused = false;
 
   $: {
     if (maps.length) {
@@ -21,6 +24,14 @@
       numberOfMaps = maps.length;
     }
   }
+
+  const onKeySubmit = () => {
+    const inputFocused = heightInputFocused || widthInputFocused;
+    const disabled = !widthInput || !heightInput;
+    if (inputFocused && !disabled) {
+      setDimensions();
+    }
+  };
 
   const setDimensions = () => {
     height = heightInput;
@@ -53,17 +64,32 @@
     <div class="dimension-input">
       <span>Height:</span>
       <div class="input-container">
-        <input type="number" class="input" bind:value={heightInput} />
+        <input
+          type="number"
+          class="input"
+          bind:value={heightInput}
+          on:focus={() => (heightInputFocused = true)}
+          on:blur={() => (heightInputFocused = false)}
+        />
       </div>
     </div>
     <div class="dimension-input">
       <span>Width:</span>
       <div class="input-container">
-        <input type="number" class="input" bind:value={widthInput} />
+        <input
+          type="number"
+          class="input"
+          bind:value={widthInput}
+          on:focus={() => (widthInputFocused = true)}
+          on:blur={() => (widthInputFocused = false)}
+        />
       </div>
     </div>
     <div class="buttons">
-      <button on:click={setDimensions} disabled={!widthInput || !heightInput}
+      <button
+        on:click={setDimensions}
+        disabled={!widthInput || !heightInput}
+        use:shortcut={{ code: 'Enter', callback: onKeySubmit }}
         >Set Dimensions</button
       >
       <button
