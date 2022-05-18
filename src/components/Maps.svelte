@@ -3,6 +3,7 @@
   import MapsMirrorLayout from './MapsMirrorLayout.svelte';
   import MapsPhoneLayout from './MapsPhoneLayout.svelte';
   import MapsSwipeLayout from './MapsSwipeLayout.svelte';
+  import MapsResponsiveLayout from './MapsResponsiveLayout.svelte';
 
   export let maps;
   export let mapState;
@@ -19,6 +20,9 @@
       break;
     case 'mirror':
       LayoutComponent = MapsMirrorLayout;
+      break;
+    case 'responsive':
+      LayoutComponent = MapsResponsiveLayout;
       break;
     case 'swipe':
     default:
