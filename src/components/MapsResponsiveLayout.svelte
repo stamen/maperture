@@ -17,6 +17,16 @@
   let heightInputFocused = false;
   let widthInputFocused = false;
 
+  let mapStateProps = mapState;
+  delete mapStateProps.width;
+  delete mapStateProps.height;
+
+  $: {
+    // Remove width and height before passing down mapState as props to Map
+    let { width, height, ...props } = mapState;
+    mapStateProps = props;
+  }
+
   $: {
     if (maps.length) {
       map = maps[0];
@@ -53,7 +63,7 @@
     {#if map}
       <Map
         {map}
-        {...mapState}
+        {...mapStateProps}
         {numberOfMaps}
         themeLabel="map-label-responsive"
         on:mapMove
