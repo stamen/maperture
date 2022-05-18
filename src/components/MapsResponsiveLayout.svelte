@@ -11,8 +11,8 @@
   let map;
   let height = mapState.height || '100%';
   let width = mapState.width || '100%';
-  let heightInput = '';
-  let widthInput = '';
+  let heightInput = mapState.height || '';
+  let widthInput = mapState.width || '';
 
   $: {
     if (maps.length) {

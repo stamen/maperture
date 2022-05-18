@@ -70,12 +70,16 @@
       height,
       width,
     } = settings;
-    // Required to be set in state
-    mapState = { bearing, center, pitch, showCollisions, showBoundaries, zoom };
-    // May be undefined
-    if (height || width) {
-      mapState = { ...mapState, height, width };
-    }
+    mapState = {
+      bearing,
+      center,
+      pitch,
+      showCollisions,
+      showBoundaries,
+      zoom,
+      ...(height && { height }),
+      ...(width && { width }),
+    };
   }
 
   // Validate map state when maps change too
@@ -99,7 +103,6 @@
   };
 
   const handleDimensions = event => {
-    console.log(event.detail);
     settings = {
       ...settings,
       ...mapState,

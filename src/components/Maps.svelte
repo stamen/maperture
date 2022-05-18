@@ -29,6 +29,14 @@
       LayoutComponent = MapsSwipeLayout;
   }
 
+  $: {
+    if (viewMode !== 'responsive' && (mapState.height || mapState.width)) {
+      handleSetDimensions({
+        detail: { options: { height: null, width: null } },
+      });
+    }
+  }
+
   const handleMapMove = event => {
     dispatch('mapState', { options: event.detail.options });
   };
