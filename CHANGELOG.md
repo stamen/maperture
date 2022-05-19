@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 0.5.0
+
+- Implement popup to inspect rendered features (#67)
+- Fix polling url issue (#64)
+
 ## 0.4.0
 
 - Allow one map view
