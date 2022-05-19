@@ -44,12 +44,25 @@ function fromQueryString(qs) {
   return params;
 }
 
+// Remove values set to null
+const cleanSettings = stateObj => {
+  let nextState = Object.keys(stateObj).reduce((acc, k) => {
+    const value = stateObj[k];
+    if (value !== null) acc[k] = value;
+    return acc;
+  }, {});
+  return nextState;
+};
+
 export function writeHash(mapSettings) {
-  const nonMapSettings = Object.fromEntries(
+  let nonMapSettings = Object.fromEntries(
     Object.entries(mapSettings)
       .filter(([k, v]) => !mapLocationKeys.includes(k))
       .map(([k, v]) => [k, jsonKeys.includes(k) ? JSON.stringify(v) : v])
   );
+
+  nonMapSettings = cleanSettings(nonMapSettings);
+
   window.location.hash = toQueryString({
     map: [
       round(mapSettings.zoom, 2),

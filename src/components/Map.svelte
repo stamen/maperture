@@ -50,7 +50,7 @@
         index={map.index}
         name={map.name}
         onClose={removeMap}
-        disableClose={numberOfMaps <= 2}
+        disableClose={numberOfMaps <= 1}
       />
     </div>
   </div>
@@ -80,5 +80,9 @@
     left: 0;
     right: 0;
     bottom: unset;
+  }
+
+  .map-label-responsive {
+    position: fixed;
   }
 </style>
