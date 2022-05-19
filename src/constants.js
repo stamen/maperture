@@ -1,4 +1,4 @@
-export const VIEW_MODES = ['swipe', 'mirror', 'phone'];
+export const VIEW_MODES = ['swipe', 'mirror', 'phone', 'responsive'];
 
 export const GOOGLE_MAP_MAX_PITCH_ZOOM_THRESHHOLD = 12;
 export const GOOGLE_MAP_MAX_PITCH_LOW_ZOOM = 35;

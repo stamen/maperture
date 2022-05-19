@@ -3,6 +3,7 @@
   import MapsMirrorLayout from './MapsMirrorLayout.svelte';
   import MapsPhoneLayout from './MapsPhoneLayout.svelte';
   import MapsSwipeLayout from './MapsSwipeLayout.svelte';
+  import MapsResponsiveLayout from './MapsResponsiveLayout.svelte';
 
   export let maps;
   export let mapState;
@@ -20,13 +21,28 @@
     case 'mirror':
       LayoutComponent = MapsMirrorLayout;
       break;
+    case 'responsive':
+      LayoutComponent = MapsResponsiveLayout;
+      break;
     case 'swipe':
     default:
       LayoutComponent = MapsSwipeLayout;
   }
 
+  $: {
+    if (viewMode !== 'responsive' && (mapState.height || mapState.width)) {
+      handleSetDimensions({
+        detail: { options: { height: null, width: null } },
+      });
+    }
+  }
+
   const handleMapMove = event => {
     dispatch('mapState', { options: event.detail.options });
+  };
+
+  const handleSetDimensions = event => {
+    dispatch('setDimensions', { ...event.detail.options });
   };
 </script>
 
@@ -35,4 +51,5 @@
   {maps}
   {mapState}
   on:mapMove={handleMapMove}
+  on:mapSetDimensions={handleSetDimensions}
 />

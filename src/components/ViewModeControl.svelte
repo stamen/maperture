@@ -16,15 +16,20 @@
   }
 
   $: {
+    if (mapsNum === 1) {
+      viewModes = VIEW_MODES.filter(mode => mode !== 'swipe');
+    }
     if (mapsNum === 2) {
-      viewModes = VIEW_MODES;
+      viewModes = VIEW_MODES.filter(mode => mode !== 'responsive');
     }
     if (mapsNum > 2 && mapsNum <= 4) {
-      viewModes = VIEW_MODES.filter(mode => mode !== 'swipe');
+      viewModes = VIEW_MODES.filter(
+        mode => mode !== 'swipe' && mode !== 'responsive'
+      );
     }
     if (mapsNum > 4) {
       viewModes = VIEW_MODES.filter(
-        mode => mode !== 'swipe' && mode !== 'phone'
+        mode => mode !== 'swipe' && mode !== 'phone' && mode !== 'responsive'
       );
     }
 
