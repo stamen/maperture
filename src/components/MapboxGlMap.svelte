@@ -110,10 +110,12 @@
       const { properties } = feature;
       html += `<h2 class="popup-source-layer">${feature.source}: ${feature.sourceLayer}</h2>`;
       if (properties && Object.keys(properties).length) {
-        Object.keys(properties).forEach(key => {
-          const propertyValue = properties[key];
-          html += `<p class="popup-property"><span class="popup-property-id">${key}:</span> <span class="popup-property-value">${propertyValue}</span></p>`;
-        });
+        Object.keys(properties)
+          .sort()
+          .forEach(key => {
+            const propertyValue = properties[key];
+            html += `<p class="popup-property"><span class="popup-property-id">${key}:</span> <span class="popup-property-value">${propertyValue}</span></p>`;
+          });
       } else {
         html += `<p class="popup-no-properties">No properties</p>`;
       }
@@ -188,5 +190,39 @@
 <style>
   .map {
     height: 100%;
+  }
+
+  :global(.popup) {
+    min-width: 180px;
+    padding-right: 12px;
+    max-height: 240px;
+    overflow: auto;
+  }
+
+  :global(.popup-source-layer) {
+    font-size: 16px;
+    line-height: 16px;
+  }
+
+  :global(.popup-property) {
+    line-height: 6px;
+    margin-top: 6px;
+    margin-bottom: 3px;
+    width: 100%;
+    padding-bottom: 6px;
+    border-bottom: 1px solid lightgray;
+  }
+
+  :global(.popup-no-properties) {
+    border-bottom: 0px !important;
+    color: lightgray;
+  }
+
+  :global(.popup-property-id) {
+    font-weight: bold;
+  }
+
+  :global(.popup-property-value) {
+    float: right;
   }
 </style>

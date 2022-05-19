@@ -67,37 +67,3 @@ button:not(:disabled):active {
 button:focus {
   border-color: #666;
 }
-
-.popup {
-  min-width: 180px;
-  padding-right: 12px;
-  max-height: 240px;
-  overflow: scroll;
-}
-
-.popup-source-layer {
-  font-size: 16px;
-  line-height: 16px;
-}
-
-.popup-property {
-  line-height: 6px;
-  margin-top: 6px;
-  margin-bottom: 3px;
-  width: 100%;
-  padding-bottom: 6px;
-  border-bottom: 1px solid lightgray;
-}
-
-.popup-no-properties {
-  border-bottom: 0px !important;
-  color: lightgray;
-}
-
-.popup-property-id {
-  font-weight: bold;
-}
-
-.popup-property-value {
-  float: right;
-}
