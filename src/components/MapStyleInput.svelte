@@ -1,4 +1,5 @@
 <script>
+  import { onDestroy, onMount } from 'svelte';
   import {
     maps as mapsStore,
     stylePresets as stylePresetsStore,
@@ -15,6 +16,7 @@
   let name;
   let branch;
   let pattern;
+  let allowPolling = true;
 
   mapsStore.subscribe(maps => {
     map = maps.find(m => m.index === index);
@@ -35,6 +37,16 @@
   let selected;
   let textInput = url;
   let dropdownOptions = {};
+
+  onMount(() => {
+    // This runs only on mount to check for localhost in url
+    poll(url);
+  });
+
+  onDestroy(() => {
+    // Cancel any polling in destroyed components
+    allowPolling = false;
+  });
 
   const getStylePresetOption = () => {
     return stylePresets && stylePresets.find(s => s.url === url);
@@ -81,7 +93,7 @@
 
   const poll = url => {
     const pollCondition = str =>
-      str && str.includes('localhost') && selected?.url === str;
+      allowPolling && str && str.includes('localhost') && selected?.url === str;
     // Simple polling for any style on localhost
     // Check that should poll to set timer
     if (pollCondition(url)) {
@@ -252,9 +264,6 @@
 
     return options;
   };
-
-  // This runs only on mount to check for localhost in url
-  poll(url);
 </script>
 
 <div class="map-style-input">
