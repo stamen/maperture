@@ -113,6 +113,49 @@ button:focus {
 .validation-message-warning.svelte-v9dmm4 {
   color: #c1810c;
 }
+.viewer-container.svelte-1hvjgnk.svelte-1hvjgnk {
+  display: flex;
+  height: 100%;
+  justify-content: space-around;
+}
+.maps.svelte-1hvjgnk.svelte-1hvjgnk {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  align-self: center;
+}
+.maps.svelte-1hvjgnk .map-container.svelte-1hvjgnk {
+  border: 20px solid #333;
+  border-radius: 30px;
+  box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
+  height: 620px;
+  margin: 20px;
+  width: 300px;
+}
+.maps.phone .mapboxgl-map {
+  border-radius: 10px;
+}
+.maps.svelte-yry985.svelte-yry985 {
+  height: 100%;
+}
+.maps.dragging.svelte-yry985 .map-container.svelte-yry985 {
+  user-select: none;
+}
+.maps.svelte-yry985 .map-container.svelte-yry985 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.slider.svelte-yry985.svelte-yry985 {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  cursor: col-resize;
+  background: black;
+  z-index: 1000;
+}
 .maps.svelte-1pk77jp {
   display: flex;
   flex-grow: 1;
@@ -167,26 +210,26 @@ input.svelte-1pk77jp::-webkit-inner-spin-button {
 input[type='number'].svelte-1pk77jp {
   -moz-appearance: textfield;
 }
-.maps.svelte-yry985.svelte-yry985 {
-  height: 100%;
+.map-state-container.svelte-xc7hba.svelte-xc7hba {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
 }
-.maps.dragging.svelte-yry985 .map-container.svelte-yry985 {
-  user-select: none;
+.map-state.svelte-xc7hba.svelte-xc7hba {
+  display: flex;
+  justify-content: space-around;
 }
-.maps.svelte-yry985 .map-container.svelte-yry985 {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+.state-record.svelte-xc7hba.svelte-xc7hba {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.slider.svelte-yry985.svelte-yry985 {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  cursor: col-resize;
-  background: black;
-  z-index: 1000;
+.location-actions.svelte-xc7hba.svelte-xc7hba {
+  display: flex;
+  flex-direction: row;
+}
+.location-actions.svelte-xc7hba > div.svelte-xc7hba {
+  margin: 0 0.5em;
 }
 .maps.svelte-1g37ixp {
   display: flex;
@@ -211,55 +254,12 @@ input[type='number'].svelte-1pk77jp {
 .map-container.svelte-1g37ixp:last-of-type {
   border-right: none;
 }
-.viewer-container.svelte-1hvjgnk.svelte-1hvjgnk {
-  display: flex;
-  height: 100%;
-  justify-content: space-around;
-}
-.maps.svelte-1hvjgnk.svelte-1hvjgnk {
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  align-self: center;
-}
-.maps.svelte-1hvjgnk .map-container.svelte-1hvjgnk {
-  border: 20px solid #333;
-  border-radius: 30px;
-  box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
-  height: 620px;
-  margin: 20px;
-  width: 300px;
-}
-.maps.phone .mapboxgl-map {
-  border-radius: 10px;
-}
-.map-state-container.svelte-xc7hba.svelte-xc7hba {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-}
-.map-state.svelte-xc7hba.svelte-xc7hba {
-  display: flex;
-  justify-content: space-around;
-}
-.state-record.svelte-xc7hba.svelte-xc7hba {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.location-actions.svelte-xc7hba.svelte-xc7hba {
-  display: flex;
-  flex-direction: row;
-}
-.location-actions.svelte-xc7hba > div.svelte-xc7hba {
-  margin: 0 0.5em;
+div.svelte-1k1b3t4 {
+  padding: 0;
 }
 div.svelte-1kuj9kb {
   width: 100%;
   height: 100%;
-}
-div.svelte-1k1b3t4 {
-  padding: 0;
 }
 div.svelte-1pfu5h6 {
   display: none;
@@ -314,6 +314,37 @@ button.svelte-d9bm20 {
 .map.svelte-16c2pp7 {
   height: 100%;
 }
+.map.svelte-18031t1 {
+  height: 100%;
+}
+.popup {
+  min-width: 180px;
+  padding-right: 12px;
+  max-height: 240px;
+  overflow: auto;
+}
+.popup-source-layer {
+  font-size: 16px;
+  line-height: 16px;
+}
+.popup-property {
+  line-height: 6px;
+  margin-top: 6px;
+  margin-bottom: 3px;
+  width: 100%;
+  padding-bottom: 6px;
+  border-bottom: 1px solid lightgray;
+}
+.popup-no-properties {
+  border-bottom: 0px !important;
+  color: lightgray;
+}
+.popup-property-id {
+  font-weight: bold;
+}
+.popup-property-value {
+  float: right;
+}
 .map-label.svelte-qshjp8 {
   background: white;
   box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
@@ -341,9 +372,6 @@ button.svelte-d9bm20 {
 .close-button.svelte-qshjp8:disabled {
   cursor: not-allowed;
   color: lightgray;
-}
-.map.svelte-16c2pp7 {
-  height: 100%;
 }
 .map-style-input.svelte-1qgw420 {
   margin-top: 6px;

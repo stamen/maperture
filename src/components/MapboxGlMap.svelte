@@ -19,6 +19,8 @@
 
   let style = {};
   let url;
+  let popup = null;
+  let isPopupOpen = false;
 
   $: if (mapStyle) ({ style, url } = mapStyle);
 
@@ -82,6 +84,46 @@
     if (shouldUpdateMapView(mapViewProps)) map.jumpTo(mapViewProps);
   };
 
+  // The Mapbox popup requires HTML as a string
+  // This means class names for the popup need to live in global.css
+  // because Svelte won't compile unused CSS classes that live in this component
+  const getPopupHtmlString = features => {
+    const dedupedFeatures = features.reduce((acc, feature) => {
+      const { source, sourceLayer, properties } = feature;
+      const isDuplicate = acc.some(f => {
+        const isSameSource =
+          f.source === source && f.sourceLayer === sourceLayer;
+        const hasSameProperties = Object.keys(properties).every(
+          p => properties[p] === f.properties[p]
+        );
+        return isSameSource && hasSameProperties;
+      });
+
+      if (!isDuplicate) {
+        acc.push(feature);
+      }
+      return acc;
+    }, []);
+
+    let html = '<div class="popup">';
+    for (const feature of dedupedFeatures) {
+      const { properties } = feature;
+      html += `<h2 class="popup-source-layer">${feature.source}: ${feature.sourceLayer}</h2>`;
+      if (properties && Object.keys(properties).length) {
+        Object.keys(properties)
+          .sort()
+          .forEach(key => {
+            const propertyValue = properties[key];
+            html += `<p class="popup-property"><span class="popup-property-id">${key}:</span> <span class="popup-property-value">${propertyValue}</span></p>`;
+          });
+      } else {
+        html += `<p class="popup-no-properties">No properties</p>`;
+      }
+    }
+    html += '</div>';
+    return html;
+  };
+
   onMount(() => {
     map = new mapboxgl.Map({
       container: id,
@@ -112,6 +154,28 @@
         handleMove(e);
       }
     });
+
+    map.on('click', e => {
+      let renderedFeatures = map.queryRenderedFeatures(e.point);
+      if (!renderedFeatures.length) return;
+
+      if (!isPopupOpen) {
+        popup = new mapboxgl.Popup()
+          .setLngLat(e.lngLat)
+          .setHTML(getPopupHtmlString(renderedFeatures))
+          .setMaxWidth(360)
+          .addTo(map);
+
+        isPopupOpen = true;
+
+        popup.on('close', () => {
+          isPopupOpen = false;
+        });
+      } else {
+        popup.remove();
+        popup = null;
+      }
+    });
   });
 
   onDestroy(() => {
@@ -126,5 +190,39 @@
 <style>
   .map {
     height: 100%;
+  }
+
+  :global(.popup) {
+    min-width: 180px;
+    padding-right: 12px;
+    max-height: 240px;
+    overflow: auto;
+  }
+
+  :global(.popup-source-layer) {
+    font-size: 16px;
+    line-height: 16px;
+  }
+
+  :global(.popup-property) {
+    line-height: 6px;
+    margin-top: 6px;
+    margin-bottom: 3px;
+    width: 100%;
+    padding-bottom: 6px;
+    border-bottom: 1px solid lightgray;
+  }
+
+  :global(.popup-no-properties) {
+    border-bottom: 0px !important;
+    color: lightgray;
+  }
+
+  :global(.popup-property-id) {
+    font-weight: bold;
+  }
+
+  :global(.popup-property-value) {
+    float: right;
   }
 </style>
