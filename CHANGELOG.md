@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 0.4.0
+
+- Allow one map view
+- Create responsive size mode
+
 ## 0.3.1
 
 - Fix: Remote style presets now update dropdown
