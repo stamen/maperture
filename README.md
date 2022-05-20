@@ -1,4 +1,4 @@
-# map-compare
+# Maperture: Stamen's map compare tool
 
 A web application for comparing webmap styles.
 
