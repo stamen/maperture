@@ -58,7 +58,7 @@ Your `index.html` file should look like the following:
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <title>Map Compare</title>
+    <title>Maperture</title>
 
     <link rel="stylesheet" href="./dist/bundle.css" />
   </head>
