@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Watch hash for changes, update app state on change
+
 ## 0.5.0
 
 - Implement popup to inspect rendered features (#67)
