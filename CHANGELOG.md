@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Retain branch name when changing between branch patterns
+
 ## 0.5.0
 
 - Implement popup to inspect rendered features (#67)
