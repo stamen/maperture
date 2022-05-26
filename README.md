@@ -39,7 +39,7 @@ For more details on how these should look, see the example in [`src/config/local
 
 ### 1. Install this module into your repo.
 
-`npm i github:stamen/map-compare#<release>` or `yarn add github:stamen/map-compare#<release>`
+`npm i github:stamen/maperture#<release>` or `yarn add github:stamen/maperture#<release>`
 
 ### 2. Set up files to serve app
 
@@ -76,7 +76,7 @@ Your `index.html` file should look like the following:
 
 ### 3. In addition, prior to serving the compare tool in your repo, you'll want to add a simple build script to your package that will copy our module files into the appropriate directory where `tool/dir/path/` is the directory you've created to serve the app from:
 
-`"build-compare": "rm -rf tool/dir/path/dist && cp -r node_modules/map-compare/dist tool/dir/path/dist"`
+`"build-compare": "rm -rf tool/dir/path/dist && cp -r node_modules/maperture/dist tool/dir/path/dist"`
 
 You will run this build script prior to serving the app from `index.html` or publishing the app anywhere to ensure files are up to date.
 

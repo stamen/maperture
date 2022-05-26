@@ -1,5 +1,7 @@
 {
-  "name": "map-compare",
+  "name": "maperture",
+  "author": "Stamen Design <info@stamen.com> (https://stamen.com)",
+  "description": "Stamen's map compare tool",
   "version": "0.5.0",
   "private": true,
   "scripts": {
