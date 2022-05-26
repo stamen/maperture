@@ -10,8 +10,8 @@
   import { loadPresetsFromUrl } from './presets-utils';
   import Maps from './components/Maps.svelte';
   import MapControls from './components/MapControls.svelte';
-  import { writeHash } from './query';
-  import { getInitialSettings } from './settings';
+  import { getHashString, writeHash } from './query';
+  import { getSettings } from './settings';
   import { validateMapState } from './map-state-utils';
   import throttle from 'lodash.throttle';
 
@@ -20,19 +20,35 @@
   let mapState = {};
   let maps = [];
   const config = makeConfig(localConfig);
-  let settings = getInitialSettings(config);
+  let settings = getSettings(config);
   let mapboxGlAccessToken;
   let stylePresetUrls;
   configStore.set(config);
   ({ mapboxGlAccessToken, stylePresetUrls } = config);
 
+  let settingsForHash = {};
+  $: if (settings || maps || mapState) {
+    // Remove the stylesheet for a more concise hash
+    const mapsHash = JSON.parse(JSON.stringify(maps)).map(m => {
+      delete m.style;
+      return m;
+    });
+
+    settingsForHash = { ...settings, maps: mapsHash, ...mapState };
+  }
+
+  // Detect changes in hash and update settings appropriately
+  window.addEventListener('hashchange', () => {
+    if (location.hash.slice(1) !== getHashString(settingsForHash)) {
+      settings = getSettings(config);
+    }
+  });
+
   mapsStore.subscribe(value => (maps = value));
 
   // Throttle writing to the hash since this can get invoked many times when
   // moving the map around
-  const throttledWriteHash = throttle(() => {
-    writeHash({ ...settings, ...mapState });
-  }, 250);
+  const throttledWriteHash = throttle(() => writeHash(settingsForHash), 250);
 
   onMount(() => {
     // Set maps and presets initially using settings
@@ -48,16 +64,7 @@
     }
   });
 
-  $: if (settings && mapState) throttledWriteHash();
-  $: if (maps) {
-    // Remove the stylesheet for a more concise hash
-    const mapsHash = JSON.parse(JSON.stringify(maps)).map(m => {
-      delete m.style;
-      return m;
-    });
-
-    writeHash({ ...settings, maps: mapsHash, ...mapState });
-  }
+  $: if (settings && mapState && maps) throttledWriteHash();
 
   $: {
     const {

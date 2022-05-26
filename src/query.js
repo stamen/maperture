@@ -54,7 +54,7 @@ const cleanSettings = stateObj => {
   return nextState;
 };
 
-export function writeHash(mapSettings) {
+export function getHashString(mapSettings) {
   let nonMapSettings = Object.fromEntries(
     Object.entries(mapSettings)
       .filter(([k, v]) => !mapLocationKeys.includes(k))
@@ -63,7 +63,7 @@ export function writeHash(mapSettings) {
 
   nonMapSettings = cleanSettings(nonMapSettings);
 
-  window.location.hash = toQueryString({
+  return toQueryString({
     map: [
       round(mapSettings.zoom, 2),
       round(mapSettings.center.lat, 4),
@@ -73,6 +73,10 @@ export function writeHash(mapSettings) {
     ].join('/'),
     ...nonMapSettings,
   });
+}
+
+export function writeHash(mapSettings) {
+  window.location.hash = getHashString(mapSettings);
 }
 
 export function readHash(qs) {
