@@ -10,12 +10,12 @@ A web application for comparing webmap styles.
 
 ## Building and running in production mode
 
-1. Create an optimised version of the app: `yarn build`. If you will serve the built app from a subpath such as `/compare-tool/` rather than the root domain, use the `BASE_PATH` environment variable to set it: `BASE_PATH=/compare-tool/ yarn build`
+1. Create an optimised version of the app: `yarn build`. If you will serve the built app from a subpath such as `/maperture/` rather than the root domain, use the `BASE_PATH` environment variable to set it: `BASE_PATH=/maperture/ yarn build`
 2. Deploy `public/` to a server.
 
 ## Local config
 
-The compare tool allows you to use a local config file (`src/config/local.js`) to customize for your use case.
+Maperture allows you to use a local config file (`src/config/local.js`) to customize for your use case.
 
 Here, you can customize the following options:
 
@@ -39,7 +39,7 @@ For more details on how these should look, see the example in [`src/config/local
 
 ### 1. Install this module into your repo.
 
-`npm i github:stamen/map-compare#<release>` or `yarn add github:stamen/map-compare#<release>`
+`npm i github:stamen/maperture#<release>` or `yarn add github:stamen/maperture#<release>`
 
 ### 2. Set up files to serve app
 
@@ -58,7 +58,7 @@ Your `index.html` file should look like the following:
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <title>Map Compare</title>
+    <title>Maperture</title>
 
     <link rel="stylesheet" href="./dist/bundle.css" />
   </head>
@@ -74,9 +74,9 @@ Your `index.html` file should look like the following:
 </html>
 ```
 
-### 3. In addition, prior to serving the compare tool in your repo, you'll want to add a simple build script to your package that will copy our module files into the appropriate directory where `tool/dir/path/` is the directory you've created to serve the app from:
+### 3. In addition, prior to serving Maperture in your repo, you'll want to add a simple build script to your package that will copy our module files into the appropriate directory where `tool/dir/path/` is the directory you've created to serve the app from:
 
-`"build-compare": "rm -rf tool/dir/path/dist && cp -r node_modules/map-compare/dist tool/dir/path/dist"`
+`"build-maperture": "rm -rf tool/dir/path/dist && cp -r node_modules/maperture/dist tool/dir/path/dist"`
 
 You will run this build script prior to serving the app from `index.html` or publishing the app anywhere to ensure files are up to date.
 
@@ -84,7 +84,7 @@ The final directory structure should look like:
 
 ```
 root/
-  - compare-tool/
+  - maperture/
     - dist/
       - bundle.js
       - bundle.js.map

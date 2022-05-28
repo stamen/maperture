@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 0.6.0
+
+- Rename from "Map Compare" to "Maperture"
+
 ## 0.5.0
 
 - Implement popup to inspect rendered features (#67)
