@@ -84,7 +84,7 @@ The final directory structure should look like:
 
 ```
 root/
-  - compare-tool/
+  - maperture/
     - dist/
       - bundle.js
       - bundle.js.map
