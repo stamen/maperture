@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Rename this tool
+
 ## 0.5.0
 
 - Implement popup to inspect rendered features (#67)
