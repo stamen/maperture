@@ -10,7 +10,7 @@
   import { loadPresetsFromUrl } from './presets-utils';
   import Maps from './components/Maps.svelte';
   import MapControls from './components/MapControls.svelte';
-  import { getHashString, writeHash } from './query';
+  import { createHashString, writeHash } from './query';
   import { getSettings } from './settings';
   import { validateMapState } from './map-state-utils';
   import throttle from 'lodash.throttle';
@@ -39,7 +39,7 @@
 
   // Detect changes in hash and update settings appropriately
   window.addEventListener('hashchange', () => {
-    if (location.hash.slice(1) !== getHashString(settingsForHash)) {
+    if (location.hash.slice(1) !== createHashString(settingsForHash)) {
       settings = getSettings(config);
     }
   });
