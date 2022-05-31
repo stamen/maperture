@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.6.0
+
 - Rename this tool
 
 ## 0.5.0
