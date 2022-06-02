@@ -55,6 +55,16 @@ const cleanSettings = stateObj => {
 };
 
 export function createHashString(mapSettings) {
+  if (mapSettings.maps?.length ?? 0) {
+    const newMaps = JSON.parse(JSON.stringify(mapSettings.maps));
+
+    // Remove map styles before hashing
+    mapSettings.maps = newMaps.map(m => {
+      delete m.style;
+      return m;
+    });
+  }
+
   let nonMapSettings = Object.fromEntries(
     Object.entries(mapSettings)
       .filter(([k, v]) => !mapLocationKeys.includes(k))

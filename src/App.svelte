@@ -28,13 +28,7 @@
 
   let settingsForHash = {};
   $: if (settings || maps || mapState) {
-    // Remove the stylesheet for a more concise hash
-    const mapsHash = JSON.parse(JSON.stringify(maps)).map(m => {
-      delete m.style;
-      return m;
-    });
-
-    settingsForHash = { ...settings, maps: mapsHash, ...mapState };
+    settingsForHash = { ...settings, maps, ...mapState };
   }
 
   // Detect changes in hash and update settings appropriately
@@ -56,6 +50,8 @@
   // moving the map around
   const throttledWriteHash = throttle(() => writeHash(settingsForHash), 250);
 
+  $: if (settingsForHash) throttledWriteHash();
+
   onMount(() => {
     // Set maps and presets initially using settings
     mapsStore.set(settings.maps.map((map, index) => ({ ...map, index })));
@@ -69,8 +65,6 @@
       });
     }
   });
-
-  $: if (settings && mapState && maps) throttledWriteHash();
 
   $: {
     const {
