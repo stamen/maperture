@@ -41,6 +41,12 @@
   window.addEventListener('hashchange', () => {
     if (location.hash.slice(1) !== createHashString(settingsForHash)) {
       settings = getSettings(config);
+
+      // Update mapsStore if necessary
+      if (settings.maps.length) {
+        const newMaps = settings.maps.map((map, index) => ({ ...map, index }));
+        mapsStore.set(newMaps);
+      }
     }
   });
 
