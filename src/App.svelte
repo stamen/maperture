@@ -17,23 +17,35 @@
 
   export let localConfig;
 
-  let mapState = {};
-  let maps = [];
+  // config is set only once on load and is assumed to be loaded from a module
   const config = makeConfig(localConfig);
-  let settings = getSettings(config);
-  let mapboxGlAccessToken;
-  let stylePresetUrls;
+  const { mapboxGlAccessToken, stylePresetUrls } = config;
   configStore.set(config);
-  ({ mapboxGlAccessToken, stylePresetUrls } = config);
 
-  let settingsForHash = {};
-  $: if (settings || maps || mapState) {
-    settingsForHash = { ...settings, maps, ...mapState };
-  }
+  // settings contains all of the current state of the app that we might want to
+  // persist in the URL
+  let settings = getSettings(config);
+
+  // mapState is a convenience object, subset of settings
+  let mapState = {};
+
+  // Set maps and presets initially using settings
+  mapsStore.set(settings.maps.map((map, index) => ({ ...map, index })));
+  stylePresetsStore.set(settings.stylePresets);
+
+  onMount(() => {
+    // If we have URLs for preset files, get them and update presets
+    if (stylePresetUrls.length > 0) {
+      stylePresetUrls.forEach(async url => {
+        const presets = await loadPresetsFromUrl(url);
+        stylePresetsStore.update(current => [...current, ...presets]);
+      });
+    }
+  });
 
   // Detect changes in hash and update settings appropriately
   window.addEventListener('hashchange', () => {
-    if (location.hash.slice(1) !== createHashString(settingsForHash)) {
+    if (location.hash.slice(1) !== createHashString(settings)) {
       settings = getSettings(config);
 
       // Update mapsStore if necessary
@@ -44,29 +56,17 @@
     }
   });
 
-  mapsStore.subscribe(value => (maps = value));
+  mapsStore.subscribe(maps => {
+    settings = { ...settings, maps };
+  });
 
   // Throttle writing to the hash since this can get invoked many times when
   // moving the map around
-  const throttledWriteHash = throttle(() => writeHash(settingsForHash), 250);
+  const throttledWriteHash = throttle(() => writeHash(settings), 250);
 
-  $: if (settingsForHash) throttledWriteHash();
+  $: if (settings) throttledWriteHash();
 
-  onMount(() => {
-    // Set maps and presets initially using settings
-    mapsStore.set(settings.maps.map((map, index) => ({ ...map, index })));
-    stylePresetsStore.set(settings.stylePresets);
-
-    // If we have URLs for preset files, get them and update presets
-    if (stylePresetUrls.length > 0) {
-      stylePresetUrls.forEach(async url => {
-        const presets = await loadPresetsFromUrl(url);
-        stylePresetsStore.update(current => [...current, ...presets]);
-      });
-    }
-  });
-
-  $: {
+  const createMapState = () => {
     const {
       bearing,
       center,
@@ -77,7 +77,8 @@
       height,
       width,
     } = settings;
-    mapState = {
+
+    return {
       bearing,
       center,
       pitch,
@@ -87,10 +88,12 @@
       ...(height && { height }),
       ...(width && { width }),
     };
-  }
+  };
+
+  $: if (settings || height || width) mapState = createMapState();
 
   // Validate map state when maps change too
-  $: mapState = validateMapState(mapState, maps);
+  $: mapState = validateMapState(mapState, settings.maps);
 
   const handleMapState = event => {
     let newMapState = {
@@ -98,13 +101,15 @@
       ...event.detail.options,
     };
 
-    mapState = validateMapState(newMapState, maps);
+    settings = {
+      ...settings,
+      ...validateMapState(newMapState, settings.maps),
+    };
   };
 
   const handleViewMode = event => {
     settings = {
       ...settings,
-      ...mapState,
       viewMode: event.detail.mode,
     };
   };
@@ -112,7 +117,6 @@
   const handleDimensions = event => {
     settings = {
       ...settings,
-      ...mapState,
       // contains width and height
       ...event.detail,
     };
@@ -129,7 +133,7 @@
 </svelte:head>
 <main>
   <Maps
-    {maps}
+    maps={settings.maps}
     {mapState}
     viewMode={settings.viewMode}
     on:mapState={handleMapState}
