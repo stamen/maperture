@@ -141,9 +141,8 @@
       .addEventListener('wheel', throttledWheelHandler, { passive: true });
 
     const handleMove = ({ origin }) => {
-      const isFocused = document
-        .getElementById(id)
-        .contains(document.activeElement);
+      const isFocused =
+        document.getElementById(id)?.contains(document.activeElement) ?? false;
       if (isFocused) {
         dispatch('mapMove', { options: getCurrentMapView() });
       }
