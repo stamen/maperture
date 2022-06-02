@@ -55,18 +55,19 @@ const cleanSettings = stateObj => {
 };
 
 export function createHashString(mapSettings) {
-  if (mapSettings.maps?.length ?? 0) {
-    const newMaps = JSON.parse(JSON.stringify(mapSettings.maps));
+  let newMapSettings = JSON.parse(JSON.stringify(mapSettings));
+  if (newMapSettings.maps?.length ?? 0) {
+    const newMaps = newMapSettings.maps;
 
     // Remove map styles before hashing
-    mapSettings.maps = newMaps.map(m => {
+    newMapSettings.maps = newMaps.map(m => {
       delete m.style;
       return m;
     });
   }
 
   let nonMapSettings = Object.fromEntries(
-    Object.entries(mapSettings)
+    Object.entries(newMapSettings)
       .filter(([k, v]) => !mapLocationKeys.includes(k))
       .map(([k, v]) => [k, jsonKeys.includes(k) ? JSON.stringify(v) : v])
   );
@@ -75,11 +76,11 @@ export function createHashString(mapSettings) {
 
   return toQueryString({
     map: [
-      round(mapSettings.zoom, 2),
-      round(mapSettings.center.lat, 4),
-      round(mapSettings.center.lng, 4),
-      round(mapSettings.pitch, 1),
-      round(mapSettings.bearing, 1),
+      round(newMapSettings.zoom, 2),
+      round(newMapSettings.center.lat, 4),
+      round(newMapSettings.center.lng, 4),
+      round(newMapSettings.pitch, 1),
+      round(newMapSettings.bearing, 1),
     ].join('/'),
     ...nonMapSettings,
   });
