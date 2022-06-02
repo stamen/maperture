@@ -18,16 +18,6 @@
   let pattern;
   let allowPolling = true;
 
-  mapsStore.subscribe(maps => {
-    map = maps.find(m => m.index === index);
-    if (map) {
-      branch = map.branch;
-      pattern = map.pattern;
-      name = map.name;
-      url = map.url;
-    }
-  });
-
   let stylePresets;
   let branchPatterns;
 
@@ -50,30 +40,6 @@
 
   const getStylePresetOption = () => {
     return stylePresets && stylePresets.find(s => s.url === url);
-  };
-
-  const setSelected = () => {
-    const stylePresetOption = getStylePresetOption();
-    if (stylePresetOption) {
-      selected = { ...stylePresetOption, dropdownType: 'preset' };
-      textInput = '';
-    } else if (branch) {
-      selected = {
-        name,
-        dropdownType: 'branch',
-        url,
-        pattern,
-      };
-      textInput = branch;
-    } else {
-      selected = {
-        name,
-        dropdownType: 'custom',
-        url,
-      };
-      textInput = url;
-    }
-    dropdownOptions = getDropdownOptions();
   };
 
   $: if (stylePresets) {
@@ -264,6 +230,41 @@
 
     return options;
   };
+
+  const setSelected = () => {
+    const stylePresetOption = getStylePresetOption();
+    if (stylePresetOption) {
+      selected = { ...stylePresetOption, dropdownType: 'preset' };
+      textInput = '';
+    } else if (branch) {
+      selected = {
+        name,
+        dropdownType: 'branch',
+        url,
+        pattern,
+      };
+      textInput = branch;
+    } else {
+      selected = {
+        name,
+        dropdownType: 'custom',
+        url,
+      };
+      textInput = url;
+    }
+    dropdownOptions = getDropdownOptions();
+  };
+
+  mapsStore.subscribe(maps => {
+    map = maps.find(m => m.index === index);
+    if (map) {
+      branch = map.branch;
+      pattern = map.pattern;
+      name = map.name;
+      url = map.url;
+    }
+    setSelected();
+  });
 </script>
 
 <div class="map-style-input">
