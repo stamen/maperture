@@ -11,8 +11,6 @@
 
   export let index;
 
-  const isUrl = s => s.includes('://');
-
   let map;
   let url;
   let name;
@@ -214,11 +212,10 @@
         break;
       }
       case 'branch': {
-        if (isUrl(textInput)) {
-          textInput = '';
-        }
-        if (textInput) {
+        if (textInput && textInput === branch) {
           submitUrl();
+        } else {
+          textInput = '';
         }
         break;
       }
