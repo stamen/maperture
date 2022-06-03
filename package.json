@@ -1,6 +1,12 @@
 {
-  "name": "map-compare",
-  "version": "0.5.0",
+  "name": "maperture",
+  "author": "Stamen Design <info@stamen.com> (https://stamen.com)",
+  "description": "Stamen's map compare tool",
+  "version": "0.6.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stamen/maperture.git"
+  },
   "private": true,
   "scripts": {
     "build": "rollup -c",
