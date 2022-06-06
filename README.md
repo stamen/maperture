@@ -2,6 +2,8 @@
 
 A web application for comparing webmap styles.
 
+View a [demo here](https://stamen.github.io/maperture/).
+
 ## Get started
 
 1. Install the dependencies: `yarn install`
