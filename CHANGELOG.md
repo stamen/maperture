@@ -1,5 +1,8 @@
 ## Unreleased
 
+## 0.7.1
+
+- Build package
 - Add LICENSE
 
 ## 0.7.0

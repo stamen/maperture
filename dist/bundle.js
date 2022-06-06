@@ -42535,7 +42535,7 @@ function Vo(t, e, r) {
       v.on('move', t => {
         t?.resize ||
           (({ origin: t }) => {
-            document.getElementById(o).contains(document.activeElement) &&
+            document.getElementById(o)?.contains(document.activeElement) &&
               y('mapMove', { options: w() });
           })(t);
       }),
@@ -43225,39 +43225,24 @@ function pa(t, e, r) {
     u,
     { index: c } = e,
     p = !0;
-  dt.subscribe(t => {
-    (n = t.find(t => t.index === c)),
-      n && ((o = n.branch), (a = n.pattern), (A = n.name), r(2, (i = n.url)));
-  }),
-    gt.subscribe(t => r(11, (s = t))),
+  gt.subscribe(t => r(11, (s = t))),
     mt.subscribe(t => ({ branchPatterns: l } = t));
   let h = i,
     f = {};
   M(() => {
-    v(i);
+    y(i);
   }),
     D(() => {
       p = !1;
     });
-  const d = () => {
-    const t = s && s.find(t => t.url === i);
-    t
-      ? (r(3, (u = { ...t, dropdownType: 'preset' })), r(0, (h = '')))
-      : o
-      ? (r(3, (u = { name: A, dropdownType: 'branch', url: i, pattern: a })),
-        r(0, (h = o)))
-      : (r(3, (u = { name: A, dropdownType: 'custom', url: i })),
-        r(0, (h = i))),
-      r(4, (f = C()));
-  };
-  let g = '',
-    m = !1,
-    y = null;
-  const v = t => {
+  let d = '',
+    g = !1,
+    m = null;
+  const y = t => {
       const e = t => p && t && t.includes('localhost') && u?.url === t;
-      e(t) && setTimeout(() => e(t) && w(t), 3e3);
+      e(t) && setTimeout(() => e(t) && _(t), 3e3);
     },
-    _ = t => {
+    v = t => {
       const e = ['dropdownType', 'selected'];
       let r = {
         ...Object.fromEntries(
@@ -43265,11 +43250,11 @@ function pa(t, e, r) {
         ),
         index: c,
       };
-      'branch' === u.dropdownType && (r.branch = g),
+      'branch' === u.dropdownType && (r.branch = d),
         t.style && ((r.id = t.style.id), (r.name = t.style.name)),
         dt.update(t => t.map((t, e) => (e === c ? r : t)));
     },
-    w = async t => {
+    _ = async t => {
       let e;
       try {
         const r = await (async t => {
@@ -43289,50 +43274,50 @@ function pa(t, e, r) {
         })(t);
         if (r && 'object' == typeof r)
           return (
-            (e = r), v(t), _({ ...u, style: e, url: t }), { status: '200' }
+            (e = r), y(t), v({ ...u, style: e, url: t }), { status: '200' }
           );
       } catch (t) {
-        return r(1, (y = new Error('Style was not found.'))), { status: '404' };
+        return r(1, (m = new Error('Style was not found.'))), { status: '404' };
       }
     },
-    B = async t => {
-      const { status: e } = await w(t);
-      '200' === e && (r(3, (u.url = t), u), v(t));
+    w = async t => {
+      const { status: e } = await _(t);
+      '200' === e && (r(3, (u.url = t), u), y(t));
     },
-    x = async () => {
-      r(12, (g = h));
+    B = async () => {
+      r(12, (d = h));
       const { dropdownType: t, pattern: e } = u;
-      let n = 'branch' === t ? ra(e, g, u.id || u.name) : g;
+      let n = 'branch' === t ? ra(e, d, u.id || u.name) : d;
       if (i !== n) {
         if (n.includes('localhost')) {
           const [t, e] = n.split('localhost');
           t || (n = `http://localhost${e}`);
         }
-        B(n);
+        w(n);
       }
     },
-    b = t => {
+    x = t => {
       r(3, (u = t));
       const { dropdownType: e } = t;
       switch (e) {
         case 'preset': {
           const { type: e, url: n } = t;
           if ('google' === e) {
-            _(t);
+            v(t);
             break;
           }
-          r(0, (h = '')), B(n);
+          r(0, (h = '')), w(n);
           break;
         }
         case 'branch':
-          r(0, (h = ''));
+          h && h === o ? B() : r(0, (h = ''));
           break;
         case 'custom':
           r(0, (h = i));
       }
-      r(4, (f = C()));
+      r(4, (f = b()));
     },
-    C = () => {
+    b = () => {
       const t = {};
       if (
         (s.length &&
@@ -43364,45 +43349,61 @@ function pa(t, e, r) {
         ]),
         t
       );
+    },
+    C = () => {
+      const t = s && s.find(t => t.url === i);
+      t
+        ? (r(3, (u = { ...t, dropdownType: 'preset' })), r(0, (h = '')))
+        : o
+        ? (r(3, (u = { name: A, dropdownType: 'branch', url: i, pattern: a })),
+          r(0, (h = o)))
+        : (r(3, (u = { name: A, dropdownType: 'custom', url: i })),
+          r(0, (h = i))),
+        r(4, (f = b()));
     };
+  dt.subscribe(t => {
+    (n = t.find(t => t.index === c)),
+      n && ((o = n.branch), (a = n.pattern), (A = n.name), r(2, (i = n.url))),
+      C();
+  });
   return (
     (t.$$set = t => {
       'index' in t && r(10, (c = t.index));
     }),
     (t.$$.update = () => {
-      2048 & t.$$.dirty[0] && s && d(),
+      2048 & t.$$.dirty[0] && s && C(),
         4099 & t.$$.dirty[0] &&
-          h !== g &&
-          y &&
-          (r(12, (g = '')), r(1, (y = null)));
+          h !== d &&
+          m &&
+          (r(12, (d = '')), r(1, (m = null)));
     }),
     [
       h,
-      y,
+      m,
       i,
       u,
       f,
-      x,
+      B,
       () => {
-        m && x();
+        g && B();
       },
       () => {
-        m = !0;
+        g = !0;
       },
       () => {
-        (m = !1),
-          y &&
+        (g = !1),
+          m &&
             ('branch' === u.dropdownType && u.url
               ? r(0, (h = o))
               : 'branch' !== u.dropdownType || u.url
               ? r(0, (h = i))
               : r(0, (h = '')));
       },
-      b,
+      x,
       c,
       s,
-      g,
-      t => b(JSON.parse(t.target.value)),
+      d,
+      t => x(JSON.parse(t.target.value)),
       function () {
         (h = this.value), r(0, h);
       },
@@ -53509,18 +53510,24 @@ const Ss = ['maps'],
   Ls = ['bearing', 'center', 'pitch', 'zoom'],
   Ms = ['bearing', 'lat', 'lng', 'pitch', 'zoom'];
 function Ds(t) {
-  let e = Object.fromEntries(
-    Object.entries(t)
+  let e = JSON.parse(JSON.stringify(t));
+  if (e.maps?.length) {
+    const t = e.maps;
+    e.maps = t.map(t => (delete t.style, t));
+  }
+  let r = Object.fromEntries(
+    Object.entries(e)
       .filter(([t, e]) => !Ls.includes(t))
       .map(([t, e]) => [t, Ss.includes(t) ? JSON.stringify(e) : e])
   );
-  var r;
-  (r = e),
-    (e = Object.keys(r).reduce((t, e) => {
-      const n = r[e];
-      return null !== n && (t[e] = n), t;
+  var n;
+  return (
+    (n = r),
+    (r = Object.keys(n).reduce((t, e) => {
+      const r = n[e];
+      return null !== r && (t[e] = r), t;
     }, {})),
-    (window.location.hash = (function (t) {
+    (function (t) {
       let e = t.map ? `map=${t.map}` : '';
       const r = ['map', 'stylePresets'];
       return (
@@ -53533,14 +53540,15 @@ function Ds(t) {
       );
     })({
       map: [
-        vt(t.zoom, 2),
-        vt(t.center.lat, 4),
-        vt(t.center.lng, 4),
-        vt(t.pitch, 1),
-        vt(t.bearing, 1),
+        vt(e.zoom, 2),
+        vt(e.center.lat, 4),
+        vt(e.center.lng, 4),
+        vt(e.pitch, 1),
+        vt(e.bearing, 1),
       ].join('/'),
-      ...e,
-    }));
+      ...r,
+    })
+  );
 }
 function ks(t) {
   let e = Object.fromEntries(
@@ -53575,20 +53583,30 @@ function ks(t) {
   }
   return e.map && delete e.map, e;
 }
-function Ps(t) {
+const Ps = t => {
+  const { mapState: e, maps: r, viewMode: n, stylePresets: i } = t;
+  return {
+    ...e,
+    viewMode: n,
+    maps: r,
+    stylePresets: i,
+    ...ks(window.location.hash),
+  };
+};
+function Hs(t) {
   let r, n, i, A, o, a, s, l;
   (A = new Ga({
-    props: { maps: t[1], mapState: t[0], viewMode: t[2].viewMode },
+    props: { maps: t[0].maps, mapState: t[1], viewMode: t[0].viewMode },
   })),
-    A.$on('mapState', t[4]),
-    A.$on('setDimensions', t[6]);
-  const u = [{ mapboxGlAccessToken: t[3] }, t[0], { viewMode: t[2].viewMode }];
+    A.$on('mapState', t[3]),
+    A.$on('setDimensions', t[5]);
+  const u = [{ mapboxGlAccessToken: t[2] }, t[1], { viewMode: t[0].viewMode }];
   let f = {};
   for (let t = 0; t < u.length; t += 1) f = e(f, u[t]);
   return (
     (s = new Is({ props: f })),
-    s.$on('mapState', t[4]),
-    s.$on('viewMode', t[5]),
+    s.$on('mapState', t[3]),
+    s.$on('viewMode', t[4]),
     {
       c() {
         (r = d('base')),
@@ -53614,16 +53632,16 @@ function Ps(t) {
       },
       p(t, [e]) {
         const r = {};
-        2 & e && (r.maps = t[1]),
-          1 & e && (r.mapState = t[0]),
-          4 & e && (r.viewMode = t[2].viewMode),
+        1 & e && (r.maps = t[0].maps),
+          2 & e && (r.mapState = t[1]),
+          1 & e && (r.viewMode = t[0].viewMode),
           A.$set(r);
         const n =
-          13 & e
+          7 & e
             ? et(u, [
-                8 & e && { mapboxGlAccessToken: t[3] },
-                1 & e && rt(t[0]),
-                4 & e && { viewMode: t[2].viewMode },
+                4 & e && { mapboxGlAccessToken: t[2] },
+                2 & e && rt(t[1]),
+                1 & e && { viewMode: t[0].viewMode },
               ])
             : {};
         s.$set(n);
@@ -53640,80 +53658,64 @@ function Ps(t) {
     }
   );
 }
-function Hs(t, e, r) {
-  let { localConfig: n } = e,
-    i = {},
-    A = [];
-  const o = (t => ({
-    maps: [
-      {
-        id: 'mapbox-streets',
-        name: 'Mapbox Streets',
-        type: 'mapbox-gl',
-        url: 'mapbox://styles/mapbox/streets-v11',
-      },
-      {
-        id: 'mapbox-light',
-        name: 'Mapbox Light',
-        type: 'mapbox-gl',
-        url: 'mapbox://styles/mapbox/light-v10',
-      },
-    ].map((e, r) => t?.stylePresets?.[r] ?? e),
-    mapState: {
-      bearing: 0,
-      center: { lng: -73.92169, lat: 40.83962 },
-      pitch: 0,
-      showCollisions: !1,
-      zoom: 13.25,
-    },
-    viewMode: 'swipe',
-    gazetteer: {
-      Scenarios: [
-        { 'Zoomed out': { pitch: 0, zoom: 10 } },
-        { 'Zoomed in/Tilted': { pitch: 45, zoom: 16 } },
-      ],
-      Locations: [
+function zs(t, e, r) {
+  let { localConfig: n } = e;
+  const i = (t => ({
+      maps: [
         {
-          'San Francisco, CA': {
-            zoom: 18,
-            center: { lng: -122.4193, lat: 37.7648 },
-          },
+          id: 'mapbox-streets',
+          name: 'Mapbox Streets',
+          type: 'mapbox-gl',
+          url: 'mapbox://styles/mapbox/streets-v11',
         },
         {
-          'Washington DC': {
-            zoom: 12,
-            center: { lng: -77.0435, lat: 38.9098 },
-          },
+          id: 'mapbox-light',
+          name: 'Mapbox Light',
+          type: 'mapbox-gl',
+          url: 'mapbox://styles/mapbox/light-v10',
         },
-      ],
-    },
-    branchPatterns: [{ pattern: '', styles: [] }],
-    stylePresetUrls: [],
-    ...t,
-  }))(n);
-  let a,
-    s,
-    l = (t => {
-      const { mapState: e, maps: r, viewMode: n, stylePresets: i } = t;
-      return {
-        ...e,
-        viewMode: n,
-        maps: r,
-        stylePresets: i,
-        ...ks(window.location.hash),
-      };
-    })(o);
-  mt.set(o),
-    ({ mapboxGlAccessToken: a, stylePresetUrls: s } = o),
-    dt.subscribe(t => r(1, (A = t)));
-  const u = kt(() => {
-    Ds({ ...l, ...i });
-  }, 250);
-  M(() => {
-    dt.set(l.maps.map((t, e) => ({ ...t, index: e }))),
-      gt.set(l.stylePresets),
-      s.length > 0 &&
-        s.forEach(async t => {
+      ].map((e, r) => t?.stylePresets?.[r] ?? e),
+      mapState: {
+        bearing: 0,
+        center: { lng: -73.92169, lat: 40.83962 },
+        pitch: 0,
+        showCollisions: !1,
+        zoom: 13.25,
+      },
+      viewMode: 'swipe',
+      gazetteer: {
+        Scenarios: [
+          { 'Zoomed out': { pitch: 0, zoom: 10 } },
+          { 'Zoomed in/Tilted': { pitch: 45, zoom: 16 } },
+        ],
+        Locations: [
+          {
+            'San Francisco, CA': {
+              zoom: 18,
+              center: { lng: -122.4193, lat: 37.7648 },
+            },
+          },
+          {
+            'Washington DC': {
+              zoom: 12,
+              center: { lng: -77.0435, lat: 38.9098 },
+            },
+          },
+        ],
+      },
+      branchPatterns: [{ pattern: '', styles: [] }],
+      stylePresetUrls: [],
+      ...t,
+    }))(n),
+    { mapboxGlAccessToken: A, stylePresetUrls: o } = i;
+  mt.set(i);
+  let a = Ps(i),
+    s = {};
+  dt.set(a.maps.map((t, e) => ({ ...t, index: e }))),
+    gt.set(a.stylePresets),
+    M(() => {
+      o.length > 0 &&
+        o.forEach(async t => {
           const e = await (async t => {
             const e = await fetch(t),
               r = await e.json();
@@ -53726,73 +53728,84 @@ function Hs(t, e, r) {
           })(t);
           gt.update(t => [...t, ...e]);
         });
-  });
+    }),
+    window.addEventListener('hashchange', () => {
+      if (
+        location.hash.slice(1) !== Ds(a) &&
+        (r(0, (a = Ps(i))), a.maps.length)
+      ) {
+        const t = a.maps.map((t, e) => ({ ...t, index: e }));
+        dt.set(t);
+      }
+    }),
+    dt.subscribe(t => {
+      r(0, (a = { ...a, maps: t }));
+    });
+  const l = kt(() => {
+    return (t = a), void (window.location.hash = Ds(t));
+    var t;
+  }, 250);
   return (
     pt.setRTLTextPlugin(
       'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.0/mapbox-gl-rtl-text.js'
     ),
     (t.$$set = t => {
-      'localConfig' in t && r(7, (n = t.localConfig));
+      'localConfig' in t && r(6, (n = t.localConfig));
     }),
     (t.$$.update = () => {
-      if (4 & t.$$.dirty) {
-        const {
-          bearing: t,
-          center: e,
-          pitch: n,
-          showCollisions: A,
-          showBoundaries: o,
-          zoom: a,
-          height: s,
-          width: u,
-        } = l;
-        r(
-          0,
-          (i = {
-            bearing: t,
-            center: e,
-            pitch: n,
-            showCollisions: A,
-            showBoundaries: o,
-            zoom: a,
-            ...(s && { height: s }),
-            ...(u && { width: u }),
-          })
-        );
-      }
-      if (
-        (3 & t.$$.dirty && r(0, (i = es(i, A))),
-        5 & t.$$.dirty && l && i && u(),
-        7 & t.$$.dirty && A)
-      ) {
-        const t = JSON.parse(JSON.stringify(A)).map(t => (delete t.style, t));
-        Ds({ ...l, maps: t, ...i });
-      }
+      1 & t.$$.dirty && a && l(),
+        1 & t.$$.dirty &&
+          (a || height || width) &&
+          r(
+            1,
+            (s = (() => {
+              const {
+                bearing: t,
+                center: e,
+                pitch: r,
+                showCollisions: n,
+                showBoundaries: i,
+                zoom: A,
+                height: o,
+                width: s,
+              } = a;
+              return {
+                bearing: t,
+                center: e,
+                pitch: r,
+                showCollisions: n,
+                showBoundaries: i,
+                zoom: A,
+                ...(o && { height: o }),
+                ...(s && { width: s }),
+              };
+            })())
+          ),
+        3 & t.$$.dirty && r(1, (s = es(s, a.maps)));
     }),
     [
-      i,
-      A,
-      l,
       a,
+      s,
+      A,
       t => {
-        let e = { ...i, ...t.detail.options };
-        r(0, (i = es(e, A)));
+        let e = { ...s, ...t.detail.options };
+        r(0, (a = { ...a, ...es(e, a.maps) }));
       },
       t => {
-        r(2, (l = { ...l, ...i, viewMode: t.detail.mode }));
+        r(0, (a = { ...a, viewMode: t.detail.mode }));
       },
       t => {
-        r(2, (l = { ...l, ...i, ...t.detail }));
+        r(0, (a = { ...a, ...t.detail }));
       },
       n,
     ]
   );
 }
-class zs extends st {
+class Os extends st {
   constructor(t) {
-    super(), at(this, t, Hs, Ps, o, { localConfig: 7 });
+    super(), at(this, t, zs, Hs, o, { localConfig: 6 });
   }
 }
-const Os = (t, e) => new zs({ target: t, props: e });
-export { Os as startApp };
+const Rs = (t, e) => new Os({ target: t, props: e });
+export { Rs as startApp };
 //# sourceMappingURL=bundle.js.map
