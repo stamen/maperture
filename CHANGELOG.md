@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Retain branch name when changing between branch patterns
+
 ## 0.6.0
 
 - Rename this tool

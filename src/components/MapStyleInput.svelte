@@ -212,7 +212,11 @@
         break;
       }
       case 'branch': {
-        textInput = '';
+        if (textInput && textInput === branch) {
+          submitUrl();
+        } else {
+          textInput = '';
+        }
         break;
       }
       case 'custom': {
