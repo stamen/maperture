@@ -10,35 +10,30 @@
   import { loadPresetsFromUrl } from './presets-utils';
   import Maps from './components/Maps.svelte';
   import MapControls from './components/MapControls.svelte';
-  import { writeHash } from './query';
-  import { getInitialSettings } from './settings';
+  import { createHashString, writeHash } from './query';
+  import { getSettings } from './settings';
   import { validateMapState } from './map-state-utils';
   import throttle from 'lodash.throttle';
 
   export let localConfig;
 
-  let mapState = {};
-  let maps = [];
+  // config is set only once on load and is assumed to be loaded from a module
   const config = makeConfig(localConfig);
-  let settings = getInitialSettings(config);
-  let mapboxGlAccessToken;
-  let stylePresetUrls;
+  const { mapboxGlAccessToken, stylePresetUrls } = config;
   configStore.set(config);
-  ({ mapboxGlAccessToken, stylePresetUrls } = config);
 
-  mapsStore.subscribe(value => (maps = value));
+  // settings contains all of the current state of the app that we might want to
+  // persist in the URL
+  let settings = getSettings(config);
 
-  // Throttle writing to the hash since this can get invoked many times when
-  // moving the map around
-  const throttledWriteHash = throttle(() => {
-    writeHash({ ...settings, ...mapState });
-  }, 250);
+  // mapState is a convenience object, subset of settings
+  let mapState = {};
+
+  // Set maps and presets initially using settings
+  mapsStore.set(settings.maps.map((map, index) => ({ ...map, index })));
+  stylePresetsStore.set(settings.stylePresets);
 
   onMount(() => {
-    // Set maps and presets initially using settings
-    mapsStore.set(settings.maps.map((map, index) => ({ ...map, index })));
-    stylePresetsStore.set(settings.stylePresets);
-
     // If we have URLs for preset files, get them and update presets
     if (stylePresetUrls.length > 0) {
       stylePresetUrls.forEach(async url => {
@@ -48,18 +43,30 @@
     }
   });
 
-  $: if (settings && mapState) throttledWriteHash();
-  $: if (maps) {
-    // Remove the stylesheet for a more concise hash
-    const mapsHash = JSON.parse(JSON.stringify(maps)).map(m => {
-      delete m.style;
-      return m;
-    });
+  // Detect changes in hash and update settings appropriately
+  window.addEventListener('hashchange', () => {
+    if (location.hash.slice(1) !== createHashString(settings)) {
+      settings = getSettings(config);
 
-    writeHash({ ...settings, maps: mapsHash, ...mapState });
-  }
+      // Update mapsStore if necessary
+      if (settings.maps.length) {
+        const newMaps = settings.maps.map((map, index) => ({ ...map, index }));
+        mapsStore.set(newMaps);
+      }
+    }
+  });
 
-  $: {
+  mapsStore.subscribe(maps => {
+    settings = { ...settings, maps };
+  });
+
+  // Throttle writing to the hash since this can get invoked many times when
+  // moving the map around
+  const throttledWriteHash = throttle(() => writeHash(settings), 250);
+
+  $: if (settings) throttledWriteHash();
+
+  const createMapState = () => {
     const {
       bearing,
       center,
@@ -70,7 +77,8 @@
       height,
       width,
     } = settings;
-    mapState = {
+
+    return {
       bearing,
       center,
       pitch,
@@ -80,10 +88,12 @@
       ...(height && { height }),
       ...(width && { width }),
     };
-  }
+  };
+
+  $: if (settings || height || width) mapState = createMapState();
 
   // Validate map state when maps change too
-  $: mapState = validateMapState(mapState, maps);
+  $: mapState = validateMapState(mapState, settings.maps);
 
   const handleMapState = event => {
     let newMapState = {
@@ -91,13 +101,15 @@
       ...event.detail.options,
     };
 
-    mapState = validateMapState(newMapState, maps);
+    settings = {
+      ...settings,
+      ...validateMapState(newMapState, settings.maps),
+    };
   };
 
   const handleViewMode = event => {
     settings = {
       ...settings,
-      ...mapState,
       viewMode: event.detail.mode,
     };
   };
@@ -105,7 +117,6 @@
   const handleDimensions = event => {
     settings = {
       ...settings,
-      ...mapState,
       // contains width and height
       ...event.detail,
     };
@@ -122,7 +133,7 @@
 </svelte:head>
 <main>
   <Maps
-    {maps}
+    maps={settings.maps}
     {mapState}
     viewMode={settings.viewMode}
     on:mapState={handleMapState}

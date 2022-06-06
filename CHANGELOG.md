@@ -1,6 +1,7 @@
 ## Unreleased
 
-- Retain branch name when changing between branch patterns
+- Retain branch name when changing between branch patterns (#72)
+- Watch hash for changes, update app state on change (#75)
 
 ## 0.6.0
 

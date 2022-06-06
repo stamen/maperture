@@ -1,6 +1,6 @@
 import { readHash } from './query';
 
-export const getInitialSettings = config => {
+export const getSettings = config => {
   const { mapState, maps, viewMode, stylePresets } = config;
   return {
     ...mapState,
