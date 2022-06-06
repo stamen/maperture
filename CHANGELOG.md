@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Add LICENSE
+
 ## 0.7.0
 
 - Retain branch name when changing between branch patterns (#72)
