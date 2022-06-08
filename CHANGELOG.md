@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Avoid reacting to hashchange when writing to hash
+
 ## 0.7.1
 
 - Build package
