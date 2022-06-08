@@ -29,6 +29,12 @@
   // mapState is a convenience object, subset of settings
   let mapState = {};
 
+  // Track when the app is attempting to write the hash
+  let writingHash = false;
+
+  const hashShouldUpdate = () =>
+    location.hash.slice(1) !== createHashString(settings);
+
   // Set maps and presets initially using settings
   mapsStore.set(settings.maps.map((map, index) => ({ ...map, index })));
   stylePresetsStore.set(settings.stylePresets);
@@ -45,15 +51,21 @@
 
   // Detect changes in hash and update settings appropriately
   window.addEventListener('hashchange', () => {
-    if (location.hash.slice(1) !== createHashString(settings)) {
+    if (!writingHash && hashShouldUpdate()) {
       settings = getSettings(config);
 
       // Update mapsStore if necessary
       if (settings.maps.length) {
-        const newMaps = settings.maps.map((map, index) => ({ ...map, index }));
+        const newMaps = settings.maps.map((map, index) => ({
+          ...map,
+          index,
+        }));
         mapsStore.set(newMaps);
       }
     }
+
+    // Reset so we will see the next change
+    writingHash = false;
   });
 
   mapsStore.subscribe(maps => {
@@ -62,7 +74,12 @@
 
   // Throttle writing to the hash since this can get invoked many times when
   // moving the map around
-  const throttledWriteHash = throttle(() => writeHash(settings), 250);
+  const throttledWriteHash = throttle(() => {
+    if (hashShouldUpdate()) {
+      writingHash = true;
+      writeHash(settings);
+    }
+  }, 250);
 
   $: if (settings) throttledWriteHash();
 
