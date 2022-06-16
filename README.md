@@ -1,5 +1,7 @@
 # Maperture: Stamen's map compare tool
 
+![Maperture Science](silly_maperture_logo.png?raw=true)
+
 A web application for comparing webmap styles.
 
 View a [demo here](https://stamen.github.io/maperture/).
