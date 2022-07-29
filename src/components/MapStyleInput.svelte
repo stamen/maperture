@@ -5,7 +5,7 @@
     stylePresets as stylePresetsStore,
     config as configStore,
   } from '../stores';
-  import { createBranchUrl } from '../branch-utils';
+  import { createBranchUrl, parseBranchUrl } from '../branch-utils';
   import { shortcut } from '../shortcut';
   import { fetchUrl } from '../fetch-url';
 
@@ -20,10 +20,6 @@
 
   let stylePresets;
   let branchPatterns;
-
-  // Temporary fix
-  // TODO: This is not a good long term solution
-  let branchId;
 
   stylePresetsStore.subscribe(value => (stylePresets = value));
   configStore.subscribe(value => ({ branchPatterns } = value));
@@ -174,7 +170,6 @@
     switch (dropdownType) {
       case 'preset': {
         const { type, url } = val;
-        branchId = undefined;
 
         if (type === 'google') {
           handleMapStyleUpdate(val);
@@ -185,8 +180,6 @@
         break;
       }
       case 'branch': {
-        branchId = val.id;
-
         if (textInput && textInput === branch) {
           submitUrl();
         } else {
@@ -196,7 +189,6 @@
         break;
       }
       case 'custom': {
-        branchId = undefined;
         textInput = url;
         break;
       }
@@ -252,8 +244,9 @@
       selected = { ...stylePresetOption, dropdownType: 'preset' };
       textInput = '';
     } else if (branch) {
+      const { styleId } = parseBranchUrl(url);
       selected = {
-        id: branchId,
+        id: styleId,
         name,
         dropdownType: 'branch',
         url,
