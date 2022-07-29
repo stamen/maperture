@@ -1,6 +1,9 @@
 ## Unreleased
 
+## 0.7.2
+
 - Avoid reacting to hashchange when writing to hash
+- Fix bug to not use style name field when creating URL from branch pattern
 
 ## 0.7.1
 
