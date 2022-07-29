@@ -22,6 +22,7 @@
   let branchPatterns;
 
   // Temporary fix
+  // TODO: This is not a good long term solution
   let branchId;
 
   stylePresetsStore.subscribe(value => (stylePresets = value));
