@@ -165,12 +165,10 @@
 
   const handleSelect = val => {
     selected = val;
-
     const { dropdownType } = val;
     switch (dropdownType) {
       case 'preset': {
         const { type, url } = val;
-
         if (type === 'google') {
           handleMapStyleUpdate(val);
           break;
@@ -185,7 +183,6 @@
         } else {
           textInput = '';
         }
-
         break;
       }
       case 'custom': {
