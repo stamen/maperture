@@ -21,6 +21,9 @@
   let stylePresets;
   let branchPatterns;
 
+  // Temporary fix
+  let branchId;
+
   stylePresetsStore.subscribe(value => (stylePresets = value));
   configStore.subscribe(value => ({ branchPatterns } = value));
 
@@ -165,10 +168,13 @@
 
   const handleSelect = val => {
     selected = val;
+
     const { dropdownType } = val;
     switch (dropdownType) {
       case 'preset': {
         const { type, url } = val;
+        branchId = undefined;
+
         if (type === 'google') {
           handleMapStyleUpdate(val);
           break;
@@ -178,14 +184,18 @@
         break;
       }
       case 'branch': {
+        branchId = val.id;
+
         if (textInput && textInput === branch) {
           submitUrl();
         } else {
           textInput = '';
         }
+
         break;
       }
       case 'custom': {
+        branchId = undefined;
         textInput = url;
         break;
       }
@@ -242,6 +252,7 @@
       textInput = '';
     } else if (branch) {
       selected = {
+        id: branchId,
         name,
         dropdownType: 'branch',
         url,
