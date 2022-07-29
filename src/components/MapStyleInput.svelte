@@ -5,7 +5,7 @@
     stylePresets as stylePresetsStore,
     config as configStore,
   } from '../stores';
-  import { createBranchUrl } from '../branch-utils';
+  import { createBranchUrl, parseBranchUrl } from '../branch-utils';
   import { shortcut } from '../shortcut';
   import { fetchUrl } from '../fetch-url';
 
@@ -241,7 +241,9 @@
       selected = { ...stylePresetOption, dropdownType: 'preset' };
       textInput = '';
     } else if (branch) {
+      const { styleId } = parseBranchUrl(url);
       selected = {
+        id: styleId,
         name,
         dropdownType: 'branch',
         url,
