@@ -15,7 +15,6 @@
   let url;
   let name;
   let branch;
-  let pattern;
   let allowPolling = true;
 
   let stylePresets;
@@ -28,27 +27,90 @@
   let textInput = url;
   let dropdownOptions = {};
 
-  onMount(() => {
-    // This runs only on mount to check for localhost in url
-    poll(url);
-  });
+  let localUrl = '';
+  let focused = false;
+  let error = null;
 
   onDestroy(() => {
     // Cancel any polling in destroyed components
     allowPolling = false;
   });
 
-  const getStylePresetOption = () => {
-    return stylePresets && stylePresets.find(s => s.url === url);
+  const getDropdownOptions = () => {
+    const options = {};
+
+    if (stylePresets.length) {
+      options['Presets'] = stylePresets.map(item => ({
+        ...item,
+        dropdownType: 'preset',
+        selected: url === item?.url,
+      }));
+    }
+    if (branchPatterns) {
+      for (const pattern of branchPatterns) {
+        if (pattern?.styles?.length) {
+          options[
+            `Styles on a branch${pattern.name ? `: ${pattern.name}` : ''}`
+          ] = pattern?.styles.map(s => {
+            return {
+              name: `${s.charAt(0).toUpperCase() + s.slice(1)} on...`,
+              id: s,
+              type: pattern.type,
+              dropdownType: 'branch',
+              selected: !!(
+                branch && createBranchUrl(pattern.pattern, branch, s) === url
+              ),
+              pattern: pattern.pattern,
+            };
+          });
+        }
+      }
+    }
+
+    const hasSelectedOption = Object.values(options)
+      .reduce((acc, opt) => acc.concat(opt), [])
+      .some(item => !!item.selected);
+
+    options['Custom'] = [
+      {
+        name: 'Fetch URL at...',
+        dropdownType: 'custom',
+        selected: !hasSelectedOption,
+      },
+    ];
+
+    return options;
   };
 
-  $: if (stylePresets) {
-    setSelected();
-  }
+  onMount(() => {
+    // This runs only on mount to check for localhost in url to continuously poll
+    poll(url);
 
-  let localUrl = '';
-  let focused = false;
-  let error = null;
+    // Set selected and dropdown options on load
+    const stylePresetOption = stylePresets.find(s => s.url === url);
+    if (stylePresetOption) {
+      selected = { ...stylePresetOption, dropdownType: 'preset' };
+      textInput = '';
+    } else {
+      selected = {
+        name,
+        dropdownType: 'custom',
+        url,
+      };
+      textInput = url;
+    }
+    dropdownOptions = getDropdownOptions();
+
+    // If it's a branch, grab the appropriate selected dropdown option based on url
+    if (branch) {
+      const allOptions = Object.values(dropdownOptions).reduce(
+        (acc, opt) => acc.concat(opt),
+        []
+      );
+      selected = allOptions.find(item => !!item.selected);
+      textInput = branch;
+    }
+  });
 
   $: {
     if (textInput !== localUrl && error) {
@@ -57,6 +119,7 @@
     }
   }
 
+  // This will continue to poll/fetch the style at a local URL to allow live changes to be picked up
   const poll = url => {
     const pollCondition = str =>
       allowPolling && str && str.includes('localhost') && selected?.url === str;
@@ -68,6 +131,7 @@
     }
   };
 
+  // Handle updating the map store
   const handleMapStyleUpdate = mapStyle => {
     // Clean up style before dispatching
     const excludedKeys = ['dropdownType', 'selected'];
@@ -90,6 +154,7 @@
     });
   };
 
+  // Fetch the style json from the URL
   const fetchStyle = async url => {
     let style;
     try {
@@ -108,6 +173,7 @@
     }
   };
 
+  // Change the URL by fetching the style and polling if necessary
   const onChangeUrl = async url => {
     const { status } = await fetchStyle(url);
     if (status === '200') {
@@ -117,6 +183,7 @@
     }
   };
 
+  // Submit URL from a custom or branch style
   const submitUrl = async () => {
     localUrl = textInput;
     const { dropdownType, pattern } = selected;
@@ -136,31 +203,6 @@
       }
     }
     onChangeUrl(nextLocalUrl);
-  };
-
-  const onKeySubmit = () => {
-    if (focused) {
-      submitUrl();
-    }
-  };
-
-  const handleOnFocus = () => {
-    focused = true;
-  };
-
-  const handleOnBlur = () => {
-    focused = false;
-
-    if (!error) return;
-
-    // If there's an error, reset textInput
-    if (selected.dropdownType === 'branch' && selected.url) {
-      textInput = branch;
-    } else if (selected.dropdownType === 'branch' && !selected.url) {
-      textInput = '';
-    } else {
-      textInput = url;
-    }
   };
 
   const handleSelect = val => {
@@ -190,87 +232,70 @@
         break;
       }
     }
-    dropdownOptions = getDropdownOptions();
-  };
 
-  const getDropdownOptions = () => {
-    const options = {};
-    if (stylePresets.length) {
-      options['Presets'] = stylePresets.map(item => ({
-        ...item,
-        dropdownType: 'preset',
-        selected:
-          selected.dropdownType === 'preset' && selected?.url === item?.url,
-      }));
-    }
-    if (branchPatterns) {
-      for (const pattern of branchPatterns) {
-        if (pattern?.styles?.length) {
-          options[
-            `Styles on a branch${pattern.name ? `: ${pattern.name}` : ''}`
-          ] = pattern?.styles.map(s => {
-            return {
-              name: `${s.charAt(0).toUpperCase() + s.slice(1)} on...`,
-              id: s,
-              type: pattern.type,
-              dropdownType: 'branch',
-              selected: !!(
-                branch &&
-                createBranchUrl(pattern.pattern, branch, s) === selected.url
-              ),
-              pattern: pattern.pattern,
-            };
+    // Set selected option in the dropdown options
+    const nextDropdownOptions = Object.entries(dropdownOptions).reduce(
+      (acc, kv) => {
+        const [k, v] = kv;
+        acc[k] = v.map(option => {
+          const isNextSelected = Object.entries(option).every(entry => {
+            const [key, val] = entry;
+            if (key === 'selected') return true;
+            return val === selected[key];
           });
-        }
-      }
-    }
-    options['Custom'] = [
-      {
-        name: 'Fetch URL at...',
-        dropdownType: 'custom',
-        selected: selected.dropdownType === 'custom',
+          if (isNextSelected) {
+            return {
+              ...option,
+              selected: true,
+            };
+          } else {
+            return {
+              ...option,
+              selected: false,
+            };
+          }
+        });
+        return acc;
       },
-    ];
+      {}
+    );
 
-    return options;
-  };
-
-  const setSelected = () => {
-    const stylePresetOption = getStylePresetOption();
-    if (stylePresetOption) {
-      selected = { ...stylePresetOption, dropdownType: 'preset' };
-      textInput = '';
-    } else if (branch) {
-      const { styleId } = parseBranchUrl(url);
-      selected = {
-        id: styleId,
-        name,
-        dropdownType: 'branch',
-        url,
-        pattern,
-      };
-      textInput = branch;
-    } else {
-      selected = {
-        name,
-        dropdownType: 'custom',
-        url,
-      };
-      textInput = url;
-    }
-    dropdownOptions = getDropdownOptions();
+    dropdownOptions = nextDropdownOptions;
   };
 
   mapsStore.subscribe(maps => {
     map = maps.find(m => m.index === index);
     if (map) {
       branch = map.branch;
-      pattern = map.pattern;
       name = map.name;
       url = map.url;
     }
-    setSelected();
   });
+
+  const onKeySubmit = () => {
+    if (focused) {
+      submitUrl();
+    }
+  };
+
+  const handleOnFocus = () => {
+    focused = true;
+  };
+
+  const handleOnBlur = () => {
+    focused = false;
+
+    if (!error) return;
+
+    // If there's an error, reset textInput
+    if (selected.dropdownType === 'branch' && selected.url) {
+      textInput = branch;
+    } else if (selected.dropdownType === 'branch' && !selected.url) {
+      textInput = '';
+    } else {
+      textInput = url;
+    }
+  };
 </script>
 
 <div class="map-style-input">
@@ -286,7 +311,7 @@
     {/each}
   </select>
 
-  {#if selected.dropdownType === 'custom' || selected.dropdownType === 'branch'}
+  {#if selected?.dropdownType === 'custom' || selected?.dropdownType === 'branch'}
     <div class="custom-input">
       <input
         class:input-error={error}
