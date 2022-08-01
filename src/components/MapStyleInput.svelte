@@ -13,7 +13,6 @@
 
   let map;
   let url;
-  let name;
   let branch;
   let allowPolling = true;
 
@@ -24,7 +23,6 @@
     map = maps.find(m => m.index === index);
     if (map) {
       branch = map.branch;
-      name = map.name;
       url = map.url;
     }
   });
@@ -33,7 +31,6 @@
   let selected;
   let textInput = url;
 
-  let localUrl = '';
   let focused = false;
   let error = null;
 
@@ -42,6 +39,23 @@
     allowPolling = false;
   });
 
+  const resetTextInput = dropdownType => {
+    switch (dropdownType) {
+      case 'preset': {
+        textInput = '';
+        break;
+      }
+      case 'branch': {
+        textInput = branch;
+        break;
+      }
+      case 'custom': {
+        textInput = url;
+      }
+    }
+  };
+
+  // Creates dropdown values for the style dropdown
   const getInitialDropdownOptions = stylePresets => {
     const options = {};
 
@@ -91,31 +105,17 @@
   const setInitialSelectedOption = stylePresets => {
     dropdownOptions = getInitialDropdownOptions(stylePresets);
 
-    // Set selected and dropdown options on load
-    const stylePresetOption = stylePresets.find(s => s.url === url);
-    if (stylePresetOption) {
-      selected = { ...stylePresetOption, dropdownType: 'preset' };
-      textInput = '';
-    } else {
-      selected = {
-        name,
-        dropdownType: 'custom',
-        url,
-      };
-      textInput = url;
-    }
+    const allOptions = Object.values(dropdownOptions).reduce(
+      (acc, opt) => acc.concat(opt),
+      []
+    );
+    selected = allOptions.find(item => !!item.selected);
 
-    // If it's a branch, grab the appropriate selected dropdown option based on url
-    if (branch) {
-      const allOptions = Object.values(dropdownOptions).reduce(
-        (acc, opt) => acc.concat(opt),
-        []
-      );
-      selected = allOptions.find(item => !!item.selected);
-      textInput = branch;
-    }
+    resetTextInput(selected.dropdownType);
   };
 
+  // We can't do this onMount because the stylePresets store will
+  // update more than once if there's style preset URLs
   stylePresetsStore.subscribe(value => {
     setInitialSelectedOption(value);
   });
@@ -148,7 +148,7 @@
       index,
     };
     if (selected.dropdownType === 'branch') {
-      value.branch = localUrl;
+      value.branch = textInput;
     }
     if (mapStyle.style) {
       value.id = mapStyle.style.id;
@@ -191,14 +191,13 @@
 
   // Submit URL from a custom or branch style
   const submitUrl = async () => {
-    localUrl = textInput;
     const { dropdownType, pattern } = selected;
 
     let nextLocalUrl =
       dropdownType === 'branch'
         ? // TODO We should sort out selected.id and selected.name here, this works but isn't clear
-          createBranchUrl(pattern, localUrl, selected.id || selected.name)
-        : localUrl;
+          createBranchUrl(pattern, textInput, selected.id || selected.name)
+        : textInput;
     if (url === nextLocalUrl) return;
     if (nextLocalUrl.includes('localhost')) {
       const [preface, address] = nextLocalUrl.split('localhost');
@@ -212,6 +211,7 @@
   };
 
   const handleSelect = val => {
+    error = null;
     selected = val;
     const { dropdownType } = val;
     switch (dropdownType) {
@@ -221,23 +221,18 @@
           handleMapStyleUpdate(val);
           break;
         }
-        textInput = '';
         onChangeUrl(url);
         break;
       }
       case 'branch': {
-        if (textInput && textInput === branch) {
-          submitUrl();
-        } else {
-          textInput = '';
-        }
+        submitUrl();
         break;
       }
       case 'custom': {
-        textInput = url;
         break;
       }
     }
+    resetTextInput(dropdownType);
 
     // Set selected option in the dropdown options
     const nextDropdownOptions = Object.entries(dropdownOptions).reduce(
@@ -284,21 +279,12 @@
 
     if (!error) return;
 
-    // If there's an error, reset textInput
-    if (selected.dropdownType === 'branch' && selected.url) {
-      textInput = branch;
-    } else if (selected.dropdownType === 'branch' && !selected.url) {
-      textInput = '';
-    } else {
-      textInput = url;
-    }
+    resetTextInput(selected.dropdownType);
   };
 
-  $: {
-    if (textInput !== localUrl && error) {
-      localUrl = '';
-      error = null;
-    }
+  // Reset error on beginning to type again
+  $: if (textInput) {
+    error = null;
   }
 </script>
 
