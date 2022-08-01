@@ -17,15 +17,21 @@
   let branch;
   let allowPolling = true;
 
-  let stylePresets;
   let branchPatterns;
 
-  stylePresetsStore.subscribe(value => (stylePresets = value));
   configStore.subscribe(value => ({ branchPatterns } = value));
+  mapsStore.subscribe(maps => {
+    map = maps.find(m => m.index === index);
+    if (map) {
+      branch = map.branch;
+      name = map.name;
+      url = map.url;
+    }
+  });
 
+  let dropdownOptions = {};
   let selected;
   let textInput = url;
-  let dropdownOptions = {};
 
   let localUrl = '';
   let focused = false;
@@ -36,7 +42,7 @@
     allowPolling = false;
   });
 
-  const getInitialDropdownOptions = () => {
+  const getInitialDropdownOptions = stylePresets => {
     const options = {};
 
     if (stylePresets.length) {
@@ -82,7 +88,9 @@
     return options;
   };
 
-  const setInitialSelectedOption = () => {
+  const setInitialSelectedOption = stylePresets => {
+    dropdownOptions = getInitialDropdownOptions(stylePresets);
+
     // Set selected and dropdown options on load
     const stylePresetOption = stylePresets.find(s => s.url === url);
     if (stylePresetOption) {
@@ -96,7 +104,6 @@
       };
       textInput = url;
     }
-    dropdownOptions = getInitialDropdownOptions();
 
     // If it's a branch, grab the appropriate selected dropdown option based on url
     if (branch) {
@@ -109,11 +116,9 @@
     }
   };
 
-  // This should only run once or twice on initial load as the stylePresets store
-  // updates with style presets and style preset urls
-  $: if (stylePresets) {
-    setInitialSelectedOption();
-  }
+  stylePresetsStore.subscribe(value => {
+    setInitialSelectedOption(value);
+  });
 
   onMount(() => {
     // This runs only on mount to check for localhost in url to continuously poll
@@ -263,15 +268,6 @@
 
     dropdownOptions = nextDropdownOptions;
   };
-
-  mapsStore.subscribe(maps => {
-    map = maps.find(m => m.index === index);
-    if (map) {
-      branch = map.branch;
-      name = map.name;
-      url = map.url;
-    }
-  });
 
   const onKeySubmit = () => {
     if (focused) {
