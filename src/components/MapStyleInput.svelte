@@ -1,4 +1,5 @@
 <script>
+  import hat from 'hat';
   import { onDestroy, onMount } from 'svelte';
   import {
     maps as mapsStore,
@@ -14,10 +15,8 @@
   let map;
   let url;
   let branch;
-  let allowPolling = true;
 
   let branchPatterns;
-
   configStore.subscribe(value => ({ branchPatterns } = value));
   mapsStore.subscribe(maps => {
     map = maps.find(m => m.index === index);
@@ -27,12 +26,18 @@
     }
   });
 
-  let dropdownOptions = {};
+  let allowPolling = true;
+
   let selected;
   let textInput = url;
 
   let focused = false;
   let error = null;
+
+  // Used to create dropdown display with headings
+  let dropdownDisplayOptions = {};
+  // Actual values selected from dropdown matched by id
+  let dropdownValues = [];
 
   onDestroy(() => {
     // Cancel any polling in destroyed components
@@ -55,24 +60,30 @@
     }
   };
 
-  // Creates dropdown values for the style dropdown
-  const getInitialDropdownOptions = stylePresets => {
-    const options = {};
-
+  // Creates dropdown values and display options for the style dropdown linked by ids
+  const setInitialDropdownOptions = stylePresets => {
+    // Create values and displays for style presets
     if (stylePresets.length) {
-      options['Presets'] = stylePresets.map(item => ({
+      const stylePresetValues = stylePresets.map(item => ({
         ...item,
         dropdownType: 'preset',
         selected: url === item?.url,
+        dropdownId: hat(),
+      }));
+
+      dropdownValues = dropdownValues.concat(stylePresetValues);
+
+      dropdownDisplayOptions['Presets'] = stylePresetValues.map(item => ({
+        text: item.name,
+        dropdownId: item.dropdownId,
       }));
     }
 
+    // Create values and displays for branch options
     if (branchPatterns) {
       for (const pattern of branchPatterns) {
         if (pattern?.styles?.length) {
-          options[
-            `Styles on a branch${pattern.name ? `: ${pattern.name}` : ''}`
-          ] = pattern?.styles.map(s => {
+          const branchValues = pattern?.styles.map(s => {
             return {
               name: `${s.charAt(0).toUpperCase() + s.slice(1)} on...`,
               id: s,
@@ -82,35 +93,46 @@
                 branch && createBranchUrl(pattern.pattern, branch, s) === url
               ),
               pattern: pattern.pattern,
+              dropdownId: hat(),
             };
           });
+
+          dropdownValues = dropdownValues.concat(branchValues);
+
+          dropdownDisplayOptions[
+            `Styles on a branch${pattern.name ? `: ${pattern.name}` : ''}`
+          ] = branchValues.map(item => ({
+            text: item.name,
+            dropdownId: item.dropdownId,
+          }));
         }
       }
     }
 
-    const hasSelectedOption = Object.values(options)
-      .reduce((acc, opt) => acc.concat(opt), [])
-      .some(item => !!item.selected);
+    const hasSelectedOption = dropdownValues.some(item => !!item.selected);
 
-    options['Custom'] = [
+    // Create a custom value and display option
+    const customValues = [
       {
         name: 'Fetch URL at...',
         dropdownType: 'custom',
         selected: !hasSelectedOption,
+        dropdownId: hat(),
       },
     ];
 
-    return options;
+    dropdownValues = dropdownValues.concat(customValues);
+
+    dropdownDisplayOptions['Custom'] = customValues.map(item => ({
+      text: item.name,
+      dropdownId: item.dropdownId,
+    }));
   };
 
   const setInitialSelectedOption = stylePresets => {
-    dropdownOptions = getInitialDropdownOptions(stylePresets);
+    setInitialDropdownOptions(stylePresets);
 
-    const allOptions = Object.values(dropdownOptions).reduce(
-      (acc, opt) => acc.concat(opt),
-      []
-    );
-    selected = allOptions.find(item => !!item.selected);
+    selected = dropdownValues.find(item => !!item.selected);
 
     resetTextInput(selected.dropdownType);
   };
@@ -184,7 +206,6 @@
   const onChangeUrl = async url => {
     const { status } = await fetchStyle(url);
     if (status === '200') {
-      selected.url = url;
       // Call poll after setting selected.url on success
       poll(url);
     }
@@ -194,10 +215,12 @@
   const submitUrl = async () => {
     const { dropdownType, pattern } = selected;
 
+    // Branch values always have an `id` field
     let nextLocalUrl =
       dropdownType === 'branch'
         ? createBranchUrl(pattern, textInput, selected.id)
         : textInput;
+
     if (url === nextLocalUrl) return;
     if (nextLocalUrl.includes('localhost')) {
       const [preface, address] = nextLocalUrl.split('localhost');
@@ -210,15 +233,26 @@
     onChangeUrl(nextLocalUrl);
   };
 
-  const handleSelect = val => {
+  const handleSelect = dropdownId => {
     error = null;
-    selected = val;
-    const { dropdownType } = val;
+    // Set selected property on value
+    dropdownValues = dropdownValues.map(v => {
+      if (v.dropdownId === dropdownId) {
+        return { ...v, selected: true };
+      } else {
+        return { ...v, selected: false };
+      }
+    });
+    // Find the selected value
+    selected = dropdownValues.find(v => v.selected);
+
+    // Submit the URL or open text input under different conditions
+    const { dropdownType } = selected;
     switch (dropdownType) {
       case 'preset': {
-        const { type, url } = val;
+        const { type, url } = selected;
         if (type === 'google') {
-          handleMapStyleUpdate(val);
+          handleMapStyleUpdate(selected);
           break;
         }
         onChangeUrl(url);
@@ -235,35 +269,6 @@
       }
     }
     resetTextInput(dropdownType);
-
-    // Set selected option in the dropdown options
-    const nextDropdownOptions = Object.entries(dropdownOptions).reduce(
-      (acc, kv) => {
-        const [k, v] = kv;
-        acc[k] = v.map(option => {
-          const isNextSelected = Object.entries(option).every(entry => {
-            const [key, val] = entry;
-            if (key === 'selected') return true;
-            return val === selected[key];
-          });
-          if (isNextSelected) {
-            return {
-              ...option,
-              selected: true,
-            };
-          } else {
-            return {
-              ...option,
-              selected: false,
-            };
-          }
-        });
-        return acc;
-      },
-      {}
-    );
-
-    dropdownOptions = nextDropdownOptions;
   };
 
   const onKeySubmit = () => {
@@ -278,10 +283,9 @@
 
   const handleOnBlur = () => {
     focused = false;
-
-    if (!error) return;
-
-    resetTextInput(selected.dropdownType);
+    if (error) {
+      resetTextInput(selected.dropdownType);
+    }
   };
 
   // Reset error on beginning to type again
@@ -291,12 +295,15 @@
 </script>
 
 <div class="map-style-input">
-  <select id="styles" on:change={e => handleSelect(JSON.parse(e.target.value))}>
-    {#each Object.keys(dropdownOptions) as group}
+  <select id="styles" on:change={e => handleSelect(e.target.value)}>
+    {#each Object.keys(dropdownDisplayOptions) as group}
       <optgroup value={group} label={group}>
-        {#each dropdownOptions[group] as style}
-          <option value={JSON.stringify(style)} selected={style.selected}
-            >{style.name}</option
+        {#each dropdownDisplayOptions[group] as value}
+          <option
+            value={value.dropdownId}
+            selected={dropdownValues.find(
+              v => v.dropdownId === value.dropdownId
+            ).selected}>{value.text}</option
           >
         {/each}
       </optgroup>
