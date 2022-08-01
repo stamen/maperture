@@ -26,8 +26,6 @@
     }
   });
 
-  let allowPolling = true;
-
   let selected;
   let textInput = url;
 
@@ -39,6 +37,7 @@
   // Actual values selected from dropdown matched by id
   let dropdownValues = [];
 
+  let allowPolling = true;
   onDestroy(() => {
     // Cancel any polling in destroyed components
     allowPolling = false;
@@ -109,6 +108,7 @@
       }
     }
 
+    // If no option has matched the URL, then it is custom
     const hasSelectedOption = dropdownValues.some(item => !!item.selected);
 
     // Create a custom value and display option
@@ -117,6 +117,7 @@
         name: 'Fetch URL at...',
         dropdownType: 'custom',
         selected: !hasSelectedOption,
+        type: 'mapbox-gl',
         dropdownId: hat(),
       },
     ];
@@ -243,7 +244,7 @@
         return { ...v, selected: false };
       }
     });
-    // Find the selected value
+    // Find the new selected value
     selected = dropdownValues.find(v => v.selected);
 
     // Submit the URL or open text input under different conditions
