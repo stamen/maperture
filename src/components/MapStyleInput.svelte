@@ -66,6 +66,7 @@
         selected: url === item?.url,
       }));
     }
+
     if (branchPatterns) {
       for (const pattern of branchPatterns) {
         if (pattern?.styles?.length) {
@@ -195,8 +196,7 @@
 
     let nextLocalUrl =
       dropdownType === 'branch'
-        ? // TODO We should sort out selected.id and selected.name here, this works but isn't clear
-          createBranchUrl(pattern, textInput, selected.id || selected.name)
+        ? createBranchUrl(pattern, textInput, selected.id)
         : textInput;
     if (url === nextLocalUrl) return;
     if (nextLocalUrl.includes('localhost')) {
@@ -225,7 +225,9 @@
         break;
       }
       case 'branch': {
-        submitUrl();
+        if (textInput && textInput === branch) {
+          submitUrl();
+        }
         break;
       }
       case 'custom': {
