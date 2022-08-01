@@ -82,10 +82,7 @@
     return options;
   };
 
-  onMount(() => {
-    // This runs only on mount to check for localhost in url to continuously poll
-    poll(url);
-
+  const setInitialSelectedOption = () => {
     // Set selected and dropdown options on load
     const stylePresetOption = stylePresets.find(s => s.url === url);
     if (stylePresetOption) {
@@ -110,6 +107,17 @@
       selected = allOptions.find(item => !!item.selected);
       textInput = branch;
     }
+  };
+
+  // This should only run once or twice on initial load as the stylePresets store
+  // updates with style presets and style preset urls
+  $: if (stylePresets) {
+    setInitialSelectedOption();
+  }
+
+  onMount(() => {
+    // This runs only on mount to check for localhost in url to continuously poll
+    poll(url);
   });
 
   $: {
