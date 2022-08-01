@@ -5,7 +5,7 @@
     stylePresets as stylePresetsStore,
     config as configStore,
   } from '../stores';
-  import { createBranchUrl, parseBranchUrl } from '../branch-utils';
+  import { createBranchUrl } from '../branch-utils';
   import { shortcut } from '../shortcut';
   import { fetchUrl } from '../fetch-url';
 
@@ -36,7 +36,7 @@
     allowPolling = false;
   });
 
-  const getDropdownOptions = () => {
+  const getInitialDropdownOptions = () => {
     const options = {};
 
     if (stylePresets.length) {
@@ -96,7 +96,7 @@
       };
       textInput = url;
     }
-    dropdownOptions = getDropdownOptions();
+    dropdownOptions = getInitialDropdownOptions();
 
     // If it's a branch, grab the appropriate selected dropdown option based on url
     if (branch) {
@@ -119,13 +119,6 @@
     // This runs only on mount to check for localhost in url to continuously poll
     poll(url);
   });
-
-  $: {
-    if (textInput !== localUrl && error) {
-      localUrl = '';
-      error = null;
-    }
-  }
 
   // This will continue to poll/fetch the style at a local URL to allow live changes to be picked up
   const poll = url => {
@@ -304,6 +297,13 @@
       textInput = url;
     }
   };
+
+  $: {
+    if (textInput !== localUrl && error) {
+      localUrl = '';
+      error = null;
+    }
+  }
 </script>
 
 <div class="map-style-input">
