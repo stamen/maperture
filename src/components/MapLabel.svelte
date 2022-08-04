@@ -1,7 +1,7 @@
 <script>
   import { faXmark } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa/src/fa.svelte';
-  import MapStyleInput from './MapStyleInput.svelte';
+  import MapStyleInputWrapper from './MapStyleInputWrapper.svelte';
 
   export let index;
   export let name;
@@ -14,7 +14,7 @@
     <Fa icon={faXmark} />
   </button>
   <div class="map-name">{name}</div>
-  <MapStyleInput {index} />
+  <MapStyleInputWrapper {index} />
 </div>
 
 <style>
