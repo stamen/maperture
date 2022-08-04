@@ -169,7 +169,7 @@
   };
 
   // Reset error on beginning to type again
-  $: if (textInput) {
+  $: if (textInput !== undefined) {
     error = null;
   }
 

@@ -44,7 +44,7 @@
         break;
       }
       case 'branch': {
-        nextValue = { ...nextValue, defaultText: branch };
+        nextValue = { ...nextValue, defaultText: branch ?? '' };
         break;
       }
       case 'custom': {
