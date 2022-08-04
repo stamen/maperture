@@ -134,6 +134,7 @@
     setInitialDropdownOptions(stylePresets);
 
     selected = dropdownValues.find(item => !!item.selected);
+    selected.url = url;
 
     resetTextInput(selected.dropdownType);
   };
@@ -153,6 +154,7 @@
   const poll = url => {
     const pollCondition = str =>
       allowPolling && str && str.includes('localhost') && selected?.url === str;
+
     // Simple polling for any style on localhost
     // Check that should poll to set timer
     if (pollCondition(url)) {
@@ -207,6 +209,7 @@
   const onChangeUrl = async url => {
     const { status } = await fetchStyle(url);
     if (status === '200') {
+      selected.url = url;
       // Call poll after setting selected.url on success
       poll(url);
     }
