@@ -10,12 +10,12 @@
 
   export let index;
 
+  let branchPatterns;
+  configStore.subscribe(value => ({ branchPatterns } = value));
+
   let map;
   let url;
   let branch;
-
-  let branchPatterns;
-  configStore.subscribe(value => ({ branchPatterns } = value));
   mapsStore.subscribe(maps => {
     map = maps.find(m => m.index === index);
     if (map) {
@@ -28,6 +28,31 @@
   let dropdownDisplayOptions = {};
   // Actual values selected from dropdown matched by id
   let dropdownValues = [];
+
+  let selectedValue;
+  const setSelectedValue = () => {
+    let nextValue = dropdownValues.find(item => !!item.selected);
+
+    // Don't mutate the dropdown values
+    nextValue = JSON.parse(JSON.stringify(nextValue));
+
+    // Set default text for the selected item's text input
+    switch (nextValue.dropdownType) {
+      case 'preset': {
+        nextValue = { ...nextValue, defaultText: '' };
+        break;
+      }
+      case 'branch': {
+        nextValue = { ...nextValue, defaultText: branch };
+        break;
+      }
+      case 'custom': {
+        nextValue = { ...nextValue, defaultText: url, url };
+      }
+    }
+
+    selectedValue = nextValue;
+  };
 
   // Creates dropdown values and display options for the style dropdown linked by ids
   const setInitialDropdownOptions = stylePresets => {
@@ -102,6 +127,7 @@
 
   const setInitialSelectedOption = stylePresets => {
     setInitialDropdownOptions(stylePresets);
+    setSelectedValue();
   };
 
   // We can't do this onMount because the stylePresets store will
@@ -120,18 +146,27 @@
         return { ...v, selected: false };
       }
     });
+
+    setSelectedValue();
+  };
+
+  // Handle updating the map store
+  const onUpdateMapStore = e => {
+    const { value } = e.detail;
+    const nextMap = { ...value, index };
+    mapsStore.update(current => {
+      return current.map((m, i) => (i === index ? nextMap : m));
+    });
   };
 </script>
 
 <div class="map-style-input">
-  {#if dropdownValues.length}
+  {#if dropdownValues}
     <MapStyleInputChild
-      {dropdownValues}
+      dropdownValue={selectedValue}
       {dropdownDisplayOptions}
-      {index}
-      {url}
-      {branch}
       on:selectOption={onSelectOption}
+      on:updateMapStore={onUpdateMapStore}
     />
   {/if}
 </div>
