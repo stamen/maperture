@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 0.7.3
+
+- Refactor MapStyleInput into MapStyleInput and MapStyleInputWrapper
+
 ## 0.7.2
 
 - Avoid reacting to hashchange when writing to hash
