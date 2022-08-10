@@ -140,9 +140,10 @@
   const onSelectOption = e => {
     const { dropdownId } = e.detail;
     // Set selected property on value
-    dropdownValues = dropdownValues.map(v => {
-      return { ...v, selected: v.dropdownId === dropdownId };
-    });
+    dropdownValues = dropdownValues.map(v => ({
+      ...v,
+      selected: v.dropdownId === dropdownId,
+    }));
 
     setSelectedValue();
   };
