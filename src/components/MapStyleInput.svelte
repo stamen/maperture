@@ -1,65 +1,39 @@
 <script>
-  import { onDestroy, onMount } from 'svelte';
-  import {
-    maps as mapsStore,
-    stylePresets as stylePresetsStore,
-    config as configStore,
-  } from '../stores';
-  import { createBranchUrl, parseBranchUrl } from '../branch-utils';
+  import { onDestroy, onMount, createEventDispatcher } from 'svelte';
+  import { createBranchUrl } from '../branch-utils';
   import { shortcut } from '../shortcut';
   import { fetchUrl } from '../fetch-url';
+  const dispatch = createEventDispatcher();
 
-  export let index;
-
-  let map;
-  let url;
-  let name;
-  let branch;
-  let pattern;
-  let allowPolling = true;
-
-  let stylePresets;
-  let branchPatterns;
-
-  stylePresetsStore.subscribe(value => (stylePresets = value));
-  configStore.subscribe(value => ({ branchPatterns } = value));
+  export let dropdownDisplayOptions;
+  export let dropdownValue;
+  export let activeUrl;
 
   let selected;
-  let textInput = url;
-  let dropdownOptions = {};
 
-  onMount(() => {
-    // This runs only on mount to check for localhost in url
-    poll(url);
-  });
+  let textInput;
 
+  let focused = false;
+  let error = null;
+
+  let allowPolling = true;
   onDestroy(() => {
     // Cancel any polling in destroyed components
     allowPolling = false;
   });
 
-  const getStylePresetOption = () => {
-    return stylePresets && stylePresets.find(s => s.url === url);
-  };
+  onMount(() => {
+    selected = dropdownValue;
+    textInput = selected.defaultText;
+    // This runs only on mount to check for localhost in url to continuously poll
+    poll(selected.url);
+  });
 
-  $: if (stylePresets) {
-    setSelected();
-  }
-
-  let localUrl = '';
-  let focused = false;
-  let error = null;
-
-  $: {
-    if (textInput !== localUrl && error) {
-      localUrl = '';
-      error = null;
-    }
-  }
-
+  // This will continue to poll/fetch the style at a local URL to allow live changes to be picked up
   const poll = url => {
     const pollCondition = str =>
-      allowPolling && str && str.includes('localhost') && selected?.url === str;
+      allowPolling && str && str.includes('localhost') && activeUrl === str;
+
     // Simple polling for any style on localhost
     // Check that should poll to set timer
     if (pollCondition(url)) {
@@ -68,28 +42,27 @@
     }
   };
 
-  const handleMapStyleUpdate = mapStyle => {
+  // Handle updating the map store
+  const handleMapStyleUpdate = mapObj => {
     // Clean up style before dispatching
     const excludedKeys = ['dropdownType', 'selected'];
     let value = {
       ...Object.fromEntries(
-        Object.entries(mapStyle).filter(([k, v]) => !excludedKeys.includes(k))
+        Object.entries(mapObj).filter(([k, v]) => !excludedKeys.includes(k))
       ),
-      index,
     };
     if (selected.dropdownType === 'branch') {
-      value.branch = localUrl;
+      value.branch = textInput;
     }
-    if (mapStyle.style) {
-      value.id = mapStyle.style.id;
-      value.name = mapStyle.style.name;
+    if (mapObj.style) {
+      value.id = mapObj.style.id;
+      value.name = mapObj.style.name;
     }
 
-    mapsStore.update(current => {
-      return current.map((m, i) => (i === index ? value : m));
-    });
+    dispatch('updateMapStore', { value });
   };
 
+  // Fetch the style json from the URL
   const fetchStyle = async url => {
     let style;
     try {
@@ -108,6 +81,7 @@
     }
   };
 
+  // Change the URL by fetching the style and polling if necessary
   const onChangeUrl = async url => {
     const { status } = await fetchStyle(url);
     if (status === '200') {
@@ -117,16 +91,17 @@
     }
   };
 
+  // Submit URL from a custom or branch style
   const submitUrl = async () => {
-    localUrl = textInput;
     const { dropdownType, pattern } = selected;
 
+    // Branch values always have an `id` field
     let nextLocalUrl =
       dropdownType === 'branch'
-        ? // TODO We should sort out selected.id and selected.name here, this works but isn't clear
-          createBranchUrl(pattern, localUrl, selected.id || selected.name)
-        : localUrl;
-    if (url === nextLocalUrl) return;
+        ? createBranchUrl(pattern, textInput, selected.id)
+        : textInput;
+
+    if (selected?.url === nextLocalUrl) return;
     if (nextLocalUrl.includes('localhost')) {
       const [preface, address] = nextLocalUrl.split('localhost');
       // Fetch doesn't accept localhost unless prefaced with http://
@@ -136,6 +111,44 @@
       }
     }
     onChangeUrl(nextLocalUrl);
+  };
+
+  const onChangeSelected = () => {
+    // If dropdownValue matches our current selected value, return early
+    const isSame = Object.entries(dropdownValue).every(kv => {
+      const [k, v] = kv;
+      if (k === 'url') return true;
+      if (selected && selected[k] === v) return true;
+    });
+    if (isSame) return;
+
+    const prevDropdownType = selected?.dropdownType;
+    selected = dropdownValue;
+    error = null;
+    // Submit the URL or open text input under different conditions
+    const { dropdownType } = selected;
+    switch (dropdownType) {
+      case 'preset': {
+        const { type, url } = selected;
+        if (type === 'google') {
+          handleMapStyleUpdate(selected);
+          break;
+        }
+        onChangeUrl(url);
+        break;
+      }
+      case 'branch': {
+        if (textInput && prevDropdownType === 'branch') {
+          submitUrl();
+        }
+        break;
+      }
+      case 'custom': {
+        break;
+      }
+    }
+
+    textInput = selected.defaultText;
   };
 
   const onKeySubmit = () => {
@@ -150,143 +163,41 @@
 
   const handleOnBlur = () => {
     focused = false;
-
-    if (!error) return;
-
-    // If there's an error, reset textInput
-    if (selected.dropdownType === 'branch' && selected.url) {
-      textInput = branch;
-    } else if (selected.dropdownType === 'branch' && !selected.url) {
-      textInput = '';
-    } else {
-      textInput = url;
+    if (error) {
+      textInput = selected.defaultText;
     }
   };
 
-  const handleSelect = val => {
-    selected = val;
-    const { dropdownType } = val;
-    switch (dropdownType) {
-      case 'preset': {
-        const { type, url } = val;
-        if (type === 'google') {
-          handleMapStyleUpdate(val);
-          break;
-        }
-        textInput = '';
-        onChangeUrl(url);
-        break;
-      }
-      case 'branch': {
-        if (textInput && textInput === branch) {
-          submitUrl();
-        } else {
-          textInput = '';
-        }
-        break;
-      }
-      case 'custom': {
-        textInput = url;
-        break;
-      }
-    }
-    dropdownOptions = getDropdownOptions();
-  };
+  // Reset error on beginning to type again
+  $: if (textInput !== undefined) {
+    error = null;
+  }
 
-  const getDropdownOptions = () => {
-    const options = {};
-    if (stylePresets.length) {
-      options['Presets'] = stylePresets.map(item => ({
-        ...item,
-        dropdownType: 'preset',
-        selected:
-          selected.dropdownType === 'preset' && selected?.url === item?.url,
-      }));
-    }
-    if (branchPatterns) {
-      for (const pattern of branchPatterns) {
-        if (pattern?.styles?.length) {
-          options[
-            `Styles on a branch${pattern.name ? `: ${pattern.name}` : ''}`
-          ] = pattern?.styles.map(s => {
-            return {
-              name: `${s.charAt(0).toUpperCase() + s.slice(1)} on...`,
-              id: s,
-              type: pattern.type,
-              dropdownType: 'branch',
-              selected: !!(
-                branch &&
-                createBranchUrl(pattern.pattern, branch, s) === selected.url
-              ),
-              pattern: pattern.pattern,
-            };
-          });
-        }
-      }
-    }
-    options['Custom'] = [
-      {
-        name: 'Fetch URL at...',
-        dropdownType: 'custom',
-        selected: selected.dropdownType === 'custom',
-      },
-    ];
-
-    return options;
-  };
-
-  const setSelected = () => {
-    const stylePresetOption = getStylePresetOption();
-    if (stylePresetOption) {
-      selected = { ...stylePresetOption, dropdownType: 'preset' };
-      textInput = '';
-    } else if (branch) {
-      const { styleId } = parseBranchUrl(url);
-      selected = {
-        id: styleId,
-        name,
-        dropdownType: 'branch',
-        url,
-        pattern,
-      };
-      textInput = branch;
-    } else {
-      selected = {
-        name,
-        dropdownType: 'custom',
-        url,
-      };
-      textInput = url;
-    }
-    dropdownOptions = getDropdownOptions();
-  };
-
-  mapsStore.subscribe(maps => {
-    map = maps.find(m => m.index === index);
-    if (map) {
-      branch = map.branch;
-      pattern = map.pattern;
-      name = map.name;
-      url = map.url;
-    }
-    setSelected();
-  });
+  // When the selected value changes, update text input and potentially fetch style
+  $: if (dropdownValue) {
+    onChangeSelected();
+  }
 </script>
 
 <div class="map-style-input">
-  <select id="styles" on:change={e => handleSelect(JSON.parse(e.target.value))}>
-    {#each Object.keys(dropdownOptions) as group}
+  <select
+    id="styles"
+    on:change={e => dispatch('selectOption', { dropdownId: e.target.value })}
+  >
+    {#each Object.keys(dropdownDisplayOptions) as group}
       <optgroup value={group} label={group}>
-        {#each dropdownOptions[group] as style}
-          <option value={JSON.stringify(style)} selected={style.selected}
-            >{style.name}</option
+        {#each dropdownDisplayOptions[group] as value}
+          <option
+            value={value.dropdownId}
+            selected={dropdownValue.dropdownId === value.dropdownId}
+            >{value.text}</option
           >
         {/each}
       </optgroup>
     {/each}
   </select>
 
-  {#if selected.dropdownType === 'custom' || selected.dropdownType === 'branch'}
+  {#if selected?.dropdownType === 'custom' || selected?.dropdownType === 'branch'}
     <div class="custom-input">
       <input
         class:input-error={error}
@@ -300,7 +211,7 @@
       <button
         use:shortcut={{ code: 'Enter', callback: onKeySubmit }}
         on:click={submitUrl}
-        disabled={url === textInput}>Submit</button
+        disabled={selected?.url === textInput}>Submit</button
       >
     </div>
   {/if}
