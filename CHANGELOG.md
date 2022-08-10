@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 0.7.4
+
+- Rebundle package
+
 ## 0.7.3
 
 - Refactor MapStyleInput into MapStyleInput and MapStyleInputWrapper
