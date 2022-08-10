@@ -141,11 +141,7 @@
     const { dropdownId } = e.detail;
     // Set selected property on value
     dropdownValues = dropdownValues.map(v => {
-      if (v.dropdownId === dropdownId) {
-        return { ...v, selected: true };
-      } else {
-        return { ...v, selected: false };
-      }
+      return { ...v, selected: v.dropdownId === dropdownId };
     });
 
     setSelectedValue();
