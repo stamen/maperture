@@ -4,33 +4,33 @@
   export let maps;
   export let mapState;
 
-  let rows = [];
+  let sections = [];
   let numberOfMaps = 0;
 
-  $: rows = [maps];
+  $: sections = [maps];
 
   $: numberOfMaps = maps.length;
 
   $: {
     if (maps.length) {
-      const numOfRows = Math.round(Math.sqrt(numberOfMaps));
-      const mapsPerRow = Math.floor(numberOfMaps / numOfRows);
+      const numOfSections = Math.round(Math.sqrt(numberOfMaps));
+      const mapsPerSection = Math.floor(numberOfMaps / numOfSections);
       let mapArr = JSON.parse(JSON.stringify(maps));
-      let nextRows = [];
+      let nextSections = [];
       while (mapArr.length) {
-        nextRows.push(mapArr.slice(0, mapsPerRow));
-        mapArr = mapArr.slice(mapsPerRow);
+        nextSections.push(mapArr.slice(0, mapsPerSection));
+        mapArr = mapArr.slice(mapsPerSection);
       }
-      rows = nextRows;
+      sections = nextSections;
     }
   }
 </script>
 
-<div class="maps mirror">
-  {#each rows as maps}
-    <div class="row">
+<div class={`mirror maps-${numberOfMaps === 2 ? 'row' : 'column'}`}>
+  {#each sections as maps}
+    <div class={`section-${numberOfMaps === 2 ? 'row' : 'column'}`}>
       {#each maps as map}
-        <div class="map-container">
+        <div class={`map-container-${numberOfMaps === 2 ? 'row' : 'column'}`}>
           <Map {map} {...mapState} {numberOfMaps} on:mapMove />
         </div>
       {/each}
@@ -39,7 +39,39 @@
 </div>
 
 <style>
-  .maps {
+  /* COLUMN ORIENTATION */
+
+  .maps-column {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: row;
+    height: 100%;
+    --border: 1px solid black;
+  }
+
+  .section-column {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    border-right: var(--border);
+  }
+
+  .section-column:last-of-type {
+    border-right: none;
+  }
+
+  .map-container-column {
+    flex-grow: 1;
+    border-bottom: var(--border);
+  }
+
+  .map-container-column:last-of-type {
+    border-bottom: none;
+  }
+
+  /* ROW ORIENTATION */
+
+  .maps-row {
     display: flex;
     flex-grow: 1;
     flex-direction: column;
@@ -47,23 +79,23 @@
     --border: 1px solid black;
   }
 
-  .row {
+  .section-row {
     display: flex;
     flex-grow: 1;
     flex-direction: row;
     border-bottom: var(--border);
   }
 
-  .row:last-of-type {
+  .section-row:last-of-type {
     border-bottom: none;
   }
 
-  .map-container {
+  .map-container-row {
     flex-grow: 1;
     border-right: var(--border);
   }
 
-  .map-container:last-of-type {
+  .map-container-row:last-of-type {
     border-right: none;
   }
 </style>
