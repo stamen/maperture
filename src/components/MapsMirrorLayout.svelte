@@ -9,10 +9,15 @@
   // When we have this many maps, the layout works
   // better as rows versus columns
   const rowExceptions = [2, 6];
+  let rowOrColumn;
 
   $: sections = [maps];
 
   $: numberOfMaps = maps.length;
+
+  $: if (numberOfMaps) {
+    rowOrColumn = rowExceptions.includes(numberOfMaps) ? 'row' : 'column';
+  }
 
   $: {
     if (maps.length) {
@@ -29,23 +34,11 @@
   }
 </script>
 
-<div
-  class={`mirror maps-${
-    rowExceptions.includes(numberOfMaps) ? 'row' : 'column'
-  }`}
->
+<div class={`mirror maps-${rowOrColumn}`}>
   {#each sections as maps}
-    <div
-      class={`section-${
-        rowExceptions.includes(numberOfMaps) ? 'row' : 'column'
-      }`}
-    >
+    <div class={`section-${rowOrColumn}`}>
       {#each maps as map}
-        <div
-          class={`map-container-${
-            rowExceptions.includes(numberOfMaps) ? 'row' : 'column'
-          }`}
-        >
+        <div class={`map-container-${rowOrColumn}`}>
           <Map {map} {...mapState} {numberOfMaps} on:mapMove />
         </div>
       {/each}
