@@ -2,14 +2,14 @@
   import { faXmark } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa/src/fa.svelte';
   import MapStyleInputWrapper from './MapStyleInputWrapper.svelte';
-
+  import { showDisplays as showDisplaysStore } from '../stores';
   export let index;
   export let name;
   export let onClose;
   export let disableClose;
 </script>
 
-<div class="map-label">
+<div class="map-label" style={$showDisplaysStore ? '' : 'display: none'}>
   <button class="close-button" on:click={onClose} disabled={disableClose}>
     <Fa icon={faXmark} />
   </button>

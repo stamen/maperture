@@ -1,6 +1,10 @@
 <script>
   import html2canvas from 'html2canvas';
-  import { faCamera, faPlus } from '@fortawesome/free-solid-svg-icons';
+  import {
+    faCamera,
+    faPlus,
+    faExpand,
+  } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa/src/fa.svelte';
   import { createEventDispatcher } from 'svelte';
   import { Geocoder } from '@beyonk/svelte-mapbox';
@@ -8,7 +12,10 @@
   import MapLocationControl from './MapLocationControl.svelte';
   import ViewModeControl from './ViewModeControl.svelte';
   import MapLocationDropdown from './MapLocationDropdown.svelte';
-  import { maps as mapsStore } from '../stores';
+  import {
+    maps as mapsStore,
+    showDisplays as showDisplaysStore,
+  } from '../stores';
 
   export let bearing;
   export let center;
@@ -71,19 +78,37 @@
       );
     });
   };
+
+  const handleHideUi = () => {
+    showDisplaysStore.update(value => !value);
+  };
 </script>
 
-<div class="map-controls">
+<div
+  class="map-controls"
+  style={$showDisplaysStore
+    ? ''
+    : 'background: none; padding: 0px; box-shadow: 0 0 0 0; border-bottom: none'}
+>
   <div class="control-row">
-    <div class="control-section">
+    <div
+      class="control-section"
+      style={$showDisplaysStore ? '' : 'display: none'}
+    >
       <MapLocationControl on:mapState {...mapState} />
     </div>
 
-    <div class="control-section">
+    <div
+      class="control-section"
+      style={$showDisplaysStore ? '' : 'display: none'}
+    >
       <ViewModeControl on:viewMode mode={viewMode} mapsNum={maps.length} />
     </div>
 
-    <div class="control-section">
+    <div
+      class="control-section"
+      style={$showDisplaysStore ? '' : 'display: none'}
+    >
       <Geocoder
         accessToken={mapboxGlAccessToken}
         geocoder={null}
@@ -91,11 +116,17 @@
       />
     </div>
 
-    <div class="control-section">
+    <div
+      class="control-section"
+      style={$showDisplaysStore ? '' : 'display: none'}
+    >
       <MapLocationDropdown on:mapState {...mapState} />
     </div>
 
-    <div class="control-section">
+    <div
+      class="control-section"
+      style={$showDisplaysStore ? '' : 'display: none'}
+    >
       <div class="checkboxes">
         <label>
           <span>Label Collisions</span>
@@ -107,7 +138,10 @@
         </label>
       </div>
     </div>
-    <div class="control-section">
+    <div
+      class="control-section"
+      style={$showDisplaysStore ? '' : 'display: none'}
+    >
       <div class="buttons">
         <button
           style="margin-right: 6px"
@@ -128,6 +162,18 @@
           Copy image
         </button>
       </div>
+    </div>
+    <div class="control-section">
+      <button
+        class="fullscreen"
+        on:click={handleHideUi}
+        title="fullscreen"
+        style={$showDisplaysStore
+          ? ''
+          : 'position: absolute; top: 12px; right: 12px; margin-top: -1em;'}
+      >
+        <Fa icon={faExpand} />
+      </button>
     </div>
   </div>
   {#if mapStateValidationMessages.length > 0}
@@ -176,5 +222,10 @@
 
   .validation-message-warning {
     color: #c1810c;
+  }
+
+  .fullscreen {
+    padding-left: 12px;
+    padding-right: 12px;
   }
 </style>
