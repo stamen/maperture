@@ -167,7 +167,7 @@
       <button
         class="fullscreen"
         on:click={handleHideUi}
-        title="fullscreen"
+        title={$showDisplaysStore ? 'Hide UI' : 'Show UI'}
         style={$showDisplaysStore
           ? ''
           : 'position: absolute; top: 12px; right: 12px; margin-top: -1em;'}
