@@ -57,6 +57,11 @@
 
   // Creates dropdown values and display options for the style dropdown linked by ids
   const setInitialDropdownOptions = stylePresets => {
+    // This can be called multiple times on load, so always start fresh to prevent
+    // accidental persistance of stale ids
+    dropdownDisplayOptions = {};
+    dropdownValues = [];
+
     // Create values and displays for style presets
     if (stylePresets.length) {
       const stylePresetValues = stylePresets.map(item => ({
