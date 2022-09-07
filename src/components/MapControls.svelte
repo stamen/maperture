@@ -4,6 +4,7 @@
     faCamera,
     faPlus,
     faExpand,
+    faCompress,
   } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa/src/fa.svelte';
   import { createEventDispatcher } from 'svelte';
@@ -172,7 +173,7 @@
           ? ''
           : 'position: absolute; top: 12px; right: 12px; margin-top: -1em;'}
       >
-        <Fa icon={faExpand} />
+        <Fa icon={$showDisplaysStore ? faExpand : faCompress} />
       </button>
     </div>
   </div>
