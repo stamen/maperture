@@ -1,4 +1,4 @@
-# Description
+## Description
 
 <!-- What changed in this PR? -->
 
@@ -6,22 +6,22 @@
 
 Closes #
 
-# QA steps
+## QA steps
 
 <!-- Add any QA steps a review should follow to review this PR -->
 
 - [ ] ...
 
-# Author checklist
+## Author checklist
 
-## Create the PR
+### Create the PR
 
 - [ ] Fill out PR template
 - [ ] Make sure you've added a CHANGELOG entry under "Unreleased"
 - [ ] Request a review
 - [ ] Make any requested changes and get approval
 
-## After approval
+### After approval
 
 - [ ] Merge any changes from `main` into your branch, resolve any conflicts
 - [ ] Squash & merge changes into `main`
