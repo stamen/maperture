@@ -62,7 +62,6 @@
     width: calc(100% + 2px);
     margin-top: -1px;
     margin-left: -1px;
-    --border: 1px solid black;
   }
 
   .mirror-column-orientation .maps {
@@ -88,6 +87,6 @@
 
   .map-container {
     flex-grow: 1;
-    border: var(--border);
+    border: 1px solid #666;
   }
 </style>
