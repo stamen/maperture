@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 0.7.5
+
+- Fix dropdown bug to pull correct value on load
+
 ## 0.7.4
 
 - Rebundle package
