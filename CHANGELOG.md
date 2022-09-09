@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Add a PR template
+
 ## 0.7.5
 
 - Fix dropdown bug to pull correct value on load
