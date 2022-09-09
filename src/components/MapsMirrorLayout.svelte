@@ -34,76 +34,59 @@
   }
 </script>
 
-<div class={`mirror maps-${rowOrColumn}`}>
-  {#each sections as maps}
-    <div class={`section-${rowOrColumn}`}>
-      {#each maps as map}
-        <div class={`map-container-${rowOrColumn}`}>
-          <Map {map} {...mapState} {numberOfMaps} on:mapMove />
-        </div>
-      {/each}
-    </div>
-  {/each}
+<div class={`mirror mirror-${rowOrColumn}-orientation`}>
+  <div class="maps">
+    {#each sections as maps}
+      <div class="section">
+        {#each maps as map}
+          <div class="map-container">
+            <Map {map} {...mapState} {numberOfMaps} on:mapMove />
+          </div>
+        {/each}
+      </div>
+    {/each}
+  </div>
 </div>
 
 <style>
-  /* COLUMN ORIENTATION */
-
-  .maps-column {
-    display: flex;
-    flex-grow: 1;
-    flex-direction: row;
+  .mirror {
     height: 100%;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .maps {
+    display: flex;
+    height: calc(100% + 2px);
+    width: calc(100% + 2px);
+    margin-top: -1px;
+    margin-left: -1px;
     --border: 1px solid black;
   }
 
-  .section-column {
-    display: flex;
-    flex-grow: 1;
-    flex-direction: column;
-    border-right: var(--border);
-  }
-
-  .section-column:last-of-type {
-    border-right: none;
-  }
-
-  .map-container-column {
-    flex-grow: 1;
-    border-bottom: var(--border);
-  }
-
-  .map-container-column:last-of-type {
-    border-bottom: none;
-  }
-
-  /* ROW ORIENTATION */
-
-  .maps-row {
-    display: flex;
-    flex-grow: 1;
-    flex-direction: column;
-    height: 100%;
-    --border: 1px solid black;
-  }
-
-  .section-row {
-    display: flex;
-    flex-grow: 1;
+  .mirror-column-orientation .maps {
     flex-direction: row;
-    border-bottom: var(--border);
   }
 
-  .section-row:last-of-type {
-    border-bottom: none;
+  .mirror-row-orientation .maps {
+    flex-direction: column;
   }
 
-  .map-container-row {
+  .section {
+    display: flex;
     flex-grow: 1;
-    border-right: var(--border);
   }
 
-  .map-container-row:last-of-type {
-    border-right: none;
+  .mirror-column-orientation .section {
+    flex-direction: column;
+  }
+
+  .mirror-row-orientation .section {
+    flex-direction: row;
+  }
+
+  .map-container {
+    flex-grow: 1;
+    border: var(--border);
   }
 </style>
