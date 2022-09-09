@@ -9,13 +9,15 @@
   export let disableClose;
 </script>
 
-<div class="map-label" style={$showDisplaysStore ? '' : 'display: none'}>
-  <button class="close-button" on:click={onClose} disabled={disableClose}>
-    <Fa icon={faXmark} />
-  </button>
-  <div class="map-name">{name}</div>
-  <MapStyleInputWrapper {index} />
-</div>
+{#if $showDisplaysStore}
+  <div class="map-label">
+    <button class="close-button" on:click={onClose} disabled={disableClose}>
+      <Fa icon={faXmark} />
+    </button>
+    <div class="map-name">{name}</div>
+    <MapStyleInputWrapper {index} />
+  </div>
+{/if}
 
 <style>
   .map-label {
