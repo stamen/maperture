@@ -4,66 +4,89 @@
   export let maps;
   export let mapState;
 
-  let rows = [];
+  let sections = [];
   let numberOfMaps = 0;
+  // When we have this many maps, the layout works
+  // better as rows versus columns
+  const rowExceptions = [2, 6];
+  let rowOrColumn;
 
-  $: rows = [maps];
+  $: sections = [maps];
 
   $: numberOfMaps = maps.length;
 
+  $: if (numberOfMaps) {
+    rowOrColumn = rowExceptions.includes(numberOfMaps) ? 'row' : 'column';
+  }
+
   $: {
     if (maps.length) {
-      const numOfRows = Math.round(Math.sqrt(numberOfMaps));
-      const mapsPerRow = Math.floor(numberOfMaps / numOfRows);
+      const numOfSections = Math.round(Math.sqrt(numberOfMaps));
+      const mapsPerSection = Math.floor(numberOfMaps / numOfSections);
       let mapArr = JSON.parse(JSON.stringify(maps));
-      let nextRows = [];
+      let nextSections = [];
       while (mapArr.length) {
-        nextRows.push(mapArr.slice(0, mapsPerRow));
-        mapArr = mapArr.slice(mapsPerRow);
+        nextSections.push(mapArr.slice(0, mapsPerSection));
+        mapArr = mapArr.slice(mapsPerSection);
       }
-      rows = nextRows;
+      sections = nextSections;
     }
   }
 </script>
 
-<div class="maps mirror">
-  {#each rows as maps}
-    <div class="row">
-      {#each maps as map}
-        <div class="map-container">
-          <Map {map} {...mapState} {numberOfMaps} on:mapMove />
-        </div>
-      {/each}
-    </div>
-  {/each}
+<div class={`mirror mirror-${rowOrColumn}-orientation`}>
+  <div class="maps">
+    {#each sections as maps}
+      <div class="section">
+        {#each maps as map}
+          <div class="map-container">
+            <Map {map} {...mapState} {numberOfMaps} on:mapMove />
+          </div>
+        {/each}
+      </div>
+    {/each}
+  </div>
 </div>
 
 <style>
+  .mirror {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+  }
+
   .maps {
     display: flex;
-    flex-grow: 1;
-    flex-direction: column;
-    height: 100%;
-    --border: 1px solid black;
+    /* To account for not showing a border at the edges of the screen */
+    height: calc(100% + 2px);
+    width: calc(100% + 2px);
+    margin-top: -1px;
+    margin-left: -1px;
   }
 
-  .row {
+  .mirror-column-orientation .maps {
+    flex-direction: row;
+  }
+
+  .mirror-row-orientation .maps {
+    flex-direction: column;
+  }
+
+  .section {
     display: flex;
     flex-grow: 1;
-    flex-direction: row;
-    border-bottom: var(--border);
   }
 
-  .row:last-of-type {
-    border-bottom: none;
+  .mirror-column-orientation .section {
+    flex-direction: column;
+  }
+
+  .mirror-row-orientation .section {
+    flex-direction: row;
   }
 
   .map-container {
     flex-grow: 1;
-    border-right: var(--border);
-  }
-
-  .map-container:last-of-type {
-    border-right: none;
+    border: 1px solid #666;
   }
 </style>
