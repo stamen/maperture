@@ -1,6 +1,10 @@
 ## Unreleased
 
+## 0.8.0
+
 - Add a PR template
+- Change map orientation in mirror mode to tend towards portrait over landscape
+- Add button to hide the UI
 
 ## 0.7.5
 
