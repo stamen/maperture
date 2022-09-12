@@ -1,6 +1,12 @@
 <script>
+  import { shortcut } from '../shortcut';
   import html2canvas from 'html2canvas';
-  import { faCamera, faPlus } from '@fortawesome/free-solid-svg-icons';
+  import {
+    faCamera,
+    faPlus,
+    faExpand,
+    faCompress,
+  } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa/src/fa.svelte';
   import { createEventDispatcher } from 'svelte';
   import { Geocoder } from '@beyonk/svelte-mapbox';
@@ -8,7 +14,10 @@
   import MapLocationControl from './MapLocationControl.svelte';
   import ViewModeControl from './ViewModeControl.svelte';
   import MapLocationDropdown from './MapLocationDropdown.svelte';
-  import { maps as mapsStore } from '../stores';
+  import {
+    maps as mapsStore,
+    showDisplays as showDisplaysStore,
+  } from '../stores';
 
   export let bearing;
   export let center;
@@ -71,73 +80,98 @@
       );
     });
   };
+
+  const toggleHideUi = () => {
+    showDisplaysStore.update(value => !value);
+  };
 </script>
 
-<div class="map-controls">
-  <div class="control-row">
-    <div class="control-section">
-      <MapLocationControl on:mapState {...mapState} />
-    </div>
+{#if $showDisplaysStore}
+  <div class="map-controls">
+    <div class="control-row">
+      <div class="control-section">
+        <MapLocationControl on:mapState {...mapState} />
+      </div>
 
-    <div class="control-section">
-      <ViewModeControl on:viewMode mode={viewMode} mapsNum={maps.length} />
-    </div>
+      <div class="control-section">
+        <ViewModeControl on:viewMode mode={viewMode} mapsNum={maps.length} />
+      </div>
 
-    <div class="control-section">
-      <Geocoder
-        accessToken={mapboxGlAccessToken}
-        geocoder={null}
-        on:result={handleGeocoderResult}
-      />
-    </div>
+      <div class="control-section">
+        <Geocoder
+          accessToken={mapboxGlAccessToken}
+          geocoder={null}
+          on:result={handleGeocoderResult}
+        />
+      </div>
 
-    <div class="control-section">
-      <MapLocationDropdown on:mapState {...mapState} />
-    </div>
+      <div class="control-section">
+        <MapLocationDropdown on:mapState {...mapState} />
+      </div>
 
-    <div class="control-section">
-      <div class="checkboxes">
-        <label>
-          <span>Label Collisions</span>
-          <input type="checkbox" bind:checked={showCollisions} />
-        </label>
-        <label>
-          <span>Tile Boundaries</span>
-          <input type="checkbox" bind:checked={showBoundaries} />
-        </label>
+      <div class="control-section">
+        <div class="checkboxes">
+          <label>
+            <span>Label Collisions</span>
+            <input type="checkbox" bind:checked={showCollisions} />
+          </label>
+          <label>
+            <span>Tile Boundaries</span>
+            <input type="checkbox" bind:checked={showBoundaries} />
+          </label>
+        </div>
+      </div>
+      <div class="control-section">
+        <div class="buttons">
+          <button
+            style="margin-right: 6px"
+            on:click={addMapPane}
+            disabled={maps.length >= 8}
+            title={maps.length >= 8 ? 'Maximum of 8 maps allowed.' : ''}
+          >
+            <Fa icon={faPlus} /> Add map
+          </button>
+          <button
+            on:click={downloadScreenshot}
+            disabled={viewMode === 'swipe'}
+            title={viewMode === 'swipe'
+              ? 'Must be in phone or mirror mode to screenshot.'
+              : 'Copy image to clipboard'}
+          >
+            <Fa icon={faCamera} />
+            Copy image
+          </button>
+        </div>
+      </div>
+      <div class="control-section">
+        <button
+          class="fullscreen-btn"
+          on:click={toggleHideUi}
+          title="Hide UI"
+          use:shortcut={{ code: 'KeyV', callback: toggleHideUi }}
+        >
+          <Fa icon={faExpand} />
+        </button>
       </div>
     </div>
-    <div class="control-section">
-      <div class="buttons">
-        <button
-          style="margin-right: 6px"
-          on:click={addMapPane}
-          disabled={maps.length >= 8}
-          title={maps.length >= 8 ? 'Maximum of 8 maps allowed.' : ''}
-        >
-          <Fa icon={faPlus} /> Add map
-        </button>
-        <button
-          on:click={downloadScreenshot}
-          disabled={viewMode === 'swipe'}
-          title={viewMode === 'swipe'
-            ? 'Must be in phone or mirror mode to screenshot.'
-            : 'Copy image to clipboard'}
-        >
-          <Fa icon={faCamera} />
-          Copy image
-        </button>
+    {#if mapStateValidationMessages.length > 0}
+      <div class="validation-messages">
+        {#each mapStateValidationMessages as m}
+          <div class={`validation-message-${m.type}`}>{m.message}</div>
+        {/each}
       </div>
-    </div>
+    {/if}
   </div>
-  {#if mapStateValidationMessages.length > 0}
-    <div class="validation-messages">
-      {#each mapStateValidationMessages as m}
-        <div class={`validation-message-${m.type}`}>{m.message}</div>
-      {/each}
-    </div>
-  {/if}
-</div>
+{:else}
+  <button
+    class="fullscreen-btn show-ui"
+    on:click={toggleHideUi}
+    use:shortcut={{ code: 'KeyV', callback: toggleHideUi }}
+    title="Show UI"
+  >
+    <Fa icon={faCompress} />
+  </button>
+{/if}
 
 <style>
   .map-controls {
@@ -176,5 +210,18 @@
 
   .validation-message-warning {
     color: #c1810c;
+  }
+
+  .fullscreen-btn {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .show-ui {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    margin-top: -1em;
+    pointer-events: all;
   }
 </style>
