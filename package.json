@@ -2,7 +2,7 @@
   "name": "maperture",
   "author": "Stamen Design <info@stamen.com> (https://stamen.com)",
   "description": "Stamen's map compare tool",
-  "version": "0.7.5",
+  "version": "0.8.0",
   "license": "MIT",
   "repository": {
     "type": "git",
