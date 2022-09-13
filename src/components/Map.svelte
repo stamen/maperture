@@ -1,5 +1,6 @@
 <script>
   import GoogleMap from './GoogleMap.svelte';
+  import MapLibreMap from './MapLibreMap.svelte';
   import MapboxGlMap from './MapboxGlMap.svelte';
   import MapLabel from './MapLabel.svelte';
   import { maps as mapsStore } from '../stores';
@@ -13,6 +14,9 @@
   $: switch (map.type) {
     case 'google':
       MapComponent = GoogleMap;
+      break;
+    case 'maplibre-gl':
+      MapComponent = MapLibreMap;
       break;
     case 'mapbox-gl':
     default:
