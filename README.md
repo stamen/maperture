@@ -28,13 +28,13 @@ Here, you can customize the following options:
 - `stylePresets`: A list of styles with urls to show in the dropdowns. Styles must have the following keys:
   - `id`: a unique id
   - `name`: a display name
-  - `type`: the type of map (`mapbox-gl`, `google`)
-  - `url`: (currently `mapbox-gl` only) the style's url
+  - `type`: the type of map (`mapbox-gl`, `maplibre-gl`, `google`)
+  - `url`: (currently `mapbox-gl` and `maplibre-gl` only) the style's url
   - `mapId`: (currently `google` only) the style's id
 - `branchPatterns`: An array of objects that specify how to build a URL to fetch a style living on a branch with the following keys:
   - `pattern`: a tokenized url pattern using `{branch}` and `{style}` tokens
   - `styles`: an array specifying specific styles you can view on the specified branch
-  - `type`: the type of map (`mapbox-gl`, `google`)
+  - `type`: the type of map (`mapbox-gl`, `maplibre-gl`, `google`)
 - `stylePresetUrls`: An array of URLs pointing to additional presets. URLs must point to JSON arrays containing objects of the same shape as those in `stylePresets`.
 
 For more details on how these should look, see the example in [`src/config/local.example.js`](./src/config/local.example.js).

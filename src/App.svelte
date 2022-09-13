@@ -1,5 +1,6 @@
 <script>
   import mapboxgl from 'mapbox-gl';
+  import maplibregl from 'maplibre-gl';
   import { onMount } from 'svelte';
   import {
     maps as mapsStore,
@@ -142,6 +143,11 @@
   // Set RTL plugin once rather than per map
   mapboxgl.setRTLTextPlugin(
     'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.0/mapbox-gl-rtl-text.js'
+  );
+  maplibregl.setRTLTextPlugin(
+    'https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js',
+    null,
+    true // Lazy load the plugin
   );
 </script>
 
