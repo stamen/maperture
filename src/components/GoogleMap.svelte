@@ -6,7 +6,6 @@
   import { Loader } from '@googlemaps/js-api-loader';
   import { createEventDispatcher, onMount } from 'svelte';
 
-  export let index;
   export let id;
   export let bearing;
   export let center;

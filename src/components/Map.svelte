@@ -1,7 +1,6 @@
 <script>
   import GoogleMap from './GoogleMap.svelte';
-  import MapLibreMap from './MapLibreMap.svelte';
-  import MapboxGlMap from './MapboxGlMap.svelte';
+  import GlMap from './GlMap.svelte';
   import MapLabel from './MapLabel.svelte';
   import { maps as mapsStore } from '../stores';
 
@@ -11,16 +10,30 @@
 
   let MapComponent;
 
-  $: switch (map.type) {
-    case 'google':
-      MapComponent = GoogleMap;
-      break;
-    case 'maplibre-gl':
-      MapComponent = MapLibreMap;
-      break;
-    case 'mapbox-gl':
-    default:
-      MapComponent = MapboxGlMap;
+  let props = {};
+
+  $: props = {
+    id: `${map.id}-${map.index}`,
+    mapStyle: map,
+    numberOfMaps,
+  };
+
+  $: mapType = map.type;
+
+  $: {
+    switch (mapType) {
+      case 'google':
+        MapComponent = GoogleMap;
+        break;
+      case 'maplibre-gl':
+        MapComponent = GlMap;
+        props.mapType = mapType;
+        break;
+      case 'mapbox-gl':
+      default:
+        MapComponent = GlMap;
+        props.mapType = mapType;
+    }
   }
 
   const removeMap = () => {
@@ -34,15 +47,14 @@
 </script>
 
 <div class="map">
-  <svelte:component
-    this={MapComponent}
-    index={map.index}
-    id={`${map.id}-${map.index}`}
-    mapStyle={map}
-    {numberOfMaps}
-    {...$$restProps}
-    on:mapMove
-  />
+  {#key mapType}
+    <svelte:component
+      this={MapComponent}
+      {...props}
+      {...$$restProps}
+      on:mapMove
+    />
+  {/key}
   <!-- Use the number of maps and index to reset map on adding and removing maps -->
   <!-- We don't want to use the map id here or we'll unnecessarily remount the component for every new style -->
   {#key `${numberOfMaps}-${map.index}`}
