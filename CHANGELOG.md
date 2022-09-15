@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Add support for MapLibre
+
 ## 0.8.0
 
 - Add a PR template

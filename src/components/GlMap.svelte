@@ -1,12 +1,9 @@
 <script>
   import deepEqual from 'deep-equal';
-  import { config as configStore } from '../stores';
   import throttle from 'lodash.throttle';
   import { createEventDispatcher, onMount, onDestroy } from 'svelte';
-  import mapboxgl from 'mapbox-gl';
-  import 'mapbox-gl/dist/mapbox-gl.css';
+  import { config as configStore } from '../stores';
 
-  export let index;
   export let id;
   export let bearing;
   export let center;
@@ -17,6 +14,22 @@
   export let mapStyle;
   export let numberOfMaps;
 
+  export let mapType;
+
+  let renderer;
+
+  // Mapbox and MapLibre share a Map component since they are so similar and utilize the same methods
+  const importRenderer = async () => {
+    if (mapType === 'maplibre-gl') {
+      await import('maplibre-gl/dist/maplibre-gl.css');
+      renderer = await import('maplibre-gl');
+    } else {
+      await import('mapbox-gl/dist/mapbox-gl.css');
+      renderer = await import('mapbox-gl');
+      renderer.accessToken = $configStore.mapboxGlAccessToken;
+    }
+  };
+
   let style = {};
   let url;
   let popup = null;
@@ -24,11 +37,7 @@
 
   $: if (mapStyle) ({ style, url } = mapStyle);
 
-  let mapboxGlAccessToken;
-  configStore.subscribe(value => ({ mapboxGlAccessToken } = value));
-
   const dispatch = createEventDispatcher();
-  mapboxgl.accessToken = mapboxGlAccessToken;
 
   let map;
   let mapViewProps = {};
@@ -84,7 +93,7 @@
     if (shouldUpdateMapView(mapViewProps)) map.jumpTo(mapViewProps);
   };
 
-  // The Mapbox popup requires HTML as a string
+  // The Mapbox/Maplibre popup requires HTML as a string
   // This means class names for the popup need to live in global.css
   // because Svelte won't compile unused CSS classes that live in this component
   const getPopupHtmlString = features => {
@@ -124,8 +133,11 @@
     return html;
   };
 
-  onMount(() => {
-    map = new mapboxgl.Map({
+  onMount(async () => {
+    await importRenderer();
+    const mapRenderer = renderer;
+
+    map = new mapRenderer.Map({
       container: id,
       style: url,
       preserveDrawingBuffer: true,
@@ -159,7 +171,7 @@
       if (!renderedFeatures.length) return;
 
       if (!isPopupOpen) {
-        popup = new mapboxgl.Popup()
+        popup = new mapRenderer.Popup()
           .setLngLat(e.lngLat)
           .setHTML(getPopupHtmlString(renderedFeatures))
           .setMaxWidth(360)
