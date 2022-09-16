@@ -67,7 +67,7 @@
       const stylePresetValues = stylePresets.map(item => ({
         ...item,
         dropdownType: 'preset',
-        selected: url === item?.url,
+        selected: url === item?.url && map.type === item?.type,
         dropdownId: hat(),
       }));
 
