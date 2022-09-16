@@ -90,7 +90,9 @@
               type: pattern.type,
               dropdownType: 'branch',
               selected: !!(
-                branch && createBranchUrl(pattern.pattern, branch, s) === url
+                branch &&
+                createBranchUrl(pattern.pattern, branch, s) === url &&
+                pattern.type === map.type
               ),
               pattern: pattern.pattern,
               dropdownId: hat(),

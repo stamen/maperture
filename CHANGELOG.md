@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Look at map type in addition to url for initial branch dropdown selection
+
 ## 0.9.0
 
 - Add support for MapLibre
