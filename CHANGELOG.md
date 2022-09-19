@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Start to standardize reactive blocks
+
 ## 0.9.0
 
 - Add support for MapLibre
