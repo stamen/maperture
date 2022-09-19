@@ -14,25 +14,24 @@
   let formattedLocation = '';
   let stateInput = '';
 
-  $: {
-    let locationParts = [
-      round(zoom, 2),
-      round(center.lat, 3),
-      round(center.lng, 3),
-    ];
-
-    if (pitch || bearing) {
-      locationParts.push(round(pitch, 1));
-      locationParts.push(round(bearing, 1));
-    }
-    formattedLocation = locationParts.join('/');
-  }
+  $: lat = center.lat;
+  $: lng = center.lng;
 
   // Reset copied when location changes
   $: {
     formattedLocation;
     copied = false;
   }
+
+  const setLocation = (lat, lng, zoom, pitch, bearing) => {
+    let locationParts = [round(zoom, 2), round(lat, 3), round(lng, 3)];
+
+    if (pitch || bearing) {
+      locationParts.push(round(pitch, 1));
+      locationParts.push(round(bearing, 1));
+    }
+    formattedLocation = locationParts.join('/');
+  };
 
   const handleCopy = () => {
     copied = true;
@@ -64,6 +63,8 @@
     if (bearing !== undefined) options.bearing = +bearing;
     dispatch('mapState', { options });
   };
+
+  $: setLocation(lat, lng, zoom, pitch, bearing);
 </script>
 
 <div>

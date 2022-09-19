@@ -11,17 +11,11 @@
   export let center;
   export let pitch;
   export let zoom;
-  export let showCollisions;
-  export let showBoundaries;
   export let mapStyle;
   export let numberOfMaps;
 
-  let mapId;
   let googleMapsAPIKey;
-  let currentNumberOfMaps = 0;
   configStore.subscribe(value => ({ googleMapsAPIKey } = value));
-
-  $: if (mapStyle) ({ mapId } = mapStyle);
 
   const dispatch = createEventDispatcher();
 
@@ -33,26 +27,10 @@
     version: 'beta',
   });
 
+  $: mapId = mapStyle?.mapId;
+
   // We group map-view props here as they are useful in a few contexts
   $: mapViewProps = { bearing, center, pitch, zoom };
-
-  // We check map and mapViewProps here to ensure this reacts to changes to
-  // either
-  $: if (map && mapViewProps) updateMapFromProps();
-
-  // Resize the map when adding more maps and changing container size
-  $: {
-    if (map && currentNumberOfMaps !== numberOfMaps) {
-      const container = document.getElementById(id);
-      if (container) {
-        const resizeObserver = new ResizeObserver(() => {
-          google.maps.event.trigger(map, 'resize');
-          currentNumberOfMaps = numberOfMaps;
-        });
-        resizeObserver.observe(container);
-      }
-    }
-  }
 
   const getCurrentMapView = () => {
     return {
@@ -85,7 +63,7 @@
     };
   };
 
-  const updateMapFromProps = () => {
+  const updateMapFromProps = mapViewProps => {
     if (shouldUpdateMapView(mapViewProps)) {
       map.moveCamera({
         center: {
@@ -143,6 +121,21 @@
       }
     };
   });
+
+  // We check map and mapViewProps here to ensure this reacts to changes to
+  // either
+  $: map && updateMapFromProps(mapViewProps);
+
+  // Resize the map when adding more maps and changing container size
+  $: if (map && numberOfMaps) {
+    const container = document.getElementById(id);
+    if (container) {
+      const resizeObserver = new ResizeObserver(() => {
+        google.maps.event.trigger(map, 'resize');
+      });
+      resizeObserver.observe(container);
+    }
+  }
 </script>
 
 <div {id} class="map" />

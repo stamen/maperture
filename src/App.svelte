@@ -40,6 +40,15 @@
   mapsStore.set(settings.maps.map((map, index) => ({ ...map, index })));
   stylePresetsStore.set(settings.stylePresets);
 
+  // Since maps comes from settings, only reset as needed
+  let maps = [];
+  $: if (JSON.stringify(maps) !== JSON.stringify(settings.maps)) {
+    maps = settings.maps;
+  }
+
+  // Validate map state when maps change too
+  $: mapState = validateMapState(mapState, maps);
+
   onMount(() => {
     // If we have URLs for preset files, get them and update presets
     if (stylePresetUrls.length > 0) {
@@ -57,7 +66,7 @@
 
       // Update mapsStore if necessary
       if (settings.maps.length) {
-        const newMaps = settings.maps.map((map, index) => ({
+        const newMaps = maps.map((map, index) => ({
           ...map,
           index,
         }));
@@ -81,8 +90,6 @@
       writeHash(settings);
     }
   }, 250);
-
-  $: if (settings) throttledWriteHash();
 
   const createMapState = () => {
     const {
@@ -108,11 +115,6 @@
     };
   };
 
-  $: if (settings || height || width) mapState = createMapState();
-
-  // Validate map state when maps change too
-  $: mapState = validateMapState(mapState, settings.maps);
-
   const handleMapState = event => {
     let newMapState = {
       ...mapState,
@@ -121,7 +123,7 @@
 
     settings = {
       ...settings,
-      ...validateMapState(newMapState, settings.maps),
+      ...validateMapState(newMapState, maps),
     };
   };
 
@@ -140,6 +142,10 @@
     };
   };
 
+  $: if (settings) throttledWriteHash();
+
+  $: if (settings || height || width) mapState = createMapState();
+
   // Set RTL plugin once rather than per map
   mapboxgl.setRTLTextPlugin(
     'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.0/mapbox-gl-rtl-text.js'
@@ -154,7 +160,7 @@
 </svelte:head>
 <main>
   <Maps
-    maps={settings.maps}
+    {maps}
     {mapState}
     viewMode={settings.viewMode}
     on:mapState={handleMapState}

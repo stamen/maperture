@@ -157,6 +157,7 @@
   const onUpdateMapStore = e => {
     const { value } = e.detail;
     const nextMap = { ...value, index };
+    delete nextMap.dropdownId;
     mapsStore.update(current => {
       return current.map((m, i) => (i === index ? nextMap : m));
     });

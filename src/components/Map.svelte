@@ -12,15 +12,24 @@
 
   let props = {};
 
-  $: props = {
-    id: `${map.id}-${map.index}`,
-    mapStyle: map,
-    numberOfMaps,
-  };
+  $: mapId = `${map.id}-${map.index}`;
+
+  let stylesheet = {};
+  $: if (JSON.stringify(stylesheet) !== JSON.stringify(map?.style)) {
+    stylesheet = map?.style;
+  }
 
   $: mapType = map.type;
 
-  $: {
+  const setProps = (id, num) => {
+    props = {
+      id,
+      mapStyle: map,
+      numberOfMaps: num,
+    };
+  };
+
+  const setMapComponent = mapType => {
     switch (mapType) {
       case 'google':
         MapComponent = GoogleMap;
@@ -34,7 +43,7 @@
         MapComponent = GlMap;
         props.mapType = mapType;
     }
-  }
+  };
 
   const removeMap = () => {
     mapsStore.update(current => {
@@ -44,6 +53,14 @@
       return next;
     });
   };
+
+  $: {
+    // Add trigger for stylesheet changes for locally served styles
+    stylesheet;
+    setProps(mapId, numberOfMaps);
+  }
+
+  $: setMapComponent(mapType);
 </script>
 
 <div class="map">

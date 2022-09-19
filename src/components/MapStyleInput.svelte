@@ -169,14 +169,12 @@
   };
 
   // Reset error on beginning to type again
-  $: if (textInput !== undefined) {
+  $: if (error && textInput !== undefined) {
     error = null;
   }
 
   // When the selected value changes, update text input and potentially fetch style
-  $: if (dropdownValue) {
-    onChangeSelected();
-  }
+  $: onChangeSelected(dropdownValue);
 </script>
 
 <div class="map-style-input">
