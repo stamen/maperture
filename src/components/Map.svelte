@@ -14,6 +14,7 @@
 
   $: mapId = `${map.id}-${map.index}`;
 
+  // Update stylesheet variable only if there's been actual changes
   let stylesheet = {};
   $: if (JSON.stringify(stylesheet) !== JSON.stringify(map?.style)) {
     stylesheet = map?.style;
