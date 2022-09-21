@@ -67,7 +67,7 @@
       const stylePresetValues = stylePresets.map(item => ({
         ...item,
         dropdownType: 'preset',
-        selected: url === item?.url,
+        selected: url === item?.url && map.type === item?.type,
         dropdownId: hat(),
       }));
 
@@ -90,7 +90,9 @@
               type: pattern.type,
               dropdownType: 'branch',
               selected: !!(
-                branch && createBranchUrl(pattern.pattern, branch, s) === url
+                branch &&
+                createBranchUrl(pattern.pattern, branch, s) === url &&
+                pattern.type === map.type
               ),
               pattern: pattern.pattern,
               dropdownId: hat(),

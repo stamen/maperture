@@ -1,6 +1,7 @@
 ## Unreleased
 
 - Start to standardize reactive blocks
+- Look at map type in addition to url for initial dropdown selection
 
 ## 0.9.0
 
