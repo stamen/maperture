@@ -17,7 +17,7 @@
 
   // Update stylesheet variable only if there's been actual changes
   let stylesheet = {};
-  $: if (isEqual(stylesheet, map?.style)) {
+  $: if (!isEqual(stylesheet, map?.style)) {
     stylesheet = map?.style;
   }
 
