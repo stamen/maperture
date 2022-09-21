@@ -63,7 +63,7 @@
     };
   };
 
-  const updateMapFromProps = mapView => {
+  const updateMapFromProps = (map, mapView) => {
     if (!map || !shouldUpdateMapView(mapView)) return;
     map.moveCamera({
       center: {
