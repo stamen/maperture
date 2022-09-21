@@ -3,6 +3,7 @@
   import GlMap from './GlMap.svelte';
   import MapLabel from './MapLabel.svelte';
   import { maps as mapsStore } from '../stores';
+  import isEqual from 'lodash.isequal';
 
   export let map;
   export let numberOfMaps;
@@ -16,7 +17,7 @@
 
   // Update stylesheet variable only if there's been actual changes
   let stylesheet = {};
-  $: if (JSON.stringify(stylesheet) !== JSON.stringify(map?.style)) {
+  $: if (isEqual(stylesheet, map?.style)) {
     stylesheet = map?.style;
   }
 

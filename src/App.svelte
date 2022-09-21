@@ -15,6 +15,7 @@
   import { getSettings } from './settings';
   import { validateMapState } from './map-state-utils';
   import throttle from 'lodash.throttle';
+  import isEqual from 'lodash.isequal';
 
   export let localConfig;
 
@@ -42,7 +43,7 @@
 
   // Since maps comes from settings, only reset as needed
   let maps = [];
-  $: if (JSON.stringify(maps) !== JSON.stringify(settings.maps)) {
+  $: if (!isEqual(maps, settings.maps)) {
     maps = settings.maps;
   }
 

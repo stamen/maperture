@@ -4,3 +4,4 @@
 /public/config/local.js
 
 .DS_Store
+yarn-error.log

@@ -63,18 +63,17 @@
     };
   };
 
-  const updateMapFromProps = mapViewProps => {
-    if (shouldUpdateMapView(mapViewProps)) {
-      map.moveCamera({
-        center: {
-          lat: center.lat,
-          lng: center.lng,
-        },
-        zoom: zoom + 1,
-        heading: bearing,
-        tilt: pitch,
-      });
-    }
+  const updateMapFromProps = mapView => {
+    if (!map || !shouldUpdateMapView(mapView)) return;
+    map.moveCamera({
+      center: {
+        lat: center.lat,
+        lng: center.lng,
+      },
+      zoom: zoom + 1,
+      heading: bearing,
+      tilt: pitch,
+    });
   };
 
   onMount(() => {
@@ -124,7 +123,7 @@
 
   // We check map and mapViewProps here to ensure this reacts to changes to
   // either
-  $: map && updateMapFromProps(mapViewProps);
+  $: updateMapFromProps(map, mapViewProps);
 
   // Resize the map when adding more maps and changing container size
   $: if (map && numberOfMaps) {

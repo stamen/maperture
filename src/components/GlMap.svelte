@@ -58,12 +58,14 @@
     return !deepEqual(getCurrentMapView(), mapViewProps);
   };
 
-  const updateMapStyle = (url, style) => {
+  const updateMapStyle = (map, url, style) => {
+    if (!map) return;
     map.setStyle(url || style);
   };
 
-  const updateMapFromProps = mapView => {
-    if (shouldUpdateMapView(mapView)) map.jumpTo(mapView);
+  const updateMapFromProps = (map, mapView) => {
+    if (!map || !shouldUpdateMapView(mapView)) return;
+    map.jumpTo(mapView);
   };
 
   // The Mapbox/Maplibre popup requires HTML as a string
@@ -170,9 +172,9 @@
 
   // We check map and mapViewProps here to ensure this reacts to changes to
   // either
-  $: map && updateMapFromProps(mapViewProps);
+  $: updateMapFromProps(map, mapViewProps);
 
-  $: map && updateMapStyle(url, style);
+  $: updateMapStyle(map, url, style);
 
   // Show collisions on the map as desired
   $: map && (map.showCollisionBoxes = showCollisions);
