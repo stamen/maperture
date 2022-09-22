@@ -14,28 +14,25 @@
   // Let our layout component handle arranging the maps on the page
   let LayoutComponent;
 
-  $: switch (viewMode) {
-    case 'phone':
-      LayoutComponent = MapsPhoneLayout;
-      break;
-    case 'mirror':
-      LayoutComponent = MapsMirrorLayout;
-      break;
-    case 'responsive':
-      LayoutComponent = MapsResponsiveLayout;
-      break;
-    case 'swipe':
-    default:
-      LayoutComponent = MapsSwipeLayout;
-  }
+  $: height = mapState.height;
+  $: width = mapState.width;
 
-  $: {
-    if (viewMode !== 'responsive' && (mapState.height || mapState.width)) {
-      handleSetDimensions({
-        detail: { options: { height: null, width: null } },
-      });
+  const setLayoutComponent = mode => {
+    switch (mode) {
+      case 'phone':
+        LayoutComponent = MapsPhoneLayout;
+        break;
+      case 'mirror':
+        LayoutComponent = MapsMirrorLayout;
+        break;
+      case 'responsive':
+        LayoutComponent = MapsResponsiveLayout;
+        break;
+      case 'swipe':
+      default:
+        LayoutComponent = MapsSwipeLayout;
     }
-  }
+  };
 
   const handleMapMove = event => {
     dispatch('mapState', { options: event.detail.options });
@@ -44,6 +41,14 @@
   const handleSetDimensions = event => {
     dispatch('setDimensions', { ...event.detail.options });
   };
+
+  $: setLayoutComponent(viewMode);
+
+  $: if (viewMode !== 'responsive' && (height || width)) {
+    handleSetDimensions({
+      detail: { options: { height: null, width: null } },
+    });
+  }
 </script>
 
 <svelte:component

@@ -75,15 +75,9 @@
     }
   };
 
-  // Broke checkSelectedValue into its own fn so this just runs on prop change only
-  $: {
-    const props = { zoom, center, pitch, bearing };
-    checkSelectedValue(props);
-  }
+  $: checkSelectedValue({ zoom, center, pitch, bearing });
 
-  $: {
-    handleChangeLocation(selected);
-  }
+  $: handleChangeLocation(selected);
 </script>
 
 {#if gazetteer}

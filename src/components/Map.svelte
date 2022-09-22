@@ -3,6 +3,7 @@
   import GlMap from './GlMap.svelte';
   import MapLabel from './MapLabel.svelte';
   import { maps as mapsStore } from '../stores';
+  import isEqual from 'lodash.isequal';
 
   export let map;
   export let numberOfMaps;
@@ -12,15 +13,25 @@
 
   let props = {};
 
-  $: props = {
-    id: `${map.id}-${map.index}`,
-    mapStyle: map,
-    numberOfMaps,
-  };
+  $: mapId = `${map.id}-${map.index}`;
+
+  // Update stylesheet variable only if there's been actual changes
+  let stylesheet = {};
+  $: if (!isEqual(stylesheet, map?.style)) {
+    stylesheet = map?.style;
+  }
 
   $: mapType = map.type;
 
-  $: {
+  const setProps = (id, num) => {
+    props = {
+      id,
+      mapStyle: map,
+      numberOfMaps: num,
+    };
+  };
+
+  const setMapComponent = mapType => {
     switch (mapType) {
       case 'google':
         MapComponent = GoogleMap;
@@ -34,7 +45,7 @@
         MapComponent = GlMap;
         props.mapType = mapType;
     }
-  }
+  };
 
   const removeMap = () => {
     mapsStore.update(current => {
@@ -44,6 +55,14 @@
       return next;
     });
   };
+
+  $: {
+    // Add trigger for stylesheet changes for locally served styles
+    stylesheet;
+    setProps(mapId, numberOfMaps);
+  }
+
+  $: setMapComponent(mapType);
 </script>
 
 <div class="map">

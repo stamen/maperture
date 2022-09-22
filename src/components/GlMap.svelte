@@ -30,47 +30,20 @@
     }
   };
 
+  const dispatch = createEventDispatcher();
+
   let style = {};
   let url;
   let popup = null;
   let isPopupOpen = false;
 
-  $: if (mapStyle) ({ style, url } = mapStyle);
-
-  const dispatch = createEventDispatcher();
-
   let map;
   let mapViewProps = {};
 
+  // We can set style (an object) here because mapStyle only changes when it needs to
+  $: ({ style, url } = mapStyle);
   // We group map-view props here as they are useful in a few contexts
   $: mapViewProps = { bearing, center, pitch, zoom };
-
-  // We check map and mapViewProps here to ensure this reacts to changes to
-  // either
-  $: if (map && mapViewProps) updateMapFromProps();
-
-  $: if (map && (url || style)) updateMapStyle();
-
-  // Show collisions on the map as desired
-  $: if (map) map.showCollisionBoxes = showCollisions;
-
-  // Show tile boundaries on the map as desired
-  $: if (map) map.showTileBoundaries = showBoundaries;
-
-  // Resize the map when adding more maps and changing container size
-  $: {
-    if (map && numberOfMaps) {
-      map.once('render', () => {
-        const container = document.getElementById(id);
-        if (container) {
-          const resizeObserver = new ResizeObserver(() => {
-            map.resize({ resize: true });
-          });
-          resizeObserver.observe(container);
-        }
-      });
-    }
-  }
 
   const getCurrentMapView = () => {
     return {
@@ -85,12 +58,14 @@
     return !deepEqual(getCurrentMapView(), mapViewProps);
   };
 
-  const updateMapStyle = () => {
-    map.setStyle(url);
+  const updateMapStyle = (map, url, style) => {
+    if (!map) return;
+    map.setStyle(url || style);
   };
 
-  const updateMapFromProps = () => {
-    if (shouldUpdateMapView(mapViewProps)) map.jumpTo(mapViewProps);
+  const updateMapFromProps = (map, mapView) => {
+    if (!map || !shouldUpdateMapView(mapView)) return;
+    map.jumpTo(mapView);
   };
 
   // The Mapbox/Maplibre popup requires HTML as a string
@@ -194,6 +169,31 @@
       map.remove();
     }
   });
+
+  // We check map and mapViewProps here to ensure this reacts to changes to
+  // either
+  $: updateMapFromProps(map, mapViewProps);
+
+  $: updateMapStyle(map, url, style);
+
+  // Show collisions on the map as desired
+  $: map && (map.showCollisionBoxes = showCollisions);
+
+  // Show tile boundaries on the map as desired
+  $: map && (map.showTileBoundaries = showBoundaries);
+
+  // Resize the map when adding more maps and changing container size
+  $: if (map && numberOfMaps) {
+    map.once('render', () => {
+      const container = document.getElementById(id);
+      if (container) {
+        const resizeObserver = new ResizeObserver(() => {
+          map.resize({ resize: true });
+        });
+        resizeObserver.observe(container);
+      }
+    });
+  }
 </script>
 
 <div {id} class="map" />

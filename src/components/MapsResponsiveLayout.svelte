@@ -8,8 +8,6 @@
 
   const dispatch = createEventDispatcher();
 
-  let numberOfMaps = 0;
-  let map;
   let height = mapState.height || '100%';
   let width = mapState.width || '100%';
   let heightInput = mapState.height || '';
@@ -21,18 +19,13 @@
   delete mapStateProps.width;
   delete mapStateProps.height;
 
+  $: map = maps[0];
+  $: numberOfMaps = maps?.length ?? 0;
+
   $: {
     // Remove width and height before passing down mapState as props to Map
     let { width, height, ...props } = mapState;
     mapStateProps = props;
-  }
-
-  $: {
-    if (maps.length) {
-      map = maps[0];
-      // For now this should only ever be 1
-      numberOfMaps = maps.length;
-    }
   }
 
   const onKeySubmit = () => {

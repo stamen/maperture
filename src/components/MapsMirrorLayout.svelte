@@ -1,7 +1,7 @@
 <script>
   import Map from './Map.svelte';
 
-  export let maps;
+  export let maps = [];
   export let mapState;
 
   let sections = [];
@@ -11,27 +11,23 @@
   const rowExceptions = [2, 6];
   let rowOrColumn;
 
-  $: sections = [maps];
-
   $: numberOfMaps = maps.length;
 
-  $: if (numberOfMaps) {
-    rowOrColumn = rowExceptions.includes(numberOfMaps) ? 'row' : 'column';
-  }
+  $: rowOrColumn = rowExceptions.includes(numberOfMaps) ? 'row' : 'column';
 
-  $: {
-    if (maps.length) {
-      const numOfSections = Math.round(Math.sqrt(numberOfMaps));
-      const mapsPerSection = Math.floor(numberOfMaps / numOfSections);
-      let mapArr = JSON.parse(JSON.stringify(maps));
-      let nextSections = [];
-      while (mapArr.length) {
-        nextSections.push(mapArr.slice(0, mapsPerSection));
-        mapArr = mapArr.slice(mapsPerSection);
-      }
-      sections = nextSections;
+  const getSections = maps => {
+    const numOfSections = Math.round(Math.sqrt(numberOfMaps));
+    const mapsPerSection = Math.floor(numberOfMaps / numOfSections);
+    let mapArr = JSON.parse(JSON.stringify(maps));
+    let nextSections = [];
+    while (mapArr.length) {
+      nextSections.push(mapArr.slice(0, mapsPerSection));
+      mapArr = mapArr.slice(mapsPerSection);
     }
-  }
+    sections = nextSections;
+  };
+
+  $: getSections(maps);
 </script>
 
 <div class={`mirror mirror-${rowOrColumn}-orientation`}>
