@@ -1,5 +1,5 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, tick } from 'svelte';
   import Button from './inputs/Button.svelte';
   import { round } from '../math';
 
@@ -13,6 +13,7 @@
   let changingState = false;
   let formattedLocation = '';
   let stateInput = '';
+  let stateInputElement;
 
   $: lat = center.lat;
   $: lng = center.lng;
@@ -38,9 +39,13 @@
     navigator.clipboard.writeText(formattedLocation);
   };
 
-  const handleChangeStart = () => {
+  const handleChangeStart = async () => {
     changingState = true;
     stateInput = formattedLocation;
+
+    // Focus on text input, but first wait for element to render
+    await tick();
+    stateInputElement.focus();
   };
 
   const handleChangeCancel = () => {
@@ -78,6 +83,8 @@
           if (e.key === 'Enter') handleChangeEnd();
           if (e.key === 'Escape') handleChangeCancel();
         }}
+        on:focus={e => e.target.select()}
+        bind:this={stateInputElement}
       />
     </div>
   {:else}
