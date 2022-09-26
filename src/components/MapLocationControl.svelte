@@ -1,5 +1,5 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, tick } from 'svelte';
   import Button from './inputs/Button.svelte';
   import { round } from '../math';
 
@@ -13,15 +13,10 @@
   let changingState = false;
   let formattedLocation = '';
   let stateInput = '';
+  let stateInputElement;
 
   $: lat = center.lat;
   $: lng = center.lng;
-
-  // Reset copied when location changes
-  $: {
-    formattedLocation;
-    copied = false;
-  }
 
   const setLocation = (lat, lng, zoom, pitch, bearing) => {
     let locationParts = [round(zoom, 2), round(lat, 3), round(lng, 3)];
@@ -31,6 +26,7 @@
       locationParts.push(round(bearing, 1));
     }
     formattedLocation = locationParts.join('/');
+    copied = false;
   };
 
   const handleCopy = () => {
@@ -38,9 +34,13 @@
     navigator.clipboard.writeText(formattedLocation);
   };
 
-  const handleChangeStart = () => {
+  const handleChangeStart = async () => {
     changingState = true;
     stateInput = formattedLocation;
+
+    // Focus on text input, but first wait for element to render
+    await tick();
+    stateInputElement.focus();
   };
 
   const handleChangeCancel = () => {
@@ -78,11 +78,13 @@
           if (e.key === 'Enter') handleChangeEnd();
           if (e.key === 'Escape') handleChangeCancel();
         }}
+        on:focus={e => e.target.select()}
+        bind:this={stateInputElement}
       />
     </div>
   {:else}
     <div class="map-state-container">
-      <div class="map-state">{formattedLocation}</div>
+      <div class="map-state" on:click={handleCopy}>{formattedLocation}</div>
       <div class="location-actions">
         <div>
           <Button on:click={handleChangeStart}>change</Button>
@@ -105,6 +107,7 @@
   }
 
   .map-state {
+    cursor: pointer;
     display: flex;
     justify-content: space-around;
   }

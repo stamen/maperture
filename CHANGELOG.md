@@ -1,5 +1,8 @@
 ## Unreleased
 
+- Copy the location text when clicking anywhere on the location control
+- Automatically select the text in the location input on change
+
 ## 0.9.1
 
 - Start to standardize reactive blocks
