@@ -82,7 +82,7 @@
     </div>
   {:else}
     <div class="map-state-container">
-      <div class="map-state">{formattedLocation}</div>
+      <div class="map-state" on:click={handleCopy}>{formattedLocation}</div>
       <div class="location-actions">
         <div>
           <Button on:click={handleChangeStart}>change</Button>
@@ -105,6 +105,7 @@
   }
 
   .map-state {
+    cursor: pointer;
     display: flex;
     justify-content: space-around;
   }
