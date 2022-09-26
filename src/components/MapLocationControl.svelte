@@ -18,12 +18,6 @@
   $: lat = center.lat;
   $: lng = center.lng;
 
-  // Reset copied when location changes
-  $: {
-    formattedLocation;
-    copied = false;
-  }
-
   const setLocation = (lat, lng, zoom, pitch, bearing) => {
     let locationParts = [round(zoom, 2), round(lat, 3), round(lng, 3)];
 
@@ -32,6 +26,7 @@
       locationParts.push(round(bearing, 1));
     }
     formattedLocation = locationParts.join('/');
+    copied = false;
   };
 
   const handleCopy = () => {
