@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.9.2
+
 - Copy the location text when clicking anywhere on the location control
 - Automatically select the text in the location input on change
 - Change hide UI keycode from `v` to `v` + `⌘` to prevent unintentionally hiding UI
