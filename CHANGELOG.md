@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.9.3
+
 - Change hide UI keycode from `v` + `⌘` to `f` + `⌘` to allow copy/paste
 
 ## 0.9.2
