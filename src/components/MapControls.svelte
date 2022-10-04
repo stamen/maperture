@@ -148,7 +148,7 @@
           class="fullscreen-btn"
           on:click={toggleHideUi}
           title="Hide UI"
-          use:shortcut={{ control: true, code: 'KeyV', callback: toggleHideUi }}
+          use:shortcut={{ control: true, code: 'KeyF', callback: toggleHideUi }}
         >
           <Fa icon={faExpand} />
         </button>
@@ -166,7 +166,7 @@
   <button
     class="fullscreen-btn show-ui"
     on:click={toggleHideUi}
-    use:shortcut={{ control: true, code: 'KeyV', callback: toggleHideUi }}
+    use:shortcut={{ control: true, code: 'KeyF', callback: toggleHideUi }}
     title="Show UI"
   >
     <Fa icon={faCompress} />
