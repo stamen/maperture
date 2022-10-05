@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Change hide UI keycode from `f` + `⌘` to `f` + `⌘` + `shift` to allow find on page
+
 ## 0.9.3
 
 - Change hide UI keycode from `v` + `⌘` to `f` + `⌘` to allow copy/paste
