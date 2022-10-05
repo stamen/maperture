@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.9.4
+
 - Change hide UI keycode from `f` + `⌘` to `f` + `⌘` + `shift` to allow find on page
 
 ## 0.9.3
