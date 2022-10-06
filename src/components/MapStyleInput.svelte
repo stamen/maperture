@@ -33,7 +33,8 @@
   const poll = url => {
     const pollCondition = str => {
       if (!allowPolling || !str || activeUrl !== str) return false;
-      return str.includes('localhost') || str.startsWith('/');
+      const absolutePathRegex = new RegExp('^(?:[a-z+]+:)?//', 'i');
+      return str.includes('localhost') || !absolutePathRegex.test(str);
     };
 
     // Simple polling for any style on localhost
@@ -170,10 +171,13 @@
     }
   };
 
-  // Reset error on beginning to type again
-  $: if (error && textInput !== undefined) {
+  const resetError = text => {
+    if (!error || text === undefined) return;
     error = null;
-  }
+  };
+
+  // Reset error on beginning to type again
+  $: resetError(textInput);
 
   // When the selected value changes, update text input and potentially fetch style
   $: onChangeSelected(dropdownValue);
