@@ -31,8 +31,10 @@
 
   // This will continue to poll/fetch the style at a local URL to allow live changes to be picked up
   const poll = url => {
-    const pollCondition = str =>
-      allowPolling && str && str.includes('localhost') && activeUrl === str;
+    const pollCondition = str => {
+      if (!allowPolling || !str || activeUrl !== str) return false;
+      return str.includes('localhost') || str.startsWith('/');
+    };
 
     // Simple polling for any style on localhost
     // Check that should poll to set timer
