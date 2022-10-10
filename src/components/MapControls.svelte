@@ -17,6 +17,7 @@
   import {
     maps as mapsStore,
     showDisplays as showDisplaysStore,
+    linkLocations as linkLocationsStore,
   } from '../stores';
 
   export let bearing;
@@ -84,6 +85,13 @@
   const toggleHideUi = () => {
     showDisplaysStore.update(value => !value);
   };
+
+  // ------------------------------------------------------
+  let linkLocations = true;
+  const handleLinkLocations = () => {
+    linkLocationsStore.set(linkLocations);
+  };
+  $: handleLinkLocations(linkLocations);
 </script>
 
 {#if $showDisplaysStore}
@@ -158,6 +166,15 @@
           <Fa icon={faExpand} />
         </button>
       </div>
+
+      <!-- ---------------------------------------------------------------------------------------- -->
+      <div class="control-section">
+        <label>
+          <span>Temporary unlink loc</span>
+          <input type="checkbox" bind:checked={linkLocations} />
+        </label>
+      </div>
+      <!-- ---------------------------------------------------------------------------------------- -->
     </div>
     {#if mapStateValidationMessages.length > 0}
       <div class="validation-messages">

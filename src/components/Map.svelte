@@ -1,15 +1,24 @@
 <script>
+  import { createEventDispatcher } from 'svelte';
   import GoogleMap from './GoogleMap.svelte';
   import GlMap from './GlMap.svelte';
   import MapLabel from './MapLabel.svelte';
-  import { maps as mapsStore } from '../stores';
+  import {
+    maps as mapsStore,
+    linkLocations as linkLocationsStore,
+  } from '../stores';
   import isEqual from 'lodash.isequal';
 
   export let map;
   export let numberOfMaps;
   export let themeLabel = '';
 
+  const dispatch = createEventDispatcher();
+
   let MapComponent;
+
+  // Only use this when locations are unlinked
+  let localMapState = {};
 
   let props = {};
 
@@ -63,15 +72,58 @@
   }
 
   $: setMapComponent(mapType);
+
+  // ----------------------------------------------------------------------------------------------------
+
+  // TODO HOW DOES THIS ALL FIT INTO A STORE/ URL
+
+  // const getMapStateProps = props => {
+  //   if ($linkLocationsStore) return props;
+  //   const { bearing, center, pitch, zoom, ...otherProps } = props;
+  //   const localOptions = {
+  //     bearing,
+  //     center,
+  //     pitch,
+  //     zoom,
+  //     ...localMapState,
+  //   };
+  //   let nextProps = { ...otherProps, ...localOptions };
+  //   return nextProps;
+  // };
+
+  // $: mapStateProps = getMapStateProps($$restProps);
+
+  // const setLocalMapState = mapLocation => {
+  //   localMapState = mapLocation;
+  // };
+
+  // const handleMapMove = event => {
+  //   if (!$linkLocationsStore) {
+  //     const { options } = event.detail;
+  //     setLocalMapState(options);
+  //   } else {
+  //     dispatch('mapMove', event.detail);
+  //   }
+  // };
+
+  const handleMapMove = event => {
+    dispatch('mapMove', { ...event.detail, index: map.index });
+  };
 </script>
 
 <div class="map">
   {#key mapType}
+    <!-- <svelte:component
+      this={MapComponent}
+      {...props}
+      {...mapStateProps}
+      on:mapMove={handleMapMove}
+    /> -->
     <svelte:component
       this={MapComponent}
       {...props}
       {...$$restProps}
-      on:mapMove
+      on:mapMove={handleMapMove}
     />
   {/key}
   <!-- Use the number of maps and index to reset map on adding and removing maps -->
