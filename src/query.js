@@ -31,6 +31,19 @@ function fromQueryString(qs) {
     paramString.split('&').map(e => e.split('=').map(decodeURIComponent))
   );
 
+  if (params.map) {
+    params.mapState = JSON.parse(params.map).map(loc => {
+      const [zoom, lat, lng, pitch, bearing] = loc.split('/');
+      return {
+        bearing,
+        center: { lat, lng },
+        pitch,
+        zoom,
+      };
+    });
+    delete params.map;
+  }
+
   return params;
 }
 
@@ -96,6 +109,8 @@ export function readHash(qs) {
         return [k, v];
       })
   );
+
+  console.log(urlState);
 
   return urlState;
 }
