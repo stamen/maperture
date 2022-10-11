@@ -75,8 +75,8 @@ export function createHashString(mapSettings) {
   });
 
   return toQueryString({
-    map: JSON.stringify(nextMapState),
     ...nonMapSettings,
+    map: JSON.stringify(nextMapState),
   });
 }
 
