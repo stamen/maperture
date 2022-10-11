@@ -18,6 +18,7 @@
     maps as mapsStore,
     showDisplays as showDisplaysStore,
     linkLocations as linkLocationsStore,
+    mapLocations as mapLocationsStore,
   } from '../stores';
 
   export let bearing;
@@ -90,6 +91,16 @@
   let linkLocations = true;
   const handleLinkLocations = () => {
     linkLocationsStore.set(linkLocations);
+    if (!linkLocations) {
+      const mapLocations = maps.map(m => ({
+        id: m.id,
+        index: m.index,
+        location: mapState,
+      }));
+      mapLocationsStore.set(mapLocations);
+    } else {
+      mapLocationsStore.set([]);
+    }
   };
   $: handleLinkLocations(linkLocations);
 </script>

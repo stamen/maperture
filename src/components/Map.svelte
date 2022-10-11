@@ -6,6 +6,7 @@
   import {
     maps as mapsStore,
     linkLocations as linkLocationsStore,
+    mapLocations as mapLocationsStore,
   } from '../stores';
   import isEqual from 'lodash.isequal';
 
@@ -18,7 +19,10 @@
   let MapComponent;
 
   // Only use this when locations are unlinked
-  let localMapState = {};
+  // TODO validate google map pitch
+  $: localMapState =
+    $mapLocationsStore.find(v => v.id === map.id && v.index === map.index)
+      ?.location ?? {};
 
   let props = {};
 
@@ -93,14 +97,17 @@
 
   $: mapStateProps = getMapStateProps($$restProps);
 
-  const setLocalMapState = mapLocation => {
-    localMapState = mapLocation;
-  };
-
   const handleMapMove = event => {
     if (!$linkLocationsStore) {
       const { options } = event.detail;
-      setLocalMapState(options);
+      mapLocationsStore.update(value => {
+        return value.map(v => {
+          if (v.id === map.id && v.index === map.index) {
+            return { ...v, location: options };
+          }
+          return v;
+        });
+      });
     } else {
       dispatch('mapMove', event.detail);
     }

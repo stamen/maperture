@@ -6,6 +6,7 @@
     maps as mapsStore,
     stylePresets as stylePresetsStore,
     config as configStore,
+    mapLocations as mapLocationsStore,
   } from './stores';
   import { makeConfig } from './make-config';
   import { loadPresetsFromUrl } from './presets-utils';
@@ -82,6 +83,12 @@
   mapsStore.subscribe(maps => {
     settings = { ...settings, maps };
   });
+
+  // mapLocationsStore.subscribe(locations => {
+  //   if (locations) {
+  //     settings = { ...settings, locations };
+  //   }
+  // });
 
   // Throttle writing to the hash since this can get invoked many times when
   // moving the map around
