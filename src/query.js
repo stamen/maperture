@@ -1,7 +1,7 @@
 import { round } from './math';
 
 // Keys that should be encoded/decoded as arrays
-const jsonKeys = ['maps', 'mapstate'];
+const jsonKeys = ['maps'];
 
 // Keys that should be encoded/decoded as boolean values
 const booleanKeys = ['showCollisions', 'showBoundaries'];
@@ -10,11 +10,11 @@ const booleanKeys = ['showCollisions', 'showBoundaries'];
 const mapLocationKeys = ['bearing', 'center', 'pitch', 'zoom'];
 
 // Keys that should be decoded as numbers
-const numericKeys = []; //['bearing', 'lat', 'lng', 'pitch', 'zoom'];
+const numericKeys = ['bearing', 'lat', 'lng', 'pitch', 'zoom'];
 
 function toQueryString(obj) {
-  let qs = '';
-  const excludedKeys = ['stylePresets'];
+  let qs = obj.map ? `map=${obj.map}` : '';
+  const excludedKeys = ['map', 'stylePresets'];
 
   Object.entries(obj).forEach(([key, value], i) => {
     if (excludedKeys.includes(key)) return;
@@ -30,7 +30,17 @@ function fromQueryString(qs) {
   let params = Object.fromEntries(
     paramString.split('&').map(e => e.split('=').map(decodeURIComponent))
   );
-
+  if (params.map) {
+    const [zoom, lat, lng, pitch, bearing] = params.map.split('/');
+    params = {
+      ...params,
+      bearing,
+      lat,
+      lng,
+      pitch,
+      zoom,
+    };
+  }
   return params;
 }
 
@@ -58,24 +68,20 @@ export function createHashString(mapSettings) {
 
   let nonMapSettings = Object.fromEntries(
     Object.entries(newMapSettings)
-      .filter(([k, v]) => k !== 'mapState')
+      .filter(([k, v]) => !mapLocationKeys.includes(k))
       .map(([k, v]) => [k, jsonKeys.includes(k) ? JSON.stringify(v) : v])
   );
+
   nonMapSettings = cleanSettings(nonMapSettings);
 
-  // TODO cleanup
-  let nextMapState = newMapSettings.mapState.map(m => {
-    return [
-      round(m.zoom, 2),
-      round(m.center.lat, 4),
-      round(m.center.lng, 4),
-      round(m.pitch, 1),
-      round(m.bearing, 1),
-    ].join('/');
-  });
-
   return toQueryString({
-    map: JSON.stringify(nextMapState),
+    map: [
+      round(newMapSettings.zoom, 2),
+      round(newMapSettings.center.lat, 4),
+      round(newMapSettings.center.lng, 4),
+      round(newMapSettings.pitch, 1),
+      round(newMapSettings.bearing, 1),
+    ].join('/'),
     ...nonMapSettings,
   });
 }
@@ -96,6 +102,19 @@ export function readHash(qs) {
         return [k, v];
       })
   );
+
+  // Only return center, not lat and lng
+  if (urlState.lat && urlState.lng) {
+    const { lat, lng } = urlState;
+    urlState.center = { lat, lng };
+    delete urlState.lat;
+    delete urlState.lng;
+  }
+
+  // map is redundant here, remove it
+  if (urlState.map) {
+    delete urlState.map;
+  }
 
   return urlState;
 }

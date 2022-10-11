@@ -35,7 +35,7 @@
   };
 
   const handleMapMove = event => {
-    dispatch('mapState', event.detail);
+    dispatch('mapState', { options: event.detail.options });
   };
 
   const handleSetDimensions = event => {

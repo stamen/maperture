@@ -77,52 +77,42 @@
 
   // TODO HOW DOES THIS ALL FIT INTO A STORE/ URL
 
-  // const getMapStateProps = props => {
-  //   if ($linkLocationsStore) return props;
-  //   const { bearing, center, pitch, zoom, ...otherProps } = props;
-  //   const localOptions = {
-  //     bearing,
-  //     center,
-  //     pitch,
-  //     zoom,
-  //     ...localMapState,
-  //   };
-  //   let nextProps = { ...otherProps, ...localOptions };
-  //   return nextProps;
-  // };
+  const getMapStateProps = props => {
+    if ($linkLocationsStore) return props;
+    const { bearing, center, pitch, zoom, ...otherProps } = props;
+    const localOptions = {
+      bearing,
+      center,
+      pitch,
+      zoom,
+      ...localMapState,
+    };
+    let nextProps = { ...otherProps, ...localOptions };
+    return nextProps;
+  };
 
-  // $: mapStateProps = getMapStateProps($$restProps);
+  $: mapStateProps = getMapStateProps($$restProps);
 
-  // const setLocalMapState = mapLocation => {
-  //   localMapState = mapLocation;
-  // };
-
-  // const handleMapMove = event => {
-  //   if (!$linkLocationsStore) {
-  //     const { options } = event.detail;
-  //     setLocalMapState(options);
-  //   } else {
-  //     dispatch('mapMove', event.detail);
-  //   }
-  // };
+  const setLocalMapState = mapLocation => {
+    localMapState = mapLocation;
+  };
 
   const handleMapMove = event => {
-    dispatch('mapMove', { ...event.detail, index: map.index });
+    if (!$linkLocationsStore) {
+      const { options } = event.detail;
+      setLocalMapState(options);
+    } else {
+      dispatch('mapMove', event.detail);
+    }
   };
 </script>
 
 <div class="map">
   {#key mapType}
-    <!-- <svelte:component
-      this={MapComponent}
-      {...props}
-      {...mapStateProps}
-      on:mapMove={handleMapMove}
-    /> -->
     <svelte:component
       this={MapComponent}
       {...props}
-      {...$$restProps}
+      {...mapStateProps}
       on:mapMove={handleMapMove}
     />
   {/key}

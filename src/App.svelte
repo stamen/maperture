@@ -29,7 +29,7 @@
   let settings = getSettings(config);
 
   // mapState is a convenience object, subset of settings
-  let mapState = [{}];
+  let mapState = {};
 
   // Track when the app is attempting to write the hash
   let writingHash = false;
@@ -48,11 +48,7 @@
   }
 
   // Validate map state when maps change too
-  // TODO this isn't right for when we detach the maps
-  $: mapState = mapState.map(ms => validateMapState(ms, maps));
-
-  let height;
-  let width;
+  $: mapState = validateMapState(mapState, maps);
 
   onMount(() => {
     // If we have URLs for preset files, get them and update presets
@@ -97,31 +93,38 @@
   }, 250);
 
   const createMapState = () => {
-    const { mapState } = settings;
+    const {
+      bearing,
+      center,
+      pitch,
+      showCollisions,
+      showBoundaries,
+      zoom,
+      height,
+      width,
+    } = settings;
 
-    return mapState.map(item => ({
-      ...item,
+    return {
+      bearing,
+      center,
+      pitch,
+      showCollisions,
+      showBoundaries,
+      zoom,
       ...(height && { height }),
       ...(width && { width }),
-    }));
+    };
   };
 
   const handleMapState = event => {
-    const { options, index } = event.detail;
-    // TODO needs update
-    let newMapState = validateMapState(
-      {
-        ...mapState,
-        ...options,
-      },
-      maps
-    );
-
-    newMapState = [newMapState];
+    let newMapState = {
+      ...mapState,
+      ...event.detail.options,
+    };
 
     settings = {
       ...settings,
-      mapState: newMapState,
+      ...validateMapState(newMapState, maps),
     };
   };
 
@@ -159,7 +162,7 @@
 <main>
   <Maps
     {maps}
-    mapState={mapState[0]}
+    {mapState}
     viewMode={settings.viewMode}
     on:mapState={handleMapState}
     on:setDimensions={handleDimensions}
@@ -168,7 +171,7 @@
   <div class="map-controls-container">
     <MapControls
       {mapboxGlAccessToken}
-      {...mapState[0]}
+      {...mapState}
       viewMode={settings.viewMode}
       on:mapState={handleMapState}
       on:viewMode={handleViewMode}
