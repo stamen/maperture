@@ -1,7 +1,7 @@
 import { round } from './math';
 
 // Keys that should be encoded/decoded as arrays
-const jsonKeys = ['maps'];
+const jsonKeys = ['maps', 'locations'];
 
 // Keys that should be encoded/decoded as boolean values
 const booleanKeys = ['showCollisions', 'showBoundaries'];

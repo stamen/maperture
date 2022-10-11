@@ -21,8 +21,7 @@
   // Only use this when locations are unlinked
   // TODO validate google map pitch
   $: localMapState =
-    $mapLocationsStore.find(v => v.id === map.id && v.index === map.index)
-      ?.location ?? {};
+    $mapLocationsStore?.find(v => v.index === map.index)?.location ?? {};
 
   let props = {};
 
@@ -69,18 +68,6 @@
     });
   };
 
-  $: {
-    // Add trigger for stylesheet changes for locally served styles
-    stylesheet;
-    setProps(mapId, numberOfMaps);
-  }
-
-  $: setMapComponent(mapType);
-
-  // ----------------------------------------------------------------------------------------------------
-
-  // TODO HOW DOES THIS ALL FIT INTO A STORE/ URL
-
   const getMapStateProps = props => {
     if ($linkLocationsStore) return props;
     const { bearing, center, pitch, zoom, ...otherProps } = props;
@@ -95,14 +82,12 @@
     return nextProps;
   };
 
-  $: mapStateProps = getMapStateProps($$restProps);
-
   const handleMapMove = event => {
     if (!$linkLocationsStore) {
       const { options } = event.detail;
       mapLocationsStore.update(value => {
         return value.map(v => {
-          if (v.id === map.id && v.index === map.index) {
+          if (v.index === map.index) {
             return { ...v, location: options };
           }
           return v;
@@ -112,6 +97,16 @@
       dispatch('mapMove', event.detail);
     }
   };
+
+  $: {
+    // Add trigger for stylesheet changes for locally served styles
+    stylesheet;
+    setProps(mapId, numberOfMaps);
+  }
+
+  $: setMapComponent(mapType);
+
+  $: mapStateProps = getMapStateProps($$restProps);
 </script>
 
 <div class="map">
@@ -137,6 +132,7 @@
         name={map.name}
         onClose={removeMap}
         disableClose={numberOfMaps <= 1}
+        mapState={localMapState}
       />
     </div>
   {/key}

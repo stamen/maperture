@@ -35,6 +35,8 @@
   let mapState;
   let mapStateValidationMessages = [];
 
+  let linkLocations = $linkLocationsStore;
+
   mapsStore.subscribe(value => (maps = value));
   $: mapState = { bearing, center, pitch, zoom };
   $: mapStateValidationMessages = getMapStateMessages(mapState, maps);
@@ -64,6 +66,12 @@
       const next = current.concat([lastMap]);
       return next;
     });
+    if ($linkLocationsStore) {
+      mapLocationsStore.update(value => [
+        ...value,
+        { ...value[value.length - 1], index: value.length },
+      ]);
+    }
   };
 
   const downloadScreenshot = () => {
@@ -87,30 +95,31 @@
     showDisplaysStore.update(value => !value);
   };
 
-  // ------------------------------------------------------
-  let linkLocations = true;
   const handleLinkLocations = () => {
+    if (linkLocations === $linkLocationsStore) return;
     linkLocationsStore.set(linkLocations);
     if (!linkLocations) {
       const mapLocations = maps.map(m => ({
-        id: m.id,
         index: m.index,
         location: mapState,
       }));
       mapLocationsStore.set(mapLocations);
     } else {
-      mapLocationsStore.set([]);
+      mapLocationsStore.set(null);
     }
   };
+
   $: handleLinkLocations(linkLocations);
 </script>
 
 {#if $showDisplaysStore}
   <div class="map-controls">
     <div class="control-row">
-      <div class="control-section">
-        <MapLocationControl on:mapState {...mapState} />
-      </div>
+      {#if $linkLocationsStore}
+        <div class="control-section">
+          <MapLocationControl on:mapState {...mapState} />
+        </div>
+      {/if}
 
       <div class="control-section">
         <ViewModeControl on:viewMode mode={viewMode} mapsNum={maps.length} />

@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
+  import { linkLocations as linkLocationsStore } from '../stores';
   import { VIEW_MODES } from '../constants';
 
   export let mode;
@@ -9,7 +10,16 @@
   let selectedMode = mode ?? '';
   let viewModes = VIEW_MODES;
 
+  linkLocationsStore.subscribe(value => {
+    if (!value) {
+      viewModes = ['mirror'];
+    }
+  });
+
   const updateViewModeFromMapCount = mapCount => {
+    if (!$linkLocationsStore) {
+      viewModes = ['mirror'];
+    }
     if (mapCount === 1) {
       viewModes = VIEW_MODES.filter(mode => mode !== 'swipe');
     }

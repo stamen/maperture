@@ -2,11 +2,16 @@
   import { faXmark } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa/src/fa.svelte';
   import MapStyleInputWrapper from './MapStyleInputWrapper.svelte';
-  import { showDisplays as showDisplaysStore } from '../stores';
+  import MapLocationControl from './MapLocationControl.svelte';
+  import {
+    showDisplays as showDisplaysStore,
+    linkLocations as linkLocationsStore,
+  } from '../stores';
   export let index;
   export let name;
   export let onClose;
   export let disableClose;
+  export let mapState;
 </script>
 
 {#if $showDisplaysStore}
@@ -15,7 +20,12 @@
       <Fa icon={faXmark} />
     </button>
     <div class="map-name">{name}</div>
-    <MapStyleInputWrapper {index} />
+    <div class="options-container">
+      <MapStyleInputWrapper {index} />
+      {#if !$linkLocationsStore && Object.keys(mapState).length}
+        <MapLocationControl on:mapState {...mapState} />
+      {/if}
+    </div>
   </div>
 {/if}
 
@@ -51,5 +61,12 @@
   .close-button:disabled {
     cursor: not-allowed;
     color: lightgray;
+  }
+
+  .options-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
 </style>
