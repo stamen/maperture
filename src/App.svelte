@@ -93,6 +93,18 @@
     }
   });
 
+  linkLocationsStore.subscribe(value => {
+    if (!value) {
+      const mapLocations = maps.map(m => ({
+        index: m.index,
+        location: mapState,
+      }));
+      mapLocationsStore.set(mapLocations);
+    } else {
+      mapLocationsStore.set(null);
+    }
+  });
+
   // Throttle writing to the hash since this can get invoked many times when
   // moving the map around
   const throttledWriteHash = throttle(() => {

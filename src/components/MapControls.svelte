@@ -95,21 +95,7 @@
   };
 
   const toggleLinkLocations = () => {
-    let linkedLocations;
-    linkLocationsStore.update(value => {
-      const nextValue = !value;
-      linkedLocations = nextValue;
-      return nextValue;
-    });
-    if (!linkedLocations) {
-      const mapLocations = maps.map(m => ({
-        index: m.index,
-        location: mapState,
-      }));
-      mapLocationsStore.set(mapLocations);
-    } else {
-      mapLocationsStore.set(null);
-    }
+    linkLocationsStore.update(value => !value);
   };
 </script>
 
