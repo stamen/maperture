@@ -60,19 +60,14 @@
   };
 
   const removeMap = () => {
-    mapsStore.update(current => {
-      const next = current
-        .filter((m, i) => i !== map.index)
+    const getReindexedArr = (arr, index) => {
+      return arr
+        .filter((_, i) => i !== index)
         .map((item, i) => ({ ...item, index: i }));
-      return next;
-    });
+    };
+    mapsStore.update(current => getReindexedArr(current, map.index));
     if (!$linkLocationsStore) {
-      mapLocationsStore.update(current => {
-        const next = current
-          .filter(item => item.index !== map.index)
-          .map((item, i) => ({ ...item, index: i }));
-        return next;
-      });
+      mapLocationsStore.update(current => getReindexedArr(current, map.index));
     }
   };
 
