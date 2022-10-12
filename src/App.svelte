@@ -94,13 +94,14 @@
   });
 
   linkLocationsStore.subscribe(value => {
-    if (!value) {
+    if (!value && !$mapLocationsStore) {
       const mapLocations = maps.map(m => ({
         index: m.index,
         location: mapState,
       }));
       mapLocationsStore.set(mapLocations);
-    } else {
+    }
+    if (value && $mapLocationsStore) {
       mapLocationsStore.set(null);
     }
   });
