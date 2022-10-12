@@ -8,6 +8,7 @@
     linkLocations as linkLocationsStore,
     mapLocations as mapLocationsStore,
   } from '../stores';
+  import { validateMapState } from '../map-state-utils';
   import isEqual from 'lodash.isequal';
 
   export let map;
@@ -19,7 +20,6 @@
   let MapComponent;
 
   // Only use this when locations are unlinked
-  // TODO validate google map pitch
   $: localMapState =
     $mapLocationsStore?.find(v => v.index === map.index)?.location ?? {};
 
@@ -82,6 +82,8 @@
       ...localMapState,
     };
     let nextProps = { ...otherProps, ...localOptions };
+    nextProps = validateMapState(nextProps, [map]);
+
     return nextProps;
   };
 
