@@ -12,6 +12,10 @@
   export let onClose;
   export let disableClose;
   export let mapState;
+
+  let locationProps;
+
+  $: ({ showBoundaries, showCollisions, ...locationProps } = mapState);
 </script>
 
 {#if $showDisplaysStore}
@@ -22,9 +26,9 @@
     <div class="map-name">{name}</div>
     <div class="options-container">
       <MapStyleInputWrapper {index} />
-      {#if !$linkLocationsStore && Object.keys(mapState).length}
+      {#if !$linkLocationsStore && Object.keys(locationProps).length}
         <div class="location-control">
-          <MapLocationControl on:mapState {...mapState} />
+          <MapLocationControl on:mapState {...locationProps} />
         </div>
       {/if}
     </div>

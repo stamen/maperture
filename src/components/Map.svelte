@@ -137,7 +137,7 @@
         name={map.name}
         onClose={removeMap}
         disableClose={numberOfMaps <= 1}
-        mapState={localMapState}
+        mapState={mapStateProps}
       />
     </div>
   {/key}

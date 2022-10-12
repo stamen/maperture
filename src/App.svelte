@@ -43,6 +43,9 @@
   mapsStore.set(settings.maps.map((map, index) => ({ ...map, index })));
   stylePresetsStore.set(settings.stylePresets);
   mapLocationsStore.set(settings?.locations ?? null);
+  if ($mapLocationsStore && $mapLocationsStore.length) {
+    linkLocationsStore.set(false);
+  }
 
   // Since maps comes from settings, only reset as needed
   let maps = [];
@@ -88,9 +91,6 @@
 
   mapLocationsStore.subscribe(locations => {
     settings = { ...settings, locations };
-    if (locations && locations.length) {
-      linkLocationsStore.set(false);
-    }
   });
 
   linkLocationsStore.subscribe(value => {
