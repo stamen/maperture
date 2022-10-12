@@ -23,7 +23,9 @@
     <div class="options-container">
       <MapStyleInputWrapper {index} />
       {#if !$linkLocationsStore && Object.keys(mapState).length}
-        <MapLocationControl on:mapState {...mapState} />
+        <div class="location-control">
+          <MapLocationControl on:mapState {...mapState} />
+        </div>
       {/if}
     </div>
   </div>
@@ -66,7 +68,13 @@
   .options-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: left;
     justify-content: center;
+  }
+
+  .location-control {
+    margin-top: 12px;
+    display: flex;
+    justify-content: left;
   }
 </style>

@@ -70,8 +70,8 @@
 <div>
   {#if changingState}
     <div class="state-record">
-      <label>enter zoom/lat/lng[/pitch/bearing]</label>
       <input
+        style="height:18px"
         type="text"
         bind:value={stateInput}
         on:keydown={e => {
@@ -80,7 +80,7 @@
         }}
         on:focus={e => e.target.select()}
         bind:this={stateInputElement}
-      />
+      /><label class="input-label">enter zoom/lat/lng[/pitch/bearing]</label>
     </div>
   {:else}
     <div class="map-state-container">
@@ -101,7 +101,7 @@
 
 <style>
   .map-state-container {
-    align-items: center;
+    align-items: left;
     display: flex;
     flex-direction: column;
   }
@@ -115,7 +115,7 @@
   .state-record {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: left;
   }
 
   .location-actions {
@@ -124,6 +124,12 @@
   }
 
   .location-actions > div {
-    margin: 0 0.5em;
+    margin: 0 0.5em 0 0;
+  }
+
+  .input-label {
+    font-size: 0.75em;
+    font-weight: normal;
+    margin-top: 3px;
   }
 </style>

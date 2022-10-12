@@ -1,4 +1,8 @@
 import { round } from './math';
+import { linkLocations as linkLocationsStore } from './stores';
+
+let linkedLocations;
+linkLocationsStore.subscribe(value => (linkedLocations = value));
 
 // Keys that should be encoded/decoded as arrays
 const jsonKeys = ['maps', 'locations'];
@@ -24,6 +28,26 @@ function toQueryString(obj) {
   return qs;
 }
 
+const encodeMapParams = ({ zoom, center, pitch, bearing }) => {
+  return [
+    round(zoom, 2),
+    round(center.lat, 4),
+    round(center.lng, 4),
+    round(pitch ?? 0, 1),
+    round(bearing ?? 0, 1),
+  ].join('/');
+};
+
+const decodeMapParams = mapStr => {
+  const [zoom, lat, lng, pitch, bearing] = mapStr.split('/');
+  return {
+    bearing,
+    center: { lat, lng },
+    pitch,
+    zoom,
+  };
+};
+
 function fromQueryString(qs) {
   const paramString = qs.split('#')[1];
   if (!paramString) return {};
@@ -31,15 +55,18 @@ function fromQueryString(qs) {
     paramString.split('&').map(e => e.split('=').map(decodeURIComponent))
   );
   if (params.map) {
-    const [zoom, lat, lng, pitch, bearing] = params.map.split('/');
     params = {
       ...params,
-      bearing,
-      lat,
-      lng,
-      pitch,
-      zoom,
+      ...decodeMapParams(params.map),
     };
+  }
+  if (params.locations) {
+    params.locations = JSON.stringify(
+      JSON.parse(params.locations).map(item => ({
+        ...item,
+        location: decodeMapParams(item.location),
+      }))
+    );
   }
   return params;
 }
@@ -68,22 +95,34 @@ export function createHashString(mapSettings) {
 
   let nonMapSettings = Object.fromEntries(
     Object.entries(newMapSettings)
-      .filter(([k, v]) => !mapLocationKeys.includes(k))
+      .filter(([k, v]) => !mapLocationKeys.includes(k) && k !== 'locations')
       .map(([k, v]) => [k, jsonKeys.includes(k) ? JSON.stringify(v) : v])
   );
 
   nonMapSettings = cleanSettings(nonMapSettings);
 
-  return toQueryString({
-    map: [
-      round(newMapSettings.zoom, 2),
-      round(newMapSettings.center.lat, 4),
-      round(newMapSettings.center.lng, 4),
-      round(newMapSettings.pitch, 1),
-      round(newMapSettings.bearing, 1),
-    ].join('/'),
+  let updatedSettings = {
     ...nonMapSettings,
-  });
+  };
+
+  if (linkedLocations) {
+    updatedSettings = {
+      map: encodeMapParams(newMapSettings),
+      ...updatedSettings,
+    };
+  } else {
+    updatedSettings = {
+      locations: JSON.stringify(
+        newMapSettings.locations.map(item => ({
+          ...item,
+          location: encodeMapParams(item.location),
+        }))
+      ),
+      ...updatedSettings,
+    };
+  }
+
+  return toQueryString(updatedSettings);
 }
 
 export function writeHash(mapSettings) {
@@ -102,14 +141,6 @@ export function readHash(qs) {
         return [k, v];
       })
   );
-
-  // Only return center, not lat and lng
-  if (urlState.lat && urlState.lng) {
-    const { lat, lng } = urlState;
-    urlState.center = { lat, lng };
-    delete urlState.lat;
-    delete urlState.lng;
-  }
 
   // map is redundant here, remove it
   if (urlState.map) {

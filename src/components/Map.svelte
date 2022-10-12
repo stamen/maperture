@@ -66,6 +66,14 @@
         .map((item, i) => ({ ...item, index: i }));
       return next;
     });
+    if (!$linkLocationsStore) {
+      mapLocationsStore.update(current => {
+        const next = current
+          .filter(item => item.index !== map.index)
+          .map((item, i) => ({ ...item, index: i }));
+        return next;
+      });
+    }
   };
 
   const getMapStateProps = props => {

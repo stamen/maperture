@@ -6,6 +6,8 @@
     faPlus,
     faExpand,
     faCompress,
+    faLink,
+    faLinkSlash,
   } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa/src/fa.svelte';
   import { createEventDispatcher } from 'svelte';
@@ -34,8 +36,6 @@
   let maps = [];
   let mapState;
   let mapStateValidationMessages = [];
-
-  let linkLocations = $linkLocationsStore;
 
   mapsStore.subscribe(value => (maps = value));
   $: mapState = { bearing, center, pitch, zoom };
@@ -66,11 +66,10 @@
       const next = current.concat([lastMap]);
       return next;
     });
-    if ($linkLocationsStore) {
-      mapLocationsStore.update(value => [
-        ...value,
-        { ...value[value.length - 1], index: value.length },
-      ]);
+    if (!$linkLocationsStore) {
+      mapLocationsStore.update(value => {
+        return [...value, { ...value[value.length - 1], index: value.length }];
+      });
     }
   };
 
@@ -95,10 +94,14 @@
     showDisplaysStore.update(value => !value);
   };
 
-  const handleLinkLocations = () => {
-    if (linkLocations === $linkLocationsStore) return;
-    linkLocationsStore.set(linkLocations);
-    if (!linkLocations) {
+  const toggleLinkLocations = () => {
+    let linkedLocations;
+    linkLocationsStore.update(value => {
+      const nextValue = !value;
+      linkedLocations = nextValue;
+      return nextValue;
+    });
+    if (!linkedLocations) {
       const mapLocations = maps.map(m => ({
         index: m.index,
         location: mapState,
@@ -108,18 +111,23 @@
       mapLocationsStore.set(null);
     }
   };
-
-  $: handleLinkLocations(linkLocations);
 </script>
 
 {#if $showDisplaysStore}
   <div class="map-controls">
     <div class="control-row">
-      {#if $linkLocationsStore}
-        <div class="control-section">
-          <MapLocationControl on:mapState {...mapState} />
+      <div class="control-section">
+        <div
+          class="link-button"
+          style="margin-right: 6px"
+          title={$linkLocationsStore ? 'Unlink locations' : 'Link locations'}
+          on:click={toggleLinkLocations}
+        >
+          <Fa icon={$linkLocationsStore ? faLink : faLinkSlash} />
         </div>
-      {/if}
+        {#if $linkLocationsStore}
+          <MapLocationControl on:mapState {...mapState} />{/if}
+      </div>
 
       <div class="control-section">
         <ViewModeControl on:viewMode mode={viewMode} mapsNum={maps.length} />
@@ -186,15 +194,6 @@
           <Fa icon={faExpand} />
         </button>
       </div>
-
-      <!-- ---------------------------------------------------------------------------------------- -->
-      <div class="control-section">
-        <label>
-          <span>Temporary unlink loc</span>
-          <input type="checkbox" bind:checked={linkLocations} />
-        </label>
-      </div>
-      <!-- ---------------------------------------------------------------------------------------- -->
     </div>
     {#if mapStateValidationMessages.length > 0}
       <div class="validation-messages">
@@ -270,5 +269,10 @@
     right: 12px;
     margin-top: -1em;
     pointer-events: all;
+  }
+
+  .link-button:hover {
+    color: #666;
+    cursor: pointer;
   }
 </style>
