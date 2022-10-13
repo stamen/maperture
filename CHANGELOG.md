@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Allow polling for locally served styles on the same port via direct path
+
 ## 0.9.4
 
 - Change hide UI keycode from `f` + `⌘` to `f` + `⌘` + `shift` to allow find on page
