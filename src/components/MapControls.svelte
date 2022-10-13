@@ -68,7 +68,7 @@
     });
     if (!$linkLocationsStore) {
       mapLocationsStore.update(value => {
-        return [...value, { ...value[value.length - 1], index: value.length }];
+        return [...value, { ...value[value.length - 1] }];
       });
     }
   };

@@ -95,10 +95,7 @@
 
   linkLocationsStore.subscribe(value => {
     if (!value && !$mapLocationsStore) {
-      const mapLocations = maps.map(m => ({
-        index: m.index,
-        location: mapState,
-      }));
+      const mapLocations = maps.map(() => mapState);
       mapLocationsStore.set(mapLocations);
     }
     if (value && $mapLocationsStore) {

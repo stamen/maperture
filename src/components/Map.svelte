@@ -20,8 +20,7 @@
   let MapComponent;
 
   // Only use this when locations are unlinked
-  $: localMapState =
-    $mapLocationsStore?.find(v => v.index === map.index)?.location ?? {};
+  $: localMapState = $mapLocationsStore?.[map.index] ?? {};
 
   let props = {};
 
@@ -60,14 +59,16 @@
   };
 
   const removeMap = () => {
-    const getReindexedArr = (arr, index) => {
-      return arr
-        .filter((_, i) => i !== index)
-        .map((item, i) => ({ ...item, index: i }));
-    };
-    mapsStore.update(current => getReindexedArr(current, map.index));
+    mapsStore.update(current =>
+      current
+        .filter((_, i) => i !== map.index)
+        .map((item, i) => ({ ...item, index: i }))
+    );
+
     if (!$linkLocationsStore) {
-      mapLocationsStore.update(current => getReindexedArr(current, map.index));
+      mapLocationsStore.update(current =>
+        current.filter((_, i) => i !== map.index)
+      );
     }
   };
 
@@ -91,12 +92,7 @@
     if (!$linkLocationsStore) {
       const { options } = event.detail;
       mapLocationsStore.update(value => {
-        return value.map(v => {
-          if (v.index === map.index) {
-            return { ...v, location: options };
-          }
-          return v;
-        });
+        return value.map((v, i) => (i === map.index ? options : v));
       });
     } else {
       dispatch('mapMove', event.detail);

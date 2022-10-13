@@ -62,10 +62,7 @@ function fromQueryString(qs) {
   }
   if (params.locations) {
     params.locations = JSON.stringify(
-      JSON.parse(params.locations).map(item => ({
-        ...item,
-        location: decodeMapParams(item.location),
-      }))
+      JSON.parse(params.locations).map(location => decodeMapParams(location))
     );
   }
   return params;
@@ -113,10 +110,7 @@ export function createHashString(mapSettings) {
   } else {
     updatedSettings = {
       locations: JSON.stringify(
-        newMapSettings.locations.map(item => ({
-          ...item,
-          location: encodeMapParams(item.location),
-        }))
+        newMapSettings.locations.map(location => encodeMapParams(location))
       ),
       ...updatedSettings,
     };
