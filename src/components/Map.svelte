@@ -1,15 +1,26 @@
 <script>
+  import { createEventDispatcher } from 'svelte';
   import GoogleMap from './GoogleMap.svelte';
   import GlMap from './GlMap.svelte';
   import MapLabel from './MapLabel.svelte';
-  import { maps as mapsStore } from '../stores';
+  import {
+    maps as mapsStore,
+    linkLocations as linkLocationsStore,
+    mapLocations as mapLocationsStore,
+  } from '../stores';
+  import { validateMapState } from '../map-state-utils';
   import isEqual from 'lodash.isequal';
 
   export let map;
   export let numberOfMaps;
   export let themeLabel = '';
 
+  const dispatch = createEventDispatcher();
+
   let MapComponent;
+
+  // Only use this when locations are unlinked
+  $: localMapState = $mapLocationsStore?.[map.index] ?? {};
 
   let props = {};
 
@@ -48,12 +59,44 @@
   };
 
   const removeMap = () => {
-    mapsStore.update(current => {
-      const next = current
-        .filter((m, i) => i !== map.index)
-        .map((item, i) => ({ ...item, index: i }));
-      return next;
-    });
+    mapsStore.update(current =>
+      current
+        .filter((_, i) => i !== map.index)
+        .map((item, i) => ({ ...item, index: i }))
+    );
+
+    if (!$linkLocationsStore) {
+      mapLocationsStore.update(current =>
+        current.filter((_, i) => i !== map.index)
+      );
+    }
+  };
+
+  const getMapStateProps = props => {
+    if ($linkLocationsStore) return props;
+    const { bearing, center, pitch, zoom, ...otherProps } = props;
+    const localOptions = {
+      bearing,
+      center,
+      pitch,
+      zoom,
+      ...localMapState,
+    };
+    let nextProps = { ...otherProps, ...localOptions };
+    nextProps = validateMapState(nextProps, [map]);
+
+    return nextProps;
+  };
+
+  const handleMapMove = event => {
+    if (!$linkLocationsStore) {
+      const { options } = event.detail;
+      mapLocationsStore.update(value => {
+        return value.map((v, i) => (i === map.index ? options : v));
+      });
+    } else {
+      dispatch('mapMove', event.detail);
+    }
   };
 
   $: {
@@ -63,6 +106,8 @@
   }
 
   $: setMapComponent(mapType);
+
+  $: mapStateProps = getMapStateProps($$restProps);
 </script>
 
 <div class="map">
@@ -70,8 +115,8 @@
     <svelte:component
       this={MapComponent}
       {...props}
-      {...$$restProps}
-      on:mapMove
+      {...mapStateProps}
+      on:mapMove={handleMapMove}
     />
   {/key}
   <!-- Use the number of maps and index to reset map on adding and removing maps -->
@@ -88,6 +133,8 @@
         name={map.name}
         onClose={removeMap}
         disableClose={numberOfMaps <= 1}
+        mapState={mapStateProps}
+        on:mapState={handleMapMove}
       />
     </div>
   {/key}

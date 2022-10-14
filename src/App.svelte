@@ -6,6 +6,8 @@
     maps as mapsStore,
     stylePresets as stylePresetsStore,
     config as configStore,
+    mapLocations as mapLocationsStore,
+    linkLocations as linkLocationsStore,
   } from './stores';
   import { makeConfig } from './make-config';
   import { loadPresetsFromUrl } from './presets-utils';
@@ -40,6 +42,10 @@
   // Set maps and presets initially using settings
   mapsStore.set(settings.maps.map((map, index) => ({ ...map, index })));
   stylePresetsStore.set(settings.stylePresets);
+  mapLocationsStore.set(settings?.locations ?? null);
+  if ($mapLocationsStore && $mapLocationsStore.length) {
+    linkLocationsStore.set(false);
+  }
 
   // Since maps comes from settings, only reset as needed
   let maps = [];
@@ -81,6 +87,20 @@
 
   mapsStore.subscribe(maps => {
     settings = { ...settings, maps };
+  });
+
+  mapLocationsStore.subscribe(locations => {
+    settings = { ...settings, locations };
+  });
+
+  linkLocationsStore.subscribe(value => {
+    if (!value && !$mapLocationsStore) {
+      const mapLocations = maps.map(() => mapState);
+      mapLocationsStore.set(mapLocations);
+    }
+    if (value && $mapLocationsStore) {
+      mapLocationsStore.set(null);
+    }
   });
 
   // Throttle writing to the hash since this can get invoked many times when

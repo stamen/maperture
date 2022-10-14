@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
+  import { linkLocations as linkLocationsStore } from '../stores';
   import { VIEW_MODES } from '../constants';
 
   export let mode;
@@ -27,6 +28,10 @@
       );
     }
 
+    if (!$linkLocationsStore) {
+      viewModes = ['mirror'];
+    }
+
     if (!viewModes.includes(selectedMode)) {
       selectedMode = viewModes[0];
     }
@@ -39,6 +44,11 @@
   $: updateViewModeFromMapCount(mapsNum);
 
   $: handleChange(selectedMode);
+
+  // Run on any change to linking locations
+  linkLocationsStore.subscribe(() => {
+    updateViewModeFromMapCount(mapsNum);
+  });
 </script>
 
 <div>

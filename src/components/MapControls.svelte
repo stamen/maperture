@@ -6,6 +6,8 @@
     faPlus,
     faExpand,
     faCompress,
+    faLink,
+    faLinkSlash,
   } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa/src/fa.svelte';
   import { createEventDispatcher } from 'svelte';
@@ -17,6 +19,8 @@
   import {
     maps as mapsStore,
     showDisplays as showDisplaysStore,
+    linkLocations as linkLocationsStore,
+    mapLocations as mapLocationsStore,
   } from '../stores';
 
   export let bearing;
@@ -62,6 +66,11 @@
       const next = current.concat([lastMap]);
       return next;
     });
+    if (!$linkLocationsStore) {
+      mapLocationsStore.update(value => {
+        return [...value, { ...value[value.length - 1] }];
+      });
+    }
   };
 
   const downloadScreenshot = () => {
@@ -84,13 +93,26 @@
   const toggleHideUi = () => {
     showDisplaysStore.update(value => !value);
   };
+
+  const toggleLinkLocations = () => {
+    linkLocationsStore.update(value => !value);
+  };
 </script>
 
 {#if $showDisplaysStore}
   <div class="map-controls">
     <div class="control-row">
       <div class="control-section">
-        <MapLocationControl on:mapState {...mapState} />
+        <div
+          class="link-button"
+          style="margin-right: 6px"
+          title={$linkLocationsStore ? 'Unlink locations' : 'Link locations'}
+          on:click={toggleLinkLocations}
+        >
+          <Fa icon={$linkLocationsStore ? faLink : faLinkSlash} />
+        </div>
+        {#if $linkLocationsStore}
+          <MapLocationControl on:mapState {...mapState} />{/if}
       </div>
 
       <div class="control-section">
@@ -233,5 +255,10 @@
     right: 12px;
     margin-top: -1em;
     pointer-events: all;
+  }
+
+  .link-button:hover {
+    color: #666;
+    cursor: pointer;
   }
 </style>
