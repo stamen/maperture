@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.10.0
+
 - Multi-location view
 - Allow polling for locally served styles on the same port via direct path
 
