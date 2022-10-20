@@ -30,7 +30,7 @@ const fetchUrl = async url => {
 
   const data = await response.json();
   // Special handling to error on Mapbox style url since it returns successfully with an error
-  if (urlIsMapbox && data.message) throw { status: 404, message: data.message };
+  if (urlIsMapbox && data.message) throw { message: data.message };
   return data;
 };
 
