@@ -21,7 +21,7 @@ const fetchUrl = async url => {
   try {
     response = await fetch(nextUrl);
   } catch (err) {
-    throw { status: err?.status, message: err.message };
+    throw { message: err.message };
   }
 
   if (!response.ok) {
@@ -29,9 +29,9 @@ const fetchUrl = async url => {
   }
 
   const data = await response.json();
-  // Special handling to error on Mapbox style url since it returns successfully with an error
+  // Special handling to error on Mapbox style url since it can return successfully with an error
   if (urlIsMapbox && data.message) {
-    throw { status: response.status, message: data.message };
+    throw { message: data.message };
   }
   return data;
 };
