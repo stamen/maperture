@@ -11,6 +11,8 @@
   let width;
   let height;
 
+  let highlightDifferences = false;
+
   $: sliderPosition = width / 2;
 
   const handleSliderMouseDown = () => (dragging = true);
@@ -19,6 +21,10 @@
   const handleSliderMouseMove = e => {
     if (!dragging || e.clientX === 0) return;
     sliderPosition = e.clientX - sliderWidth / 2;
+  };
+
+  const toggleHighlightDifferences = () => {
+    highlightDifferences = !highlightDifferences;
   };
 </script>
 
@@ -37,7 +43,15 @@
         ? `clip: rect(0px, ${width}px, ${height}px, ${sliderPosition}px)`
         : null}
     >
-      <Map {map} {...mapState} numberOfMaps={maps.length} on:mapMove />
+      <Map
+        {map}
+        {...mapState}
+        numberOfMaps={maps.length}
+        on:mapMove
+        on:toggleHighlightDifferences={toggleHighlightDifferences}
+        highlightDifferences={map.index === 1 && highlightDifferences}
+        showHighlightDifferences={map.index === 1}
+      />
     </div>
   {/each}
 

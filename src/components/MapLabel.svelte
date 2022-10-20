@@ -1,4 +1,5 @@
 <script>
+  import { createEventDispatcher } from 'svelte';
   import { faXmark } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa/src/fa.svelte';
   import MapStyleInputWrapper from './MapStyleInputWrapper.svelte';
@@ -12,10 +13,18 @@
   export let onClose;
   export let disableClose;
   export let mapState;
+  export let highlightDifferences = false;
+  export let showHighlightDifferences = false;
+
+  const dispatch = createEventDispatcher();
 
   let locationProps;
 
   $: ({ showBoundaries, showCollisions, ...locationProps } = mapState);
+
+  const toggleHighlightDifferences = () => {
+    dispatch('toggleHighlightDifferences');
+  };
 </script>
 
 {#if $showDisplaysStore}
@@ -23,7 +32,19 @@
     <button class="close-button" on:click={onClose} disabled={disableClose}>
       <Fa icon={faXmark} />
     </button>
-    <div class="map-name">{name}</div>
+    <div class="style-input-container">
+      <div class="map-name">{name}</div>
+      {#if showHighlightDifferences}
+        <label>
+          <input
+            type="checkbox"
+            bind:checked={highlightDifferences}
+            on:change={toggleHighlightDifferences}
+          />
+          <span>Diff</span>
+        </label>
+      {/if}
+    </div>
     <div class="options-container">
       <MapStyleInputWrapper {index} />
       {#if !$linkLocationsStore && Object.keys(locationProps).length}
@@ -48,6 +69,7 @@
   .map-name {
     font-size: 1.25em;
     font-weight: bold;
+    margin-right: 12px;
   }
 
   .close-button {
@@ -80,5 +102,10 @@
     margin-top: 12px;
     display: flex;
     justify-content: left;
+  }
+
+  .style-input-container {
+    display: flex;
+    align-items: center;
   }
 </style>
