@@ -79,8 +79,9 @@
         return { status: '200' };
       }
     } catch (err) {
-      error = new Error('Style was not found.');
-      return { status: '404' };
+      const { status, message } = err;
+      error = new Error(message);
+      return { status };
     }
   };
 

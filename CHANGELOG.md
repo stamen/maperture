@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Better error reporting on fetching bad styles
+
 ## 0.10.0
 
 - Multi-location view
