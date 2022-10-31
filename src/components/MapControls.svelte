@@ -101,6 +101,10 @@
   const toggleLinkLocations = () => {
     linkLocationsStore.update(value => !value);
   };
+
+  $: if (viewMode !== 'swipe' && showDiff) {
+    showDiff = false;
+  }
 </script>
 
 {#if $showDisplaysStore}
