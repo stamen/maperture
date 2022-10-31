@@ -15,7 +15,6 @@
   export let numberOfMaps;
   export let themeLabel = '';
   export let highlightDifferences = false;
-  export let showHighlightDifferences = false;
 
   const dispatch = createEventDispatcher();
 
@@ -141,10 +140,7 @@
         onClose={removeMap}
         disableClose={numberOfMaps <= 1}
         mapState={mapStateProps}
-        {highlightDifferences}
-        {showHighlightDifferences}
         on:mapState={handleMapMove}
-        on:toggleHighlightDifferences
       />
     </div>
   {/key}

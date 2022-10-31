@@ -28,8 +28,9 @@
   export let mapboxGlAccessToken;
   export let pitch;
   export let showCollisions;
-  export let viewMode;
   export let showBoundaries;
+  export let showDiff;
+  export let viewMode;
   export let zoom;
 
   const dispatch = createEventDispatcher();
@@ -42,7 +43,9 @@
   $: mapStateValidationMessages = getMapStateMessages(mapState, maps);
 
   // When showCollisions or showBoundaries changes, update map state
-  $: dispatch('mapState', { options: { showCollisions, showBoundaries } });
+  $: dispatch('mapState', {
+    options: { showCollisions, showBoundaries, showDiff },
+  });
 
   const handleGeocoderResult = ({ detail }) => {
     const { result } = detail;
@@ -133,14 +136,20 @@
 
       <div class="control-section">
         <div class="checkboxes">
-          <label>
-            <span>Label Collisions</span>
+          <label class="checkbox-container">
+            <span class="checkbox-label">Label Collisions</span>
             <input type="checkbox" bind:checked={showCollisions} />
           </label>
-          <label>
-            <span>Tile Boundaries</span>
+          <label class="checkbox-container">
+            <span class="checkbox-label">Tile Boundaries</span>
             <input type="checkbox" bind:checked={showBoundaries} />
           </label>
+          {#if viewMode === 'swipe'}
+            <label class="checkbox-container">
+              <span class="checkbox-label">Highlight differences</span>
+              <input type="checkbox" bind:checked={showDiff} />
+            </label>
+          {/if}
         </div>
       </div>
       <div class="control-section">
@@ -233,6 +242,17 @@
 
   .checkboxes {
     text-align: right;
+    font-size: 12px;
+  }
+
+  .checkbox-container {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+  }
+
+  .checkbox-label {
+    margin-right: 6px;
   }
 
   .validation-messages {

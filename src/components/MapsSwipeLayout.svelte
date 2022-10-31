@@ -11,8 +11,6 @@
   let width;
   let height;
 
-  let highlightDifferences = false;
-
   $: sliderPosition = width / 2;
 
   const handleSliderMouseDown = () => (dragging = true);
@@ -21,10 +19,6 @@
   const handleSliderMouseMove = e => {
     if (!dragging || e.clientX === 0) return;
     sliderPosition = e.clientX - sliderWidth / 2;
-  };
-
-  const toggleHighlightDifferences = () => {
-    highlightDifferences = !highlightDifferences;
   };
 </script>
 
@@ -48,9 +42,7 @@
         {...mapState}
         numberOfMaps={maps.length}
         on:mapMove
-        on:toggleHighlightDifferences={toggleHighlightDifferences}
-        highlightDifferences={map.index === 1 && highlightDifferences}
-        showHighlightDifferences={map.index === 1}
+        highlightDifferences={map.index === 1 && mapState?.showDiff}
       />
     </div>
   {/each}
