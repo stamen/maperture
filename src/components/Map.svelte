@@ -113,10 +113,7 @@
 
 <div class="map-container">
   {#key mapType}
-    <div
-      class="map"
-      style={highlightDifferences && 'filter: invert(1) opacity(0.5);'}
-    >
+    <div class="map" class:highlight-diff={highlightDifferences}>
       <svelte:component
         this={MapComponent}
         {...props}
@@ -180,5 +177,9 @@
 
   .map-label-responsive {
     position: fixed;
+  }
+
+  .highlight-diff {
+    filter: invert(1) opacity(0.5);
   }
 </style>
