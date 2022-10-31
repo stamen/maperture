@@ -16,6 +16,7 @@
   import MapLocationControl from './MapLocationControl.svelte';
   import ViewModeControl from './ViewModeControl.svelte';
   import MapLocationDropdown from './MapLocationDropdown.svelte';
+  import Tooltip from './Tooltip.svelte';
   import {
     maps as mapsStore,
     showDisplays as showDisplaysStore,
@@ -145,10 +146,12 @@
             <input type="checkbox" bind:checked={showBoundaries} />
           </label>
           {#if viewMode === 'swipe'}
-            <label class="checkbox-container">
-              <span class="checkbox-label">Highlight differences</span>
-              <input type="checkbox" bind:checked={showDiff} />
-            </label>
+            <Tooltip title="Highlights visual differences between two styles.">
+              <label class="checkbox-container">
+                <span class="checkbox-label">Highlight differences</span>
+                <input type="checkbox" bind:checked={showDiff} />
+              </label>
+            </Tooltip>
           {/if}
         </div>
       </div>
