@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.11.0
+
 - Add highlight diff checkbox in swipe mode
 
 ## 0.10.1
