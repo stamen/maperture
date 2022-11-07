@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Add highlight diff checkbox in swipe mode
+
 ## 0.10.1
 
 - Better error reporting on fetching bad styles

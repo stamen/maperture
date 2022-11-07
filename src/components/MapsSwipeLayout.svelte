@@ -37,7 +37,13 @@
         ? `clip: rect(0px, ${width}px, ${height}px, ${sliderPosition}px)`
         : null}
     >
-      <Map {map} {...mapState} numberOfMaps={maps.length} on:mapMove />
+      <Map
+        {map}
+        {...mapState}
+        numberOfMaps={maps.length}
+        on:mapMove
+        highlightDifferences={map.index === 1 && mapState?.showDiff}
+      />
     </div>
   {/each}
 

@@ -14,6 +14,7 @@
   export let map;
   export let numberOfMaps;
   export let themeLabel = '';
+  export let highlightDifferences = false;
 
   const dispatch = createEventDispatcher();
 
@@ -110,14 +111,16 @@
   $: mapStateProps = getMapStateProps($$restProps);
 </script>
 
-<div class="map">
+<div class="map-container">
   {#key mapType}
-    <svelte:component
-      this={MapComponent}
-      {...props}
-      {...mapStateProps}
-      on:mapMove={handleMapMove}
-    />
+    <div class="map" class:highlight-diff={highlightDifferences}>
+      <svelte:component
+        this={MapComponent}
+        {...props}
+        {...mapStateProps}
+        on:mapMove={handleMapMove}
+      />
+    </div>
   {/key}
   <!-- Use the number of maps and index to reset map on adding and removing maps -->
   <!-- We don't want to use the map id here or we'll unnecessarily remount the component for every new style -->
@@ -141,6 +144,12 @@
 </div>
 
 <style>
+  .map-container {
+    height: 100%;
+    width: 100%;
+    position: relative;
+  }
+
   .map {
     height: 100%;
     width: 100%;
@@ -168,5 +177,9 @@
 
   .map-label-responsive {
     position: fixed;
+  }
+
+  .highlight-diff {
+    filter: invert(1) opacity(0.5);
   }
 </style>
