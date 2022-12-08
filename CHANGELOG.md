@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Only add to browser history when updating non-location settings
+
 ## 0.11.0
 
 - Add highlight diff checkbox in swipe mode
