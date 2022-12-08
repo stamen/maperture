@@ -1,6 +1,6 @@
 import isEqual from 'lodash.isequal';
 import { round } from './math';
-import { linkLocations as linkLocationsStore, maps } from './stores';
+import { linkLocations as linkLocationsStore } from './stores';
 
 let linkedLocations;
 linkLocationsStore.subscribe(value => (linkedLocations = value));
