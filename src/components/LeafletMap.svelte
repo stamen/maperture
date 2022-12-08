@@ -14,15 +14,13 @@
 
   const dispatch = createEventDispatcher();
 
-  let style = {};
   let url;
 
   let map;
   let layer;
   let mapViewProps = {};
 
-  // We can set style (an object) here because mapStyle only changes when it needs to
-  $: ({ style, url } = mapStyle);
+  $: ({ url } = mapStyle);
 
   // We group map-view props here as they are useful in a few contexts
   $: mapViewProps = { center, zoom };
