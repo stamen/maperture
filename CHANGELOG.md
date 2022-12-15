@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Add support for Leaflet styles
+
 ## 0.11.0
 
 - Add highlight diff checkbox in swipe mode

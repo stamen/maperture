@@ -40,6 +40,7 @@
     "deep-equal": "^2.0.5",
     "hat": "^0.0.3",
     "html2canvas": "^1.4.1",
+    "leaflet": "^1.9.3",
     "lodash.isequal": "^4.5.0",
     "lodash.throttle": "^4.1.1",
     "mapbox-gl": "^1.13.1",

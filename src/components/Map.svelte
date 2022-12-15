@@ -2,6 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import GoogleMap from './GoogleMap.svelte';
   import GlMap from './GlMap.svelte';
+  import LeafletMap from './LeafletMap.svelte';
   import MapLabel from './MapLabel.svelte';
   import {
     maps as mapsStore,
@@ -47,6 +48,9 @@
     switch (mapType) {
       case 'google':
         MapComponent = GoogleMap;
+        break;
+      case 'leaflet':
+        MapComponent = LeafletMap;
         break;
       case 'maplibre-gl':
         MapComponent = GlMap;
