@@ -1,6 +1,7 @@
 ## Unreleased
 
 - Add support for Leaflet styles
+- Document gazetteer configuration
 
 ## 0.11.0
 
