@@ -134,7 +134,7 @@
     switch (dropdownType) {
       case 'preset': {
         const { type, url } = selected;
-        if (type === 'google') {
+        if (['google', 'leaflet'].includes(type)) {
           handleMapStyleUpdate(selected);
           break;
         }

@@ -30,14 +30,38 @@ Here, you can customize the following options:
 - `stylePresets`: A list of styles with urls to show in the dropdowns. Styles must have the following keys:
   - `id`: a unique id
   - `name`: a display name
-  - `type`: the type of map (`mapbox-gl`, `maplibre-gl`, `google`)
-  - `url`: (currently `mapbox-gl` and `maplibre-gl` only) the style's url
+  - `type`: the type of map (`mapbox-gl`, `maplibre-gl`, `google`, `leaflet`)
+  - `url`: (currently applies to `mapbox-gl`, `maplibre-gl`, and `leaflet` maps only) the style's url
   - `mapId`: (currently `google` only) the style's id
 - `branchPatterns`: An array of objects that specify how to build a URL to fetch a style living on a branch with the following keys:
   - `pattern`: a tokenized url pattern using `{branch}` and `{style}` tokens
   - `styles`: an array specifying specific styles you can view on the specified branch
-  - `type`: the type of map (`mapbox-gl`, `maplibre-gl`, `google`)
+  - `type`: the type of map (`mapbox-gl`, `maplibre-gl`, `google`, `leaflet`)
 - `stylePresetUrls`: An array of URLs pointing to additional presets. URLs must point to JSON arrays containing objects of the same shape as those in `stylePresets`.
+- `gazetteer`: An object that specifies the options available in the interface for navigating directly to specific geographic locations or changing other view options such as the pitch and zoom of the map. The object is a map of **option group names** to arrays of options. Each **option** is an object of names to map options to update.
+
+  See `defaultGazetteer` in `src/make-config.js` for the default gazetteer, but as an example you might use:
+
+  ```js
+  const gazetteer = {
+    Locations: [
+      {
+        'San Francisco, CA': {
+          zoom: 18,
+          center: { lng: -122.4193, lat: 37.7648 },
+        },
+      },
+      {
+        'Washington DC': {
+          zoom: 12,
+          center: { lng: -77.0435, lat: 38.9098 },
+        },
+      },
+    ],
+  };
+  ```
+
+  This creates an option group called **Locations** with two options (**San Francisco** and **Washington DC**). Selecting **San Francisco** or **Washington DC** zooms and centers the map view as specified.
 
 For more details on how these should look, see the example in [`src/config/local.example.js`](./src/config/local.example.js).
 

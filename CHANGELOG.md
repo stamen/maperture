@@ -1,6 +1,8 @@
 ## Unreleased
 
 - Only add to browser history when updating non-location settings
+- Add support for Leaflet styles
+- Document gazetteer configuration
 
 ## 0.11.0
 
