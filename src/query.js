@@ -1,3 +1,4 @@
+import isEqual from 'lodash.isequal';
 import { round } from './math';
 import { linkLocations as linkLocationsStore } from './stores';
 
@@ -16,12 +17,14 @@ const mapLocationKeys = ['bearing', 'center', 'pitch', 'zoom'];
 // Keys that should be decoded as numbers
 const numericKeys = ['bearing', 'lat', 'lng', 'pitch', 'zoom'];
 
+// These keys are excluded from settings either because of special handling or not being part of the hash
+const excludedKeysFromSettings = ['map', 'stylePresets'];
+
 function toQueryString(obj) {
   let qs = obj.map ? `map=${obj.map}` : '';
-  const excludedKeys = ['map', 'stylePresets'];
 
   Object.entries(obj).forEach(([key, value], i) => {
-    if (excludedKeys.includes(key)) return;
+    if (excludedKeysFromSettings.includes(key)) return;
     let encodedValue = encodeURIComponent(value);
     qs = `${qs}${qs !== '' ? '&' : ''}${key}=${encodedValue}`;
   });
@@ -78,7 +81,7 @@ const cleanSettings = stateObj => {
   return nextState;
 };
 
-export function createHashString(mapSettings) {
+export const createHashString = mapSettings => {
   let newMapSettings = JSON.parse(JSON.stringify(mapSettings));
   if (newMapSettings.maps?.length ?? 0) {
     const newMaps = newMapSettings.maps;
@@ -98,6 +101,19 @@ export function createHashString(mapSettings) {
 
   nonMapSettings = cleanSettings(nonMapSettings);
 
+  const currentHash = readHash(window.location.hash);
+
+  const requiresHistoryItem = Object.entries(nonMapSettings).some(kv => {
+    let [k, v] = kv;
+    if (excludedKeysFromSettings.includes(k)) return false;
+
+    try {
+      v = JSON.parse(v);
+    } catch (e) {}
+
+    return !isEqual(v, currentHash?.[k]);
+  });
+
   let updatedSettings = {
     ...nonMapSettings,
   };
@@ -116,11 +132,18 @@ export function createHashString(mapSettings) {
     };
   }
 
-  return toQueryString(updatedSettings);
-}
+  const nextHash = toQueryString(updatedSettings);
+
+  return { nextHash, requiresHistoryItem };
+};
 
 export function writeHash(mapSettings) {
-  window.location.hash = createHashString(mapSettings);
+  const { nextHash, requiresHistoryItem } = createHashString(mapSettings);
+  if (!requiresHistoryItem) {
+    window.location.replace(`#${nextHash}`);
+  } else {
+    window.location.hash = nextHash;
+  }
 }
 
 export function readHash(qs) {
