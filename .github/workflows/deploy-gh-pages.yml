@@ -19,7 +19,7 @@ jobs:
         run: |
           yarn install --network-concurrency 1
           cp public/config/gh-pages.js public/config/local.js
-          BASE_PATH=maperture yarn build
+          yarn build
       - name: deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
