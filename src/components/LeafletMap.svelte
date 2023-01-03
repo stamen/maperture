@@ -11,6 +11,7 @@
   export let zoom;
   export let mapStyle;
   export let numberOfMaps;
+  export let overrideLayer;
 
   const dispatch = createEventDispatcher();
 
@@ -36,16 +37,20 @@
     return !deepEqual(getCurrentMapView(), mapViewProps);
   };
 
-  const updateMapStyle = (map, url) => {
+  const updateMapStyle = (map, url, overrideLayer) => {
     if (!map) return;
     if (layer != null) {
       layer.remove();
     }
 
-    // TODO surface attribution
-    layer = L.tileLayer(url, {
-      detectRetina: true,
-    }).addTo(map);
+    if (overrideLayer) {
+      layer = overrideLayer;
+    } else {
+      // TODO surface attribution
+      layer = L.tileLayer(url, { detectRetina: true });
+    }
+
+    layer.addTo(map);
   };
 
   const updateMapFromProps = (map, mapView) => {
@@ -93,7 +98,7 @@
   // either
   $: updateMapFromProps(map, mapViewProps);
 
-  $: updateMapStyle(map, url);
+  $: updateMapStyle(map, url, overrideLayer);
 
   // Resize the map when adding more maps and changing container size
   $: {
