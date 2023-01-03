@@ -1,0 +1,19 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  check-clean-style:
+    name: Deploy to gh-pages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - id: deploy-to-gh-pages
+        shell: bash
+        run: |
+          yarn install --network-concurrency 1
+          yarn deploy
