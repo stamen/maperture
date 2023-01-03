@@ -140,7 +140,7 @@ export const createHashString = mapSettings => {
 export function writeHash(mapSettings) {
   const { nextHash, requiresHistoryItem } = createHashString(mapSettings);
   if (!requiresHistoryItem) {
-    window.location.replace(`#${nextHash}`);
+    window.location.replace(`${'process.env.BASE_PATH'}#${nextHash}`);
   } else {
     window.location.hash = nextHash;
   }
