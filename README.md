@@ -26,6 +26,7 @@ The compare tool allows you to use a local config file (`src/config/local.js`) t
 Here, you can customize the following options:
 
 - `mapboxGlAccessToken`: Your Mapbox GL token to allow style reads
+  - `mapboxBaseApiUrl`: (optional) Support for a Mapbox flavored style that is served from a different server other than `api.mapbox.com`, e.g., Mapbox Atlas.
 - `googleMapsAPIKey`: Your Google Maps API key to enable API usage
 - `stylePresets`: A list of styles with urls to show in the dropdowns. Styles must have the following keys:
   - `id`: a unique id
