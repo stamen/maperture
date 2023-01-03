@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Add a Github Action for pushing to gh-pages on pushes to main
+
 ## 0.12.0
 
 - Only add to browser history when updating non-location settings
