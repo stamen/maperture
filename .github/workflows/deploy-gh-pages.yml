@@ -13,4 +13,6 @@ jobs:
         shell: bash
         run: |
           yarn install --network-concurrency 1
+          cp public/config/gh-pages.js public/config/local.js
           yarn deploy
+          rm public/config/local.js
