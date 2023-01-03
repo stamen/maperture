@@ -5,8 +5,10 @@ jobs:
     name: Deploy to gh-pages
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: setup node
+        uses: actions/setup-node@v2
         with:
           node-version: '16'
       - name: install & build
@@ -15,3 +17,11 @@ jobs:
           yarn install --network-concurrency 1
           cp public/config/gh-pages.js public/config/local.js
           yarn build
+      - name: deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: public
+      - name: cleanup
+        shell: bash
+        run: |
+          rm public/config/local.js
