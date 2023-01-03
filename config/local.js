@@ -26,6 +26,14 @@ const stylePresets = [
     type: 'mapbox-gl',
     url: 'mapbox://styles/mapbox/dark-v10',
   },
+  {
+    id: 'openstreetmap',
+    name: 'OpenStreetMap',
+    type: 'leaflet',
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  },
 ];
 
 export { mapboxGlAccessToken, stylePresets };
