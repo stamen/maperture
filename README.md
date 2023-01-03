@@ -81,7 +81,7 @@ When setting up the app in your repo, you'll want to create a directory that can
 
 Your `index.html` file should look like the following:
 
-```html
+```
 <!DOCTYPE html>
 <html lang="en">
   <head>
