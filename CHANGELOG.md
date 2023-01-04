@@ -1,6 +1,7 @@
 ## Unreleased
 
 - Add a Github Action for pushing to gh-pages on pushes to main
+- Validate location input on submit
 
 ## 0.12.0
 
