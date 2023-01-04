@@ -52,6 +52,13 @@
     copied = false;
 
     const [zoom, lat, lng, pitch, bearing] = stateInput.split('/');
+
+    const error = [zoom, lat, lng, pitch, bearing]
+      .filter(Boolean)
+      .some(item => isNaN(Number(item)));
+
+    if (error) return;
+
     const options = { mapStateUpdateOrigin: 'controls' };
     if (zoom !== undefined) options.zoom = +zoom;
     if (lat !== undefined && lng !== undefined)
@@ -61,6 +68,7 @@
       };
     if (pitch !== undefined) options.pitch = +pitch;
     if (bearing !== undefined) options.bearing = +bearing;
+
     dispatch('mapState', { options });
   };
 
