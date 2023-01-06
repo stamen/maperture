@@ -16,6 +16,7 @@
   let map;
   let url;
   let branch;
+  let stylePresets = [];
   mapsStore.subscribe(maps => {
     map = maps.find(m => m.index === index);
     if (map) {
@@ -30,6 +31,7 @@
   let dropdownValues = [];
 
   let selectedValue;
+
   // Selects the appropriate value from dropdownValues and adds any necessary key
   const setSelectedValue = () => {
     let nextValue = dropdownValues.find(item => !!item.selected);
@@ -56,7 +58,7 @@
   };
 
   // Creates dropdown values and display options for the style dropdown linked by ids
-  const setInitialDropdownOptions = stylePresets => {
+  const setInitialDropdownOptions = () => {
     // This can be called multiple times on load, so always start fresh to prevent
     // accidental persistance of stale ids
     dropdownDisplayOptions = {};
@@ -133,15 +135,16 @@
     }));
   };
 
-  const setInitialSelectedOption = stylePresets => {
-    setInitialDropdownOptions(stylePresets);
+  const setInitialSelectedOption = () => {
+    setInitialDropdownOptions();
     setSelectedValue();
   };
 
   // We can't do this onMount because the stylePresets store will
   // update more than once if there's style preset URLs
   stylePresetsStore.subscribe(value => {
-    setInitialSelectedOption(value);
+    stylePresets = value;
+    setInitialSelectedOption();
   });
 
   const onSelectOption = e => {
@@ -164,6 +167,20 @@
       return current.map((m, i) => (i === index ? nextMap : m));
     });
   };
+
+  const updateSelectedFromProps = nextValue => {
+    // Normally selectedValue should change map, but via props it's reversed
+    // So that the bound selectedValue displays correctly
+    if (
+      nextValue.type !== selectedValue.type ||
+      nextValue.url !== selectedValue.url
+    ) {
+      // Reset all selected options
+      setInitialSelectedOption();
+    }
+  };
+
+  $: updateSelectedFromProps(map);
 </script>
 
 <div class="map-style-input">

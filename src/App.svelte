@@ -69,11 +69,12 @@
   // Detect changes in hash and update settings appropriately
   window.addEventListener('hashchange', () => {
     if (!writingHash && hashShouldUpdate()) {
-      settings = getSettings(config);
+      const nextSettings = getSettings(config);
+      settings = nextSettings;
 
       // Update mapsStore if necessary
       if (settings.maps.length) {
-        const newMaps = maps.map((map, index) => ({
+        const newMaps = settings.maps.map((map, index) => ({
           ...map,
           index,
         }));

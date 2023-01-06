@@ -41,6 +41,14 @@
     dispatch('viewMode', { mode });
   };
 
+  const updateSelectedModeFromProps = nextMode => {
+    // Normally selectedMode should change mode, but via props it's reversed
+    // So that the bound selectedMode displays correctly
+    if (nextMode !== selectedMode) {
+      selectedMode = nextMode;
+    }
+  };
+
   $: updateViewModeFromMapCount(mapsNum);
 
   $: handleChange(selectedMode);
@@ -49,6 +57,9 @@
   linkLocationsStore.subscribe(() => {
     updateViewModeFromMapCount(mapsNum);
   });
+
+  // Trigger only on incoming mode prop
+  $: updateSelectedModeFromProps(mode);
 </script>
 
 <div>
