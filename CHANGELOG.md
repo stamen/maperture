@@ -1,6 +1,7 @@
 ## Unreleased
 
 - Add a Github Action for pushing to gh-pages on pushes to main
+- Update app UI on browser history changes
 
 ## 0.12.0
 
