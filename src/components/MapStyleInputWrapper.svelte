@@ -168,7 +168,8 @@
     });
   };
 
-  const updateSelectedFromProps = nextValue => {
+  const updateSelectedMapFromProps = nextValue => {
+    if (!nextValue) return;
     // Normally selectedValue should change map, but via props it's reversed
     // So that the bound selectedValue displays correctly
     if (
@@ -180,7 +181,7 @@
     }
   };
 
-  $: updateSelectedFromProps(map);
+  $: updateSelectedMapFromProps(map);
 </script>
 
 <div class="map-style-input">

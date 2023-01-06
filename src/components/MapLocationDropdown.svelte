@@ -68,10 +68,9 @@
   };
 
   const checkSelectedValue = props => {
-    if (!selected) return;
     const nextSelected = findSelectedFromProps(props);
     if (selected !== nextSelected) {
-      selected = '';
+      selected = nextSelected ?? '';
     }
   };
 
