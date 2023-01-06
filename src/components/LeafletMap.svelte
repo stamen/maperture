@@ -5,7 +5,6 @@
   import * as L from 'leaflet';
   import 'leaflet/dist/leaflet.css';
 
-  export let index;
   export let id;
   export let center;
   export let zoom;
@@ -39,9 +38,8 @@
 
   const updateMapStyle = (map, url, overrideLayer) => {
     if (!map) return;
-    if (layer != null) {
-      layer.remove();
-    }
+
+    if (layer) layer.remove();
 
     if (overrideLayer) {
       layer = overrideLayer;

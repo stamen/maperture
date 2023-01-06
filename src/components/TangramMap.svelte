@@ -2,7 +2,6 @@
   import { leafletLayer } from 'tangram';
   import LeafletMap from './LeafletMap.svelte';
 
-  export let index;
   export let id;
   export let center;
   export let zoom;
@@ -18,10 +17,9 @@
 
   const getLayer = url => {
     if (overrideLayer != null && overrideLayer.options.scene === url) {
-      return;
+      return overrideLayer;
     }
 
-    // TODO this doesn't quite work!
     return leafletLayer({
       scene: url,
       webGLContextOptions: {
@@ -31,4 +29,12 @@
   };
 </script>
 
-<LeafletMap {index} {id} {center} {mapStyle} {numberOfMaps} {overrideLayer} />
+<LeafletMap
+  {id}
+  {center}
+  {zoom}
+  {mapStyle}
+  {numberOfMaps}
+  {overrideLayer}
+  on:mapMove
+/>
