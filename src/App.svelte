@@ -37,7 +37,7 @@
   let writingHash = false;
 
   const hashShouldUpdate = () =>
-    location.hash.slice(1) !== createHashString(settings);
+    location.hash.slice(1) !== createHashString(settings)?.nextHash;
 
   // Set maps and presets initially using settings
   mapsStore.set(settings.maps.map((map, index) => ({ ...map, index })));
