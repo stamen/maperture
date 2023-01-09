@@ -27,6 +27,11 @@
       await import('mapbox-gl/dist/mapbox-gl.css');
       renderer = await import('mapbox-gl');
       renderer.accessToken = $configStore.mapboxGlAccessToken;
+
+      // Set if your Mapbox flavored style uses a different server than `api.mapbox.com`.
+      if ($configStore.mapboxBaseApiUrl) {
+        renderer.baseApiUrl = $configStore.mapboxBaseApiUrl;
+      }
     }
   };
 
