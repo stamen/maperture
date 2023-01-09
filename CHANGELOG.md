@@ -2,6 +2,7 @@
 
 - Add a Github Action for pushing to gh-pages on pushes to main
 - Add support for Tangram styles
+- Remove border on screenshots
 
 ## 0.12.0
 
