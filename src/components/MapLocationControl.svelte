@@ -47,11 +47,51 @@
     changingState = false;
   };
 
+  const validateInput = ({ zoom, lat, lng, pitch, bearing }) => {
+    let isValid = true;
+
+    const isNumber = [zoom, lat, lng, pitch, bearing]
+      .filter(Boolean)
+      .every(item => !isNaN(Number(item)));
+
+    if (!isNumber) {
+      isValid = false;
+    }
+
+    // zoom
+    if (+zoom < 0 || +zoom > 24) {
+      isValid = false;
+    }
+    // lat
+    if (+lat < -90 || +lat > 90) {
+      isValid = false;
+    }
+    // lng
+    if (+lng < -180 || +lng > 180) {
+      isValid = false;
+    }
+    // pitch
+    if (pitch !== undefined && (+pitch < 0 || +pitch > 85)) {
+      isValid = false;
+    }
+    // bearing
+    if (bearing !== undefined && (+bearing < 0 || +bearing > 360)) {
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
   const handleChangeEnd = () => {
     changingState = false;
     copied = false;
 
     const [zoom, lat, lng, pitch, bearing] = stateInput.split('/');
+
+    const isValid = validateInput({ zoom, lat, lng, pitch, bearing });
+
+    if (!isValid) return;
+
     const options = { mapStateUpdateOrigin: 'controls' };
     if (zoom !== undefined) options.zoom = +zoom;
     if (lat !== undefined && lng !== undefined)
@@ -61,6 +101,7 @@
       };
     if (pitch !== undefined) options.pitch = +pitch;
     if (bearing !== undefined) options.bearing = +bearing;
+
     dispatch('mapState', { options });
   };
 
