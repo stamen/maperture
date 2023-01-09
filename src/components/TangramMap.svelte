@@ -2,11 +2,7 @@
   import { leafletLayer } from 'tangram';
   import LeafletMap from './LeafletMap.svelte';
 
-  export let id;
-  export let center;
-  export let zoom;
   export let mapStyle;
-  export let numberOfMaps;
 
   let overrideLayer;
   let url;
@@ -29,12 +25,4 @@
   };
 </script>
 
-<LeafletMap
-  {id}
-  {center}
-  {zoom}
-  {mapStyle}
-  {numberOfMaps}
-  {overrideLayer}
-  on:mapMove
-/>
+<LeafletMap {mapStyle} {overrideLayer} {...$$restProps} on:mapMove />
