@@ -5,12 +5,12 @@
   import * as L from 'leaflet';
   import 'leaflet/dist/leaflet.css';
 
-  export let index;
   export let id;
   export let center;
   export let zoom;
   export let mapStyle;
   export let numberOfMaps;
+  export let overrideLayer;
 
   const dispatch = createEventDispatcher();
 
@@ -36,16 +36,19 @@
     return !deepEqual(getCurrentMapView(), mapViewProps);
   };
 
-  const updateMapStyle = (map, url) => {
+  const updateMapStyle = (map, url, overrideLayer) => {
     if (!map) return;
-    if (layer != null) {
-      layer.remove();
+
+    if (layer) layer.remove();
+
+    if (overrideLayer) {
+      layer = overrideLayer;
+    } else {
+      // TODO surface attribution
+      layer = L.tileLayer(url, { detectRetina: true });
     }
 
-    // TODO surface attribution
-    layer = L.tileLayer(url, {
-      detectRetina: true,
-    }).addTo(map);
+    layer.addTo(map);
   };
 
   const updateMapFromProps = (map, mapView) => {
@@ -93,7 +96,7 @@
   // either
   $: updateMapFromProps(map, mapViewProps);
 
-  $: updateMapStyle(map, url);
+  $: updateMapStyle(map, url, overrideLayer);
 
   // Resize the map when adding more maps and changing container size
   $: {

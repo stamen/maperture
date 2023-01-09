@@ -3,6 +3,7 @@
   import GoogleMap from './GoogleMap.svelte';
   import GlMap from './GlMap.svelte';
   import LeafletMap from './LeafletMap.svelte';
+  import TangramMap from './TangramMap.svelte';
   import MapLabel from './MapLabel.svelte';
   import {
     maps as mapsStore,
@@ -51,6 +52,9 @@
         break;
       case 'leaflet':
         MapComponent = LeafletMap;
+        break;
+      case 'tangram':
+        MapComponent = TangramMap;
         break;
       case 'maplibre-gl':
         MapComponent = GlMap;
