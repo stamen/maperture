@@ -35,7 +35,7 @@
     {#each sections as maps}
       <div class="section">
         {#each maps as map}
-          <div class="map-container">
+          <div class="map-container map-container-border">
             <Map {map} {...mapState} {numberOfMaps} on:mapMove />
           </div>
         {/each}
@@ -83,6 +83,9 @@
 
   .map-container {
     flex-grow: 1;
+  }
+
+  .map-container-border {
     border: 1px solid #666;
   }
 </style>
