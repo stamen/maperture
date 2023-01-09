@@ -57,9 +57,9 @@
     if (selected.dropdownType === 'branch') {
       value.branch = textInput;
     }
-    if (mapObj.style) {
-      value.id = mapObj.style.id;
-      value.name = mapObj.style.name;
+    if (mapObj) {
+      value.id = mapObj?.style?.id ?? mapObj.id;
+      value.name = mapObj?.style?.name ?? mapObj.name;
     }
 
     dispatch('updateMapStore', { value });

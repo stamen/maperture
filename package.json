@@ -46,7 +46,8 @@
     "mapbox-gl": "^1.13.1",
     "maplibre-gl": "^2.4.0",
     "sirv-cli": "^1.0.0",
-    "svelte-fa": "^2.4.0"
+    "svelte-fa": "^2.4.0",
+    "tangram": "^0.21.1"
   },
   "main": "dist/bundle.js"
 }
