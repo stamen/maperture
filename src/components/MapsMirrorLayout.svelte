@@ -88,4 +88,8 @@
   .map-container-border {
     border: 1px solid #666;
   }
+
+  .map-container-border-transparent {
+    border: 1px solid transparent;
+  }
 </style>

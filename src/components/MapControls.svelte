@@ -77,10 +77,6 @@
     }
   };
 
-  async function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
   const downloadScreenshot = async () => {
     const mapsView = document.getElementsByClassName('maps')[0];
 
@@ -92,8 +88,8 @@
       ];
       adjustedEls.forEach(el => {
         el.classList.remove('map-container-border');
+        el.classList.add('map-container-border-transparent');
       });
-      await sleep(25);
     }
 
     const ignoreElements = el => {
@@ -112,6 +108,7 @@
     // Cleanup for mirror mode border
     if (viewMode === 'mirror') {
       adjustedEls.forEach(el => {
+        el.classList.remove('map-container-border-transparent');
         el.classList.add('map-container-border');
       });
     }
