@@ -6,6 +6,7 @@
 - Validate location input on submit
 - Add support for Tangram styles
 - Switch out `BASE_PATH` for `window.location.pathname` in url updates
+- Remove border on screenshots
 
 ## 0.12.0
 

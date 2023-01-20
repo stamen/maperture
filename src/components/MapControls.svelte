@@ -77,8 +77,20 @@
     }
   };
 
-  const downloadScreenshot = () => {
+  const downloadScreenshot = async () => {
     const mapsView = document.getElementsByClassName('maps')[0];
+
+    let adjustedEls = [];
+    // Remove border on mirror mode screenshot
+    if (viewMode === 'mirror') {
+      adjustedEls = [
+        ...document.getElementsByClassName('map-container-border'),
+      ];
+      adjustedEls.forEach(el => {
+        el.classList.remove('map-container-border');
+        el.classList.add('map-container-border-transparent');
+      });
+    }
 
     const ignoreElements = el => {
       if (el.className && typeof el.className === 'string') {
@@ -92,6 +104,14 @@
         navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
       );
     });
+
+    // Cleanup for mirror mode border
+    if (viewMode === 'mirror') {
+      adjustedEls.forEach(el => {
+        el.classList.remove('map-container-border-transparent');
+        el.classList.add('map-container-border');
+      });
+    }
   };
 
   const toggleHideUi = () => {
