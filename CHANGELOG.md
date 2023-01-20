@@ -5,6 +5,7 @@
 - Update app UI on browser history changes
 - Validate location input on submit
 - Add support for Tangram styles
+- Remove border on screenshots
 
 ## 0.12.0
 
