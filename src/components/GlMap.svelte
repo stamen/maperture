@@ -241,4 +241,8 @@
   :global(.popup-property-value) {
     float: right;
   }
+
+  :global(.mapboxgl-control-container .mapboxgl-ctrl-logo) {
+    display: none;
+  }
 </style>
