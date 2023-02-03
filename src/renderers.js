@@ -12,4 +12,4 @@ const typeToRenderers = {
   'maplibre-gl': glVectorRenderers,
 };
 
-export const getRenderers = map => typeToRenderers[map.type];
+export const getRenderers = mapType => typeToRenderers[mapType];
