@@ -68,7 +68,6 @@
 
   // Set renderer options based on the selected map's type
   const setRendererOptions = () => {
-    if (!selectedValue) return;
     rendererOptions = getRenderers(selectedValue.type);
     setRendererValue();
   };
