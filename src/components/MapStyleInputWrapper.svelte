@@ -70,6 +70,7 @@
   const setRendererOptions = () => {
     if (!selectedValue) return;
     rendererOptions = getRenderers(selectedValue.type);
+    setRendererValue();
   };
 
   // Set renderer value based on the selected map's renderer or type if no
@@ -178,7 +179,6 @@
     stylePresets = value;
     setInitialSelectedOption();
     setRendererOptions();
-    setRendererValue();
   });
 
   const onSelectOption = e => {
@@ -191,7 +191,6 @@
 
     setSelectedValue();
     setRendererOptions();
-    setRendererValue();
   };
 
   // Update map renderer in store
