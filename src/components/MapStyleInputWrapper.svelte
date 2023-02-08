@@ -80,7 +80,9 @@
     const validRenderers = getRenderers(selectedValue.type).map(r => r.value);
 
     if (!updatedRenderer || !validRenderers.includes(updatedRenderer)) {
-      updatedRenderer = validRenderers[0];
+      updatedRenderer = validRenderers.includes(selectedValue.type)
+        ? selectedValue.type
+        : validRenderers[0];
     }
 
     rendererValue = updatedRenderer;
