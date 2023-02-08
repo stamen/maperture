@@ -68,7 +68,7 @@
 
   // Set renderer options based on the selected map's type
   const setRendererOptions = () => {
-    rendererOptions = getRenderers(selectedValue.type);
+    rendererOptions = getRenderers(selectedValue);
     setRendererValue();
   };
 
@@ -77,7 +77,7 @@
   const setRendererValue = () => {
     let updatedRenderer = renderer;
 
-    const validRenderers = getRenderers(selectedValue.type).map(r => r.value);
+    const validRenderers = getRenderers(selectedValue).map(r => r.value);
 
     if (!updatedRenderer || !validRenderers.includes(updatedRenderer)) {
       updatedRenderer = validRenderers.includes(selectedValue.type)

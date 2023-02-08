@@ -1,5 +1,9 @@
+import { isMapboxUrl } from './mapbox-urls';
+
+const mapboxGlOption = { name: 'Mapbox GL JS', value: 'mapbox-gl' };
+
 const glVectorRenderers = [
-  { name: 'Mapbox GL JS', value: 'mapbox-gl' },
+  mapboxGlOption,
   { name: 'Maplibre GL JS', value: 'maplibre-gl' },
 ];
 
@@ -12,4 +16,10 @@ const typeToRenderers = {
   'maplibre-gl': glVectorRenderers,
 };
 
-export const getRenderers = mapType => typeToRenderers[mapType];
+export const getRenderers = map => {
+  // If using the mapbox:// protocol, force mapbox-gl
+  if (map.type === 'mapbox-gl' && map.url && isMapboxUrl(map.url)) {
+    return [mapboxGlOption];
+  }
+  return typeToRenderers[map.type];
+};
