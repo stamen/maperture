@@ -7,6 +7,8 @@
 
   export let dropdownDisplayOptions;
   export let dropdownValue;
+  export let rendererOptions;
+  export let rendererValue;
   export let activeUrl;
 
   let selected;
@@ -93,6 +95,7 @@
       // Call poll after setting selected.url on success
       poll(url);
     }
+    dispatch('setUrl', { value: url });
   };
 
   // Submit URL from a custom or branch style
@@ -225,11 +228,27 @@
       {error}
     </div>
   {/if}
+
+  <div class="renderer-control">
+    <span>Rendered with</span>
+    <select
+      on:change={e => dispatch('selectRenderer', { value: e.target.value })}
+    >
+      {#each rendererOptions as option}
+        <option value={option.value} selected={option.value === rendererValue}>
+          {option.name}
+        </option>
+      {/each}
+    </select>
+  </div>
 </div>
 
 <style>
   .map-style-input {
     margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
   }
 
   .custom-input {
@@ -249,5 +268,16 @@
     border-radius: 4px;
     padding: 6px;
     color: white;
+  }
+
+  .renderer-control {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+
+  .renderer-control select {
+    flex-grow: 1;
   }
 </style>

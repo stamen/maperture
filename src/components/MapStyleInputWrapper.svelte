@@ -6,6 +6,7 @@
     config as configStore,
   } from '../stores';
   import { createBranchUrl } from '../branch-utils';
+  import { getRenderers } from '../renderers';
   import MapStyleInput from './MapStyleInput.svelte';
 
   export let index;
@@ -14,13 +15,17 @@
   configStore.subscribe(value => ({ branchPatterns } = value));
 
   let map;
-  let url;
   let branch;
+  let renderer;
+  let type;
+  let url;
   let stylePresets = [];
   mapsStore.subscribe(maps => {
     map = maps.find(m => m.index === index);
     if (map) {
       branch = map.branch;
+      renderer = map.renderer;
+      type = map.type;
       url = map.url;
     }
   });
@@ -32,9 +37,13 @@
 
   let selectedValue;
 
+  let rendererOptions = [];
+  let rendererValue;
+
   // Selects the appropriate value from dropdownValues and adds any necessary key
   const setSelectedValue = () => {
     let nextValue = dropdownValues.find(item => !!item.selected);
+    if (!nextValue) return;
 
     // Don't mutate the dropdown values
     nextValue = JSON.parse(JSON.stringify(nextValue));
@@ -57,6 +66,28 @@
     selectedValue = nextValue;
   };
 
+  // Set renderer options based on the selected map's type
+  const setRendererOptions = () => {
+    rendererOptions = getRenderers(selectedValue);
+    setRendererValue();
+  };
+
+  // Set renderer value based on the selected map's renderer or type if no
+  // renderer is set
+  const setRendererValue = () => {
+    let updatedRenderer = renderer;
+
+    const validRenderers = getRenderers(selectedValue).map(r => r.value);
+
+    if (!updatedRenderer || !validRenderers.includes(updatedRenderer)) {
+      updatedRenderer = validRenderers.includes(selectedValue.type)
+        ? selectedValue.type
+        : validRenderers[0];
+    }
+
+    rendererValue = updatedRenderer;
+  };
+
   // Creates dropdown values and display options for the style dropdown linked by ids
   const setInitialDropdownOptions = () => {
     // This can be called multiple times on load, so always start fresh to prevent
@@ -69,7 +100,7 @@
       const stylePresetValues = stylePresets.map(item => ({
         ...item,
         dropdownType: 'preset',
-        selected: url === item?.url && map.type === item?.type,
+        selected: url === item?.url && type === item?.type,
         dropdownId: hat(),
       }));
 
@@ -94,7 +125,7 @@
               selected: !!(
                 branch &&
                 createBranchUrl(pattern.pattern, branch, s) === url &&
-                pattern.type === map.type
+                pattern.type === type
               ),
               pattern: pattern.pattern,
               dropdownId: hat(),
@@ -123,6 +154,7 @@
         dropdownType: 'custom',
         selected: !hasSelectedOption,
         type: 'mapbox-gl',
+        renderer: 'mapbox-gl',
         dropdownId: hat(),
       },
     ];
@@ -145,7 +177,14 @@
   stylePresetsStore.subscribe(value => {
     stylePresets = value;
     setInitialSelectedOption();
+    setRendererOptions();
   });
+
+  // On fetching a custom URL, update renderer options
+  const onSetUrl = e => {
+    selectedValue.url = e.detail.value;
+    setRendererOptions();
+  };
 
   const onSelectOption = e => {
     const { dropdownId } = e.detail;
@@ -156,12 +195,24 @@
     }));
 
     setSelectedValue();
+    setRendererOptions();
+  };
+
+  // Update map renderer in store
+  const updateMapRenderer = renderer => {
+    mapsStore.update(current => {
+      return current.map((m, i) => (i !== index ? m : { ...m, renderer }));
+    });
+  };
+
+  const onSelectRenderer = e => {
+    rendererValue = e.detail.value;
   };
 
   // Handle updating the map store
   const onUpdateMapStore = e => {
     const { value } = e.detail;
-    const nextMap = { ...value, index };
+    const nextMap = { ...value, index, renderer };
     delete nextMap.dropdownId;
     mapsStore.update(current => {
       return current.map((m, i) => (i === index ? nextMap : m));
@@ -182,22 +233,28 @@
   };
 
   $: updateSelectedMapFromProps(map);
+
+  $: updateMapRenderer(rendererValue);
 </script>
 
-<div class="map-style-input">
+<div class="map-style-input-wrapper">
   {#if dropdownValues}
     <MapStyleInput
       dropdownValue={selectedValue}
       {dropdownDisplayOptions}
+      {rendererOptions}
+      {rendererValue}
       activeUrl={url}
+      on:setUrl={onSetUrl}
       on:selectOption={onSelectOption}
+      on:selectRenderer={onSelectRenderer}
       on:updateMapStore={onUpdateMapStore}
     />
   {/if}
 </div>
 
 <style>
-  .map-style-input {
+  .map-style-input-wrapper {
     margin-top: 6px;
   }
 </style>

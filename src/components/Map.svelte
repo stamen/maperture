@@ -35,7 +35,7 @@
     stylesheet = map?.style;
   }
 
-  $: mapType = map.type;
+  $: mapRenderer = map.renderer;
 
   const setProps = (id, num) => {
     props = {
@@ -45,8 +45,8 @@
     };
   };
 
-  const setMapComponent = mapType => {
-    switch (mapType) {
+  const setMapComponent = mapRenderer => {
+    switch (mapRenderer) {
       case 'google':
         MapComponent = GoogleMap;
         break;
@@ -58,12 +58,12 @@
         break;
       case 'maplibre-gl':
         MapComponent = GlMap;
-        props.mapType = mapType;
+        props.mapRenderer = mapRenderer;
         break;
       case 'mapbox-gl':
       default:
         MapComponent = GlMap;
-        props.mapType = mapType;
+        props.mapRenderer = mapRenderer;
     }
   };
 
@@ -114,13 +114,13 @@
     setProps(mapId, numberOfMaps);
   }
 
-  $: setMapComponent(mapType);
+  $: setMapComponent(mapRenderer);
 
   $: mapStateProps = getMapStateProps($$restProps);
 </script>
 
 <div class="map-container">
-  {#key mapType}
+  {#key mapRenderer}
     <div class="map" class:highlight-diff={highlightDifferences}>
       <svelte:component
         this={MapComponent}

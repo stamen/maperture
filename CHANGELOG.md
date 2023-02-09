@@ -7,6 +7,7 @@
 - Add support for Tangram styles
 - Switch out `BASE_PATH` for `window.location.pathname` in url updates
 - Remove border on screenshots
+- Add renderer dropdown for styles that support mulitple renderers
 
 ## 0.12.0
 

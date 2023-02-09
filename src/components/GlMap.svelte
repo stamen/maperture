@@ -14,13 +14,13 @@
   export let mapStyle;
   export let numberOfMaps;
 
-  export let mapType;
+  export let mapRenderer;
 
   let renderer;
 
   // Mapbox and MapLibre share a Map component since they are so similar and utilize the same methods
   const importRenderer = async () => {
-    if (mapType === 'maplibre-gl') {
+    if (mapRenderer === 'maplibre-gl') {
       await import('maplibre-gl/dist/maplibre-gl.css');
       renderer = await import('maplibre-gl');
     } else {
@@ -240,5 +240,9 @@
 
   :global(.popup-property-value) {
     float: right;
+  }
+
+  :global(.mapboxgl-control-container .mapboxgl-ctrl-logo) {
+    display: none;
   }
 </style>
