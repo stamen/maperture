@@ -95,6 +95,7 @@
       // Call poll after setting selected.url on success
       poll(url);
     }
+    dispatch('setUrl', { value: url });
   };
 
   // Submit URL from a custom or branch style

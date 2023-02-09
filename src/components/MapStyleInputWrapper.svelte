@@ -180,6 +180,12 @@
     setRendererOptions();
   });
 
+  // On fetching a custom URL, update renderer options
+  const onSetUrl = e => {
+    selectedValue.url = e.detail.value;
+    setRendererOptions();
+  };
+
   const onSelectOption = e => {
     const { dropdownId } = e.detail;
     // Set selected property on value
@@ -239,6 +245,7 @@
       {rendererOptions}
       {rendererValue}
       activeUrl={url}
+      on:setUrl={onSetUrl}
       on:selectOption={onSelectOption}
       on:selectRenderer={onSelectRenderer}
       on:updateMapStore={onUpdateMapStore}
