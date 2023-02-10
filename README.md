@@ -11,7 +11,7 @@ View a [demo here](https://stamen.github.io/maperture/).
 ## Get started
 
 1. Install the dependencies: `yarn install`
-2. Make a local config module: `cp src/config/local.example.js src/config/local.js` and edit the config file as appropriate
+2. Make a local config module: `cp public/config/local.example.js src/config/local.js` and edit the config file as appropriate
 3. Start the dev server: `yarn dev`
 
 ## Building and running in production mode
@@ -64,7 +64,7 @@ Here, you can customize the following options:
 
   This creates an option group called **Locations** with two options (**San Francisco** and **Washington DC**). Selecting **San Francisco** or **Washington DC** zooms and centers the map view as specified.
 
-For more details on how these should look, see the example in [`src/config/local.example.js`](./src/config/local.example.js).
+For more details on how these should look, see the example in [`public/config/local.example.js`](./public/config/local.example.js).
 
 ## Setting up the app in your repo
 
