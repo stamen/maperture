@@ -62,6 +62,7 @@
   .maps.dragging .map-container {
     /* Avoid selecting text in maps / map label sections when dragging */
     user-select: none;
+    -webkit-user-select: none;
   }
 
   .maps .map-container {
