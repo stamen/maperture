@@ -21,7 +21,7 @@ View a [demo here](https://stamen.github.io/maperture/).
 
 ## Local config
 
-The compare tool allows you to use a local config file (`src/config/local.js`) to customize for your use case.
+The compare tool allows you to use a local config file (`public/config/local.js`) to customize for your use case.
 
 Here, you can customize the following options:
 
@@ -64,7 +64,7 @@ Here, you can customize the following options:
 
   This creates an option group called **Locations** with two options (**San Francisco** and **Washington DC**). Selecting **San Francisco** or **Washington DC** zooms and centers the map view as specified.
 
-For more details on how these should look, see the example in [`src/config/local.example.js`](./src/config/local.example.js).
+For more details on how these should look, see the example in [`public/config/local.example.js`](./public/config/local.example.js).
 
 ## Setting up the app in your repo
 
