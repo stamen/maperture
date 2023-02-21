@@ -148,11 +148,13 @@
       </div>
 
       <div class="control-section">
-        <Geocoder
-          accessToken={mapboxGlAccessToken}
-          geocoder={null}
-          on:result={handleGeocoderResult}
-        />
+        {#if mapboxGlAccessToken}
+          <Geocoder
+            accessToken={mapboxGlAccessToken}
+            geocoder={null}
+            on:result={handleGeocoderResult}
+          />
+        {/if}
       </div>
 
       <div class="control-section">
