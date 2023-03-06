@@ -123,6 +123,7 @@
   };
 
   function onKeyDown(e) {
+    if (e.target.tagName.toLowerCase() === 'input') return;
     if (e.key === 'c' || e.key === 'C') showCollisions = !showCollisions;
     if (e.key === 't' || e.key === 'T') showBoundaries = !showBoundaries;
     if (e.key === 'd' || e.key === 'D') showDiff = !showDiff;
@@ -255,7 +256,7 @@
   </button>
 {/if}
 
-<svelte:window on:keydown|preventDefault={onKeyDown} />
+<svelte:window on:keydown={onKeyDown} />
 
 <style>
   .map-controls {
