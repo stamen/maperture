@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.13.0
+
 - Add a Github Action for pushing to gh-pages on pushes to main
 - Add support for Mapbox Atlas.
 - Update app UI on browser history changes
@@ -8,6 +10,8 @@
 - Switch out `BASE_PATH` for `window.location.pathname` in url updates
 - Remove border on screenshots
 - Add renderer dropdown for styles that support mulitple renderers
+- Don't load geocoder without Mapbox token
+- Add hotkeys for map controls
 
 ## 0.12.0
 
