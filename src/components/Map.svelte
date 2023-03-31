@@ -122,12 +122,14 @@
 <div class="map-container">
   {#key mapRenderer}
     <div class="map" class:highlight-diff={highlightDifferences}>
-      <svelte:component
-        this={MapComponent}
-        {...props}
-        {...mapStateProps}
-        on:mapMove={handleMapMove}
-      />
+      {#if map.style}
+        <svelte:component
+          this={MapComponent}
+          {...props}
+          {...mapStateProps}
+          on:mapMove={handleMapMove}
+        />
+      {/if}
     </div>
   {/key}
   <!-- Use the number of maps and index to reset map on adding and removing maps -->

@@ -2,7 +2,10 @@ import { config as configStore } from './stores';
 import { isMapboxUrl, normalizeMapboxUrl } from './mapbox-urls';
 
 let mapboxGlAccessToken;
-configStore.subscribe(value => ({ mapboxGlAccessToken } = value));
+let alterIncomingStyle;
+configStore.subscribe(
+  value => ({ mapboxGlAccessToken, alterIncomingStyle } = value)
+);
 
 const fetchUrl = async url => {
   const urlIsMapbox = isMapboxUrl(url);
@@ -21,11 +24,16 @@ const fetchUrl = async url => {
     throw { status: response.status, message: response.statusText };
   }
 
-  const data = await response.json();
+  let data = await response.json();
   // Special handling to error on Mapbox style url since it can return successfully with an error
   if (urlIsMapbox && data.message) {
     throw { message: data.message };
   }
+
+  if (alterIncomingStyle) {
+    data = alterIncomingStyle(data);
+  }
+
   return data;
 };
 

@@ -65,7 +65,7 @@
 
   const updateMapStyle = (map, url, style) => {
     if (!map) return;
-    map.setStyle(url || style);
+    map.setStyle(style || url, { diff: true });
   };
 
   const updateMapFromProps = (map, mapView) => {
@@ -119,7 +119,7 @@
 
     map = new mapRenderer.Map({
       container: id,
-      style: url,
+      style: style || url,
       preserveDrawingBuffer: true,
       ...mapViewProps,
     });
