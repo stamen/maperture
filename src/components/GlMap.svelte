@@ -123,6 +123,8 @@
     await importRenderer();
     const currentRenderer = renderer;
 
+    console.log({ mapRenderer, customProtocol, customProtocolFn });
+
     if (mapRenderer === 'maplibre-gl' && customProtocol && customProtocolFn) {
       currentRenderer.addProtocol(customProtocol, customProtocolFn);
     }
