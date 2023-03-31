@@ -16,6 +16,9 @@
 
   export let mapRenderer;
 
+  let customProtocol;
+  configStore.subscribe(value => ({ customProtocol } = value));
+
   let renderer;
 
   // Mapbox and MapLibre share a Map component since they are so similar and utilize the same methods
@@ -116,6 +119,10 @@
   onMount(async () => {
     await importRenderer();
     const mapRenderer = renderer;
+
+    if (renderer === 'maplibre-gl' && customProtocol) {
+      mapRenderer.addProtocol('custom', customProtocol);
+    }
 
     map = new mapRenderer.Map({
       container: id,
