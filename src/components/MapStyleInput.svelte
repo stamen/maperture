@@ -198,7 +198,9 @@
           <option
             value={value.dropdownId}
             selected={dropdownValue.dropdownId === value.dropdownId}
-            >{value.text}</option
+            >{value.text} is a really really really long name and I think this is
+            the longest name we've ever had and I'm not even sure if it will fit
+            on the screen</option
           >
         {/each}
       </optgroup>
@@ -249,6 +251,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
+    width: 100%;
   }
 
   .custom-input {

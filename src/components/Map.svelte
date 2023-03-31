@@ -173,6 +173,7 @@
   .map-label-container-0 {
     right: unset;
     left: 1em;
+    width: 100%;
   }
 
   .map-label-offset {
