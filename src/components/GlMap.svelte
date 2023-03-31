@@ -17,7 +17,10 @@
   export let mapRenderer;
 
   let customProtocol;
-  configStore.subscribe(value => ({ customProtocol } = value));
+  let customProtocolFn;
+  configStore.subscribe(
+    value => ({ customProtocol, customProtocolFn } = value)
+  );
 
   let renderer;
 
@@ -120,8 +123,8 @@
     await importRenderer();
     const mapRenderer = renderer;
 
-    if (renderer === 'maplibre-gl' && customProtocol) {
-      mapRenderer.addProtocol('custom', customProtocol);
+    if (renderer === 'maplibre-gl' && customProtocol && customProtocolFn) {
+      mapRenderer.addProtocol(customProtocol, customProtocolFn);
     }
 
     map = new mapRenderer.Map({
