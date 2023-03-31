@@ -121,15 +121,13 @@
 
   onMount(async () => {
     await importRenderer();
-    const mapRenderer = renderer;
+    const currentRenderer = renderer;
 
-    console.log({ renderer, customProtocol, customProtocolFn });
-
-    if (renderer === 'maplibre-gl' && customProtocol && customProtocolFn) {
-      mapRenderer.addProtocol(customProtocol, customProtocolFn);
+    if (mapRenderer === 'maplibre-gl' && customProtocol && customProtocolFn) {
+      currentRenderer.addProtocol(customProtocol, customProtocolFn);
     }
 
-    map = new mapRenderer.Map({
+    map = new currentRenderer.Map({
       container: id,
       style: url,
       preserveDrawingBuffer: true,
@@ -163,7 +161,7 @@
       if (!renderedFeatures.length) return;
 
       if (!isPopupOpen) {
-        popup = new mapRenderer.Popup()
+        popup = new currentRenderer.Popup()
           .setLngLat(e.lngLat)
           .setHTML(getPopupHtmlString(renderedFeatures))
           .setMaxWidth(360)
