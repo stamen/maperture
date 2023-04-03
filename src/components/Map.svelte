@@ -168,12 +168,9 @@
     position: absolute;
     right: 1em;
     bottom: 2em;
-  }
-
-  .map-label-container-0 {
-    right: unset;
-    left: 1em;
-    width: 100%;
+    width: auto;
+    max-width: calc(100% - 6em);
+    min-width: 240px;
   }
 
   .map-label-offset {
@@ -182,6 +179,7 @@
     left: 0;
     right: 0;
     bottom: unset;
+    max-width: unset;
   }
 
   .map-label-responsive {

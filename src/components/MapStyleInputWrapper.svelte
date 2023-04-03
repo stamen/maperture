@@ -256,6 +256,5 @@
 <style>
   .map-style-input-wrapper {
     margin-top: 6px;
-    max-width: 90%;
   }
 </style>

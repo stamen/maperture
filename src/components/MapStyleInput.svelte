@@ -198,10 +198,11 @@
           <option
             value={value.dropdownId}
             selected={dropdownValue.dropdownId === value.dropdownId}
-            >{value.text} is a really really really long name and I think this is
-            the longest name we've ever had and I'm not even sure if it will fit
-            on the screen</option
           >
+            {value.text}is a really really really long name and I think this is
+            the longest name we've ever had and I'm not even sure if it will fit
+            on the screen
+          </option>
         {/each}
       </optgroup>
     {/each}
@@ -232,7 +233,7 @@
   {/if}
 
   <div class="renderer-control">
-    <span>Rendered with</span>
+    <span class="nowrap">Rendered with</span>
     <select
       on:change={e => dispatch('selectRenderer', { value: e.target.value })}
     >
@@ -251,7 +252,6 @@
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    width: 100%;
   }
 
   .custom-input {
@@ -273,14 +273,28 @@
     color: white;
   }
 
+  .nowrap {
+    white-space: nowrap;
+  }
+
   .renderer-control {
     align-items: center;
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
+    flex-wrap: nowrap;
   }
 
   .renderer-control select {
     flex-grow: 1;
+    min-width: 0px;
+  }
+
+  select,
+  option.selected {
+    display: block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 </style>
