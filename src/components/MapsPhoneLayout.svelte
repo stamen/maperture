@@ -12,7 +12,7 @@
         <Map
           {map}
           {...mapState}
-          themeLabel="map-label-offset"
+          labelStyle="position: absolute; margin-top: 48px; left: 0; right: 0; bottom: unset; max-width: unset;"
           numberOfMaps={maps.length}
           on:mapMove
         />

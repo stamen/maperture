@@ -199,9 +199,7 @@
             value={value.dropdownId}
             selected={dropdownValue.dropdownId === value.dropdownId}
           >
-            {value.text}is a really really really long name and I think this is
-            the longest name we've ever had and I'm not even sure if it will fit
-            on the screen
+            {value.text}
           </option>
         {/each}
       </optgroup>
