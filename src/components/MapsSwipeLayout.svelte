@@ -24,8 +24,8 @@
   $: rightWidth = width - sliderPosition;
   $: leftWidth = width - rightWidth;
 
-  $: themeLeftMap = `right: ${rightWidth}px;max-width:calc(${leftWidth}px - 6em)`;
-  $: themeRightMap = `max-width:calc(${rightWidth}px - 6em)`;
+  $: themeLeftMapLabel = `right: unset; margin-right:unset; left:0; margin-left:1em; max-width:calc(${leftWidth}px - 6em)`;
+  $: themeRightMapLabel = `max-width:calc(${rightWidth}px - 6em)`;
 </script>
 
 <div
@@ -49,7 +49,7 @@
         numberOfMaps={maps.length}
         on:mapMove
         highlightDifferences={map.index === 1 && mapState?.showDiff}
-        labelStyle={map.index === 0 ? themeLeftMap : themeRightMap}
+        labelStyle={map.index === 0 ? themeLeftMapLabel : themeRightMapLabel}
       />
     </div>
   {/each}
