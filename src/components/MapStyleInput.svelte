@@ -50,7 +50,7 @@
   // Handle updating the map store
   const handleMapStyleUpdate = mapObj => {
     // Clean up style before dispatching
-    const excludedKeys = ['dropdownType', 'selected'];
+    const excludedKeys = ['dropdownType', 'selected', 'defaultText'];
     let value = {
       ...Object.fromEntries(
         Object.entries(mapObj).filter(([k, v]) => !excludedKeys.includes(k))

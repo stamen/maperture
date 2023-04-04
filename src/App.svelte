@@ -91,7 +91,6 @@
     // in MapStyleInputWrapper are coming from polled styles or from history
     const nextMaps = JSON.parse(JSON.stringify(maps)).map(m => {
       delete m.isPolling;
-      delete m.defaultText;
       return m;
     });
     settings = { ...settings, maps: nextMaps };
