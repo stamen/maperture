@@ -15,8 +15,8 @@
 
   export let map;
   export let numberOfMaps;
-  export let themeLabel = '';
   export let highlightDifferences = false;
+  export let labelStyle = '';
 
   const dispatch = createEventDispatcher();
 
@@ -137,7 +137,8 @@
       id={map.id}
       class={`map-label-container ${
         numberOfMaps === 2 ? `map-label-container-${map.index}` : ''
-      } ${themeLabel}`}
+      }`}
+      style={labelStyle}
     >
       <MapLabel
         index={map.index}
@@ -166,25 +167,13 @@
 
   .map-label-container {
     position: absolute;
-    right: 1em;
-    bottom: 2em;
-  }
-
-  .map-label-container-0 {
-    right: unset;
-    left: 1em;
-  }
-
-  .map-label-offset {
-    position: absolute;
-    margin-top: 48px;
-    left: 0;
     right: 0;
-    bottom: unset;
-  }
-
-  .map-label-responsive {
-    position: fixed;
+    bottom: 0;
+    margin-right: 1em;
+    margin-bottom: 2em;
+    width: auto;
+    max-width: calc(100% - 6em);
+    min-width: 240px;
   }
 
   .highlight-diff {

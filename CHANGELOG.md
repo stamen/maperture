@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Update dropdown styling to accomodate long style names
+
 ## 0.13.0
 
 - Add a Github Action for pushing to gh-pages on pushes to main

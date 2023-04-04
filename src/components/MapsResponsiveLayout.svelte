@@ -58,7 +58,7 @@
         {map}
         {...mapStateProps}
         {numberOfMaps}
-        themeLabel="map-label-responsive"
+        labelStyle="position: fixed;"
         on:mapMove
       />
     {/if}

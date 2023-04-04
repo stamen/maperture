@@ -42,7 +42,7 @@
     padding: 1em;
     display: flex;
     flex-direction: column;
-    min-width: 240px;
+    position: relative;
   }
 
   .map-name {
@@ -74,6 +74,7 @@
     flex-direction: column;
     align-items: left;
     justify-content: center;
+    margin-right: 1em;
   }
 
   .location-control {
