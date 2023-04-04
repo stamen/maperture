@@ -87,7 +87,14 @@
   });
 
   mapsStore.subscribe(maps => {
-    settings = { ...settings, maps };
+    // The isPolling key never makes it to the hash so we can know if prop updates downstream
+    // in MapStyleInputWrapper are coming from polled styles or from history
+    const nextMaps = JSON.parse(JSON.stringify(maps)).map(m => {
+      delete m.isPolling;
+      delete m.defaultText;
+      return m;
+    });
+    settings = { ...settings, maps: nextMaps };
   });
 
   mapLocationsStore.subscribe(locations => {
