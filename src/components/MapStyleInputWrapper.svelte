@@ -220,7 +220,9 @@
   };
 
   const updateSelectedMapFromProps = nextValue => {
-    if (!nextValue) return;
+    const hasUnsetBranch =
+      selectedValue?.dropdownType === 'branch' && !selectedValue?.url;
+    if (!nextValue || hasUnsetBranch) return;
     // Normally selectedValue should change map, but via props it's reversed
     // So that the bound selectedValue displays correctly
     if (
