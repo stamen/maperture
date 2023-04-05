@@ -1,6 +1,7 @@
 ## Unreleased
 
 - Update dropdown styling to accomodate long style names
+- Add layer id to feature popup
 
 ## 0.13.0
 
