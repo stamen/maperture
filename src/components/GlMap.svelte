@@ -96,9 +96,14 @@
 
     let html = '<div class="popup">';
     for (const feature of dedupedFeatures) {
-      const { properties } = feature;
-      html += `<h2 class="popup-source-layer">${feature.source}: ${feature.sourceLayer}</h2>`;
+      html += `<div class="popup-feature">`;
+      const { properties, layer } = feature;
+      html += `<div class="popup-label-heading">layer id</div>`;
+      html += `<div class="popup-layer-id">${layer.id}</div>`;
+      html += `<div class="popup-label-heading">source: source-layer</div>`;
+      html += `<div class="popup-source-layer"><span class="popup-source">${feature.source}:</span> ${feature.sourceLayer}</div>`;
       if (properties && Object.keys(properties).length) {
+        html += `<div class="popup-label-heading">properties</div>`;
         Object.keys(properties)
           .sort()
           .forEach(key => {
@@ -108,6 +113,7 @@
       } else {
         html += `<p class="popup-no-properties">No properties</p>`;
       }
+      html += `</div>`;
     }
     html += '</div>';
     return html;
@@ -149,7 +155,6 @@
     map.on('click', e => {
       let renderedFeatures = map.queryRenderedFeatures(e.point);
       if (!renderedFeatures.length) return;
-
       if (!isPopupOpen) {
         popup = new mapRenderer.Popup()
           .setLngLat(e.lngLat)
@@ -208,6 +213,13 @@
     height: 100%;
   }
 
+  :global(.popup-label-heading) {
+    font-size: 14px;
+    color: #666;
+    font-weight: 200;
+    font-style: italic;
+  }
+
   :global(.popup) {
     min-width: 180px;
     padding-right: 12px;
@@ -215,9 +227,31 @@
     overflow: auto;
   }
 
-  :global(.popup-source-layer) {
+  :global(.popup-feature) {
+    margin-top: 18px;
+    margin-left: 3px;
+  }
+
+  :global(.popup-feature):first-child {
+    margin-top: 0;
+  }
+
+  :global(.popup-layer-id) {
+    font-weight: 600;
     font-size: 16px;
     line-height: 16px;
+    margin-bottom: 6px;
+  }
+
+  :global(.popup-source) {
+    font-weight: 600;
+  }
+
+  :global(.popup-source-layer) {
+    font-size: 14px;
+    line-height: 14px;
+    margin-bottom: 6px;
+    color: #666;
   }
 
   :global(.popup-property) {
