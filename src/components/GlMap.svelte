@@ -98,9 +98,12 @@
     for (const feature of dedupedFeatures) {
       html += `<div class="popup-feature">`;
       const { properties, layer } = feature;
+      html += `<div class="popup-label-heading">layer id</div>`;
       html += `<div class="popup-layer-id">${layer.id}</div>`;
+      html += `<div class="popup-label-heading">source: source-layer</div>`;
       html += `<div class="popup-source-layer"><span class="popup-source">${feature.source}:</span> ${feature.sourceLayer}</div>`;
       if (properties && Object.keys(properties).length) {
+        html += `<div class="popup-label-heading">properties</div>`;
         Object.keys(properties)
           .sort()
           .forEach(key => {
@@ -210,6 +213,13 @@
     height: 100%;
   }
 
+  :global(.popup-label-heading) {
+    font-size: 14px;
+    color: #666;
+    font-weight: 200;
+    font-style: italic;
+  }
+
   :global(.popup) {
     min-width: 180px;
     padding-right: 12px;
@@ -219,6 +229,11 @@
 
   :global(.popup-feature) {
     margin-top: 18px;
+    margin-left: 3px;
+  }
+
+  :global(.popup-feature):first-child {
+    margin-top: 0;
   }
 
   :global(.popup-layer-id) {
@@ -228,10 +243,6 @@
     margin-bottom: 6px;
   }
 
-  :global(.popup-layer-id):first-child {
-    margin-top: 0px;
-  }
-
   :global(.popup-source) {
     font-weight: 600;
   }
@@ -239,7 +250,7 @@
   :global(.popup-source-layer) {
     font-size: 14px;
     line-height: 14px;
-    margin-bottom: 18px;
+    margin-bottom: 6px;
     color: #666;
   }
 
