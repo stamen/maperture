@@ -2,6 +2,7 @@
 
 - Update dropdown styling to accomodate long style names
 - Add layer id to feature popup
+- Fix bug for branch dropdown option while polling a style
 
 ## 0.13.0
 

@@ -212,15 +212,26 @@
   // Handle updating the map store
   const onUpdateMapStore = e => {
     const { value } = e.detail;
-    const nextMap = { ...value, index, renderer };
-    delete nextMap.dropdownId;
-    mapsStore.update(current => {
-      return current.map((m, i) => (i === index ? nextMap : m));
-    });
+    if (!value.isPolling) {
+      const nextMap = { ...value, index, renderer };
+      delete nextMap.dropdownId;
+      mapsStore.update(current => {
+        return current.map((m, i) => (i === index ? nextMap : m));
+      });
+    } else {
+      mapsStore.update(current => {
+        return current.map((m, i) => (i === index ? { ...m, ...value } : m));
+      });
+    }
   };
 
   const updateSelectedMapFromProps = nextValue => {
-    if (!nextValue) return;
+    const hasUnsetBranch =
+      selectedValue?.dropdownType === 'branch' && !selectedValue?.url;
+
+    // isPolling lets us continue polling while in the unset branch mode while letting
+    // us reset this on a history change as isPolling is never saved in the hash
+    if (!nextValue || (hasUnsetBranch && map.isPolling)) return;
     // Normally selectedValue should change map, but via props it's reversed
     // So that the bound selectedValue displays correctly
     if (
