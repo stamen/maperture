@@ -43,14 +43,14 @@
     // Check that should poll to set timer
     if (pollCondition(url)) {
       // Check poll condition again to cancel action for a url
-      setTimeout(() => pollCondition(url) && fetchStyle(url), 3000);
+      setTimeout(() => pollCondition(url) && fetchStyle(url, true), 3000);
     }
   };
 
   // Handle updating the map store
   const handleMapStyleUpdate = mapObj => {
     // Clean up style before dispatching
-    const excludedKeys = ['dropdownType', 'selected'];
+    const excludedKeys = ['dropdownType', 'selected', 'defaultText'];
     let value = {
       ...Object.fromEntries(
         Object.entries(mapObj).filter(([k, v]) => !excludedKeys.includes(k))
@@ -68,7 +68,7 @@
   };
 
   // Fetch the style json from the URL
-  const fetchStyle = async url => {
+  const fetchStyle = async (url, isPolling = false) => {
     let style;
     try {
       const data = await fetchUrl(url);
@@ -77,7 +77,11 @@
         // TODO create checks by type for non-mapbox maps
         style = data;
         poll(url);
-        handleMapStyleUpdate({ ...selected, style, url });
+        if (isPolling) {
+          dispatch('updateMapStore', { value: { style, isPolling } });
+        } else {
+          handleMapStyleUpdate({ ...selected, style, url, isPolling });
+        }
         return { status: '200' };
       }
     } catch (err) {
