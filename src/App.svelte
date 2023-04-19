@@ -18,6 +18,7 @@
   import { validateMapState } from './map-state-utils';
   import throttle from 'lodash.throttle';
   import isEqual from 'lodash.isequal';
+  import './attribution';
 
   export let localConfig;
 
@@ -197,6 +198,8 @@
     on:setDimensions={handleDimensions}
   />
 
+  <div class="attribution-space" />
+
   <div class="map-controls-container">
     <MapControls
       {mapboxGlAccessToken}
@@ -213,6 +216,12 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+  }
+
+  .attribution-space {
+    height: 48px;
+    width: 100%;
+    background-color: black;
   }
 
   .map-controls-container {
