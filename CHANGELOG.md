@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Add Stamen attribution
+
 ## 0.13.1
 
 - Update dropdown styling to accomodate long style names
