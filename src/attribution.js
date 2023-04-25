@@ -1,4 +1,4 @@
-const stamenLogo = `<?xml version="1.0" encoding="utf-8"?>
+const stamenSvg = `<?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 24.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 98.6 21.7" style="enable-background:new 0 0 98.6 21.7;" xml:space="preserve">
@@ -31,20 +31,52 @@ const stamenLogo = `<?xml version="1.0" encoding="utf-8"?>
 </svg>
 `;
 
-const link = document.createElement('a');
-const attribution = document.createElement('img');
-attribution.src = `data:image/svg+xml;charset=utf-8,${stamenLogo}`;
-attribution.style.height = '18px';
-link.href = 'https://stamen.com';
-link.style.bottom = '12px';
-link.style.right = '12px';
-link.style.zIndex = 10000;
-link.style.position = 'fixed';
-link.appendChild(attribution);
-document.body.appendChild(link);
+const attribution = document.createElement('div');
+const siteLink = document.createElement('a');
+const stamenLogo = document.createElement('img');
+stamenLogo.src = `data:image/svg+xml;charset=utf-8,${stamenSvg}`;
+stamenLogo.style.height = '24px';
+stamenLogo.style.position = 'absolute';
+stamenLogo.style.bottom = '-1px';
+siteLink.href = 'https://stamen.com';
+siteLink.style.position = 'relative';
+siteLink.style.width = '110px';
+siteLink.appendChild(stamenLogo);
 
-module.exports.updateStyle = styleObj => {
+attribution.style.bottom = '0px';
+attribution.style.right = '12px';
+attribution.style.zIndex = 10000;
+attribution.style.position = 'fixed';
+attribution.style.display = 'flex';
+attribution.style.flexDirection = 'row-reverse';
+attribution.appendChild(siteLink);
+document.body.appendChild(attribution);
+
+const updateStyle = styleObj => {
   for (const [k, v] of Object.entries(styleObj)) {
-    link.style[k] = v;
+    attribution.style[k] = v;
   }
 };
+
+// First link does not get a spacer because it's next to the logo
+let marker = false;
+const addLink = (url, text) => {
+  siteLink.style.marginRight = '6px';
+  const addedLink = document.createElement('a');
+  addedLink.innerHTML = text;
+  addedLink.href = url;
+  addedLink.style.color = 'white';
+  addedLink.style.marginRight = '6px';
+  addedLink.style.marginBottom = '6px';
+  addedLink.style.fontSize = '14px';
+  const spacer = document.createElement('div');
+  spacer.innerHTML = marker ? '|' : ' ';
+  spacer.style.color = 'white';
+  spacer.style.marginRight = '6px';
+  spacer.style.marginBottom = '6px';
+  attribution.appendChild(spacer);
+  attribution.appendChild(addedLink);
+  marker = true;
+};
+
+module.exports = { updateStyle, addLink };

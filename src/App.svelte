@@ -18,7 +18,9 @@
   import { validateMapState } from './map-state-utils';
   import throttle from 'lodash.throttle';
   import isEqual from 'lodash.isequal';
-  import './attribution';
+  import { addLink } from './attribution';
+  addLink('https://stamen.com/blog/', 'Learn more');
+  addLink('https://github.com/stamen/maperture', 'Fork on Github');
 
   export let localConfig;
 
@@ -219,7 +221,7 @@
   }
 
   .attribution-space {
-    height: 48px;
+    height: 33px;
     width: 100%;
     background-color: black;
   }
