@@ -1,6 +1,7 @@
 ## Unreleased
 
-- Add Stamen attribution
+- Add Stamen attribution with custom code
+- Switch to module for Stamen attribution
 
 ## 0.13.1
 
