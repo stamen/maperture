@@ -3,9 +3,9 @@ import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
-import css from 'rollup-plugin-css-only';
 import replace from '@rollup/plugin-replace';
 import postcss from 'rollup-plugin-postcss';
+import autoprefixer from 'autoprefixer';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -58,10 +58,8 @@ export default {
     }),
     // we'll extract any component CSS out into
     // a separate file - better for performance
-    // css({ output: 'bundle.css' }),
-
     postcss({
-      plugins: [],
+      plugins: [autoprefixer],
       extract: 'bundle.css',
     }),
 
