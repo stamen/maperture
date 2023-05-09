@@ -1,6 +1,7 @@
 ## Unreleased
 
 - Add Stamen attribution
+- Add CSS auto-prefixing to rollup config
 
 ## 0.13.1
 
