@@ -1,6 +1,7 @@
 ## Unreleased
 
 - Add Stamen attribution
+- Add Stamen map tiles in GitHub Pages deploy
 
 ## 0.13.1
 
