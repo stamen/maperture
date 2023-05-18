@@ -2,6 +2,7 @@
 
 - Add Stamen attribution
 - Add Stamen map tiles in GitHub Pages deploy
+- Upgrade to latest version of `mapbox-gl`
 
 ## 0.13.1
 
