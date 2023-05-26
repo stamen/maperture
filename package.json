@@ -2,7 +2,7 @@
   "name": "maperture",
   "author": "Stamen Design <info@stamen.com> (https://stamen.com)",
   "description": "Stamen's map compare tool",
-  "version": "0.13.1",
+  "version": "0.14.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -44,7 +44,7 @@
     "leaflet": "^1.9.3",
     "lodash.isequal": "^4.5.0",
     "lodash.throttle": "^4.1.1",
-    "mapbox-gl": "^1.13.1",
+    "mapbox-gl": "^2.14.1",
     "maplibre-gl": "^2.4.0",
     "postcss": "^8.4.23",
     "sirv-cli": "^1.0.0",
