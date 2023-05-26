@@ -48,6 +48,7 @@
     "maplibre-gl": "^2.4.0",
     "postcss": "^8.4.23",
     "sirv-cli": "^1.0.0",
+    "stamen-attribution": "github:stamen/stamen-attribution#v0.1.0",
     "svelte-fa": "^2.4.0",
     "tangram": "^0.21.1"
   },

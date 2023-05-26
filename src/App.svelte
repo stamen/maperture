@@ -18,7 +18,7 @@
   import { validateMapState } from './map-state-utils';
   import throttle from 'lodash.throttle';
   import isEqual from 'lodash.isequal';
-  import { addLink } from './attribution';
+  import { addLink } from 'stamen-attribution';
   addLink('https://stamen.com/blog/', 'Learn more');
   addLink('https://github.com/stamen/maperture', 'Fork on Github');
 
