@@ -10,6 +10,7 @@
   import MapStyleInput from './MapStyleInput.svelte';
 
   export let index;
+  export let stylesheet;
 
   let branchPatterns;
   configStore.subscribe(value => ({ branchPatterns } = value));
@@ -68,7 +69,7 @@
 
   // Set renderer options based on the selected map's type
   const setRendererOptions = () => {
-    rendererOptions = getRenderers(selectedValue);
+    rendererOptions = getRenderers(selectedValue, stylesheet?.sources);
     setRendererValue();
   };
 
@@ -77,7 +78,9 @@
   const setRendererValue = () => {
     let updatedRenderer = renderer;
 
-    const validRenderers = getRenderers(selectedValue).map(r => r.value);
+    const validRenderers = getRenderers(selectedValue, stylesheet?.sources).map(
+      r => r.value
+    );
 
     if (!updatedRenderer || !validRenderers.includes(updatedRenderer)) {
       updatedRenderer = validRenderers.includes(selectedValue.type)

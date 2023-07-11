@@ -16,10 +16,24 @@ const typeToRenderers = {
   'maplibre-gl': glVectorRenderers,
 };
 
-export const getRenderers = map => {
+export const getRenderers = (map, sources) => {
+  let mapboxOnly = false;
+
+  if (map.type !== 'mapbox-gl') return typeToRenderers[map.type];
+
   // If using the mapbox:// protocol, force mapbox-gl
-  if (map.type === 'mapbox-gl' && map.url && isMapboxUrl(map.url)) {
-    return [mapboxGlOption];
+  if (map.url && isMapboxUrl(map.url)) {
+    mapboxOnly = true;
+  } else if (sources) {
+    mapboxOnly = Object.values(sources).some(value => {
+      return (
+        isMapboxUrl(value?.url) ||
+        (value?.tiles ?? []).some(url => isMapboxUrl(url))
+      );
+    });
   }
+
+  if (mapboxOnly) return [mapboxGlOption];
+
   return typeToRenderers[map.type];
 };

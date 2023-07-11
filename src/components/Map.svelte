@@ -146,6 +146,7 @@
         onClose={removeMap}
         disableClose={numberOfMaps <= 1}
         mapState={mapStateProps}
+        {stylesheet}
         on:mapState={handleMapMove}
       />
     </div>

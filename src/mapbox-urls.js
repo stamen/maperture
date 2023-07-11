@@ -3,9 +3,8 @@
  */
 export const isMapboxUrl = url => {
   if (typeof url !== 'string') return false;
-  const hasMapboxFormat =
-    url.startsWith('mapbox://styles/') && url.split('/').length === 5;
-  return hasMapboxFormat;
+  const hasMapboxProtocol = url.startsWith('mapbox://');
+  return hasMapboxProtocol;
 };
 
 /*
