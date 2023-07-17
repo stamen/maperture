@@ -2,6 +2,7 @@
 
 - Switch to module for Stamen attribution
 - Add CSS auto-prefixing to rollup config
+- Add labels when screenshotting
 
 ## 0.14.0
 
