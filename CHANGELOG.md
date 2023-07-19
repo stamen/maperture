@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.15.0
+
 - Switch to module for Stamen attribution
 - Add CSS auto-prefixing to rollup config
 - Add check for Mapbox URLs in source object of stylesheet
