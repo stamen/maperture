@@ -120,6 +120,7 @@
 </script>
 
 <div class="map-container">
+  <div class="screenshot-label-transparent">{map.name ?? map.id}</div>
   {#key mapRenderer}
     <div class="map" class:highlight-diff={highlightDifferences}>
       <svelte:component
@@ -179,5 +180,22 @@
 
   .highlight-diff {
     filter: invert(1) opacity(0.5);
+  }
+
+  .screenshot-label {
+    background-color: white;
+    position: absolute;
+    z-index: 1000;
+    margin: 0.25rem;
+    width: calc(100% - 1.5rem);
+    padding: 0.5rem;
+    font-size: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .screenshot-label-transparent {
+    display: none;
   }
 </style>
