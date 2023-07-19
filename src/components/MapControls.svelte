@@ -80,13 +80,21 @@
   const downloadScreenshot = async () => {
     const mapsView = document.getElementsByClassName('maps')[0];
 
-    let adjustedEls = [];
+    let adjustedLabels = [
+      ...document.getElementsByClassName('screenshot-label-transparent'),
+    ];
+    adjustedLabels.forEach(el => {
+      el.classList.remove('screenshot-label-transparent');
+      el.classList.add('screenshot-label');
+    });
+
+    let adjustedBorders = [];
     // Remove border on mirror mode screenshot
     if (viewMode === 'mirror') {
-      adjustedEls = [
+      adjustedBorders = [
         ...document.getElementsByClassName('map-container-border'),
       ];
-      adjustedEls.forEach(el => {
+      adjustedBorders.forEach(el => {
         el.classList.remove('map-container-border');
         el.classList.add('map-container-border-transparent');
       });
@@ -105,9 +113,15 @@
       );
     });
 
+    // Cleanup labels
+    adjustedLabels.forEach(el => {
+      el.classList.remove('screenshot-label');
+      el.classList.add('screenshot-label-transparent');
+    });
+
     // Cleanup for mirror mode border
     if (viewMode === 'mirror') {
-      adjustedEls.forEach(el => {
+      adjustedBorders.forEach(el => {
         el.classList.remove('map-container-border-transparent');
         el.classList.add('map-container-border');
       });
