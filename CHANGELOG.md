@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.15.1
+
 - Update Maplibre GL to `v3.6.2`
 
 ## 0.15.0
