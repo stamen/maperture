@@ -121,9 +121,9 @@
 
   onMount(async () => {
     await importRenderer();
-    const mapRenderer = renderer;
+    const glLibrary = renderer;
 
-    map = new mapRenderer.Map({
+    map = new glLibrary.Map({
       container: id,
       style: url,
       preserveDrawingBuffer: true,
@@ -156,7 +156,7 @@
       let renderedFeatures = map.queryRenderedFeatures(e.point);
       if (!renderedFeatures.length) return;
       if (!isPopupOpen) {
-        popup = new mapRenderer.Popup()
+        popup = new glLibrary.Popup()
           .setLngLat(e.lngLat)
           .setHTML(getPopupHtmlString(renderedFeatures))
           .setMaxWidth(360)
@@ -194,15 +194,18 @@
 
   // Resize the map when adding more maps and changing container size
   $: if (map && numberOfMaps) {
-    map.once('render', () => {
-      const container = document.getElementById(id);
-      if (container) {
-        const resizeObserver = new ResizeObserver(() => {
-          map.resize({ resize: true });
-        });
-        resizeObserver.observe(container);
-      }
-    });
+    // As of `v3.0.0` maplibre no longer needs this resizing: https://github.com/maplibre/maplibre-gl-js/blob/main/CHANGELOG.md#potentially-breaking-changes
+    if (mapRenderer !== 'maplibre-gl') {
+      map.once('render', () => {
+        const container = document.getElementById(id);
+        if (container) {
+          const resizeObserver = new ResizeObserver(() => {
+            map.resize({ resize: true });
+          });
+          resizeObserver.observe(container);
+        }
+      });
+    }
   }
 </script>
 

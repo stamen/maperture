@@ -43,6 +43,7 @@
       mapStyle: map,
       numberOfMaps: num,
     };
+    setMapComponent(mapRenderer);
   };
 
   const setMapComponent = mapRenderer => {
