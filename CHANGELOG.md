@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Update Maplibre GL to `v3.6.2`
+
 ## 0.15.0
 
 - Switch to module for Stamen attribution
