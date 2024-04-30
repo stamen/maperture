@@ -21,11 +21,8 @@
   const onClickDropdown = e => {
     const { dropdown, option } = JSON.parse(e.target.value);
     const opt = dropdownOptions?.[dropdown]?.options?.[option];
-    const map = $mapObjStore?.[mapIdIndex];
-    console.log({
-      store: $mapObjStore,
-      mapIdIndex,
-    });
+    const index = mapIdIndex.split('-').pop();
+    const map = $mapObjStore?.[index];
     if (!map || !opt) return;
     const { script } = opt;
     const fn = script(map);
