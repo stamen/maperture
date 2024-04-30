@@ -13,6 +13,7 @@
   export let disableClose;
   export let mapState;
   export let stylesheet;
+  export let mapIdIndex;
 
   let locationProps;
 
@@ -26,7 +27,7 @@
     </button>
     <div class="map-name">{name}</div>
     <div class="options-container">
-      <MapStyleInputWrapper {index} {stylesheet} />
+      <MapStyleInputWrapper {index} {stylesheet} {mapIdIndex} />
       {#if !$linkLocationsStore && Object.keys(locationProps).length}
         <div class="location-control">
           <MapLocationControl on:mapState {...locationProps} />

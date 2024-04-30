@@ -8,9 +8,11 @@
   import { createBranchUrl } from '../branch-utils';
   import { getRenderers } from '../renderers';
   import MapStyleInput from './MapStyleInput.svelte';
+  import CustomJsUi from './CustomJsUi.svelte';
 
   export let index;
   export let stylesheet;
+  export let mapIdIndex;
 
   let branchPatterns;
   configStore.subscribe(value => ({ branchPatterns } = value));
@@ -265,6 +267,7 @@
       on:updateMapStore={onUpdateMapStore}
     />
   {/if}
+  <CustomJsUi mapId={map.id} {mapIdIndex} />
 </div>
 
 <style>

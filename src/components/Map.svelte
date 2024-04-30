@@ -144,6 +144,7 @@
     >
       <MapLabel
         index={map.index}
+        mapIdIndex={mapId}
         name={map.name}
         onClose={removeMap}
         disableClose={numberOfMaps <= 1}
