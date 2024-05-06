@@ -35,7 +35,7 @@
   <div class="action-dropdown">
     Custom actions:
     <select
-      id="locations"
+      id="custom-actions"
       bind:value={selectedDropdown}
       on:change={onClickDropdown}
     >
