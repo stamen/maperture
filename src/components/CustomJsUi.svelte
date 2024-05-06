@@ -3,6 +3,7 @@
 
   export let mapId;
   export let mapIdIndex;
+  export let map;
 
   const { customJs } = $configStore;
 

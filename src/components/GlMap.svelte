@@ -13,6 +13,7 @@
   export let zoom;
   export let mapStyle;
   export let numberOfMaps;
+  export let onMapMount;
 
   export let mapRenderer;
 
@@ -130,8 +131,7 @@
       ...mapViewProps,
     });
 
-    const index = id.split('-').pop();
-    mapObjStore.update(mapObj => ({ ...mapObj, [index]: map }));
+    onMapMount(map);
 
     // Also focus map on wheel (automatically focused on click)
     const throttledWheelHandler = throttle(() => {

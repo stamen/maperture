@@ -12,6 +12,7 @@
   export let mapStyle;
   export let numberOfMaps;
   export let overrideLayer;
+  export let onMapMount;
 
   const dispatch = createEventDispatcher();
 
@@ -65,8 +66,7 @@
     }).setView(mapViewProps.center, mapViewProps.zoom + 1);
     map.attributionControl.setPrefix('');
 
-    const index = id.split('-').pop();
-    mapObjStore.update(mapObj => ({ ...mapObj, [index]: map }));
+    onMapMount(map);
 
     // Also focus map on wheel (automatically focused on click)
     const throttledWheelHandler = throttle(() => {

@@ -13,6 +13,7 @@
   export let zoom;
   export let mapStyle;
   export let numberOfMaps;
+  export let onMapMount;
 
   let googleMapsAPIKey;
   configStore.subscribe(value => ({ googleMapsAPIKey } = value));
@@ -96,8 +97,7 @@
         zoomControl: false,
       });
 
-      const index = id.split('-').pop();
-      mapObjStore.update(mapObj => ({ ...mapObj, [index]: map }));
+      onMapMount(map);
 
       const throttledWheelHandler = throttle(() => {
         document.getElementById(id).querySelector('div[tabindex="0"]').focus();
