@@ -1,6 +1,6 @@
 <script>
   import { round } from '../math';
-  import { config as configStore } from '../stores';
+  import { config as configStore, mapObj as mapObjStore } from '../stores';
   import throttle from 'lodash.throttle';
   import deepEqual from 'deep-equal';
   import { Loader } from '@googlemaps/js-api-loader';
@@ -95,6 +95,9 @@
         fullscreenControl: false,
         zoomControl: false,
       });
+
+      const index = id.split('-').pop();
+      mapObjStore.update(mapObj => ({ ...mapObj, [index]: map }));
 
       const throttledWheelHandler = throttle(() => {
         document.getElementById(id).querySelector('div[tabindex="0"]').focus();

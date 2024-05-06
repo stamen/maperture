@@ -66,10 +66,6 @@
   const updateMapStyle = (map, url, style) => {
     if (!map) return;
     map.setStyle(url || style);
-    map.once('styledata', () => {
-      const index = id.split('-').pop();
-      mapObjStore.update(mapObj => ({ ...mapObj, [index]: map }));
-    });
   };
 
   const updateMapFromProps = (map, mapView) => {
