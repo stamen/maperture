@@ -267,7 +267,7 @@
       on:updateMapStore={onUpdateMapStore}
     />
   {/if}
-  <CustomJsUi {map} mapId={map?.id} {mapIdIndex} />
+  <CustomJsUi mapId={map ? map?.id : null} {mapIdIndex} />
 </div>
 
 <style>
