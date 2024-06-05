@@ -251,6 +251,8 @@
   $: updateSelectedMapFromProps(map);
 
   $: updateMapRenderer(rendererValue);
+
+  $: console.log(map);
 </script>
 
 <div class="map-style-input-wrapper">
@@ -267,7 +269,7 @@
       on:updateMapStore={onUpdateMapStore}
     />
   {/if}
-  <CustomJsUi mapId={map ? map?.id : null} {mapIdIndex} />
+  <CustomJsUi mapId={map && map?.id ? map?.id : null} {mapIdIndex} />
 </div>
 
 <style>
