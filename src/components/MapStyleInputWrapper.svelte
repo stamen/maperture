@@ -251,8 +251,6 @@
   $: updateSelectedMapFromProps(map);
 
   $: updateMapRenderer(rendererValue);
-
-  $: console.log(map);
 </script>
 
 <div class="map-style-input-wrapper">
