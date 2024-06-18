@@ -123,7 +123,7 @@
         if (pattern?.styles?.length) {
           const branchValues = pattern?.styles.map(s => {
             return {
-              name: `${s.charAt(0).toUpperCase() + s.slice(1)} on...`,
+              name: `${pattern.name ?? pattern.id}: ${s} on...`,
               id: s,
               type: pattern.type,
               dropdownType: 'branch',
