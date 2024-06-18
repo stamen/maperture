@@ -2,7 +2,7 @@
   import deepEqual from 'deep-equal';
   import throttle from 'lodash.throttle';
   import { createEventDispatcher, onMount, onDestroy } from 'svelte';
-  import { config as configStore } from '../stores';
+  import { config as configStore, mapObj as mapObjStore } from '../stores';
 
   export let id;
   export let bearing;
@@ -13,6 +13,7 @@
   export let zoom;
   export let mapStyle;
   export let numberOfMaps;
+  export let onMapMount;
 
   export let mapRenderer;
 
@@ -129,6 +130,8 @@
       preserveDrawingBuffer: true,
       ...mapViewProps,
     });
+
+    onMapMount(map);
 
     // Also focus map on wheel (automatically focused on click)
     const throttledWheelHandler = throttle(() => {

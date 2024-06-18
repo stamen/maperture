@@ -60,8 +60,8 @@
       value.branch = textInput;
     }
     if (mapObj) {
-      value.id = mapObj?.style?.id ?? mapObj.id;
-      value.name = mapObj?.style?.name ?? mapObj.name;
+      value.id = mapObj.id ?? mapObj?.style?.id;
+      value.name = mapObj.name ?? mapObj?.style?.name;
     }
 
     dispatch('updateMapStore', { value });
