@@ -43,7 +43,21 @@
 
   // Selects the appropriate value from dropdownValues and adds any necessary key
   const setSelectedValue = () => {
-    let nextValue = dropdownValues.find(item => !!item.selected);
+    let nextValue;
+
+    for (const dropdownValue of dropdownValues) {
+      if (!!dropdownValue?.selected) {
+        nextValue = dropdownValue;
+      }
+      if (dropdownValue?.type === 'sublist') {
+        for (const dv of dropdownValue?.presets) {
+          if (!!dv?.selected) {
+            nextValue = dv;
+          }
+        }
+      }
+    }
+
     if (!nextValue) return;
 
     // Don't mutate the dropdown values
@@ -105,14 +119,31 @@
         dropdownType: 'preset',
         selected: url === item?.url && type === item?.type,
         dropdownId: hat(),
+        ...(item.type === 'sublist' && {
+          presets: item.presets.map(v => ({
+            ...v,
+            dropdownType: 'preset',
+            selected: url === v?.url && type === v?.type,
+            dropdownId: hat(),
+          })),
+        }),
       }));
 
       dropdownValues = dropdownValues.concat(stylePresetValues);
 
-      dropdownDisplayOptions['Presets'] = stylePresetValues.map(item => ({
-        text: item.name,
-        dropdownId: item.dropdownId,
-      }));
+      dropdownDisplayOptions['Presets'] = stylePresetValues.map(item => {
+        return {
+          text: item.name,
+          ...(item.type !== 'sublist' && { dropdownId: item.dropdownId }),
+          ...(item.type === 'sublist' && {
+            type: 'sublist',
+            presets: item.presets.map(v => ({
+              text: v.name,
+              dropdownId: v.dropdownId,
+            })),
+          }),
+        };
+      });
     }
 
     // Create values and displays for branch options
@@ -137,6 +168,7 @@
 
           dropdownValues = dropdownValues.concat(branchValues);
 
+          // TODO come back and allow nesting for branch options
           dropdownDisplayOptions[
             `Styles on a branch${pattern.name ? `: ${pattern.name}` : ''}`
           ] = branchValues.map(item => ({
@@ -148,7 +180,9 @@
     }
 
     // If no option has matched the URL, then it is custom
-    const hasSelectedOption = dropdownValues.some(item => !!item.selected);
+    const hasSelectedOption = dropdownValues.some(
+      item => !!item?.selected || item?.presets?.some(v => !!v.selected)
+    );
 
     // Create a custom value and display option
     const customValues = [
@@ -190,12 +224,25 @@
   };
 
   const onSelectOption = e => {
+    // TODO needs to handle nesting
     const { dropdownId } = e.detail;
-    // Set selected property on value
-    dropdownValues = dropdownValues.map(v => ({
-      ...v,
-      selected: v.dropdownId === dropdownId,
-    }));
+
+    dropdownValues = dropdownValues.reduce((acc, v) => {
+      let next = v;
+      if (next?.type === 'sublist') {
+        next.presets = next.presets.map(v => ({
+          ...v,
+          selected: v.dropdownId === dropdownId,
+        }));
+      } else {
+        next = {
+          ...next,
+          selected: v.dropdownId === dropdownId,
+        };
+      }
+      acc.push(next);
+      return acc;
+    }, []);
 
     setSelectedValue();
     setRendererOptions();

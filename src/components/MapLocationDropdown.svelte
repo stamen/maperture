@@ -1,6 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { config as configStore } from '../stores';
+  import SimpleDropdown from './inputs/SimpleDropdown.svelte';
 
   export let bearing;
   export let center;
@@ -77,21 +78,32 @@
   $: checkSelectedValue({ zoom, center, pitch, bearing });
 
   $: handleChangeLocation(selected);
+
+  $: selectionOptions = Object.entries(gazetteer).reduce(
+    (acc, [locationHeader, locations]) => {
+      acc.push({ header: locationHeader });
+      for (const location of locations) {
+        let [label, _] = Object.entries(location)[0];
+        acc.push({ label, value: JSON.stringify(location) });
+      }
+      return acc;
+    },
+    []
+  );
+
+  $: onSelect = v => {
+    selected = v;
+  };
 </script>
 
 {#if gazetteer}
-  <select id="locations" bind:value={selected}>
-    {#each Object.keys(gazetteer) as locationHeader}
-      <optgroup label={locationHeader}>
-        <option value="" disabled selected hidden>Go to...</option>
-        {#each gazetteer[locationHeader] as location}
-          <option value={JSON.stringify(location)}
-            >{Object.keys(location)[0]}</option
-          >
-        {/each}
-      </optgroup>
-    {/each}
-  </select>
+  <SimpleDropdown
+    placeholder={'Go to...'}
+    options={selectionOptions}
+    value={selected}
+    onClick={onSelect}
+    direction="down"
+  />
 {/if}
 
 <style>

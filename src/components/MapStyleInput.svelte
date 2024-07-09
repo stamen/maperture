@@ -3,6 +3,8 @@
   import { createBranchUrl } from '../branch-utils';
   import { shortcut } from '../shortcut';
   import { fetchUrl } from '../fetch-url';
+  import StylesDropdown from './inputs/StylesDropdown.svelte';
+  import SimpleDropdown from './inputs/SimpleDropdown.svelte';
   const dispatch = createEventDispatcher();
 
   export let dropdownDisplayOptions;
@@ -192,23 +194,11 @@
 </script>
 
 <div class="map-style-input">
-  <select
-    id="styles"
-    on:change={e => dispatch('selectOption', { dropdownId: e.target.value })}
-  >
-    {#each Object.keys(dropdownDisplayOptions) as group}
-      <optgroup value={group} label={group}>
-        {#each dropdownDisplayOptions[group] as value}
-          <option
-            value={value.dropdownId}
-            selected={dropdownValue.dropdownId === value.dropdownId}
-          >
-            {value.text}
-          </option>
-        {/each}
-      </optgroup>
-    {/each}
-  </select>
+  <StylesDropdown
+    {dropdownDisplayOptions}
+    {dropdownValue}
+    onSelect={v => dispatch('selectOption', { dropdownId: v })}
+  />
 
   {#if selected?.dropdownType === 'custom' || selected?.dropdownType === 'branch'}
     <div class="custom-input">
@@ -236,15 +226,12 @@
 
   <div class="renderer-control">
     <span class="nowrap">Rendered with</span>
-    <select
-      on:change={e => dispatch('selectRenderer', { value: e.target.value })}
-    >
-      {#each rendererOptions as option}
-        <option value={option.value} selected={option.value === rendererValue}>
-          {option.name}
-        </option>
-      {/each}
-    </select>
+    <SimpleDropdown
+      options={rendererOptions.map(v => ({ label: v.name, value: v.value }))}
+      value={rendererValue}
+      onClick={v => dispatch('selectRenderer', { value: v })}
+      direction="up"
+    />
   </div>
 </div>
 
