@@ -20,6 +20,14 @@
     let active = presets.some(p => isActiveOption(p.dropdownId));
     return active;
   };
+
+  let isOpen = false;
+
+  $: onClick = v => {
+    onSelect(v);
+  };
+
+  $: console.log(isOpen);
 </script>
 
 <Styles />
@@ -46,7 +54,7 @@
               {#each value.presets as subPreset}
                 <DropdownItem
                   active={isActiveOption(subPreset.dropdownId)}
-                  on:click={() => onSelect(subPreset.dropdownId)}
+                  on:click={() => onClick(subPreset.dropdownId)}
                   >{subPreset.text}</DropdownItem
                 >
               {/each}
@@ -55,7 +63,7 @@
         {:else}
           <DropdownItem
             active={isActiveOption(value.dropdownId)}
-            on:click={() => onSelect(value.dropdownId)}
+            on:click={() => onClick(value.dropdownId)}
             >{value.text}</DropdownItem
           >
         {/if}

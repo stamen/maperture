@@ -146,9 +146,16 @@
       });
     }
 
-    // Create values and displays for branch options
     if (branchPatterns) {
+      let patterns = [];
       for (const pattern of branchPatterns) {
+        let preset = {
+          name: pattern.name ?? pattern.id,
+          type: 'sublist',
+          dropdownId: hat(),
+          presets: [],
+        };
+
         if (pattern?.styles?.length) {
           const branchValues = pattern?.styles.map(s => {
             return {
@@ -166,16 +173,26 @@
             };
           });
 
-          dropdownValues = dropdownValues.concat(branchValues);
-
-          // TODO come back and allow nesting for branch options
-          dropdownDisplayOptions[
-            `Styles on a branch${pattern.name ? `: ${pattern.name}` : ''}`
-          ] = branchValues.map(item => ({
-            text: item.name,
-            dropdownId: item.dropdownId,
-          }));
+          preset.presets = preset.presets.concat(branchValues);
         }
+
+        patterns.push(preset);
+
+        dropdownValues = dropdownValues.concat(patterns);
+
+        dropdownDisplayOptions[`Styles on a branch`] = patterns.map(item => {
+          return {
+            text: item.name,
+            ...(item.type !== 'sublist' && { dropdownId: item.dropdownId }),
+            ...(item.type === 'sublist' && {
+              type: 'sublist',
+              presets: item.presets.map(v => ({
+                text: v.name,
+                dropdownId: v.dropdownId,
+              })),
+            }),
+          };
+        });
       }
     }
 
