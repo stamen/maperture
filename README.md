@@ -31,13 +31,15 @@ Here, you can customize the following options:
 - `stylePresets`: A list of styles with urls to show in the dropdowns. Styles must have the following keys:
   - `id`: a unique id
   - `name`: a display name
-  - `type`: the type of map (`mapbox-gl`, `maplibre-gl`, `google`, `leaflet`)
+  - `type`: the type of map or referencing a sublist of presets (`mapbox-gl`, `maplibre-gl`, `google`, `leaflet`, `sublist`)
   - `url`: (currently applies to `mapbox-gl`, `maplibre-gl`, and `leaflet` maps only) the style's url
   - `mapId`: (currently `google` only) the style's id
+  - [`presets`]: used only with `type: sublist`, this allows one level of nesting to add an additional nested list of style presets following this format
 - `branchPatterns`: An array of objects that specify how to build a URL to fetch a style living on a branch with the following keys:
   - `pattern`: a tokenized url pattern using `{branch}` and `{style}` tokens
   - `styles`: an array specifying specific styles you can view on the specified branch
-  - `type`: the type of map (`mapbox-gl`, `maplibre-gl`, `google`, `leaflet`)
+  - `type`: the type of map or referencing a sublist of presets (`mapbox-gl`, `maplibre-gl`, `google`, `leaflet`, `sublist`)
+  - [`presets`]: used only with `type: sublist`, this allows one level of nesting to add an additional nested list of style branch patterns following this format
 - `stylePresetUrls`: An array of URLs pointing to additional presets. URLs must point to JSON arrays containing objects of the same shape as those in `stylePresets`.
 - `gazetteer`: An object that specifies the options available in the interface for navigating directly to specific geographic locations or changing other view options such as the pitch and zoom of the map. The object is a map of **option group names** to arrays of options. Each **option** is an object of names to map options to update.
 
