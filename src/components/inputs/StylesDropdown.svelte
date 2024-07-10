@@ -26,8 +26,6 @@
   $: onClick = v => {
     onSelect(v);
   };
-
-  $: console.log(isOpen);
 </script>
 
 <Styles />
