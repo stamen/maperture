@@ -71,17 +71,29 @@
 </Dropdown>
 
 <style>
+  :global(.dropdown) {
+    display: flex !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
   :global(.dropdown-toggle) {
-    width: 100% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
     border: 1px solid lightgray !important;
     white-space: nowrap !important;
+    flex: 1 !important;
+    text-overflow: ellipsis !important;
+    overflow: hidden !important;
   }
 
   :global(.dropdown-item) {
     border: none !important;
+    display: block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 
   :global(.dropdown-menu) {
