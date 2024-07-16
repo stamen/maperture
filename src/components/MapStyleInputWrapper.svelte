@@ -322,6 +322,7 @@
       {dropdownDisplayOptions}
       {rendererOptions}
       {rendererValue}
+      {index}
       activeUrl={url}
       on:setUrl={onSetUrl}
       on:selectOption={onSelectOption}

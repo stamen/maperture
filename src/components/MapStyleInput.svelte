@@ -12,6 +12,7 @@
   export let rendererOptions;
   export let rendererValue;
   export let activeUrl;
+  export let index;
 
   let selected;
 
@@ -197,6 +198,7 @@
   <StylesDropdown
     {dropdownDisplayOptions}
     {dropdownValue}
+    {index}
     onSelect={v => dispatch('selectOption', { dropdownId: v })}
   />
 

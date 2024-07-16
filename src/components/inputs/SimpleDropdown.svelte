@@ -52,8 +52,9 @@
     flex: 1 !important;
     text-overflow: ellipsis !important;
     overflow: hidden !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
   }
-
   :global(.dropdown-item) {
     border: none !important;
   }

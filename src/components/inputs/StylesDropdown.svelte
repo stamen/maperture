@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from 'svelte';
   import {
     Dropdown,
     DropdownItem,
@@ -10,6 +11,9 @@
   export let dropdownDisplayOptions;
   export let dropdownValue;
   export let onSelect;
+  export let index;
+
+  let direction = 'up';
 
   $: isActiveOption = dropdownId => {
     let active = dropdownValue.dropdownId === dropdownId;
@@ -21,54 +25,63 @@
     return active;
   };
 
-  let isOpen = false;
-
   $: onClick = v => {
     onSelect(v);
   };
+
+  onMount(() => {
+    const screenHeight = document?.body?.clientHeight;
+    const element = document?.getElementById(`styles-dropdown-${index}`);
+    const position = element?.getBoundingClientRect();
+    const y = position?.top;
+    if (!y || !screenHeight) return;
+    direction = y < screenHeight / 2 ? 'down' : 'up';
+  });
 </script>
 
 <Styles />
 
-<Dropdown theme="light" direction="up" autoClose={true}>
-  <DropdownToggle caret color="light"
-    >{dropdownValue?.name ?? dropdownValue?.id}</DropdownToggle
-  >
+<div id={`styles-dropdown-${index}`}>
+  <Dropdown theme="light" {direction} autoClose={true}>
+    <DropdownToggle caret color="light"
+      >{dropdownValue?.name ?? dropdownValue?.id}</DropdownToggle
+    >
 
-  <DropdownMenu>
-    {#each Object.keys(dropdownDisplayOptions) as group}
-      <DropdownItem header>{group}</DropdownItem>
+    <DropdownMenu>
+      {#each Object.keys(dropdownDisplayOptions) as group}
+        <DropdownItem header>{group}</DropdownItem>
 
-      {#each dropdownDisplayOptions[group] as value}
-        {#if value?.type === 'sublist'}
-          <Dropdown direction="right" autoClose={true}>
-            <DropdownToggle
-              caret
-              class="dropdown-item"
-              active={isActiveParentToggle(value.presets)}
-              color="light">{value.text}</DropdownToggle
+        {#each dropdownDisplayOptions[group] as value}
+          {#if value?.type === 'sublist'}
+            <Dropdown direction="right" autoClose={true}>
+              <DropdownToggle
+                caret
+                class="dropdown-item"
+                active={isActiveParentToggle(value.presets)}
+                color="light">{value.text}</DropdownToggle
+              >
+              <DropdownMenu>
+                {#each value.presets as subPreset}
+                  <DropdownItem
+                    active={isActiveOption(subPreset.dropdownId)}
+                    on:click={() => onClick(subPreset.dropdownId)}
+                    >{subPreset.text}</DropdownItem
+                  >
+                {/each}
+              </DropdownMenu>
+            </Dropdown>
+          {:else}
+            <DropdownItem
+              active={isActiveOption(value.dropdownId)}
+              on:click={() => onClick(value.dropdownId)}
+              >{value.text}</DropdownItem
             >
-            <DropdownMenu>
-              {#each value.presets as subPreset}
-                <DropdownItem
-                  active={isActiveOption(subPreset.dropdownId)}
-                  on:click={() => onClick(subPreset.dropdownId)}
-                  >{subPreset.text}</DropdownItem
-                >
-              {/each}
-            </DropdownMenu>
-          </Dropdown>
-        {:else}
-          <DropdownItem
-            active={isActiveOption(value.dropdownId)}
-            on:click={() => onClick(value.dropdownId)}
-            >{value.text}</DropdownItem
-          >
-        {/if}
+          {/if}
+        {/each}
       {/each}
-    {/each}
-  </DropdownMenu>
-</Dropdown>
+    </DropdownMenu>
+  </Dropdown>
+</div>
 
 <style>
   :global(.dropdown) {
@@ -86,6 +99,8 @@
     flex: 1 !important;
     text-overflow: ellipsis !important;
     overflow: hidden !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
   }
 
   :global(.dropdown-item) {
