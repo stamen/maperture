@@ -85,22 +85,69 @@
 
 <style>
   :global(.dropdown) {
-    display: flex !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
+    max-width: 240px !important;
+    min-width: 100px !important;
   }
 
   :global(.dropdown-toggle) {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
+    width: 100% !important;
     border: 1px solid lightgray !important;
-    white-space: nowrap !important;
-    flex: 1 !important;
-    text-overflow: ellipsis !important;
-    overflow: hidden !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* down */
+  :global(.dropdown .dropdown-toggle::before) {
+    display: inline-block;
+    margin-left: 0.5em;
+    vertical-align: 0.255em;
+    content: '';
+    border-top: 0.3em solid;
+    border-right: 0.3em solid transparent;
+    border-bottom: 0;
+    border-left: 0.3em solid transparent;
+    float: right;
+    margin-top: 9px;
+  }
+
+  /* up */
+  :global(.dropup .dropdown-toggle::before) {
+    display: inline-block;
+    margin-left: 0.5em;
+    vertical-align: 0.255em;
+    content: '';
+    border-top: 0;
+    border-right: 0.3em solid transparent;
+    border-bottom: 0.3em solid;
+    border-left: 0.3em solid transparent;
+    float: right;
+    margin-top: 9px;
+  }
+
+  /* right */
+  :global(.dropend .dropdown-toggle::before) {
+    display: inline-block;
+    margin-left: 0.5em;
+    vertical-align: 0.255em;
+    content: '';
+    border-right: 0;
+    border-top: 0.3em solid transparent;
+    border-left: 0.3em solid;
+    border-bottom: 0.3em solid transparent;
+    float: right;
+    margin-top: 9px;
+  }
+
+  :global(.dropdown-toggle::after) {
+    display: none !important;
+    margin-left: unset;
+    vertical-align: unset;
+    content: unset;
+    border-top: unset;
+    border-right: unset;
+    border-bottom: unset;
+    border-left: unset;
   }
 
   :global(.dropdown-item) {

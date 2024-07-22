@@ -75,7 +75,6 @@
     flex-direction: column;
     align-items: left;
     justify-content: center;
-    margin-right: 1em;
   }
 
   .location-control {
