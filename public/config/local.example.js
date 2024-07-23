@@ -26,17 +26,25 @@ const stylePresets = [
     type: 'mapbox-gl',
     url: 'mapbox://styles/mapbox/streets-v11',
   },
+  // sublist is used to nest style options in the dropdown
+  // this is helpful if you need to organize a large amount of styles
   {
-    id: 'mapbox-light',
-    name: 'Mapbox Light',
-    type: 'mapbox-gl',
-    url: 'mapbox://styles/mapbox/light-v10',
-  },
-  {
-    id: 'mapbox-dark',
-    name: 'Mapbox Dark',
-    type: 'mapbox-gl',
-    url: 'mapbox://styles/mapbox/dark-v10',
+    name: 'Data viz styles',
+    type: 'sublist',
+    presets: [
+      {
+        id: 'mapbox-light',
+        name: 'Mapbox Light',
+        type: 'mapbox-gl',
+        url: 'mapbox://styles/mapbox/light-v10',
+      },
+      {
+        id: 'mapbox-dark',
+        name: 'Mapbox Dark',
+        type: 'mapbox-gl',
+        url: 'mapbox://styles/mapbox/dark-v10',
+      },
+    ],
   },
   {
     id: 'openstreetmap',

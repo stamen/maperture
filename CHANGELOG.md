@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Add multi-level dropdowns
+
 ## 0.15.1
 
 - Update Maplibre GL to `v3.6.2`
