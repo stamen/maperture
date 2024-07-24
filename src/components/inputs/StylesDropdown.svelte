@@ -156,9 +156,55 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    width: 50% !important;
+    background-color: white !important;
+  }
+
+  :global(.dropdown-item:hover) {
+    background-color: #f8f9fa !important;
+  }
+
+  :global(.dropdown-item.active) {
+    background-color: #0d6efd !important;
+  }
+
+  :global(.dropdown-item.active:hover) {
+    background-color: #0d6efd !important;
+  }
+
+  :global(.dropdown-item.active:focus) {
+    color: white !important;
+  }
+
+  :global(.dropend .dropdown-item) {
+    width: 100% !important;
+  }
+
+  :global(.dropdown-header) {
+    background-color: white !important;
+    width: 50% !important;
   }
 
   :global(.dropdown-menu) {
-    width: 100%;
+    /* width: 100%;
+    max-height: 200px;
+    overflow-y: scroll; */
+    width: 200%;
+    max-height: 200px;
+    overflow-x: visible;
+    overflow-y: scroll;
+    background: none !important;
+    border: none !important;
+  }
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  :global(.dropdown-menu::-webkit-scrollbar) {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  :global(.dropdown-menu) {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
   }
 </style>
