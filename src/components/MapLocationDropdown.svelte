@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { config as configStore } from '../stores';
-  import SimpleDropdown from './inputs/SimpleDropdown.svelte';
+  import Dropdown from './inputs/Dropdown/Dropdown.svelte';
 
   export let bearing;
   export let center;
@@ -97,14 +97,19 @@
 </script>
 
 {#if gazetteer}
-  <SimpleDropdown
-    placeholder={'Go to...'}
-    options={selectionOptions}
-    value={selected}
-    onClick={onSelect}
-    direction="down"
-  />
+  <div class="dropdown-container">
+    <Dropdown
+      placeholder={'Go to...'}
+      options={selectionOptions}
+      activeValue={selected}
+      {onSelect}
+      direction="down"
+    />
+  </div>
 {/if}
 
 <style>
+  .dropdown-container {
+    min-width: 140px;
+  }
 </style>
