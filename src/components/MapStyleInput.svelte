@@ -4,7 +4,8 @@
   import { shortcut } from '../shortcut';
   import { fetchUrl } from '../fetch-url';
   import StylesDropdown from './inputs/StylesDropdown.svelte';
-  import SimpleDropdown from './inputs/SimpleDropdown.svelte';
+  import Dropdown from './inputs/Dropdown/Dropdown.svelte';
+
   const dispatch = createEventDispatcher();
 
   export let dropdownDisplayOptions;
@@ -228,10 +229,10 @@
 
   <div class="renderer-control">
     <span class="nowrap">Rendered with</span>
-    <SimpleDropdown
+    <Dropdown
       options={rendererOptions.map(v => ({ label: v.name, value: v.value }))}
-      value={rendererValue}
-      onClick={v => dispatch('selectRenderer', { value: v })}
+      activeValue={rendererValue}
+      onSelect={v => dispatch('selectRenderer', { value: v })}
       direction="up"
     />
   </div>
@@ -243,11 +244,19 @@
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    max-width: 240px;
+    max-width: 300px;
   }
 
   .custom-input {
     margin-top: 0px;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.25rem;
+  }
+
+  .custom-input input {
+    flex-grow: 1;
+    width: 0;
   }
 
   .input-error:focus {

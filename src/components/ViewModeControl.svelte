@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import { linkLocations as linkLocationsStore } from '../stores';
   import { VIEW_MODES } from '../constants';
-  import SimpleDropdown from './inputs/SimpleDropdown.svelte';
+  import Dropdown from './inputs/Dropdown/Dropdown.svelte';
 
   export let mode;
   export let mapsNum;
@@ -67,11 +67,17 @@
   };
 </script>
 
-<div>
-  <SimpleDropdown
+<div class="dropdown-container">
+  <Dropdown
     options={viewModes.map(v => ({ label: v, value: v }))}
-    value={selectedMode}
-    onClick={onSelect}
+    activeValue={selectedMode}
+    {onSelect}
     direction="down"
   />
 </div>
+
+<style>
+  .dropdown-container {
+    min-width: 100px;
+  }
+</style>

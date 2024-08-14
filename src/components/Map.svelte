@@ -183,7 +183,7 @@
     margin-bottom: 2em;
     width: auto;
     max-width: calc(100% - 6em);
-    min-width: 240px;
+    min-width: 300px;
   }
 
   .highlight-diff {

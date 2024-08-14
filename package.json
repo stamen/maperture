@@ -50,7 +50,6 @@
     "sirv-cli": "^1.0.0",
     "stamen-attribution": "github:stamen/stamen-attribution#v0.1.0",
     "svelte-fa": "^2.4.0",
-    "sveltestrap": "^5.11.3",
     "tangram": "^0.21.1"
   },
   "main": "dist/bundle.js"
