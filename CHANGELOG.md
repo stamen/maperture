@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.16.0
+
 - Add multi-level dropdowns
 
 ## 0.15.1
