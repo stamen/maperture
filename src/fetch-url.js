@@ -1,14 +1,22 @@
 import { config as configStore } from './stores';
 import { isMapboxUrl, normalizeMapboxUrl } from './mapbox-urls';
 
-let mapboxGlAccessToken;
-configStore.subscribe(value => ({ mapboxGlAccessToken } = value));
+let mapboxGlAccessToken, maptilerApiKey;
+configStore.subscribe(
+  value => ({ mapboxGlAccessToken, maptilerApiKey } = value)
+);
 
 const fetchUrl = async url => {
   const urlIsMapbox = isMapboxUrl(url);
   let nextUrl = url;
   if (urlIsMapbox) {
     nextUrl = normalizeMapboxUrl(url, mapboxGlAccessToken);
+  } else if (
+    maptilerApiKey &&
+    (url.startsWith('https://api.maptiler.com') || !url.startsWith('http'))
+  ) {
+    const maptilersdk = await import('@maptiler/sdk');
+    nextUrl = `${maptilersdk.expandMapStyle(url)}?key=${maptilerApiKey}`;
   }
   let response;
   try {
