@@ -1,5 +1,7 @@
 ## Unreleased
 
+- add support for MapTiler SDK
+
 ## 0.16.0
 
 - Add multi-level dropdowns
