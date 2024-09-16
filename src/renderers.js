@@ -15,7 +15,7 @@ const typeToRenderers = {
   'vector-gl': glVectorRenderers,
   'mapbox-gl': glVectorRenderers,
   'maplibre-gl': glVectorRenderers,
-  'maptiler-sdk': [{ name: 'MapTiler SDK', value: 'maptiler-sdk' }],
+  'maptiler-sdk': glVectorRenderers,
 };
 
 export const getRenderers = (map, sources) => {

@@ -68,7 +68,7 @@ const stylePresets = [
   //   id: 'maptiler-streets',
   //   name: 'MapTiler Streets',
   //   type: 'maptiler-sdk',
-  //   url: 'streets-v2',
+  //   url: 'https://api.maptiler.com/maps/streets-v2/style.json',
   // },
 ];
 
