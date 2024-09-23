@@ -8,11 +8,15 @@ configStore.subscribe(
 
 const fetchUrl = async url => {
   const urlIsMapbox = isMapboxUrl(url);
-  let nextUrl = url;
+  let nextUrl = new URL(url);
   if (urlIsMapbox) {
-    nextUrl = normalizeMapboxUrl(url, mapboxGlAccessToken);
-  } else if (maptilerApiKey && url.startsWith('https://api.maptiler.com')) {
-    nextUrl = `${url}?key=${maptilerApiKey}`;
+    nextUrl = normalizeMapboxUrl(nextUrl.toString(), mapboxGlAccessToken);
+  } else if (
+    maptilerApiKey &&
+    nextUrl.host === 'api.maptiler.com' &&
+    !nextUrl.searchParams.has('key')
+  ) {
+    nextUrl.searchParams.append('key', maptilerApiKey);
   }
   let response;
   try {
