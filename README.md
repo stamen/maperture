@@ -40,6 +40,8 @@ Here, you can customize the following options:
   - `styles`: an array specifying specific styles you can view on the specified branch
   - `type`: the type of map (`mapbox-gl`, `maplibre-gl`, `google`, `leaflet`)
 - `stylePresetUrls`: An array of URLs pointing to additional presets. URLs must point to JSON arrays containing objects of the same shape as those in `stylePresets`.
+- `viewMode`: The starting view configuration, one of `swipe` (the default), `mirror`, `phone`, or `responsive`.
+- `mapState`: An object containing options for the Mapbox or MapLibre `Map` (see [MapOptions](https://maplibre.org/maplibre-gl-js/docs/API/type-aliases/MapOptions/) in the MapLibre documentation).
 - `gazetteer`: An object that specifies the options available in the interface for navigating directly to specific geographic locations or changing other view options such as the pitch and zoom of the map. The object is a map of **option group names** to arrays of options. Each **option** is an object of names to map options to update.
 
   See `defaultGazetteer` in `src/make-config.js` for the default gazetteer, but as an example you might use:
