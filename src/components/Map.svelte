@@ -58,9 +58,6 @@
         MapComponent = TangramMap;
         break;
       case 'maplibre-gl':
-        MapComponent = GlMap;
-        props.mapRenderer = mapRenderer;
-        break;
       case 'mapbox-gl':
       default:
         MapComponent = GlMap;
