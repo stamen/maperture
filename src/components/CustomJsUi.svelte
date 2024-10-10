@@ -94,13 +94,15 @@
           <div class="checkbox-options">
             <div class="checkbox-label">{checkboxAction?.label}:</div>
             {#each checkboxAction?.options as checkboxOption, iter}
-              <input
-                type="checkbox"
-                id={iter}
-                checked={getInitialCheck(checkboxOption?.checked)}
-                on:click={() => onClickCheckbox(checkboxOption?.script)}
-              />
-              <label for={iter}>{checkboxOption?.label}</label>
+              {#if checkboxOption?.script(mapObj)}
+                <input
+                  type="checkbox"
+                  id={iter}
+                  checked={getInitialCheck(checkboxOption?.checked)}
+                  on:click={() => onClickCheckbox(checkboxOption?.script)}
+                />
+                <label for={iter}>{checkboxOption?.label}</label>
+              {/if}
             {/each}
           </div>
         {/each}
