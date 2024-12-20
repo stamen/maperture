@@ -1,5 +1,6 @@
 import { config as configStore } from './stores';
 import { isMapboxUrl, normalizeMapboxUrl } from './mapbox-urls';
+import { normalizeMapTilerUrl } from './maptiler-urls';
 
 let mapboxGlAccessToken, maptilerApiKey;
 configStore.subscribe(
@@ -11,12 +12,8 @@ const fetchUrl = async url => {
   let nextUrl = new URL(url);
   if (urlIsMapbox) {
     nextUrl = normalizeMapboxUrl(nextUrl.toString(), mapboxGlAccessToken);
-  } else if (
-    maptilerApiKey &&
-    nextUrl.host === 'api.maptiler.com' &&
-    !nextUrl.searchParams.has('key')
-  ) {
-    nextUrl.searchParams.append('key', maptilerApiKey);
+  } else if (nextUrl.host === 'api.maptiler.com') {
+    nextUrl = normalizeMapTilerUrl(nextUrl, maptilerApiKey);
   }
   let response;
   try {
