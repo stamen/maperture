@@ -178,7 +178,7 @@
     width: calc(100% - 2px);
     border-left: 1px solid lightgray;
     border-right: 1px solid lightgray;
-    z-index: 1;
+    z-index: 3;
   }
 
   .menu-top {
