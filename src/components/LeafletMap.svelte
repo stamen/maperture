@@ -1,6 +1,7 @@
 <script>
   import deepEqual from 'deep-equal';
   import throttle from 'lodash.throttle';
+  import { mapObj as mapObjStore } from '../stores';
   import { createEventDispatcher, onMount, onDestroy } from 'svelte';
   import * as L from 'leaflet';
   import 'leaflet/dist/leaflet.css';
@@ -11,6 +12,7 @@
   export let mapStyle;
   export let numberOfMaps;
   export let overrideLayer;
+  export let onMapMount;
 
   const dispatch = createEventDispatcher();
 
@@ -63,6 +65,8 @@
       zoomSnap: 0,
     }).setView(mapViewProps.center, mapViewProps.zoom + 1);
     map.attributionControl.setPrefix('');
+
+    onMapMount(map);
 
     // Also focus map on wheel (automatically focused on click)
     const throttledWheelHandler = throttle(() => {
