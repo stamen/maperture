@@ -1,5 +1,9 @@
 ## Unreleased
 
+- Make sure Mapbox and Maplibre attributions don't overlap the styles dropdown
+
+## 0.16.0
+
 - Add multi-level dropdowns
 
 ## 0.15.1
