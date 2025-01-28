@@ -1,6 +1,7 @@
 ## Unreleased
 
 - Make sure Mapbox and Maplibre attributions don't overlap the styles dropdown
+- Add support for MapTiler SDK
 
 ## 0.16.0
 

@@ -5,6 +5,7 @@ const mapboxGlOption = { name: 'Mapbox GL JS', value: 'mapbox-gl' };
 const glVectorRenderers = [
   mapboxGlOption,
   { name: 'Maplibre GL JS', value: 'maplibre-gl' },
+  { name: 'MapTiler SDK', value: 'maptiler-sdk' },
 ];
 
 const typeToRenderers = {
@@ -14,6 +15,7 @@ const typeToRenderers = {
   'vector-gl': glVectorRenderers,
   'mapbox-gl': glVectorRenderers,
   'maplibre-gl': glVectorRenderers,
+  'maptiler-sdk': glVectorRenderers,
 };
 
 export const getRenderers = (map, sources) => {

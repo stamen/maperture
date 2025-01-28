@@ -1,14 +1,19 @@
 import { config as configStore } from './stores';
 import { isMapboxUrl, normalizeMapboxUrl } from './mapbox-urls';
+import { normalizeMapTilerUrl } from './maptiler-urls';
 
-let mapboxGlAccessToken;
-configStore.subscribe(value => ({ mapboxGlAccessToken } = value));
+let mapboxGlAccessToken, maptilerApiKey;
+configStore.subscribe(
+  value => ({ mapboxGlAccessToken, maptilerApiKey } = value)
+);
 
 const fetchUrl = async url => {
   const urlIsMapbox = isMapboxUrl(url);
-  let nextUrl = url;
+  let nextUrl = new URL(url);
   if (urlIsMapbox) {
-    nextUrl = normalizeMapboxUrl(url, mapboxGlAccessToken);
+    nextUrl = normalizeMapboxUrl(nextUrl.toString(), mapboxGlAccessToken);
+  } else if (nextUrl.host === 'api.maptiler.com') {
+    nextUrl = normalizeMapTilerUrl(nextUrl, maptilerApiKey);
   }
   let response;
   try {
