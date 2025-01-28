@@ -27,12 +27,13 @@ Here, you can customize the following options:
 
 - `mapboxGlAccessToken`: Your Mapbox GL token to allow style reads
 - `mapboxBaseApiUrl`: (optional) Support for a Mapbox flavored style that is served from a different server other than `api.mapbox.com`, e.g., Mapbox Atlas.
+- `maptilerApiKey`: Your MapTiler API key to use with `maptiler-sdk`
 - `googleMapsAPIKey`: Your Google Maps API key to enable API usage
 - `stylePresets`: A list of styles with urls to show in the dropdowns. Styles must have the following keys:
   - `id`: a unique id
   - `name`: a display name
-  - `type`: the type of map or referencing a sublist of presets (`mapbox-gl`, `maplibre-gl`, `google`, `leaflet`, `sublist`)
-  - `url`: (currently applies to `mapbox-gl`, `maplibre-gl`, and `leaflet` maps only) the style's url
+  - `type`: the type of map or referencing a sublist of presets (`mapbox-gl`, `maplibre-gl`, `maptiler-sdk`, `google`, `leaflet`, `sublist`)
+  - `url`: (currently applies to `mapbox-gl`, `maplibre-gl`, `maptiler-sdk` and `leaflet` maps only) the style's url
   - `mapId`: (currently `google` only) the style's id
   - [`presets`]: used only with `type: sublist`, this allows one level of nesting to add an additional nested list of style presets following this format
 - `branchPatterns`: An array of objects that specify how to build a URL to fetch a style living on a branch with the following keys:
@@ -40,6 +41,8 @@ Here, you can customize the following options:
   - `styles`: an array specifying specific styles you can view on the specified branch
   - `type`: the type of map (`mapbox-gl`, `maplibre-gl`, `google`, `leaflet`)
 - `stylePresetUrls`: An array of URLs pointing to additional presets. URLs must point to JSON arrays containing objects of the same shape as those in `stylePresets`.
+- `viewMode`: The starting view configuration, one of `swipe` (the default), `mirror`, `phone`, or `responsive`.
+- `mapState`: An object containing options for the Mapbox or MapLibre `Map` (see [MapOptions](https://maplibre.org/maplibre-gl-js/docs/API/type-aliases/MapOptions/) in the MapLibre documentation).
 - `gazetteer`: An object that specifies the options available in the interface for navigating directly to specific geographic locations or changing other view options such as the pitch and zoom of the map. The object is a map of **option group names** to arrays of options. Each **option** is an object of names to map options to update.
 
   See `defaultGazetteer` in `src/make-config.js` for the default gazetteer, but as an example you might use:

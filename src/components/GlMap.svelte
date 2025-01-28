@@ -1,8 +1,9 @@
 <script>
   import deepEqual from 'deep-equal';
   import throttle from 'lodash.throttle';
-  import { createEventDispatcher, onMount, onDestroy } from 'svelte';
+  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import { config as configStore } from '../stores';
+  import { normalizeMapTilerUrl } from '../maptiler-urls';
 
   export let id;
   export let bearing;
@@ -23,6 +24,10 @@
     if (mapRenderer === 'maplibre-gl') {
       await import('maplibre-gl/dist/maplibre-gl.css');
       renderer = await import('maplibre-gl');
+    } else if (mapRenderer === 'maptiler-sdk') {
+      await import('@maptiler/sdk/dist/maptiler-sdk.css');
+      renderer = await import('@maptiler/sdk');
+      renderer.config.apiKey = $configStore.maptilerApiKey;
     } else {
       await import('mapbox-gl/dist/mapbox-gl.css');
       renderer = await import('mapbox-gl');
@@ -46,7 +51,9 @@
   let mapViewProps = {};
 
   // We can set style (an object) here because mapStyle only changes when it needs to
-  $: ({ style, url } = mapStyle);
+  $: ({ style, url: baseUrl } = mapStyle);
+  $: url = normalizeMapTilerUrl(baseUrl, $configStore.maptilerApiKey);
+
   // We group map-view props here as they are useful in a few contexts
   $: mapViewProps = { bearing, center, pitch, zoom };
 
@@ -195,7 +202,7 @@
   // Resize the map when adding more maps and changing container size
   $: if (map && numberOfMaps) {
     // As of `v3.0.0` maplibre no longer needs this resizing: https://github.com/maplibre/maplibre-gl-js/blob/main/CHANGELOG.md#potentially-breaking-changes
-    if (mapRenderer !== 'maplibre-gl') {
+    if (mapRenderer !== 'maplibre-gl' && mapRenderer !== 'maptiler-sdk') {
       map.once('render', () => {
         const container = document.getElementById(id);
         if (container) {
