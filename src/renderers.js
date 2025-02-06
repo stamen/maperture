@@ -24,6 +24,8 @@ export const getRenderers = (map, sources) => {
   if (map.type !== 'mapbox-gl') return typeToRenderers[map.type];
 
   // If using the mapbox:// protocol, force mapbox-gl
+  // TODO instead of forcing this, we should consider replacing all necessary
+  // mapbox protocols in sprites and glyphs with full URL
   if (map.url && isMapboxUrl(map.url)) {
     mapboxOnly = true;
   } else if (sources) {

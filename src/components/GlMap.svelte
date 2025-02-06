@@ -3,7 +3,6 @@
   import throttle from 'lodash.throttle';
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import { config as configStore } from '../stores';
-  import { normalizeMapTilerUrl } from '../maptiler-urls';
 
   export let id;
   export let bearing;
@@ -51,8 +50,7 @@
   let mapViewProps = {};
 
   // We can set style (an object) here because mapStyle only changes when it needs to
-  $: ({ style, url: baseUrl } = mapStyle);
-  $: url = normalizeMapTilerUrl(baseUrl, $configStore.maptilerApiKey);
+  $: ({ style, url } = mapStyle);
 
   // We group map-view props here as they are useful in a few contexts
   $: mapViewProps = { bearing, center, pitch, zoom };
