@@ -1,6 +1,9 @@
 // Replace with your Mapbox GL token, if any
 const mapboxGlAccessToken = 'pk.eyAAAABBBCCC';
 
+// Replace with your MapTiler API key
+const maptilerApiKey = '';
+
 // Example of setting up a gazetteer object. This is described in the `README`
 // but these are the options that populate the dropdown in the UI that take you
 // to specific locations or map views. You can add as many as you like here and
@@ -54,6 +57,19 @@ const stylePresets = [
     attribution:
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   },
+  {
+    id: 'maplibre-demo-tiles',
+    name: 'Maplibre Demo Tiles',
+    type: 'maplibre-gl',
+    url: 'https://demotiles.maplibre.org/style.json',
+  },
+  // In order for this to work you need to set the maptilerApiKey
+  // {
+  //   id: 'maptiler-streets',
+  //   name: 'MapTiler Streets',
+  //   type: 'maptiler-sdk',
+  //   url: 'https://api.maptiler.com/maps/streets-v2/style.json',
+  // },
 ];
 
 // Commented out example for branchpattern
@@ -73,4 +89,4 @@ const stylePresets = [
 // Example of stylePresetUrls
 // const stylePresetUrls = ['./presets/example.json'];
 
-export { gazetteer, mapboxGlAccessToken, stylePresets };
+export { gazetteer, mapboxGlAccessToken, stylePresets, maptilerApiKey };

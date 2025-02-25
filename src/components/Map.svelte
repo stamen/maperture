@@ -13,6 +13,8 @@
   } from '../stores';
   import { validateMapState } from '../map-state-utils';
   import isEqual from 'lodash.isequal';
+  import { normalizeUrl } from '../transform-urls';
+  import { config as configStore } from '../stores';
 
   export let map;
   export let numberOfMaps;
@@ -39,9 +41,16 @@
   $: mapRenderer = map.renderer;
 
   const setProps = (id, num) => {
+    const keys = {
+      mapboxKey: $configStore.mapboxGlAccessToken,
+      maptilerKey: $configStore.maptilerApiKey,
+    };
     props = {
       id,
-      mapStyle: map,
+      mapStyle: {
+        ...map,
+        url: normalizeUrl(map.url, keys),
+      },
       numberOfMaps: num,
     };
     setMapComponent(mapRenderer);
@@ -58,14 +67,28 @@
       case 'tangram':
         MapComponent = TangramMap;
         break;
-      case 'maplibre-gl':
+      case 'maplibre-gl': {
         MapComponent = GlMap;
         props.mapRenderer = mapRenderer;
         break;
-      case 'mapbox-gl':
-      default:
+      }
+      case 'mapbox-gl': {
         MapComponent = GlMap;
         props.mapRenderer = mapRenderer;
+
+        break;
+      }
+      case 'maptiler-sdk': {
+        MapComponent = GlMap;
+        props.mapRenderer = mapRenderer;
+
+        break;
+      }
+      default: {
+        MapComponent = GlMap;
+        props.mapRenderer = mapRenderer;
+        break;
+      }
     }
   };
 

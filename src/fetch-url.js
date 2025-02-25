@@ -1,15 +1,19 @@
 import { config as configStore } from './stores';
-import { isMapboxUrl, normalizeMapboxUrl } from './mapbox-urls';
+import { normalizeUrl, isMapboxUrl } from './transform-urls';
 
-let mapboxGlAccessToken;
-configStore.subscribe(value => ({ mapboxGlAccessToken } = value));
+let mapboxGlAccessToken, maptilerApiKey;
+configStore.subscribe(
+  value => ({ mapboxGlAccessToken, maptilerApiKey } = value)
+);
 
 const fetchUrl = async url => {
   const urlIsMapbox = isMapboxUrl(url);
-  let nextUrl = url;
-  if (urlIsMapbox) {
-    nextUrl = normalizeMapboxUrl(url, mapboxGlAccessToken);
-  }
+  let nextUrl = new URL(url);
+
+  const keys = { mapboxKey: mapboxGlAccessToken, maptilerKey: maptilerApiKey };
+
+  nextUrl = normalizeUrl(nextUrl.toString(), keys);
+
   let response;
   try {
     response = await fetch(nextUrl);

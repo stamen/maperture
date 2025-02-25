@@ -37,6 +37,7 @@
     "@beyonk/svelte-mapbox": "^8.1.4",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@googlemaps/js-api-loader": "^1.13.10",
+    "@maptiler/sdk": "^2.3.0",
     "autoprefixer": "^10.4.14",
     "deep-equal": "^2.0.5",
     "hat": "^0.0.3",
