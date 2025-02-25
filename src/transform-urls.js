@@ -18,6 +18,7 @@ export const normalizeMapboxUrl = (url, accessToken) => {
 };
 
 export const isMaptilerUrl = url => {
+  if (!url) return false;
   let nextUrl = new URL(url);
   return (
     nextUrl.host === 'api.maptiler.com' && !nextUrl.searchParams.has('key')
