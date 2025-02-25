@@ -75,7 +75,7 @@
       isValid = false;
     }
     // bearing
-    if (bearing !== undefined && (+bearing < 0 || +bearing > 360)) {
+    if (bearing !== undefined && isNaN(+bearing)) {
       isValid = false;
     }
 
