@@ -55,9 +55,15 @@
   };
 
   $: if (mapObj) {
-    mapObj.on('style.load', () => {
+    const isStyleLoaded = mapObj.isStyleLoaded();
+
+    if (isStyleLoaded) {
       mounted = true;
-    });
+    } else {
+      mapObj.on('style.load', () => {
+        mounted = true;
+      });
+    }
   }
 </script>
 
