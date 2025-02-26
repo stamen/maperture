@@ -4,6 +4,7 @@
 - Add support for MapTiler SDK
 - Consistify URL normalization between Mapbox and Maptiler handling
 - Fix bug that did not allow valid bearing values to be entered
+- Fix validation for style preset urls not allowing multi level dropdown syntax
 
 ## 0.16.0
 
