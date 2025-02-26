@@ -3,6 +3,7 @@
 - Make sure Mapbox and Maplibre attributions don't overlap the styles dropdown
 - Add support for MapTiler SDK
 - Consistify URL normalization between Mapbox and Maptiler handling
+- Fix validation for style preset urls not allowing multi level dropdown syntax
 
 ## 0.16.0
 
