@@ -4,6 +4,9 @@
 - Add support for MapTiler SDK
 - Consistify URL normalization between Mapbox and Maptiler handling
 - Fix bug that did not allow valid bearing values to be entered
+- Update Maplibre GL to `^5.2.0`
+- Update Mapbox GL to `^3.10.0`
+- Update Maptiler SDK to `^3.0.1`
 
 ## 0.16.0
 
