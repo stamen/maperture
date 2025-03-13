@@ -2,6 +2,7 @@ export const loadPresetsFromUrl = async url => {
   const response = await fetch(url);
   const json = await response.json();
 
+  console.log(isValidPresetsArray(json));
   if (!isValidPresetsArray(json)) {
     console.warn(`Style presets at ${url} is not valid, check the format`);
     return [];

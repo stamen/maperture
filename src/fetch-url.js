@@ -8,11 +8,19 @@ configStore.subscribe(
 
 const fetchUrl = async url => {
   const urlIsMapbox = isMapboxUrl(url);
-  let nextUrl = new URL(url);
 
-  const keys = { mapboxKey: mapboxGlAccessToken, maptilerKey: maptilerApiKey };
+  let nextUrl = url;
 
-  nextUrl = normalizeUrl(nextUrl.toString(), keys);
+  try {
+    let nextUrl = new URL(url);
+
+    const keys = {
+      mapboxKey: mapboxGlAccessToken,
+      maptilerKey: maptilerApiKey,
+    };
+
+    nextUrl = normalizeUrl(nextUrl.toString(), keys);
+  } catch (err) {}
 
   let response;
   try {

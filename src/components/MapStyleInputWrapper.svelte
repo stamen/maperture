@@ -8,9 +8,11 @@
   import { createBranchUrl } from '../branch-utils';
   import { getRenderers } from '../renderers';
   import MapStyleInput from './MapStyleInput.svelte';
+  import CustomJsUi from './CustomJsUi.svelte';
 
   export let index;
   export let stylesheet;
+  export let mapIdIndex;
 
   let branchPatterns;
   configStore.subscribe(value => ({ branchPatterns } = value));
@@ -159,7 +161,7 @@
         if (pattern?.styles?.length) {
           const branchValues = pattern?.styles.map(s => {
             return {
-              name: `${s.charAt(0).toUpperCase() + s.slice(1)} on...`,
+              name: `${pattern.name ?? pattern.id}: ${s} on...`,
               id: s,
               type: pattern.type,
               dropdownType: 'branch',
@@ -330,6 +332,7 @@
       on:updateMapStore={onUpdateMapStore}
     />
   {/if}
+  <CustomJsUi mapId={map && map?.id ? map?.id : null} {mapIdIndex} />
 </div>
 
 <style>
