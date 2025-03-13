@@ -14,11 +14,21 @@ const isValidPresetsArray = json => {
   if (!Array.isArray(json)) return false;
 
   const requiredKeys = ['id', 'name', 'type'];
-  const presetsMissingKeys = json.filter(preset => {
+
+  const isValid = preset => {
     const presetKeys = Object.keys(preset);
     const missingKeys = requiredKeys.filter(key => !presetKeys.includes(key));
     return missingKeys.length > 0;
+  };
+
+  const presetsMissingKeys = json.filter(preset => {
+    if (preset.type === 'sublist') {
+      return preset.presets.every(isValid);
+    } else {
+      return isValid(preset);
+    }
   });
+
   if (presetsMissingKeys.length > 0) return false;
   return true;
 };
