@@ -8,6 +8,8 @@
 - Update Maplibre GL to `^5.2.0`
 - Update Mapbox GL to `^3.10.0`
 - Update Maptiler SDK to `^3.0.1`
+- Use Smithsonian tiles for Stamen Watercolor
+- Show Stamen Toner and Watercolor by default
 
 ## 0.16.0
 
