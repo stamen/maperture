@@ -3,44 +3,20 @@ const mapboxGlAccessToken =
 
 const stylePresets = [
   {
-    id: 'mapbox-streets',
-    name: 'Mapbox Streets',
-    type: 'mapbox-gl',
-    url: 'mapbox://styles/mapbox/streets-v11',
-  },
-  {
-    id: 'mapbox-outdoors',
-    name: 'Mapbox Outdoors',
-    type: 'mapbox-gl',
-    url: 'mapbox://styles/mapbox/outdoors-v11',
-  },
-  {
-    id: 'mapbox-light',
-    name: 'Mapbox Light',
-    type: 'mapbox-gl',
-    url: 'mapbox://styles/mapbox/light-v10',
-  },
-  {
-    id: 'mapbox-dark',
-    name: 'Mapbox Dark',
-    type: 'mapbox-gl',
-    url: 'mapbox://styles/mapbox/dark-v10',
-  },
-  {
-    id: 'openstreetmap',
-    name: 'OpenStreetMap',
-    type: 'leaflet',
-    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  },
-  {
     id: 'stamen-toner',
     name: 'Stamen Toner',
-    type: 'leaflet',
+    type: 'maplibre-gl',
     url: 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}@2x.png',
     attribution:
       '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/about/" target="_blank">OpenStreetMap contributors</a>',
+  },
+  {
+    id: 'stamen-watercolor',
+    name: 'Stamen Watercolor',
+    type: 'leaflet',
+    url: 'https://watercolormaps.collection.cooperhewitt.org/tile/watercolor/{z}/{x}/{y}.jpg',
+    attribution:
+      '&copy; <a href="https://stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://www.openstreetmap.org/about/" target="_blank">OpenStreetMap contributors</a>',
   },
   {
     id: 'stamen-toner-lite',
@@ -107,12 +83,42 @@ const stylePresets = [
       '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/about/" target="_blank">OpenStreetMap contributors</a>',
   },
   {
-    id: 'stamen-watercolor',
-    name: 'Stamen Watercolor',
+    id: 'openstreetmap',
+    name: 'OpenStreetMap',
     type: 'leaflet',
-    url: 'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg',
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution:
-      '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://www.openstreetmap.org/about/" target="_blank">OpenStreetMap contributors</a>',
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  },
+  {
+    name: 'Mapbox',
+    type: 'sublist',
+    presets: [
+      {
+        id: 'mapbox-streets',
+        name: 'Mapbox Streets',
+        type: 'mapbox-gl',
+        url: 'mapbox://styles/mapbox/streets-v11',
+      },
+      {
+        id: 'mapbox-outdoors',
+        name: 'Mapbox Outdoors',
+        type: 'mapbox-gl',
+        url: 'mapbox://styles/mapbox/outdoors-v11',
+      },
+      {
+        id: 'mapbox-light',
+        name: 'Mapbox Light',
+        type: 'mapbox-gl',
+        url: 'mapbox://styles/mapbox/light-v10',
+      },
+      {
+        id: 'mapbox-dark',
+        name: 'Mapbox Dark',
+        type: 'mapbox-gl',
+        url: 'mapbox://styles/mapbox/dark-v10',
+      },
+    ],
   },
 ];
 
