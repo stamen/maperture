@@ -46,7 +46,7 @@
     "lodash.isequal": "^4.5.0",
     "lodash.throttle": "^4.1.1",
     "mapbox-gl": "^3.10.0",
-    "maplibre-gl": "github:maplibre/maplibre-gl-js",
+    "maplibre-gl": "github:stamen/maplibre-gl-js#springmeyer/icon-offset-fix",
     "postcss": "^8.4.23",
     "sirv-cli": "^1.0.0",
     "stamen-attribution": "github:stamen/stamen-attribution#v0.1.0",
