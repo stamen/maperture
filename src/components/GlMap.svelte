@@ -21,8 +21,8 @@
   // Mapbox and MapLibre share a Map component since they are so similar and utilize the same methods
   const importRenderer = async () => {
     if (mapRenderer === 'maplibre-gl') {
-      await import('maplibre-gl/dist/maplibre-gl.css');
-      renderer = await import('maplibre-gl');
+      await import('../maplibre-gl.css');
+      renderer = await import('../maplibre-gl');
     } else if (mapRenderer === 'maptiler-sdk') {
       await import('@maptiler/sdk/dist/maptiler-sdk.css');
       renderer = await import('@maptiler/sdk');

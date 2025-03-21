@@ -1,6 +1,6 @@
 <script>
   import mapboxgl from 'mapbox-gl';
-  import maplibregl from 'maplibre-gl';
+  import maplibregl from './maplibre-gl';
   import { onMount } from 'svelte';
   import {
     maps as mapsStore,
