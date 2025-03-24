@@ -12,7 +12,7 @@ const fetchUrl = async url => {
   let nextUrl = url;
 
   try {
-    let nextUrl = new URL(url);
+    nextUrl = new URL(url);
 
     const keys = {
       mapboxKey: mapboxGlAccessToken,
