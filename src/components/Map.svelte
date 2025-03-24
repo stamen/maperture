@@ -9,6 +9,7 @@
     maps as mapsStore,
     linkLocations as linkLocationsStore,
     mapLocations as mapLocationsStore,
+    mapObj as mapObjStore,
   } from '../stores';
   import { validateMapState } from '../map-state-utils';
   import isEqual from 'lodash.isequal';
@@ -132,6 +133,10 @@
     }
   };
 
+  const onMapMount = mapObj => {
+    mapObjStore.update(store => ({ ...store, [map.index]: mapObj }));
+  };
+
   $: {
     // Add trigger for stylesheet changes for locally served styles
     stylesheet;
@@ -149,6 +154,7 @@
     <div class="map" class:highlight-diff={highlightDifferences}>
       <svelte:component
         this={MapComponent}
+        {onMapMount}
         {...props}
         {...mapStateProps}
         on:mapMove={handleMapMove}
@@ -167,6 +173,7 @@
     >
       <MapLabel
         index={map.index}
+        mapIdIndex={mapId}
         name={map.name}
         onClose={removeMap}
         disableClose={numberOfMaps <= 1}
