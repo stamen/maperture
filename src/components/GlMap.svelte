@@ -129,7 +129,6 @@
     await importRenderer();
     const glLibrary = renderer;
 
-    console.log('preserveDrawingBuffer');
     map = new glLibrary.Map({
       container: id,
       style: url,
