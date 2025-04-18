@@ -11,6 +11,8 @@
 - Update Maptiler SDK to `^3.0.1`
 - Fix fetch url transform of specific protocols
 - Fix screenshotting with Maplibre update
+- Use Smithsonian tiles for Stamen Watercolor
+- Show Stamen Toner and Watercolor by default
 
 ## 0.16.0
 
