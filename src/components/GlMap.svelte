@@ -1,7 +1,7 @@
 <script>
   import deepEqual from 'deep-equal';
   import throttle from 'lodash.throttle';
-  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
+  import { createEventDispatcher, onMount, onDestroy } from 'svelte';
   import { config as configStore } from '../stores';
 
   export let id;
@@ -13,6 +13,7 @@
   export let zoom;
   export let mapStyle;
   export let numberOfMaps;
+  export let onMapMount;
 
   export let mapRenderer;
 
@@ -131,9 +132,12 @@
     map = new glLibrary.Map({
       container: id,
       style: url,
+      canvasContextAttributes: { preserveDrawingBuffer: true },
       preserveDrawingBuffer: true,
       ...mapViewProps,
     });
+
+    onMapMount(map);
 
     // Also focus map on wheel (automatically focused on click)
     const throttledWheelHandler = throttle(() => {
