@@ -11,6 +11,7 @@
 - Update Maptiler SDK to `^3.0.1`
 - Fix fetch url transform of specific protocols
 - Fix screenshotting with Maplibre update
+- Increase precision for lat/lon
 
 ## 0.16.0
 
