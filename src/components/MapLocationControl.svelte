@@ -19,7 +19,7 @@
   $: lng = center.lng;
 
   const setLocation = (lat, lng, zoom, pitch, bearing) => {
-    let locationParts = [round(zoom, 2), round(lat, 3), round(lng, 3)];
+    let locationParts = [round(zoom, 2), round(lat, 5), round(lng, 5)];
 
     if (pitch || bearing) {
       locationParts.push(round(pitch, 1));
