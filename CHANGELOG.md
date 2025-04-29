@@ -12,6 +12,8 @@
 - Fix fetch url transform of specific protocols
 - Fix screenshotting with Maplibre update
 - Increase precision for lat/lon
+- Use Smithsonian tiles for Stamen Watercolor
+- Show Stamen Toner and Watercolor by default
 
 ## 0.16.0
 
