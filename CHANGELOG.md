@@ -12,6 +12,7 @@
 - Fix fetch url transform of specific protocols
 - Fix screenshotting with Maplibre update
 - Increase precision for lat/lon
+- Fix bug in custom JS to use branch pattern id and not sub style id
 
 ## 0.16.0
 
