@@ -1,5 +1,8 @@
 const mapboxGlAccessToken =
   'pk.eyJ1Ijoic3RhbWVuIiwiYSI6ImNreWM1emM2NjAyNTgyb25kc2o5ZG1iMmoifQ.o2QhFbe03ilcplg9sAhYZQ';
+const amazonLocationApiKey =
+  'v1.public.eyJqdGkiOiIyODEyOTE3Yy1jZDNjLTRlYjgtOWM0Ni0zOGM2M2JkM2NiN2UifXEZYVcCi19PbxEZfsE0o27ZTpQnf8PkoDB8hpNKleiPkK5rewQJWnKAp-kE4-XpPhbtk8RSFefX9bT5hWt6ALch7moSiEe8Xm9j-wuBqKDP9aATESbOr-N1wDSJPtqV-gNYvzgF8_zkNODHF-JOZ_xbKhrFDUxXHW6Vjl9q34Le7ZdHsblytyKAGkbrfrCfmaMMR5JZ8eQaEQNzmWv0YCEF0VXOxdkAaeSBB4M50rvY_QG8KQfuRehZ1mlIoOflN-xI1ejfq9nSHDScL-3_wTT4ygn4KIrgeK7zWEinTa_vfNiG6J3W8K8vh4edRAsj4oHql9jDrKeUrqg2MxSiF9A.MGFjMDA4ZmUtYWRiYy00NTgyLTg0Y2MtZTY3MzFlZDRmYTQ1';
+const region = 'us-west-2';
 
 const stylePresets = [
   {
@@ -97,6 +100,18 @@ const stylePresets = [
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   },
   {
+    name: 'Amazon Location',
+    type: 'sublist',
+    presets: [
+      {
+        id: 'amazon-location-standard-light',
+        name: 'Amazon Location Standard Light',
+        type: 'maplibre-gl',
+        url: `https://maps.geo.${region}.amazonaws.com/v2/styles/Standard/descriptor?key=${amazonLocationApiKey}&color-scheme=Light`,
+      },
+    ],
+  },
+  {
     name: 'Mapbox',
     type: 'sublist',
     presets: [
@@ -136,4 +151,10 @@ const stylePresets = [
 
 const customJs = [];
 
-export { customJs, mapboxGlAccessToken, stylePresets };
+export {
+  customJs,
+  mapboxGlAccessToken,
+  amazonLocationApiKey,
+  region,
+  stylePresets,
+};
