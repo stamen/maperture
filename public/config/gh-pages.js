@@ -91,23 +91,47 @@ const stylePresets = [
       },
     ],
   },
-  {
-    id: 'openstreetmap',
-    name: 'OpenStreetMap',
-    type: 'leaflet',
-    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  },
+  //{
+  //  id: 'openstreetmap',
+  //  name: 'OpenStreetMap',
+  //  type: 'leaflet',
+  //  url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  //  attribution:
+  //    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  //},
   {
     name: 'Amazon Location',
     type: 'sublist',
     presets: [
       {
         id: 'amazon-location-standard-light',
-        name: 'Amazon Location Standard Light',
+        name: 'AWS Standard Light',
         type: 'maplibre-gl',
         url: `https://maps.geo.${region}.amazonaws.com/v2/styles/Standard/descriptor?key=${amazonLocationApiKey}&color-scheme=Light`,
+      },
+      {
+        id: 'amazon-location-standard-dark',
+        name: 'AWS Standard Dark',
+        type: 'maplibre-gl',
+        url: `https://maps.geo.${region}.amazonaws.com/v2/styles/Standard/descriptor?key=${amazonLocationApiKey}&color-scheme=Dark`,
+      },
+      {
+        id: 'amazon-location-monochrome-light',
+        name: 'AWS Monochrome Light',
+        type: 'maplibre-gl',
+        url: `https://maps.geo.${region}.amazonaws.com/v2/styles/Monochrome/descriptor?key=${amazonLocationApiKey}&color-scheme=Light`,
+      },
+      {
+        id: 'amazon-location-monochrome-dark',
+        name: 'AWS Monochrome Dark',
+        type: 'maplibre-gl',
+        url: `https://maps.geo.${region}.amazonaws.com/v2/styles/Monochrome/descriptor?key=${amazonLocationApiKey}&color-scheme=Dark`,
+      },
+      {
+        id: 'amazon-location-hybrid',
+        name: 'AWS Satellite Hybrid',
+        type: 'maplibre-gl',
+        url: `https://maps.geo.${region}.amazonaws.com/v2/styles/Hybrid/descriptor?key=${amazonLocationApiKey}&color-scheme=Light`,
       },
     ],
   },
