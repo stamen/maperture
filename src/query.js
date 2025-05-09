@@ -1,3 +1,4 @@
+import jsoncrush from 'jsoncrush';
 import isEqual from 'lodash.isequal';
 import { round } from './math';
 import { linkLocations as linkLocationsStore } from './stores';
@@ -6,7 +7,7 @@ let linkedLocations;
 linkLocationsStore.subscribe(value => (linkedLocations = value));
 
 // Keys that should be encoded/decoded as arrays
-const jsonKeys = ['maps', 'locations'];
+const jsonKeys = ['locations'];
 
 // Keys that should be encoded/decoded as boolean values
 const booleanKeys = ['showCollisions', 'showBoundaries', 'showDiff'];
@@ -30,6 +31,36 @@ function toQueryString(obj) {
   });
   return qs;
 }
+
+const encodeMaps = (maps, configMaps) => {
+  const mapsToEncode = maps.map(m => {
+    const encodeMap = { id: m.id };
+    const configMap = configMaps.find(({ id }) => id === m.id);
+
+    // TODO on branchPatterns include branch, style instead
+    if (!configMap) return m;
+
+    // Only renderer if not default
+    if (m.renderer !== configMap.renderer) {
+      encodeMap.renderer = m.renderer;
+    }
+
+    return encodeMap;
+  });
+
+  return jsoncrush.crush(JSON.stringify(mapsToEncode));
+};
+
+const decodeMaps = (str, configMaps) => {
+  const maps = JSON.parse(jsoncrush.uncrush(str));
+  return maps
+    .map(m => {
+      const configMap = configMaps.find(({ id }) => id === m.id);
+      if (!configMap) return m;
+      return { ...configMap, ...m };
+    })
+    .filter(v => v);
+};
 
 const encodeMapParams = ({ zoom, center, pitch, bearing }) => {
   return [
@@ -71,37 +102,33 @@ function fromQueryString(qs) {
   return params;
 }
 
-// Remove values set to null
+// Remove values set to null / false
 const cleanSettings = stateObj => {
   let nextState = Object.keys(stateObj).reduce((acc, k) => {
     const value = stateObj[k];
+    // Only include booleanKeys if not default
+    if (booleanKeys.includes(k) && !value) return acc;
     if (value !== null) acc[k] = value;
     return acc;
   }, {});
   return nextState;
 };
 
-export const createHashString = mapSettings => {
-  let newMapSettings = JSON.parse(JSON.stringify(mapSettings));
-  if (newMapSettings.maps?.length ?? 0) {
-    const newMaps = newMapSettings.maps;
-
-    // Remove map styles before hashing
-    newMapSettings.maps = newMaps.map(m => {
-      delete m.style;
-      return m;
-    });
-  }
-
+export const createHashString = (mapSettings, config) => {
   let nonMapSettings = Object.fromEntries(
-    Object.entries(newMapSettings)
+    Object.entries(mapSettings)
       .filter(([k, v]) => !mapLocationKeys.includes(k) && k !== 'locations')
-      .map(([k, v]) => [k, jsonKeys.includes(k) ? JSON.stringify(v) : v])
+      .map(([k, v]) => {
+        let encodedValue = v;
+        if (k === 'maps') encodedValue = encodeMaps(v, config.maps);
+        else if (jsonKeys.includes(k)) encodedValue = JSON.stringify(v);
+        return [k, encodedValue];
+      })
   );
 
   nonMapSettings = cleanSettings(nonMapSettings);
 
-  const currentHash = readHash(window.location.hash);
+  const currentHash = readHash(window.location.hash, config);
 
   const requiresHistoryItem = Object.entries(nonMapSettings).some(kv => {
     let [k, v] = kv;
@@ -120,13 +147,13 @@ export const createHashString = mapSettings => {
 
   if (linkedLocations) {
     updatedSettings = {
-      map: encodeMapParams(newMapSettings),
+      map: encodeMapParams(mapSettings),
       ...updatedSettings,
     };
   } else {
     updatedSettings = {
       locations: JSON.stringify(
-        newMapSettings.locations.map(location => encodeMapParams(location))
+        mapSettings.locations.map(location => encodeMapParams(location))
       ),
       ...updatedSettings,
     };
@@ -137,8 +164,11 @@ export const createHashString = mapSettings => {
   return { nextHash, requiresHistoryItem };
 };
 
-export function writeHash(mapSettings) {
-  const { nextHash, requiresHistoryItem } = createHashString(mapSettings);
+export function writeHash(mapSettings, config) {
+  const { nextHash, requiresHistoryItem } = createHashString(
+    mapSettings,
+    config
+  );
   if (!requiresHistoryItem) {
     window.location.replace(`${window.location.pathname}#${nextHash}`);
   } else {
@@ -146,12 +176,13 @@ export function writeHash(mapSettings) {
   }
 }
 
-export function readHash(qs) {
+export function readHash(qs, config) {
   // Remove unset values, convert value as necessary
   let urlState = Object.fromEntries(
     Object.entries(fromQueryString(qs))
       .filter(([k, v]) => !!v)
       .map(([k, v]) => {
+        if (k === 'maps') return [k, decodeMaps(v, config.maps)];
         if (jsonKeys.includes(k)) return [k, JSON.parse(v)];
         if (booleanKeys.includes(k)) return [k, v === 'true'];
         if (numericKeys.includes(k)) return [k, +v || 0];

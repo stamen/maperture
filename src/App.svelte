@@ -40,7 +40,7 @@
   let writingHash = false;
 
   const hashShouldUpdate = () =>
-    location.hash.slice(1) !== createHashString(settings)?.nextHash;
+    location.hash.slice(1) !== createHashString(settings, config)?.nextHash;
 
   // Set maps and presets initially using settings
   mapsStore.set(settings.maps.map((map, index) => ({ ...map, index })));
@@ -118,7 +118,7 @@
   const throttledWriteHash = throttle(() => {
     if (hashShouldUpdate()) {
       writingHash = true;
-      writeHash(settings);
+      writeHash(settings, config);
     }
   }, 250);
 
