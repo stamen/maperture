@@ -10,8 +10,6 @@ const stylePresets = [
     name: 'Stamen Watercolor',
     type: 'leaflet',
     url: 'https://watercolormaps.collection.cooperhewitt.org/tile/watercolor/{z}/{x}/{y}.jpg',
-    attribution:
-      '&copy; <a href="https://stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://www.openstreetmap.org/about/" target="_blank">OpenStreetMap contributors</a>',
   },
   {
     id: 'stamen-terrain',
