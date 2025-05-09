@@ -72,6 +72,8 @@ const stylePresets = [
   // },
 ];
 
+const branchPatterns = null; // pass null value to suppress the "Styles on a branch" menu, if you aren't using it
+
 // Commented out example for branchpattern
 // const branchPatterns = [
 //   {
@@ -89,4 +91,10 @@ const stylePresets = [
 // Example of stylePresetUrls
 // const stylePresetUrls = ['./presets/example.json'];
 
-export { gazetteer, mapboxGlAccessToken, stylePresets, maptilerApiKey };
+export {
+  gazetteer,
+  mapboxGlAccessToken,
+  branchPatterns,
+  stylePresets,
+  maptilerApiKey,
+};

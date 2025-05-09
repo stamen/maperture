@@ -154,11 +154,13 @@ const stylePresets = [
 ];
 
 const customJs = [];
+const branchPatterns = null;
 
 export {
   customJs,
   mapboxGlAccessToken,
   amazonLocationApiKey,
   region,
+  branchPatterns,
   stylePresets,
 };
