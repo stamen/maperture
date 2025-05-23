@@ -62,6 +62,9 @@
     } else {
       mapObj.on('style.load', () => {
         mounted = true;
+        mapObj.setProjection({
+          type: 'globe', // Set projection to globe
+        });
       });
     }
   }
