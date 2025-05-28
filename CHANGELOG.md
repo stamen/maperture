@@ -13,6 +13,8 @@
 - Fix screenshotting with Maplibre update
 - Increase precision for lat/lon
 - Fix bug in custom JS to use branch pattern id and not sub style id
+- Use Smithsonian tiles for Stamen Watercolor
+- Show Stamen Toner and Watercolor by default
 
 ## 0.16.0
 
