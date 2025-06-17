@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Shorten URLs by reducing map state kept in the hash to the minimum
+
 ## 0.17.0
 
 - Make sure Mapbox and Maplibre attributions don't overlap the styles dropdown
