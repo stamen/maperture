@@ -2,6 +2,7 @@ import jsoncrush from 'jsoncrush';
 import isEqual from 'lodash.isequal';
 import { round } from './math';
 import { linkLocations as linkLocationsStore } from './stores';
+import { createBranchUrl } from './branch-utils';
 
 let linkedLocations;
 linkLocationsStore.subscribe(value => (linkedLocations = value));
@@ -32,12 +33,44 @@ function toQueryString(obj) {
   return qs;
 }
 
-const encodeMaps = (maps, configMaps) => {
-  const mapsToEncode = maps.map(m => {
-    const encodeMap = { id: m.id };
-    const configMap = configMaps.find(({ id }) => id === m.id);
+const findStylePreset = (id, stylePresets) => {
+  const flatPresets = [
+    ...stylePresets.filter(p => p.type !== 'sublist'),
+    ...stylePresets.filter(p => p.type === 'sublist').flatMap(p => p.presets),
+  ];
 
-    // TODO on branchPatterns include branch, style instead
+  return flatPresets.find(preset => preset.id === id);
+};
+
+const findBranchPattern = (map, branchPatterns) => {
+  const branchPattern = branchPatterns.find(p => p.id === map.branchPatternId);
+  if (!branchPattern) return null;
+  return {
+    ...branchPattern,
+    url: createBranchUrl(
+      branchPattern.pattern,
+      map.branch,
+      map.branchPatternStyle
+    ),
+  };
+};
+
+const encodeMaps = (maps, config) => {
+  const mapsToEncode = maps.map(m => {
+    let encodeMap = { id: m.id };
+    let configMap;
+
+    if (m.branchPatternId) {
+      configMap = findBranchPattern(m, config.branchPatterns);
+      encodeMap = {
+        branchPatternId: configMap.id,
+        branchPatternStyle: m.branchPatternStyle,
+        branch: m.branch,
+      };
+    } else {
+      configMap = findStylePreset(m.id, config.stylePresets);
+    }
+
     if (!configMap) return m;
 
     // Only renderer if not default
@@ -51,15 +84,17 @@ const encodeMaps = (maps, configMaps) => {
   return jsoncrush.crush(JSON.stringify(mapsToEncode));
 };
 
-const decodeMaps = (str, configMaps) => {
+const decodeMaps = (str, config) => {
   const maps = JSON.parse(jsoncrush.uncrush(str));
-  return maps
+  const decodedMaps = maps
     .map(m => {
-      const configMap = configMaps.find(({ id }) => id === m.id);
+      let configMap = findStylePreset(m.id, config.stylePresets);
+      if (!configMap) configMap = findBranchPattern(m, config.branchPatterns);
       if (!configMap) return m;
       return { ...configMap, ...m };
     })
     .filter(v => v);
+  return decodedMaps;
 };
 
 const encodeMapParams = ({ zoom, center, pitch, bearing }) => {
@@ -120,7 +155,7 @@ export const createHashString = (mapSettings, config) => {
       .filter(([k, v]) => !mapLocationKeys.includes(k) && k !== 'locations')
       .map(([k, v]) => {
         let encodedValue = v;
-        if (k === 'maps') encodedValue = encodeMaps(v, config.maps);
+        if (k === 'maps') encodedValue = encodeMaps(v, config);
         else if (jsonKeys.includes(k)) encodedValue = JSON.stringify(v);
         return [k, encodedValue];
       })
@@ -182,7 +217,7 @@ export function readHash(qs, config) {
     Object.entries(fromQueryString(qs))
       .filter(([k, v]) => !!v)
       .map(([k, v]) => {
-        if (k === 'maps') return [k, decodeMaps(v, config.maps)];
+        if (k === 'maps') return [k, decodeMaps(v, config)];
         if (jsonKeys.includes(k)) return [k, JSON.parse(v)];
         if (booleanKeys.includes(k)) return [k, v === 'true'];
         if (numericKeys.includes(k)) return [k, +v || 0];

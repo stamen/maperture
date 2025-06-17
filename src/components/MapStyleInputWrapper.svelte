@@ -163,6 +163,8 @@
             return {
               name: `${pattern.name ?? pattern.id}: ${s} on...`,
               id: s,
+              branchPatternId: pattern.id,
+              branchPatternStyle: s,
               type: pattern.type,
               dropdownType: 'branch',
               selected: !!(
