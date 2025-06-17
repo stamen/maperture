@@ -1,4 +1,3 @@
-import jsoncrush from 'jsoncrush';
 import isEqual from 'lodash.isequal';
 import { round } from './math';
 import { linkLocations as linkLocationsStore } from './stores';
@@ -81,11 +80,11 @@ const encodeMaps = (maps, config) => {
     return encodeMap;
   });
 
-  return jsoncrush.crush(JSON.stringify(mapsToEncode));
+  return JSON.stringify(mapsToEncode);
 };
 
 const decodeMaps = (str, config) => {
-  const maps = JSON.parse(jsoncrush.uncrush(str));
+  const maps = JSON.parse(str);
   const decodedMaps = maps
     .map(m => {
       let configMap = findStylePreset(m.id, config.stylePresets);
