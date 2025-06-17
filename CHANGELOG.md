@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.17.0
+
 - Make sure Mapbox and Maplibre attributions don't overlap the styles dropdown
 - Add support for MapTiler SDK
 - Consistify URL normalization between Mapbox and Maptiler handling
@@ -12,6 +14,7 @@
 - Fix fetch url transform of specific protocols
 - Fix screenshotting with Maplibre update
 - Increase precision for lat/lon
+- Fix bug in custom JS to use branch pattern id and not sub style id
 - Use Smithsonian tiles for Stamen Watercolor
 - Show Stamen Toner and Watercolor by default
 
