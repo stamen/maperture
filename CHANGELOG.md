@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Don't set RTL text plugin if already in progress
+
 ## 0.17.0
 
 - Make sure Mapbox and Maplibre attributions don't overlap the styles dropdown
