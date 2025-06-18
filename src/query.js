@@ -60,7 +60,7 @@ const encodeMaps = (maps, config) => {
     let configMap;
 
     if (m.branchPatternId) {
-      configMap = findBranchPattern(m, config.branchPatterns);
+      configMap = findBranchPattern(m, config?.branchPatterns ?? []);
       encodeMap = {
         branchPatternId: configMap.id,
         branchPatternStyle: m.branchPatternStyle,
@@ -87,8 +87,9 @@ const decodeMaps = (str, config) => {
   const maps = JSON.parse(str);
   const decodedMaps = maps
     .map(m => {
-      let configMap = findStylePreset(m.id, config.stylePresets);
-      if (!configMap) configMap = findBranchPattern(m, config.branchPatterns);
+      let configMap = findStylePreset(m.id, config?.stylePresets ?? []);
+      if (!configMap)
+        configMap = findBranchPattern(m, config?.branchPatterns ?? []);
       if (!configMap) return m;
       return { ...configMap, ...m };
     })
