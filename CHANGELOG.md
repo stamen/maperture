@@ -1,5 +1,6 @@
 ## Unreleased
 
+- Shorten URLs by reducing map state kept in the hash to the minimum
 - Don't set RTL text plugin if already in progress
 
 ## 0.17.0

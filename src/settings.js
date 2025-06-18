@@ -8,6 +8,6 @@ export const getSettings = config => {
     viewMode,
     maps,
     stylePresets,
-    ...readHash(window.location.hash),
+    ...readHash(window.location.hash, config),
   };
 };
