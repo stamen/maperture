@@ -42,15 +42,11 @@ const findStylePreset = (id, stylePresets) => {
 };
 
 const findBranchPattern = (map, branchPatterns) => {
-  const branchPattern = branchPatterns.find(p => p.id === map.branchPatternId);
+  const branchPattern = branchPatterns.find(p => p.id === map.branchId);
   if (!branchPattern) return null;
   return {
     ...branchPattern,
-    url: createBranchUrl(
-      branchPattern.pattern,
-      map.branch,
-      map.branchPatternStyle
-    ),
+    url: createBranchUrl(branchPattern.pattern, map.branch, map.branchStyle),
   };
 };
 
@@ -59,11 +55,11 @@ const encodeMaps = (maps, config) => {
     let encodeMap = { id: m.id };
     let configMap;
 
-    if (m.branchPatternId) {
+    if (m.branchId) {
       configMap = findBranchPattern(m, config?.branchPatterns ?? []);
       encodeMap = {
-        branchPatternId: configMap.id,
-        branchPatternStyle: m.branchPatternStyle,
+        branchId: configMap.id,
+        branchStyle: m.branchStyle,
         branch: m.branch,
       };
     } else {

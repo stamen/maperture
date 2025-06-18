@@ -164,8 +164,7 @@
               name: `${pattern.name ?? pattern.id}: ${s} on...`,
               branchId: pattern?.id,
               id: s,
-              branchPatternId: pattern.id,
-              branchPatternStyle: s,
+              branchStyle: s,
               type: pattern.type,
               dropdownType: 'branch',
               selected: !!(
