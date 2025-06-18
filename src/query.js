@@ -70,7 +70,12 @@ const encodeMaps = (maps, config) => {
       configMap = findStylePreset(m.id, config.stylePresets);
     }
 
-    if (!configMap) return m;
+    // If not set yet, must be a custom URL
+    if (!configMap) {
+      return Object.fromEntries(
+        Object.entries(m).filter(([k]) => k !== 'style')
+      );
+    }
 
     // Only renderer if not default
     if (m.renderer !== configMap.renderer) {
