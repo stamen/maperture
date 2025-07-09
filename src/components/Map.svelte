@@ -146,10 +146,17 @@
   $: setMapComponent(mapRenderer);
 
   $: mapStateProps = getMapStateProps($$restProps);
+
+  $: console.log(map);
 </script>
 
 <div class="map-container">
-  <div class="screenshot-label-transparent">{map.name ?? map.id}</div>
+  <div class="screenshot-label-transparent">
+    {map.name ?? map.id}
+    {#if map?.branch}
+      : {map.branch}
+    {/if}
+  </div>
   {#key mapRenderer}
     <div class="map" class:highlight-diff={highlightDifferences}>
       <svelte:component
