@@ -12,7 +12,7 @@
     mapObj = state?.[index];
   });
 
-  const { customJs } = $configStore;
+  const { customJs = [] } = $configStore;
 
   $: validActions = customJs.filter(js => js.mapIds.includes(mapId));
 
