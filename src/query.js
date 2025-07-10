@@ -1,12 +1,13 @@
 import isEqual from 'lodash.isequal';
 import { round } from './math';
 import { linkLocations as linkLocationsStore } from './stores';
+import { createBranchUrl } from './branch-utils';
 
 let linkedLocations;
 linkLocationsStore.subscribe(value => (linkedLocations = value));
 
 // Keys that should be encoded/decoded as arrays
-const jsonKeys = ['maps', 'locations'];
+const jsonKeys = ['locations'];
 
 // Keys that should be encoded/decoded as boolean values
 const booleanKeys = ['showCollisions', 'showBoundaries', 'showDiff'];
@@ -30,6 +31,72 @@ function toQueryString(obj) {
   });
   return qs;
 }
+
+const findStylePreset = (id, stylePresets) => {
+  const flatPresets = [
+    ...stylePresets.filter(p => p.type !== 'sublist'),
+    ...stylePresets.filter(p => p.type === 'sublist').flatMap(p => p.presets),
+  ];
+
+  return flatPresets.find(preset => preset.id === id);
+};
+
+const findBranchPattern = (map, branchPatterns) => {
+  const branchPattern = branchPatterns.find(p => p.id === map.branchId);
+  if (!branchPattern) return null;
+  return {
+    ...branchPattern,
+    url: createBranchUrl(branchPattern.pattern, map.branch, map.branchStyle),
+  };
+};
+
+const encodeMaps = (maps, config) => {
+  const mapsToEncode = maps.map(m => {
+    let encodeMap = { id: m.id };
+    let configMap;
+
+    if (m.branchId) {
+      configMap = findBranchPattern(m, config?.branchPatterns ?? []);
+      encodeMap = {
+        branchId: configMap.id,
+        branchStyle: m.branchStyle,
+        branch: m.branch,
+      };
+    } else {
+      configMap = findStylePreset(m.id, config.stylePresets);
+    }
+
+    // If not set yet, must be a custom URL
+    if (!configMap) {
+      return Object.fromEntries(
+        Object.entries(m).filter(([k]) => k !== 'style')
+      );
+    }
+
+    // Only renderer if not default
+    if (m.renderer !== configMap.renderer) {
+      encodeMap.renderer = m.renderer;
+    }
+
+    return encodeMap;
+  });
+
+  return JSON.stringify(mapsToEncode);
+};
+
+const decodeMaps = (str, config) => {
+  const maps = JSON.parse(str);
+  const decodedMaps = maps
+    .map(m => {
+      let configMap = findStylePreset(m.id, config?.stylePresets ?? []);
+      if (!configMap)
+        configMap = findBranchPattern(m, config?.branchPatterns ?? []);
+      if (!configMap) return m;
+      return { ...configMap, ...m };
+    })
+    .filter(v => v);
+  return decodedMaps;
+};
 
 const encodeMapParams = ({ zoom, center, pitch, bearing }) => {
   return [
@@ -71,37 +138,33 @@ function fromQueryString(qs) {
   return params;
 }
 
-// Remove values set to null
+// Remove values set to null / false
 const cleanSettings = stateObj => {
   let nextState = Object.keys(stateObj).reduce((acc, k) => {
     const value = stateObj[k];
+    // Only include booleanKeys if not default
+    if (booleanKeys.includes(k) && !value) return acc;
     if (value !== null) acc[k] = value;
     return acc;
   }, {});
   return nextState;
 };
 
-export const createHashString = mapSettings => {
-  let newMapSettings = JSON.parse(JSON.stringify(mapSettings));
-  if (newMapSettings.maps?.length ?? 0) {
-    const newMaps = newMapSettings.maps;
-
-    // Remove map styles before hashing
-    newMapSettings.maps = newMaps.map(m => {
-      delete m.style;
-      return m;
-    });
-  }
-
+export const createHashString = (mapSettings, config) => {
   let nonMapSettings = Object.fromEntries(
-    Object.entries(newMapSettings)
+    Object.entries(mapSettings)
       .filter(([k, v]) => !mapLocationKeys.includes(k) && k !== 'locations')
-      .map(([k, v]) => [k, jsonKeys.includes(k) ? JSON.stringify(v) : v])
+      .map(([k, v]) => {
+        let encodedValue = v;
+        if (k === 'maps') encodedValue = encodeMaps(v, config);
+        else if (jsonKeys.includes(k)) encodedValue = JSON.stringify(v);
+        return [k, encodedValue];
+      })
   );
 
   nonMapSettings = cleanSettings(nonMapSettings);
 
-  const currentHash = readHash(window.location.hash);
+  const currentHash = readHash(window.location.hash, config);
 
   const requiresHistoryItem = Object.entries(nonMapSettings).some(kv => {
     let [k, v] = kv;
@@ -120,13 +183,13 @@ export const createHashString = mapSettings => {
 
   if (linkedLocations) {
     updatedSettings = {
-      map: encodeMapParams(newMapSettings),
+      map: encodeMapParams(mapSettings),
       ...updatedSettings,
     };
   } else {
     updatedSettings = {
       locations: JSON.stringify(
-        newMapSettings.locations.map(location => encodeMapParams(location))
+        mapSettings.locations.map(location => encodeMapParams(location))
       ),
       ...updatedSettings,
     };
@@ -137,8 +200,11 @@ export const createHashString = mapSettings => {
   return { nextHash, requiresHistoryItem };
 };
 
-export function writeHash(mapSettings) {
-  const { nextHash, requiresHistoryItem } = createHashString(mapSettings);
+export function writeHash(mapSettings, config) {
+  const { nextHash, requiresHistoryItem } = createHashString(
+    mapSettings,
+    config
+  );
   if (!requiresHistoryItem) {
     window.location.replace(`${window.location.pathname}#${nextHash}`);
   } else {
@@ -146,12 +212,13 @@ export function writeHash(mapSettings) {
   }
 }
 
-export function readHash(qs) {
+export function readHash(qs, config) {
   // Remove unset values, convert value as necessary
   let urlState = Object.fromEntries(
     Object.entries(fromQueryString(qs))
       .filter(([k, v]) => !!v)
       .map(([k, v]) => {
+        if (k === 'maps') return [k, decodeMaps(v, config)];
         if (jsonKeys.includes(k)) return [k, JSON.parse(v)];
         if (booleanKeys.includes(k)) return [k, v === 'true'];
         if (numericKeys.includes(k)) return [k, +v || 0];

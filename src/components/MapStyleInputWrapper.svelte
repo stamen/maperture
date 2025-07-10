@@ -161,8 +161,11 @@
         if (pattern?.styles?.length) {
           const branchValues = pattern?.styles.map(s => {
             return {
+              screenshotName: `${pattern.name ?? pattern.id}: ${s} on`,
               name: `${pattern.name ?? pattern.id}: ${s} on...`,
+              branchId: pattern?.id,
               id: s,
+              branchStyle: s,
               type: pattern.type,
               dropdownType: 'branch',
               selected: !!(
@@ -315,6 +318,14 @@
   $: updateSelectedMapFromProps(map);
 
   $: updateMapRenderer(rendererValue);
+
+  let customJsId;
+
+  // If there's a branch id, we want to use that and not the id which
+  // is based on the particular style from a branch
+  $: if (map) {
+    customJsId = map?.branchId ?? map?.id ?? null;
+  }
 </script>
 
 <div class="map-style-input-wrapper">
@@ -332,7 +343,7 @@
       on:updateMapStore={onUpdateMapStore}
     />
   {/if}
-  <CustomJsUi mapId={map && map?.id ? map?.id : null} {mapIdIndex} />
+  <CustomJsUi mapId={customJsId} {mapIdIndex} />
 </div>
 
 <style>
