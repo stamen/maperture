@@ -161,6 +161,7 @@
         if (pattern?.styles?.length) {
           const branchValues = pattern?.styles.map(s => {
             return {
+              screenshotName: `${pattern.name ?? pattern.id}: ${s} on`,
               name: `${pattern.name ?? pattern.id}: ${s} on...`,
               branchId: pattern?.id,
               id: s,
