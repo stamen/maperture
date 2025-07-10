@@ -153,8 +153,10 @@
 <div class="map-container">
   <div class="screenshot-label-transparent">
     {#if map?.branch}
-      {map.screenshotName ?? map.name ?? map.id}
-      <span class="screenshot-label-bold">&nbsp;{map.branch}</span>
+      <div class="screenshot-text">
+        {map.screenshotName ?? map.name ?? map.id}
+        <span class="screenshot-label-bold">&nbsp;{map.branch}</span>
+      </div>
     {:else}
       {map.name ?? map.id}
     {/if}
@@ -233,6 +235,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .screenshot-text {
+    text-align: center;
   }
 
   .screenshot-label-bold {
