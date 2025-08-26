@@ -76,6 +76,51 @@
       });
     }
   };
+  /* 
+  const downloadQAImages = async () => {
+    const mapsView = document.getElementsByClassName('maps')[0];
+
+    let adjustedLabels = [
+      ...document.getElementsByClassName('screenshot-label-transparent'),
+    ];
+    adjustedLabels.forEach(el => {
+      el.classList.remove('screenshot-label-transparent');
+      el.classList.add('screenshot-label');
+    });
+
+    let adjustedBorders = [];
+    // Remove border on mirror mode screenshot
+    if (viewMode === 'mirror') {
+      adjustedBorders = [
+        ...document.getElementsByClassName('map-container-border'),
+      ];
+      adjustedBorders.forEach(el => {
+        el.classList.remove('map-container-border');
+        el.classList.add('map-container-border-transparent');
+      });
+    }
+
+    const ignoreElements = el => {
+      if (el.className && typeof el.className === 'string') {
+        return el.className.includes('map-label');
+      }
+      return false;
+    };
+
+    html2canvas(mapsView, { ignoreElements }).then(canvas => {
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'screenshot.png';
+        //link.download = `screenshot_${mapstate.zoom}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    });
+  });
+  */
 
   const downloadScreenshot = async () => {
     const mapsView = document.getElementsByClassName('maps')[0];
@@ -108,9 +153,18 @@
     };
 
     html2canvas(mapsView, { ignoreElements }).then(canvas => {
-      canvas.toBlob(blob =>
-        navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
-      );
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        // const prefix = 'screenshot';
+        const prefix = 'logistics';
+        link.download = `${prefix}_${mapState.zoom}_${mapState.center.lat}_${mapState.center.lng}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      });
     });
 
     // Cleanup labels
@@ -228,6 +282,18 @@
             <Fa icon={faCamera} />
             Copy image
           </button>
+          <!----
+          <button
+            on:click={downloadQAImages}
+            disabled={viewMode === 'swipe'}
+            title={viewMode === 'swipe'
+              ? 'Must be in phone or mirror mode to screenshot.'
+              : 'Download QA images'}
+          >
+            <Fa icon={faCamera} />
+            Download QA images
+          </button>
+        -->
         </div>
       </div>
       <div class="control-section">
