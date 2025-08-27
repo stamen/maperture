@@ -78,8 +78,8 @@
     }
   };
 
-  // TODO: avoid code duplication with downloadScreenshot
-  const downloadQAImages = async () => {
+  // TODO: avoid code duplication with copyScreenshotToClipboard
+  const downloadScreenshot = async () => {
     const mapsView = document.getElementsByClassName('maps')[0];
 
     let adjustedLabels = [
@@ -138,7 +138,7 @@
     }
   };
 
-  const downloadScreenshot = async () => {
+  const copyScreenshotToClipboard = async () => {
     const mapsView = document.getElementsByClassName('maps')[0];
 
     let adjustedLabels = [
@@ -280,7 +280,7 @@
             <Fa icon={faPlus} /> Add map
           </button>
           <button
-            on:click={downloadScreenshot}
+            on:click={copyScreenshotToClipboard}
             disabled={viewMode === 'swipe'}
             title={viewMode === 'swipe'
               ? 'Must be in phone or mirror mode to screenshot.'
@@ -290,7 +290,7 @@
             Copy image
           </button>
           <button
-            on:click={downloadQAImages}
+            on:click={downloadScreenshot}
             disabled={viewMode === 'swipe'}
             title={viewMode === 'swipe'
               ? 'Must be in phone or mirror mode to screenshot.'
