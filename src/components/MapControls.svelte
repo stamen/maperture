@@ -115,7 +115,7 @@
         const link = document.createElement('a');
         link.href = url;
         const prefix = 'screenshot'; // Ideally get from currently selected map type(s)
-        link.download = `${prefix}_${mapState.zoom}_${mapState.center.lat}_${mapState.center.lng}.png`;
+        link.download = `${prefix}-${mapState.zoom}_${mapState.center.lat}_${mapState.center.lng}.png`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
