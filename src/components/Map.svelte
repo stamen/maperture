@@ -146,8 +146,6 @@
   $: setMapComponent(mapRenderer);
 
   $: mapStateProps = getMapStateProps($$restProps);
-
-  $: console.log(map);
 </script>
 
 <div class="map-container">
