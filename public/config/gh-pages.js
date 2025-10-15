@@ -25,9 +25,21 @@ const stylePresets = [
   },
   {
     id: 'stamen-toner-lite',
-    name: 'Stamen Toner (Lite)',
+    name: 'Stamen Toner Lite',
     type: 'maplibre-gl',
     url: 'https://tiles.stadiamaps.com/styles/stamen_toner_lite.json',
+  },
+  {
+    id: 'stamen-toner-dark',
+    name: 'Stamen Toner Dark',
+    type: 'maplibre-gl',
+    url: 'https://tiles.stadiamaps.com/styles/stamen_toner_dark.json',
+  },
+  {
+    id: 'stamen-toner-blacklite',
+    name: 'Stamen Toner Blacklite',
+    type: 'maplibre-gl',
+    url: 'https://tiles.stadiamaps.com/styles/stamen_toner_blacklite.json',
   },
   {
     name: 'Stamen Raster Layers',
