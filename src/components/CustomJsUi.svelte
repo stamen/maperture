@@ -56,7 +56,7 @@
     const index = mapIdIndex.split('-').pop();
     if (!mapObj || !script) return;
     const fn = script(mapObj);
-    fn(relevantState, v => (checkboxState[scriptIndex] = v));
+    fn(relevantState, v => (checkboxState[scriptIndex].activeVariants = v));
   };
 
   const getInitialCheck = checked => {
