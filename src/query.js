@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import isEqual from 'lodash.isequal';
 import { round } from './math';
 import { linkLocations as linkLocationsStore } from './stores';
@@ -78,6 +79,14 @@ const encodeMaps = (maps, config) => {
       encodeMap.renderer = m.renderer;
     }
 
+    if (m?.selectedPrecompileOption) {
+      const a = m.selectedPrecompileOption ?? [];
+      const b = configMap?.precompile?.options?.default ?? [];
+      if (!a.every(v => b.includes(v)) || !b.every(v => a.includes(v))) {
+        encodeMap.selectedPrecompileOption = m.selectedPrecompileOption;
+      }
+    }
+
     return encodeMap;
   });
 
@@ -89,10 +98,24 @@ const decodeMaps = (str, config) => {
   const decodedMaps = maps
     .map(m => {
       let configMap = findStylePreset(m.id, config?.stylePresets ?? []);
+
       if (!configMap)
         configMap = findBranchPattern(m, config?.branchPatterns ?? []);
+
       if (!configMap) return m;
-      return { ...configMap, ...m };
+
+      let nextPrecompile;
+      // If a precompile option is selected, make that the default
+      if (m?.selectedPrecompileOption) {
+        nextPrecompile = _.cloneDeep(configMap?.precompile);
+        nextPrecompile.options.default = m?.selectedPrecompileOption;
+      }
+
+      return {
+        ...configMap,
+        ...m,
+        ...(nextPrecompile ? { precompile: nextPrecompile } : {}),
+      };
     })
     .filter(v => v);
 
