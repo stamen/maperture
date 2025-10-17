@@ -117,24 +117,30 @@
 
     // Create values and displays for style presets
     if (stylePresets.length) {
-      const stylePresetValues = stylePresets.map(item => ({
-        ...item,
-        dropdownType: 'preset',
-        selected: url === item?.url && type === item?.type,
-        dropdownId: hat(),
-        ...(item.precompile &&
-          !item.selectedPrecompileOption && {
-            selectedPrecompileOption: item.precompile.options.default,
+      const stylePresetValues = stylePresets.map((item, i) => {
+        let selectedPrecompileOption;
+        if (map.id === item.id && map.index === i) {
+          selectedPrecompileOption = map?.selectedPrecompileOption;
+        }
+        return {
+          ...item,
+          dropdownType: 'preset',
+          selected: url === item?.url && type === item?.type,
+          dropdownId: hat(),
+          ...(item.precompile && {
+            selectedPrecompileOption:
+              selectedPrecompileOption ?? item.precompile.options.default,
           }),
-        ...(item.type === 'sublist' && {
-          presets: item.presets.map(v => ({
-            ...v,
-            dropdownType: 'preset',
-            selected: url === v?.url && type === v?.type,
-            dropdownId: hat(),
-          })),
-        }),
-      }));
+          ...(item.type === 'sublist' && {
+            presets: item.presets.map(v => ({
+              ...v,
+              dropdownType: 'preset',
+              selected: url === v?.url && type === v?.type,
+              dropdownId: hat(),
+            })),
+          }),
+        };
+      });
 
       dropdownValues = dropdownValues.concat(stylePresetValues);
 

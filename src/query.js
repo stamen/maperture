@@ -95,6 +95,7 @@ const encodeMaps = (maps, config) => {
 
 const decodeMaps = (str, config) => {
   const maps = JSON.parse(str);
+
   const decodedMaps = maps
     .map(m => {
       let configMap = findStylePreset(m.id, config?.stylePresets ?? []);
@@ -104,17 +105,16 @@ const decodeMaps = (str, config) => {
 
       if (!configMap) return m;
 
-      let nextPrecompile;
+      configMap = _.cloneDeep(configMap);
+
       // If a precompile option is selected, make that the default
       if (m?.selectedPrecompileOption) {
-        nextPrecompile = _.cloneDeep(configMap?.precompile);
-        nextPrecompile.options.default = m?.selectedPrecompileOption;
+        configMap.selectedPrecompileOption = m?.selectedPrecompileOption;
       }
 
       return {
         ...configMap,
         ...m,
-        ...(nextPrecompile ? { precompile: nextPrecompile } : {}),
       };
     })
     .filter(v => v);

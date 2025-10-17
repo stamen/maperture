@@ -35,9 +35,6 @@
   // persist in the URL
   let settings = getSettings(config);
 
-  // TODO check query why isn't this coming through correctly?
-  $: console.log(settings?.stylePresets?.[0]?.precompile?.options?.default);
-
   // mapState is a convenience object, subset of settings
   let mapState = {};
 

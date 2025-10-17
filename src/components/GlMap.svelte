@@ -87,8 +87,6 @@
       stylesheet = await precompile.script(stylesheet, activePrecompileOptions);
     }
 
-    console.log({ selectedPrecompileOption });
-
     map.setStyle(stylesheet);
   };
 
