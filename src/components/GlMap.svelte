@@ -70,19 +70,24 @@
     return !deepEqual(getCurrentMapView(), mapViewProps);
   };
 
-  const updateMapStyle = async (map, url, style) => {
+  const updateMapStyle = async (map, url, style, activePrecompileOptions) => {
     if (!map) return;
-    let isUrl = !style && url === 'string';
+    let isUrl = !style && typeof url === 'string';
     let stylesheet = style;
     if (isUrl) {
       stylesheet = await fetchUrl(url);
     }
 
+    if (!stylesheet) return;
+
     if (precompile) {
       // If we're precompiling and nothing is selected, wait for a default to come through
-      if (!selectedPrecompileOption) return;
-      stylesheet = precompile.script(stylesheet, selectedPrecompileOption);
+      if (!activePrecompileOptions) return;
+
+      stylesheet = await precompile.script(stylesheet, activePrecompileOptions);
     }
+
+    console.log({ selectedPrecompileOption });
 
     map.setStyle(stylesheet);
   };
@@ -206,7 +211,7 @@
   // either
   $: updateMapFromProps(map, mapViewProps);
 
-  $: updateMapStyle(map, url, style);
+  $: updateMapStyle(map, url, style, selectedPrecompileOption);
 
   // Show collisions on the map as desired
   $: map && (map.showCollisionBoxes = showCollisions);

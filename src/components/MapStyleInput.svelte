@@ -71,15 +71,6 @@
     if (mapObj) {
       value.id = mapObj.id ?? mapObj?.style?.id;
       value.name = mapObj.name ?? mapObj?.style?.name;
-
-      // if (mapObj?.precompile) {
-      //   // TODO wrong location
-      //   if (!activePrecompileOptions) {
-      //     activePrecompileOptions = [mapObj?.precompile?.options?.default];
-      //   }
-      //   value.precompileSelection = activePrecompileOptions ??
-      //     mapObj.precompileSelection ?? [mapObj?.precompile?.options?.default];
-      // }
     }
 
     dispatch('updateMapStore', { value });
