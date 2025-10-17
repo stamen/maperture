@@ -14,10 +14,15 @@
   export let rendererValue;
   export let activeUrl;
   export let index;
+  export let mapIdIndex;
 
   let selected;
 
   let textInput;
+
+  $: precompileOptions = dropdownValue?.precompile
+    ? dropdownValue?.precompile?.options
+    : null;
 
   let focused = false;
   let error = null;
@@ -66,6 +71,15 @@
     if (mapObj) {
       value.id = mapObj.id ?? mapObj?.style?.id;
       value.name = mapObj.name ?? mapObj?.style?.name;
+
+      // if (mapObj?.precompile) {
+      //   // TODO wrong location
+      //   if (!activePrecompileOptions) {
+      //     activePrecompileOptions = [mapObj?.precompile?.options?.default];
+      //   }
+      //   value.precompileSelection = activePrecompileOptions ??
+      //     mapObj.precompileSelection ?? [mapObj?.precompile?.options?.default];
+      // }
     }
 
     dispatch('updateMapStore', { value });
@@ -193,6 +207,15 @@
 
   // When the selected value changes, update text input and potentially fetch style
   $: onChangeSelected(dropdownValue);
+
+  const onChangeCompileOption = value => {
+    let active = selected?.selectedPrecompileOption ?? [];
+    active = active.includes(value)
+      ? active.filter(v => v !== value)
+      : active.concat([value]);
+    selected = { ...selected, selectedPrecompileOption: active };
+    handleMapStyleUpdate(selected);
+  };
 </script>
 
 <div class="map-style-input">
@@ -236,9 +259,45 @@
       direction="up"
     />
   </div>
+
+  <!-- ------------------------------------------------------------------------ -->
+  {#key mapIdIndex}
+    {#if precompileOptions.type === 'checkbox'}
+      {#if precompileOptions.values.length}
+        <div class="checkbox-container">
+          <div class="checkbox-options">
+            <div class="checkbox-label">Compile options:</div>
+            {#each precompileOptions.values as value, i}
+              <input
+                type="checkbox"
+                id={i}
+                checked={dropdownValue?.selectedPrecompileOption &&
+                  dropdownValue.selectedPrecompileOption.includes(value.value)}
+                on:click={() => onChangeCompileOption(value.value)}
+              />
+              <label for={i}>{value?.label ?? value.value}</label>
+            {/each}
+          </div>
+        </div>
+      {/if}
+    {/if}
+  {/key}
+  <!-- ------------------------------------------------------------------------ -->
 </div>
 
 <style>
+  .checkbox-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .checkbox-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
   .map-style-input {
     margin-top: 6px;
     display: flex;

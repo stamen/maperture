@@ -1,4 +1,5 @@
 <script>
+  import _ from 'lodash';
   import Map from './Map.svelte';
 
   export let maps = [];
@@ -18,7 +19,7 @@
   const getSections = maps => {
     const numOfSections = Math.round(Math.sqrt(numberOfMaps));
     const mapsPerSection = Math.floor(numberOfMaps / numOfSections);
-    let mapArr = JSON.parse(JSON.stringify(maps));
+    let mapArr = _.cloneDeep(maps);
     let nextSections = [];
     while (mapArr.length) {
       nextSections.push(mapArr.slice(0, mapsPerSection));

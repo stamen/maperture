@@ -146,6 +146,8 @@
   $: setMapComponent(mapRenderer);
 
   $: mapStateProps = getMapStateProps($$restProps);
+
+  $: console.log(map?.selectedPrecompileOption);
 </script>
 
 <div class="map-container">

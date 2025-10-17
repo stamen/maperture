@@ -95,6 +95,7 @@ const decodeMaps = (str, config) => {
       return { ...configMap, ...m };
     })
     .filter(v => v);
+
   return decodedMaps;
 };
 

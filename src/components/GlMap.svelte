@@ -3,6 +3,7 @@
   import throttle from 'lodash.throttle';
   import { createEventDispatcher, onMount, onDestroy } from 'svelte';
   import { config as configStore } from '../stores';
+  import { fetchUrl } from '../fetch-url';
 
   export let id;
   export let bearing;
@@ -51,7 +52,7 @@
   let mapViewProps = {};
 
   // We can set style (an object) here because mapStyle only changes when it needs to
-  $: ({ style, url } = mapStyle);
+  $: ({ style, url, precompile, selectedPrecompileOption } = mapStyle);
 
   // We group map-view props here as they are useful in a few contexts
   $: mapViewProps = { bearing, center, pitch, zoom };
@@ -69,9 +70,21 @@
     return !deepEqual(getCurrentMapView(), mapViewProps);
   };
 
-  const updateMapStyle = (map, url, style) => {
+  const updateMapStyle = async (map, url, style) => {
     if (!map) return;
-    map.setStyle(url || style);
+    let isUrl = !style && url === 'string';
+    let stylesheet = style;
+    if (isUrl) {
+      stylesheet = await fetchUrl(url);
+    }
+
+    if (precompile) {
+      // If we're precompiling and nothing is selected, wait for a default to come through
+      if (!selectedPrecompileOption) return;
+      stylesheet = precompile.script(stylesheet, selectedPrecompileOption);
+    }
+
+    map.setStyle(stylesheet);
   };
 
   const updateMapFromProps = (map, mapView) => {

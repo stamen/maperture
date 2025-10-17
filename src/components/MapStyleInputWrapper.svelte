@@ -1,4 +1,5 @@
 <script>
+  import _ from 'lodash';
   import hat from 'hat';
   import {
     maps as mapsStore,
@@ -63,7 +64,7 @@
     if (!nextValue) return;
 
     // Don't mutate the dropdown values
-    nextValue = JSON.parse(JSON.stringify(nextValue));
+    nextValue = _.cloneDeep(nextValue);
 
     // Set default text for the selected item's text input
     switch (nextValue.dropdownType) {
@@ -121,6 +122,10 @@
         dropdownType: 'preset',
         selected: url === item?.url && type === item?.type,
         dropdownId: hat(),
+        ...(item.precompile &&
+          !item.selectedPrecompileOption && {
+            selectedPrecompileOption: item.precompile.options.default,
+          }),
         ...(item.type === 'sublist' && {
           presets: item.presets.map(v => ({
             ...v,
@@ -284,8 +289,10 @@
   // Handle updating the map store
   const onUpdateMapStore = e => {
     const { value } = e.detail;
+
     if (!value.isPolling) {
       const nextMap = { ...value, index, renderer };
+
       delete nextMap.dropdownId;
       mapsStore.update(current => {
         return current.map((m, i) => (i === index ? nextMap : m));
@@ -336,6 +343,7 @@
       {rendererOptions}
       {rendererValue}
       {index}
+      {mapIdIndex}
       activeUrl={url}
       on:setUrl={onSetUrl}
       on:selectOption={onSelectOption}
