@@ -251,7 +251,7 @@
     />
   </div>
 
-  <!-- ------------------------------------------------------------------------ -->
+  <!-- Precompile controls -->
   {#key mapIdIndex}
     {#if precompileOptions.type === 'checkbox'}
       {#if precompileOptions.values.length}
@@ -259,21 +259,24 @@
           <div class="checkbox-options">
             <div class="checkbox-label">Compile options:</div>
             {#each precompileOptions.values as value, i}
-              <input
-                type="checkbox"
-                id={i}
-                checked={dropdownValue?.selectedPrecompileOption &&
-                  dropdownValue.selectedPrecompileOption.includes(value.value)}
-                on:click={() => onChangeCompileOption(value.value)}
-              />
-              <label for={i}>{value?.label ?? value.value}</label>
+              <div class="checkbox-row">
+                <input
+                  type="checkbox"
+                  id={i}
+                  checked={dropdownValue?.selectedPrecompileOption &&
+                    dropdownValue.selectedPrecompileOption.includes(
+                      value.value
+                    )}
+                  on:click={() => onChangeCompileOption(value.value)}
+                />
+                <label for={i}>{value?.label ?? value.value}</label>
+              </div>
             {/each}
           </div>
         </div>
       {/if}
     {/if}
   {/key}
-  <!-- ------------------------------------------------------------------------ -->
 </div>
 
 <style>
@@ -285,8 +288,18 @@
 
   .checkbox-options {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 0.25rem;
+  }
+
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .checkbox-label {
+    font-weight: bold;
   }
 
   .map-style-input {
