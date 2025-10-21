@@ -1,5 +1,4 @@
 <script>
-  import { onMount } from 'svelte';
   import { config as configStore, mapObj as mapObjStore } from '../stores';
 
   export let mapId;
@@ -21,19 +20,6 @@
 
   $: checkboxOptions = validActions.filter(ui => ui.type === 'checkbox');
 
-  let checkboxState = null;
-
-  $: if (mapId) {
-    checkboxState = null;
-  }
-
-  $: if (checkboxOptions && !checkboxState) {
-    checkboxState = checkboxOptions.reduce((acc, co, i) => {
-      acc[i] = co?.state;
-      return acc;
-    }, {});
-  }
-
   let selectedDropdown = null;
 
   $: {
@@ -51,12 +37,11 @@
     fn();
   };
 
-  const onClickCheckbox = (script, scriptIndex) => {
-    const relevantState = checkboxState?.[scriptIndex];
+  const onClickCheckbox = script => {
     const index = mapIdIndex.split('-').pop();
     if (!mapObj || !script) return;
     const fn = script(mapObj);
-    fn(relevantState, v => (checkboxState[scriptIndex].activeVariants = v));
+    fn();
   };
 
   const getInitialCheck = checked => {
@@ -109,28 +94,26 @@
       </select>
     {/if}
 
-    {#key mapId}
-      {#if checkboxOptions.length}
-        <div class="checkbox-container">
-          {#each checkboxOptions as checkboxAction, i}
-            <div class="checkbox-options">
-              <div class="checkbox-label">{checkboxAction?.label}:</div>
-              {#each checkboxAction?.options as checkboxOption, iter}
-                {#if checkboxOption?.script(mapObj)}
-                  <input
-                    type="checkbox"
-                    id={iter}
-                    checked={getInitialCheck(checkboxOption?.checked)}
-                    on:click={() => onClickCheckbox(checkboxOption?.script, i)}
-                  />
-                  <label for={iter}>{checkboxOption?.label}</label>
-                {/if}
-              {/each}
-            </div>
-          {/each}
-        </div>
-      {/if}
-    {/key}
+    {#if checkboxOptions.length}
+      <div class="checkbox-container">
+        {#each checkboxOptions as checkboxAction, i}
+          <div class="checkbox-options">
+            <div class="checkbox-label">{checkboxAction?.label}:</div>
+            {#each checkboxAction?.options as checkboxOption, iter}
+              {#if checkboxOption?.script(mapObj)}
+                <input
+                  type="checkbox"
+                  id={iter}
+                  checked={getInitialCheck(checkboxOption?.checked)}
+                  on:click={() => onClickCheckbox(checkboxOption?.script)}
+                />
+                <label for={iter}>{checkboxOption?.label}</label>
+              {/if}
+            {/each}
+          </div>
+        {/each}
+      </div>
+    {/if}
   </div>
 {/if}
 
