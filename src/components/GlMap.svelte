@@ -74,20 +74,23 @@
     if (!map) return;
     let isUrl = !style && typeof url === 'string';
     let stylesheet = style;
-    if (isUrl) {
-      stylesheet = await fetchUrl(url);
-    }
-
-    if (!stylesheet) return;
 
     if (precompile) {
       // If we're precompiling and nothing is selected, wait for a default to come through
       if (!activePrecompileOptions) return;
 
-      stylesheet = await precompile.script(stylesheet, activePrecompileOptions);
-    }
+      if (isUrl) {
+        stylesheet = await fetchUrl(url);
+      }
 
-    map.setStyle(stylesheet);
+      if (!stylesheet) return;
+
+      stylesheet = await precompile.script(stylesheet, activePrecompileOptions);
+
+      map.setStyle(stylesheet);
+    } else {
+      map.setStyle(url || style);
+    }
   };
 
   const updateMapFromProps = (map, mapView) => {
@@ -145,9 +148,29 @@
     await importRenderer();
     const glLibrary = renderer;
 
+    let isUrl = typeof url === 'string';
+    let stylesheet;
+
+    // This should get reset because the selectedPrecompileOption
+    // usually doesn't exist here yet. This prevents an invalid stylesheet getting through
+    if (precompile) {
+      const activePrecompileOptions =
+        selectedPrecompileOption ?? precompile.options.default;
+
+      if (!activePrecompileOptions) return;
+
+      if (isUrl) {
+        stylesheet = await fetchUrl(url);
+      }
+
+      if (!stylesheet) return;
+
+      stylesheet = await precompile.script(stylesheet, activePrecompileOptions);
+    }
+
     map = new glLibrary.Map({
       container: id,
-      style: url,
+      style: stylesheet ?? url,
       canvasContextAttributes: { preserveDrawingBuffer: true },
       preserveDrawingBuffer: true,
       ...mapViewProps,
