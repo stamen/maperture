@@ -1,5 +1,5 @@
 <script>
-  import _ from 'lodash';
+  import { cloneDeep } from 'es-toolkit/compat';
   import mapboxgl from 'mapbox-gl';
   import maplibregl from 'maplibre-gl';
   import { onMount } from 'svelte';
@@ -96,7 +96,7 @@
     // The isPolling key never makes it to the hash so we can know if prop updates downstream
     // in MapStyleInputWrapper are coming from polled styles or from history
     // cloneDeep copies over functions in case those are the values
-    const nextMaps = _.cloneDeep(maps).map(m => {
+    const nextMaps = cloneDeep(maps).map(m => {
       delete m.isPolling;
       return m;
     });

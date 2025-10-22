@@ -1,5 +1,5 @@
 <script>
-  import _ from 'lodash';
+  import { cloneDeep } from 'es-toolkit/compat';
   import hat from 'hat';
   import {
     maps as mapsStore,
@@ -64,7 +64,7 @@
     if (!nextValue) return;
 
     // Don't mutate the dropdown values
-    nextValue = _.cloneDeep(nextValue);
+    nextValue = cloneDeep(nextValue);
 
     // Set default text for the selected item's text input
     switch (nextValue.dropdownType) {

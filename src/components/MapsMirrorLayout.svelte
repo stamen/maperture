@@ -1,5 +1,5 @@
 <script>
-  import _ from 'lodash';
+  import { cloneDeep } from 'es-toolkit/compat';
   import Map from './Map.svelte';
 
   export let maps = [];
@@ -19,7 +19,7 @@
   const getSections = maps => {
     const numOfSections = Math.round(Math.sqrt(numberOfMaps));
     const mapsPerSection = Math.floor(numberOfMaps / numOfSections);
-    let mapArr = _.cloneDeep(maps);
+    let mapArr = cloneDeep(maps);
     let nextSections = [];
     while (mapArr.length) {
       nextSections.push(mapArr.slice(0, mapsPerSection));

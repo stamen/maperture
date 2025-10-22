@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { cloneDeep } from 'es-toolkit/compat';
 import isEqual from 'lodash.isequal';
 import { round } from './math';
 import { linkLocations as linkLocationsStore } from './stores';
@@ -105,7 +105,7 @@ const decodeMaps = (str, config) => {
 
       if (!configMap) return m;
 
-      configMap = _.cloneDeep(configMap);
+      configMap = cloneDeep(configMap);
 
       // If a precompile option is selected, set that property
       if (m?.selectedPrecompileOption) {
