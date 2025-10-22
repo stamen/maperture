@@ -155,7 +155,7 @@
     // usually doesn't exist here yet. This prevents an invalid stylesheet getting through
     if (precompile) {
       const activePrecompileOptions =
-        selectedPrecompileOption ?? precompile.options.default;
+        selectedPrecompileOption ?? precompile?.options?.default;
 
       if (!activePrecompileOptions) return;
 
