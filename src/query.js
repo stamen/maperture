@@ -107,7 +107,7 @@ const decodeMaps = (str, config) => {
 
       configMap = _.cloneDeep(configMap);
 
-      // If a precompile option is selected, make that the default
+      // If a precompile option is selected, set that property
       if (m?.selectedPrecompileOption) {
         configMap.selectedPrecompileOption = m?.selectedPrecompileOption;
       }

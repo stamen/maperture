@@ -253,7 +253,7 @@
 
   <!-- Precompile controls -->
   {#key mapIdIndex}
-    {#if precompileOptions.type === 'checkbox'}
+    {#if precompileOptions?.type === 'checkbox'}
       {#if precompileOptions.values.length}
         <div class="checkbox-container">
           <div class="checkbox-options">
