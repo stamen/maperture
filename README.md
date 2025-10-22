@@ -36,7 +36,7 @@ Here, you can customize the following options:
   - `url`: (currently applies to `mapbox-gl`, `maplibre-gl`, `maptiler-sdk` and `leaflet` maps only) the style's url
   - `mapId`: (currently `google` only) the style's id
   - [`presets`]: Used only with `type: sublist`, this allows one level of nesting to add an additional nested list of style presets following this format
-  - `precompile`: (optional) A config that allows you to use a custom script to precompile a stylesheet. With this set, your style will precompile before render based on the selected options. Only Mapbox and Maplibre stylesheets are supported.
+  - [`precompile`]: (optional) A config that allows you to use a custom script to precompile a stylesheet. With this set, your style will precompile before render based on the selected options. Only Mapbox and Maplibre stylesheets are supported.
     - `script`: A function to run on the stylesheet that takes two arguments, a JSON stylesheet and an array of options from the available option values.
     - `options`: Nested config for available options to pass to your compile script.
       - `type`: UI to show in the Maperture interface for option values. Currently only `checkbox` is supported.
