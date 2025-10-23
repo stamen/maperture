@@ -263,6 +263,7 @@
 
     dropdownValues = dropdownValues.reduce((acc, v) => {
       let next = v;
+
       if (next?.type === 'sublist') {
         next.presets = next.presets.map(v => ({
           ...v,
@@ -274,6 +275,14 @@
           selected: v.dropdownId === dropdownId,
         };
       }
+
+      // Since the initial value is set based on current value in the hash,
+      // we need to reset to the default when changing the style, otherwise
+      // that initial value from hash becomes the default for that pane
+      if (next?.selected && next?.selectedPrecompileOption) {
+        next.selectedPrecompileOption = next.precompile.options.default;
+      }
+
       acc.push(next);
       return acc;
     }, []);
