@@ -119,9 +119,10 @@
     if (stylePresets.length) {
       const stylePresetValues = stylePresets.map((item, i) => {
         let selectedPrecompileOption;
-        if (map.id === item.id && map.index === i) {
+        if (map.id === item.id) {
           selectedPrecompileOption = map?.selectedPrecompileOption;
         }
+
         return {
           ...item,
           dropdownType: 'preset',
