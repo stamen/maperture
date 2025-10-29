@@ -3,20 +3,20 @@
   import throttle from 'lodash.throttle';
   import { createEventDispatcher, onMount, onDestroy } from 'svelte';
   import { config as configStore } from '../stores';
-  import { MapboxOverlay } from '@deck.gl/mapbox';
-  import { ScatterplotLayer, GeoJsonLayer, ArcLayer } from '@deck.gl/layers';
-  import { CesiumIonLoader } from '@loaders.gl/3d-tiles';
-  import { Deck, MapView } from '@deck.gl/core';
-  import { Tile3DLayer, MVTLayer } from '@deck.gl/geo-layers';
-  import { ScenegraphLayer } from '@deck.gl/mesh-layers';
-  import { BasisLoader } from '@loaders.gl/textures';
+  // import { MapboxOverlay } from '@deck.gl/mapbox';
+  // import { ScatterplotLayer, GeoJsonLayer, ArcLayer } from '@deck.gl/layers';
+  // import { CesiumIonLoader } from '@loaders.gl/3d-tiles';
+  // import { Deck, MapView } from '@deck.gl/core';
+  // import { Tile3DLayer, MVTLayer } from '@deck.gl/geo-layers';
+  // import { ScenegraphLayer } from '@deck.gl/mesh-layers';
+  // import { BasisLoader } from '@loaders.gl/textures';
+  // import { I3SLoader } from '@loaders.gl/i3s';
   // import { GLTFScenegraphLoader } from '@loaders.gl/gltf';
-
-  import { DracoLoader } from '@loaders.gl/draco';
-
-  import { Tiles3DLoader } from '@loaders.gl/3d-tiles';
-  import { GLTFLoader } from '@loaders.gl/gltf';
-  import { registerLoaders } from '@loaders.gl/core';
+  // import { DracoLoader } from '@loaders.gl/draco';
+  // import { Tiles3DLoader } from '@loaders.gl/3d-tiles';
+  // import { GLTFLoader } from '@loaders.gl/gltf';
+  // import { registerLoaders } from '@loaders.gl/core';
+  import * as Cesium from 'cesium';
 
   export let id;
   export let bearing;
@@ -143,58 +143,6 @@
     await importRenderer();
     const glLibrary = renderer;
 
-    // ----------------------------------------------------------------------------------------
-
-    const INITIAL_VIEW_STATE = {
-      latitude: 40,
-      longitude: -75,
-      pitch: 45,
-      maxPitch: 60,
-      bearing: 0,
-      minZoom: 2,
-      maxZoom: 30,
-      zoom: 17,
-    };
-
-    const threeDlayer = new Tile3DLayer({
-      id: 'tile-3d-layer',
-      // WORKS
-      // data: 'https://pelican-public.s3.amazonaws.com/3dtiles/agi-hq/tileset.json',
-      // DOES NOT WORK
-      data: 'https://vector.hereapi.com/3dtiles/v1/3dlandmarks/tileset.json?apiKey=pC36c9S2G22-Nc4gvEWW9tXTrGxuo_eJPiHyIW9z5cA',
-      // loader: Tiles3DLoader,
-      // loadOptions: {
-      //   // 'cesium-ion': {
-      //   //   accessToken:
-      //   //     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjODA5MmYzZi0zYzY1LTQ5ZTYtOTMxOC03YzdlNTY0ZGJmM2UiLCJpZCI6MzU0OTgwLCJpYXQiOjE3NjE2OTg4NDN9.jb6Kw0ESwF3xrvxfGbbZr3kp6BuYoDJePWa3YLp_nyM',
-      //   // },
-      //   // fetch: {
-      //   // mode: 'cors',
-      //   // headers: { apiKey: 'pC36c9S2G22-Nc4gvEWW9tXTrGxuo_eJPiHyIW9z5cA' },
-      //   // },
-      // },
-
-      loader: Tiles3DLoader, // or Tiles3DLoader for b3dm
-      loadOptions: {
-        gltf: {
-          loader: GLTFLoader,
-          // loaders: [DracoLoader, BasisLoader],
-        },
-        // texture: {
-        //   loader: BasisLoader,
-        // },
-      },
-      // onTileLoad: tile => {
-      //   // The tile.content.url is the relative .glb/b3dm path
-      //   if (tile.content && tile.content.url) {
-      //     tile.content.url +=
-      //       (tile.content.url.includes('?') ? '&' : '?') +
-      //       `apiKey=${'pC36c9S2G22-Nc4gvEWW9tXTrGxuo_eJPiHyIW9z5cA'}`;
-      //   }
-      // },
-      pickable: true,
-    });
-
     map = new glLibrary.Map({
       container: id,
       style: url,
@@ -203,138 +151,88 @@
       ...mapViewProps,
     });
 
-    // map.on('load', () => {
-    //   /*
-    //    * https://deck.gl/docs/api-reference/mesh-layers/scenegraph-layer
-    //    */
-    //   const layer = new ScenegraphLayer({
-    //     id: 'ScenegraphLayer',
-    //     data: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/bart-stations.json',
-    //     _animations: {
-    //       '*': { speed: 5 },
-    //     },
-    //     _lighting: 'pbr',
+    // ---------------------------------------------------------------------------------
+    Cesium.buildModuleUrl.setBaseUrl('/Cesium/');
 
-    //     getOrientation: d => [0, Math.random() * 180, 90],
-    //     getPosition: d => d.coordinates,
-    //     scenegraph:
-    //       'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/BoxAnimated/glTF-Binary/BoxAnimated.glb',
-    //     sizeScale: 500,
-    //     pickable: true,
+    // 2️⃣ Initialize CesiumJS
+    const viewer = new Cesium.Viewer(`cesiumContainer-${id}`, {
+      imageryProvider: false,
+      baseLayerPicker: false,
+      timeline: false,
+      animation: false,
+      sceneModePicker: false,
+      selectionIndicator: false,
+      navigationHelpButton: false,
+      infoBox: false,
+    });
+
+    // Sync Cesium camera on MapLibre move
+    map.on('move', () => {
+      const center = map.getCenter();
+      const zoom = map.getZoom();
+      const pitch = map.getPitch();
+      const bearing = map.getBearing();
+
+      viewer.camera.setView({
+        destination: Cesium.Cartesian3.fromDegrees(
+          center.lng,
+          center.lat,
+          100 + (zoom - 17) * 50
+        ),
+        orientation: {
+          heading: Cesium.Math.toRadians(bearing),
+          pitch: Cesium.Math.toRadians(-pitch),
+          roll: 0,
+        },
+      });
+    });
+
+    // // 3️⃣ Add 3D Tiles from HERE (replace YOUR_HERE_KEY)
+    // const tileset = viewer.scene.primitives.add(
+    //   new Cesium.Cesium3DTileset({
+    //     url: 'https://vector.hereapi.com/3dtiles/v1/3dlandmarks/tileset.json?apiKey=pC36c9S2G22-Nc4gvEWW9tXTrGxuo_eJPiHyIW9z5cA',
+    //   })
+    // );
+
+    // 3️⃣ Add 3D Tiles from HERE (replace YOUR_HERE_KEY)
+    const tileset = await Cesium.Cesium3DTileset.fromUrl(
+      'https://vector.hereapi.com/3dtiles/v1/3dlandmarks/tileset.json?apiKey=pC36c9S2G22-Nc4gvEWW9tXTrGxuo_eJPiHyIW9z5cA'
+    );
+
+    viewer.scene.primitives.add(tileset);
+
+    console.log(tileset);
+
+    // tileset.readyPromise
+    //   .then(() => {
+    //     console.log('3D Tiles ready');
+    //     viewer.zoomTo(tileset);
+    //   })
+    //   .catch(error => {
+    //     console.error('Tileset failed to load:', error);
     //   });
-
-    //   const parent = document.getElementById(id);
-
-    //   new Deck({
-    //     parent: parent,
-    //     // container: id,
-    //     map,
-    //     mapStyle:
-    //       'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
-    //     initialViewState: {
-    //       longitude: -122.4,
-    //       latitude: 37.74,
-    //       zoom: 11,
-    //       maxZoom: 20,
-    //       pitch: 30,
-    //       bearing: 0,
-    //     },
-    //     controller: true,
-    //     getTooltip: ({ object }) =>
-    //       object &&
-    //       `${object.name}
-    //   ${object.address}`,
-    //     layers: [layer],
-    //   });
-    // });
-
-    // ----------------------------------------------------------------------------------------
-
-    // map = new glLibrary.Map({
-    //   container: id,
-    //   style: url,
-    //   canvasContextAttributes: { preserveDrawingBuffer: true },
-    //   preserveDrawingBuffer: true,
-    //   ...mapViewProps,
-    // });
 
     // ---------------------------------------------------------------------------------
-    // Cesium
-    // const threeDlayer = new Tile3DLayer({
-    //   id: 'tile-3d-layer',
-    //   data: 'https://assets.cesium.com/43978/tileset.json',
-    //   loader: CesiumIonLoader,
-    //   onTileError: e => console.error('Tile error', e),
-    //   loadOptions: {
-    //     'cesium-ion': {
-    //       accessToken:
-    //         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJmNTlhYjJlOS1jOGIxLTQ3MTEtYjQxMy1lMzhiZTEwMDAzYjkiLCJpZCI6MzU0OTgwLCJpYXQiOjE3NjE2ODMxNDN9.KRVpUoZOUjVsBZ8BmzTmhp53ZtWmQb8WwFHRD_9cymg',
-    //     },
+
+    // // How to use the 3D Tiles Styling language to style individual features, like buildings.
+    // // Styling language specification: https://github.com/CesiumGS/3d-tiles/tree/main/specification/Styling
+    // const viewer = new Cesium.Viewer('cesiumContainer', {
+    //   terrain: Cesium.Terrain.fromWorldTerrain(),
+    // });
+    // const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+
+    // // Add Cesium OSM buildings to the scene as our example 3D Tileset.
+    // const osmBuildingsTileset = await Cesium.createOsmBuildingsAsync();
+    // viewer.scene.primitives.add(osmBuildingsTileset);
+
+    // // Set the initial camera to look at Seattle
+    // viewer.scene.camera.setView({
+    //   destination: Cesium.Cartesian3.fromDegrees(-122.3472, 47.598, 370),
+    //   orientation: {
+    //     heading: Cesium.Math.toRadians(10),
+    //     pitch: Cesium.Math.toRadians(-10),
     //   },
     // });
-
-    // Initial array buffer
-    // const threeDlayer = new Tile3DLayer({
-    //   id: 'tile-3d-layer',
-    //   data: 'https://vector.hereapi.com/3dtiles/v1/3dlandmarks/tileset.json?apiKey=pC36c9S2G22-Nc4gvEWW9tXTrGxuo_eJPiHyIW9z5cA',
-    //   onTileError: e => console.error('Tile error', e),
-    //   loadOptions: {
-    //     fetch: {
-    //       // mode: 'cors',
-    //       headers: { Accept: 'application/octet-stream' },
-    //       responseType: 'arraybuffer',
-    //     },
-    //     '3d-tiles': { loadGLTF: true, fetch: { responseType: 'arraybuffer' } },
-    //   },
-    // });
-
-    // // bitmaps
-    // const threeDlayer = new Tile3DLayer({
-    //   id: 'here-3d-buildings',
-    //   data: `https://vector.hereapi.com/3dtiles/v1/3dlandmarks/tileset.json?apiKey=pC36c9S2G22-Nc4gvEWW9tXTrGxuo_eJPiHyIW9z5cA`,
-    //   loadOptions: {
-    //     fetch: {
-    //       mode: 'cors',
-    //       headers: { Accept: 'application/octet-stream' },
-    //       responseType: 'arraybuffer',
-    //     },
-    //     '3d-tiles': {
-    //       loadGLTF: true,
-    //       gltf: {
-    //         decompressMeshes: true,
-    //         loadImages: true, // ensures actual Image objects are loaded
-    //         useImageBitmaps: false, // <— critical! avoids ImageBitmap path that triggers texSubImage2D errors
-    //       },
-    //     },
-    //   },
-    //   onTilesetLoad: t => console.log('HERE tileset loaded', t),
-    //   onTileLoad: t => console.log('Tile loaded', t),
-    // });
-
-    // const deckgl = new Deck({
-    //   container: 'map',
-    //   map: glLibrary,
-    //   mapStyle: url,
-    //   mapOptions: { geolocateControl: false, navigationControl: false },
-    //   initialViewState: {
-    //     longitude: -74.0115,
-    //     latitude: 40.7082,
-    //     zoom: 14,
-    //     pitch: 60,
-    //   },
-    //   controller: true,
-    //   layers: [threeDlayer],
-    // });
-
-    const deckOverlay = new MapboxOverlay({
-      interleaved: false,
-      layers: [threeDlayer],
-    });
-
-    map.on('load', () => {
-      map.addControl(deckOverlay);
-    });
-
     // ---------------------------------------------------------------------------------
 
     // onMapMount(map);
@@ -418,12 +316,21 @@
   // }
 </script>
 
-<div {id} class="map" />
+<div class="map-container">
+  <div {id} class="map" />
+  <div id={`cesiumContainer-${id}`} class="map" />
+</div>
 
 <style>
-  .map {
+  .map-container {
     position: relative;
     height: 100%;
+  }
+
+  .map {
+    position: absolute;
+    height: 100%;
+    width: 100%;
   }
 
   :global(.popup-label-heading) {
