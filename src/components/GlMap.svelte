@@ -18,6 +18,9 @@
   // import { registerLoaders } from '@loaders.gl/core';
   import * as Cesium from 'cesium';
 
+  Cesium.Ion.defaultAccessToken =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjODA5MmYzZi0zYzY1LTQ5ZTYtOTMxOC03YzdlNTY0ZGJmM2UiLCJpZCI6MzU0OTgwLCJpYXQiOjE3NjE2OTg4NDN9.jb6Kw0ESwF3xrvxfGbbZr3kp6BuYoDJePWa3YLp_nyM';
+
   export let id;
   export let bearing;
   export let center;
@@ -318,7 +321,9 @@
 
 <div class="map-container">
   <div {id} class="map" />
-  <div id={`cesiumContainer-${id}`} class="map" />
+  <div class="cesium-container">
+    <div id={`cesiumContainer-${id}`} class="cesium" />
+  </div>
 </div>
 
 <style>
@@ -329,6 +334,20 @@
 
   .map {
     position: absolute;
+    height: 100%;
+    width: 100%;
+  }
+
+  .cesium-container {
+    pointer-events: none;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+  }
+
+  .cesium {
+    pointer-events: none;
+    position: relative;
     height: 100%;
     width: 100%;
   }
