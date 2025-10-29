@@ -3,6 +3,7 @@
   import throttle from 'lodash.throttle';
   import { createEventDispatcher, onMount, onDestroy } from 'svelte';
   import { config as configStore } from '../stores';
+
   // import { MapboxOverlay } from '@deck.gl/mapbox';
   // import { ScatterplotLayer, GeoJsonLayer, ArcLayer } from '@deck.gl/layers';
   // import { CesiumIonLoader } from '@loaders.gl/3d-tiles';
@@ -17,6 +18,7 @@
   // import { GLTFLoader } from '@loaders.gl/gltf';
   // import { registerLoaders } from '@loaders.gl/core';
   import * as Cesium from 'cesium';
+  import 'cesium/Build/Cesium/Widgets/widgets.css';
 
   Cesium.Ion.defaultAccessToken =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjODA5MmYzZi0zYzY1LTQ5ZTYtOTMxOC03YzdlNTY0ZGJmM2UiLCJpZCI6MzU0OTgwLCJpYXQiOjE3NjE2OTg4NDN9.jb6Kw0ESwF3xrvxfGbbZr3kp6BuYoDJePWa3YLp_nyM';
@@ -159,15 +161,48 @@
 
     // 2️⃣ Initialize CesiumJS
     const viewer = new Cesium.Viewer(`cesiumContainer-${id}`, {
-      imageryProvider: false,
-      baseLayerPicker: false,
-      timeline: false,
       animation: false,
+      baseLayerPicker: false,
+      geocoder: false,
+      homeButton: false,
+      infoBox: false,
       sceneModePicker: false,
       selectionIndicator: false,
+      timeline: false,
       navigationHelpButton: false,
-      infoBox: false,
+      //imageryProvider: false,
+      // creditContainer: viewer.creditDisplay.container,
+      skyBox: false,
+      skyAtmosphere: false,
+      globe: false,
+      contextOptions: {
+        webgl: {
+          alpha: true,
+        },
+      },
     });
+
+    viewer.scene.backgroundColor = Cesium.Color.TRANSPARENT;
+
+    function zoomToAltitude(zoom) {
+      // Constants
+      const EARTH_RADIUS = 6378137; // meters
+      const TILE_SIZE = 512; // Mapbox default
+
+      // Using Web Mercator scale
+      const altitude =
+        EARTH_RADIUS * Math.PI * (1 / Math.pow(2, zoom)) * (TILE_SIZE / 256);
+
+      return altitude;
+    }
+
+    const mapbox = new Cesium.MapboxStyleImageryProvider({
+      styleId: 'streets-v11',
+      accessToken:
+        'pk.eyJ1Ijoic3RhbWVuIiwiYSI6ImNsNXNraGFnMjA1YWUzYnQ4ZGdrYnp6YXkifQ.9E3jdAZ-5DwSwIyw15_Dlg',
+    });
+
+    viewer.imageryLayers.addImageryProvider(mapbox);
 
     // Sync Cesium camera on MapLibre move
     map.on('move', () => {
@@ -180,22 +215,16 @@
         destination: Cesium.Cartesian3.fromDegrees(
           center.lng,
           center.lat,
-          100 + (zoom - 17) * 50
+          zoomToAltitude(zoom)
+          // 100 + (zoom - 17) * 50
         ),
         orientation: {
           heading: Cesium.Math.toRadians(bearing),
-          pitch: Cesium.Math.toRadians(-pitch),
-          roll: 0,
+          pitch: Cesium.Math.toRadians(-90 - pitch),
+          roll: Cesium.Math.toRadians(180),
         },
       });
     });
-
-    // // 3️⃣ Add 3D Tiles from HERE (replace YOUR_HERE_KEY)
-    // const tileset = viewer.scene.primitives.add(
-    //   new Cesium.Cesium3DTileset({
-    //     url: 'https://vector.hereapi.com/3dtiles/v1/3dlandmarks/tileset.json?apiKey=pC36c9S2G22-Nc4gvEWW9tXTrGxuo_eJPiHyIW9z5cA',
-    //   })
-    // );
 
     // 3️⃣ Add 3D Tiles from HERE (replace YOUR_HERE_KEY)
     const tileset = await Cesium.Cesium3DTileset.fromUrl(
@@ -204,38 +233,6 @@
 
     viewer.scene.primitives.add(tileset);
 
-    console.log(tileset);
-
-    // tileset.readyPromise
-    //   .then(() => {
-    //     console.log('3D Tiles ready');
-    //     viewer.zoomTo(tileset);
-    //   })
-    //   .catch(error => {
-    //     console.error('Tileset failed to load:', error);
-    //   });
-
-    // ---------------------------------------------------------------------------------
-
-    // // How to use the 3D Tiles Styling language to style individual features, like buildings.
-    // // Styling language specification: https://github.com/CesiumGS/3d-tiles/tree/main/specification/Styling
-    // const viewer = new Cesium.Viewer('cesiumContainer', {
-    //   terrain: Cesium.Terrain.fromWorldTerrain(),
-    // });
-    // const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-
-    // // Add Cesium OSM buildings to the scene as our example 3D Tileset.
-    // const osmBuildingsTileset = await Cesium.createOsmBuildingsAsync();
-    // viewer.scene.primitives.add(osmBuildingsTileset);
-
-    // // Set the initial camera to look at Seattle
-    // viewer.scene.camera.setView({
-    //   destination: Cesium.Cartesian3.fromDegrees(-122.3472, 47.598, 370),
-    //   orientation: {
-    //     heading: Cesium.Math.toRadians(10),
-    //     pitch: Cesium.Math.toRadians(-10),
-    //   },
-    // });
     // ---------------------------------------------------------------------------------
 
     // onMapMount(map);
@@ -321,12 +318,10 @@
 
 <div class="map-container">
   <div {id} class="map" />
-  <div class="cesium-container">
-    <div id={`cesiumContainer-${id}`} class="cesium" />
-  </div>
+  <div id={`cesiumContainer-${id}`} class="map cesium" />
 </div>
 
-<style>
+<style lang="scss">
   .map-container {
     position: relative;
     height: 100%;
@@ -338,18 +333,12 @@
     width: 100%;
   }
 
-  .cesium-container {
-    pointer-events: none;
-    position: absolute;
-    height: 100%;
-    width: 100%;
-  }
-
   .cesium {
     pointer-events: none;
-    position: relative;
-    height: 100%;
-    width: 100%;
+  }
+
+  .cesium canvas {
+    background-color: transparent !important;
   }
 
   :global(.popup-label-heading) {
