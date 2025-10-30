@@ -10,13 +10,21 @@
   import { Tile3DLayer, MVTLayer } from '@deck.gl/geo-layers';
   import { ScenegraphLayer } from '@deck.gl/mesh-layers';
   import { BasisLoader } from '@loaders.gl/textures';
-  // import { GLTFScenegraphLoader } from '@loaders.gl/gltf';
 
   import { DracoLoader } from '@loaders.gl/draco';
 
   import { Tiles3DLoader } from '@loaders.gl/3d-tiles';
   import { GLTFLoader } from '@loaders.gl/gltf';
-  import { registerLoaders } from '@loaders.gl/core';
+  // import { setLoaderOptions } from '@loaders.gl/core';
+
+  // import draco3d from 'draco3d';
+
+  // setLoaderOptions({
+  //   draco: {
+  //     draco3d: draco3d, // Use the installed draco3d
+  //     // worker: false, // Optional: if debugging is needed
+  //   },
+  // });
 
   export let id;
   export let bearing;
@@ -156,42 +164,52 @@
       zoom: 17,
     };
 
+    // Custom loader function
+    async function fetchAndDecompress(url) {
+      console.log({ url });
+      // Step 1: fetch the GLB as ArrayBuffer
+      const arrayBuffer = await fetch(url).then(r => r.arrayBuffer());
+
+      // Step 2: parse GLB
+      const glb = await load(arrayBuffer, GLTFLoader);
+
+      // Step 3: decompress KTX2 textures
+      for (const texture of glb.gltf.textures) {
+        if (texture.extensions?.KHR_texture_basisu) {
+          // decode to RGBA using CPU fallback
+          texture.source.data = await BasisLoader.decode(texture.source.data);
+          texture.mimeType = 'image/png';
+        }
+      }
+
+      console.log({ glb });
+
+      return glb; // pass uncompressed GLB to Deck.gl
+    }
+
     const threeDlayer = new Tile3DLayer({
       id: 'tile-3d-layer',
       // WORKS
       // data: 'https://pelican-public.s3.amazonaws.com/3dtiles/agi-hq/tileset.json',
       // DOES NOT WORK
       data: 'https://vector.hereapi.com/3dtiles/v1/3dlandmarks/tileset.json?apiKey=pC36c9S2G22-Nc4gvEWW9tXTrGxuo_eJPiHyIW9z5cA',
-      // loader: Tiles3DLoader,
+      // loader: { ...Tiles3DLoader, fetch: fetchAndDecompress }, // or Tiles3DLoader for b3dm
+      // loader: GLTFLoader,
       // loadOptions: {
-      //   // 'cesium-ion': {
-      //   //   accessToken:
-      //   //     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjODA5MmYzZi0zYzY1LTQ5ZTYtOTMxOC03YzdlNTY0ZGJmM2UiLCJpZCI6MzU0OTgwLCJpYXQiOjE3NjE2OTg4NDN9.jb6Kw0ESwF3xrvxfGbbZr3kp6BuYoDJePWa3YLp_nyM',
-      //   // },
-      //   // fetch: {
-      //   // mode: 'cors',
-      //   // headers: { apiKey: 'pC36c9S2G22-Nc4gvEWW9tXTrGxuo_eJPiHyIW9z5cA' },
-      //   // },
+      //   gltf: {
+      //     fetch: fetchAndDecompress,
+      //   },
       // },
-
-      loader: Tiles3DLoader, // or Tiles3DLoader for b3dm
+      // loader: fetchAndDecompress,
+      loaders: [Tiles3DLoader, GLTFLoader, DracoLoader],
       loadOptions: {
-        gltf: {
-          loader: GLTFLoader,
-          // loaders: [DracoLoader, BasisLoader],
-        },
-        // texture: {
-        //   loader: BasisLoader,
-        // },
+        '3d-tiles': { isTileset: true },
+        isTileset: true,
       },
-      // onTileLoad: tile => {
-      //   // The tile.content.url is the relative .glb/b3dm path
-      //   if (tile.content && tile.content.url) {
-      //     tile.content.url +=
-      //       (tile.content.url.includes('?') ? '&' : '?') +
-      //       `apiKey=${'pC36c9S2G22-Nc4gvEWW9tXTrGxuo_eJPiHyIW9z5cA'}`;
-      //   }
-      // },
+      onTilesetLoad: tileset => {
+        console.log('HERE 3D Tileset loaded:', tileset);
+      },
+      onTilesetError: e => console.log(e),
       pickable: true,
     });
 
@@ -203,127 +221,15 @@
       ...mapViewProps,
     });
 
-    // map.on('load', () => {
-    //   /*
-    //    * https://deck.gl/docs/api-reference/mesh-layers/scenegraph-layer
-    //    */
-    //   const layer = new ScenegraphLayer({
-    //     id: 'ScenegraphLayer',
-    //     data: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/bart-stations.json',
-    //     _animations: {
-    //       '*': { speed: 5 },
+    // const testing = new ScenegraphLayer({
+    //   id: 'scenegraph-layer',
+    //   data: [
+    //     {
+    //       position: [-122.4, 37.7],
     //     },
-    //     _lighting: 'pbr',
-
-    //     getOrientation: d => [0, Math.random() * 180, 90],
-    //     getPosition: d => d.coordinates,
-    //     scenegraph:
-    //       'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/BoxAnimated/glTF-Binary/BoxAnimated.glb',
-    //     sizeScale: 500,
-    //     pickable: true,
-    //   });
-
-    //   const parent = document.getElementById(id);
-
-    //   new Deck({
-    //     parent: parent,
-    //     // container: id,
-    //     map,
-    //     mapStyle:
-    //       'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
-    //     initialViewState: {
-    //       longitude: -122.4,
-    //       latitude: 37.74,
-    //       zoom: 11,
-    //       maxZoom: 20,
-    //       pitch: 30,
-    //       bearing: 0,
-    //     },
-    //     controller: true,
-    //     getTooltip: ({ object }) =>
-    //       object &&
-    //       `${object.name}
-    //   ${object.address}`,
-    //     layers: [layer],
-    //   });
-    // });
-
-    // ----------------------------------------------------------------------------------------
-
-    // map = new glLibrary.Map({
-    //   container: id,
-    //   style: url,
-    //   canvasContextAttributes: { preserveDrawingBuffer: true },
-    //   preserveDrawingBuffer: true,
-    //   ...mapViewProps,
-    // });
-
-    // ---------------------------------------------------------------------------------
-    // Cesium
-    // const threeDlayer = new Tile3DLayer({
-    //   id: 'tile-3d-layer',
-    //   data: 'https://assets.cesium.com/43978/tileset.json',
-    //   loader: CesiumIonLoader,
-    //   onTileError: e => console.error('Tile error', e),
-    //   loadOptions: {
-    //     'cesium-ion': {
-    //       accessToken:
-    //         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJmNTlhYjJlOS1jOGIxLTQ3MTEtYjQxMy1lMzhiZTEwMDAzYjkiLCJpZCI6MzU0OTgwLCJpYXQiOjE3NjE2ODMxNDN9.KRVpUoZOUjVsBZ8BmzTmhp53ZtWmQb8WwFHRD_9cymg',
-    //     },
-    //   },
-    // });
-
-    // Initial array buffer
-    // const threeDlayer = new Tile3DLayer({
-    //   id: 'tile-3d-layer',
-    //   data: 'https://vector.hereapi.com/3dtiles/v1/3dlandmarks/tileset.json?apiKey=pC36c9S2G22-Nc4gvEWW9tXTrGxuo_eJPiHyIW9z5cA',
-    //   onTileError: e => console.error('Tile error', e),
-    //   loadOptions: {
-    //     fetch: {
-    //       // mode: 'cors',
-    //       headers: { Accept: 'application/octet-stream' },
-    //       responseType: 'arraybuffer',
-    //     },
-    //     '3d-tiles': { loadGLTF: true, fetch: { responseType: 'arraybuffer' } },
-    //   },
-    // });
-
-    // // bitmaps
-    // const threeDlayer = new Tile3DLayer({
-    //   id: 'here-3d-buildings',
-    //   data: `https://vector.hereapi.com/3dtiles/v1/3dlandmarks/tileset.json?apiKey=pC36c9S2G22-Nc4gvEWW9tXTrGxuo_eJPiHyIW9z5cA`,
-    //   loadOptions: {
-    //     fetch: {
-    //       mode: 'cors',
-    //       headers: { Accept: 'application/octet-stream' },
-    //       responseType: 'arraybuffer',
-    //     },
-    //     '3d-tiles': {
-    //       loadGLTF: true,
-    //       gltf: {
-    //         decompressMeshes: true,
-    //         loadImages: true, // ensures actual Image objects are loaded
-    //         useImageBitmaps: false, // <— critical! avoids ImageBitmap path that triggers texSubImage2D errors
-    //       },
-    //     },
-    //   },
-    //   onTilesetLoad: t => console.log('HERE tileset loaded', t),
-    //   onTileLoad: t => console.log('Tile loaded', t),
-    // });
-
-    // const deckgl = new Deck({
-    //   container: 'map',
-    //   map: glLibrary,
-    //   mapStyle: url,
-    //   mapOptions: { geolocateControl: false, navigationControl: false },
-    //   initialViewState: {
-    //     longitude: -74.0115,
-    //     latitude: 40.7082,
-    //     zoom: 14,
-    //     pitch: 60,
-    //   },
-    //   controller: true,
-    //   layers: [threeDlayer],
+    //   ],
+    //   // scenegraph: '/testing.glb',
+    //   sizeScale: 200,
     // });
 
     const deckOverlay = new MapboxOverlay({
