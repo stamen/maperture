@@ -209,7 +209,7 @@
         ),
         orientation: {
           heading: Cesium.Math.toRadians(bearing),
-          pitch: Cesium.Math.toRadians(-90 - pitch),
+          pitch: Cesium.Math.toRadians(-90 + pitch),
           roll: 0, //Cesium.Math.toRadians(0),
         },
       });
