@@ -20,8 +20,7 @@
   import * as Cesium from 'cesium';
   import 'cesium/Build/Cesium/Widgets/widgets.css';
 
-  Cesium.Ion.defaultAccessToken =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjODA5MmYzZi0zYzY1LTQ5ZTYtOTMxOC03YzdlNTY0ZGJmM2UiLCJpZCI6MzU0OTgwLCJpYXQiOjE3NjE2OTg4NDN9.jb6Kw0ESwF3xrvxfGbbZr3kp6BuYoDJePWa3YLp_nyM';
+  Cesium.Ion.defaultAccessToken = $configStore?.cesiumAccessToken;
 
   export let id;
   export let bearing;
@@ -156,10 +155,11 @@
       ...mapViewProps,
     });
 
+    // Cesium stuff below
     // ---------------------------------------------------------------------------------
+
     Cesium.buildModuleUrl.setBaseUrl('/Cesium/');
 
-    // 2️⃣ Initialize CesiumJS
     const viewer = new Cesium.Viewer(`cesiumContainer-${id}`, {
       animation: false,
       baseLayerPicker: false,
@@ -185,24 +185,14 @@
     viewer.scene.backgroundColor = Cesium.Color.TRANSPARENT;
 
     function zoomToAltitude(zoom) {
-      // Constants
-      const EARTH_RADIUS = 6378137; // meters
-      const TILE_SIZE = 512; // Mapbox default
+      const EARTH_RADIUS = 6378137;
+      const TILE_SIZE = 512;
 
-      // Using Web Mercator scale
       const altitude =
         EARTH_RADIUS * Math.PI * (1 / Math.pow(2, zoom)) * (TILE_SIZE / 256);
 
-      return altitude;
+      return altitude * 1.5;
     }
-
-    const mapbox = new Cesium.MapboxStyleImageryProvider({
-      styleId: 'streets-v11',
-      accessToken:
-        'pk.eyJ1Ijoic3RhbWVuIiwiYSI6ImNsNXNraGFnMjA1YWUzYnQ4ZGdrYnp6YXkifQ.9E3jdAZ-5DwSwIyw15_Dlg',
-    });
-
-    viewer.imageryLayers.addImageryProvider(mapbox);
 
     // Sync Cesium camera on MapLibre move
     map.on('move', () => {
@@ -216,19 +206,17 @@
           center.lng,
           center.lat,
           zoomToAltitude(zoom)
-          // 100 + (zoom - 17) * 50
         ),
         orientation: {
           heading: Cesium.Math.toRadians(bearing),
           pitch: Cesium.Math.toRadians(-90 - pitch),
-          roll: Cesium.Math.toRadians(180),
+          roll: 0, //Cesium.Math.toRadians(0),
         },
       });
     });
 
-    // 3️⃣ Add 3D Tiles from HERE (replace YOUR_HERE_KEY)
     const tileset = await Cesium.Cesium3DTileset.fromUrl(
-      'https://vector.hereapi.com/3dtiles/v1/3dlandmarks/tileset.json?apiKey=pC36c9S2G22-Nc4gvEWW9tXTrGxuo_eJPiHyIW9z5cA'
+      `https://vector.hereapi.com/3dtiles/v1/3dlandmarks/tileset.json?apiKey=${$configStore?.hereApiKey}`
     );
 
     viewer.scene.primitives.add(tileset);
