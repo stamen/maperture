@@ -201,18 +201,29 @@
       const pitch = map.getPitch();
       const bearing = map.getBearing();
 
-      viewer.camera.setView({
-        destination: Cesium.Cartesian3.fromDegrees(
-          center.lng,
-          center.lat,
-          zoomToAltitude(zoom)
-        ),
-        orientation: {
-          heading: Cesium.Math.toRadians(bearing),
-          pitch: Cesium.Math.toRadians(-90 + pitch),
-          roll: 0, //Cesium.Math.toRadians(0),
-        },
-      });
+      // viewer.camera.setView({
+      //   destination: Cesium.Cartesian3.fromDegrees(
+      //     center.lng,
+      //     center.lat,
+      //     zoomToAltitude(zoom)
+      //   ),
+      //   orientation: {
+      //     heading: Cesium.Math.toRadians(bearing),
+      //     pitch: Cesium.Math.toRadians(-90 + pitch),
+      //     roll: 0,
+      //   },
+      // });
+      const target = Cesium.Cartesian3.fromDegrees(center.lng, center.lat, 0.0);
+      const cameraHeight = zoomToAltitude(zoom);
+
+      // Distance from camera to ground target
+      const offset = new Cesium.HeadingPitchRange(
+        Cesium.Math.toRadians(bearing),
+        Cesium.Math.toRadians(-90 + pitch),
+        cameraHeight
+      );
+
+      viewer.camera.lookAt(target, offset);
     });
 
     const tileset = await Cesium.Cesium3DTileset.fromUrl(
