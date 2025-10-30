@@ -6,6 +6,7 @@ import { terser } from 'rollup-plugin-terser';
 import replace from '@rollup/plugin-replace';
 import postcss from 'rollup-plugin-postcss';
 import autoprefixer from 'autoprefixer';
+import copy from 'rollup-plugin-copy';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -49,6 +50,9 @@ export default {
       'process.env.BASE_PATH': process.env.BASE_PATH
         ? process.env.BASE_PATH
         : '/',
+      'process.env.NODE_ENV': JSON.stringify(
+        process.env.NODE_ENV || 'development'
+      ),
     }),
     svelte({
       compilerOptions: {
@@ -72,8 +76,18 @@ export default {
       browser: true,
       dedupe: ['svelte'],
       preferBuiltins: false,
+      extensions: ['.mjs', '.js', '.json', '.node'],
     }),
     commonjs(),
+    // Copy Cesium static assets to dist
+    copy({
+      targets: [
+        {
+          src: 'node_modules/cesium/Build/Cesium',
+          dest: 'public/',
+        },
+      ],
+    }),
 
     // In dev mode, call `npm run start` once
     // the bundle has been generated
