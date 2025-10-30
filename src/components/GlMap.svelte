@@ -153,58 +153,22 @@
 
     // ----------------------------------------------------------------------------------------
 
-    const INITIAL_VIEW_STATE = {
-      latitude: 40,
-      longitude: -75,
-      pitch: 45,
-      maxPitch: 60,
-      bearing: 0,
-      minZoom: 2,
-      maxZoom: 30,
-      zoom: 17,
-    };
-
-    // Custom loader function
-    async function fetchAndDecompress(url) {
-      console.log({ url });
-      // Step 1: fetch the GLB as ArrayBuffer
-      const arrayBuffer = await fetch(url).then(r => r.arrayBuffer());
-
-      // Step 2: parse GLB
-      const glb = await load(arrayBuffer, GLTFLoader);
-
-      // Step 3: decompress KTX2 textures
-      for (const texture of glb.gltf.textures) {
-        if (texture.extensions?.KHR_texture_basisu) {
-          // decode to RGBA using CPU fallback
-          texture.source.data = await BasisLoader.decode(texture.source.data);
-          texture.mimeType = 'image/png';
-        }
-      }
-
-      console.log({ glb });
-
-      return glb; // pass uncompressed GLB to Deck.gl
-    }
-
     const threeDlayer = new Tile3DLayer({
       id: 'tile-3d-layer',
-      // WORKS
+      // WORKING EXAMPLE, NOT GLB BUT SAME 3D TILESET SPEC
       // data: 'https://pelican-public.s3.amazonaws.com/3dtiles/agi-hq/tileset.json',
       // DOES NOT WORK
-      data: 'https://vector.hereapi.com/3dtiles/v1/3dlandmarks/tileset.json?apiKey=pC36c9S2G22-Nc4gvEWW9tXTrGxuo_eJPiHyIW9z5cA',
-      // loader: { ...Tiles3DLoader, fetch: fetchAndDecompress }, // or Tiles3DLoader for b3dm
+      data: `https://vector.hereapi.com/3dtiles/v1/3dlandmarks/tileset.json?apiKey=${$configStore?.hereApiKey}`,
+      // loader: Tiles3DLoader,
       // loader: GLTFLoader,
-      // loadOptions: {
-      //   gltf: {
-      //     fetch: fetchAndDecompress,
-      //   },
-      // },
-      // loader: fetchAndDecompress,
       loaders: [Tiles3DLoader, GLTFLoader, DracoLoader],
       loadOptions: {
         '3d-tiles': { isTileset: true },
         isTileset: true,
+        // gltf: { loader: GLTFLoader },
+        // gltf: {
+        //   decompressMeshes: true,
+        // },
       },
       onTilesetLoad: tileset => {
         console.log('HERE 3D Tileset loaded:', tileset);
@@ -220,17 +184,6 @@
       preserveDrawingBuffer: true,
       ...mapViewProps,
     });
-
-    // const testing = new ScenegraphLayer({
-    //   id: 'scenegraph-layer',
-    //   data: [
-    //     {
-    //       position: [-122.4, 37.7],
-    //     },
-    //   ],
-    //   // scenegraph: '/testing.glb',
-    //   sizeScale: 200,
-    // });
 
     const deckOverlay = new MapboxOverlay({
       interleaved: false,
