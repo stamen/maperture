@@ -191,7 +191,7 @@
       const altitude =
         EARTH_RADIUS * Math.PI * (1 / Math.pow(2, zoom)) * (TILE_SIZE / 256);
 
-      return altitude * 1.5;
+      return altitude * 1.85;
     }
 
     // Sync Cesium camera on MapLibre move
