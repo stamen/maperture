@@ -179,6 +179,8 @@
       stylesheet = await precompile.script(stylesheet, activePrecompileOptions);
     }
 
+    console.log(stylesheet);
+
     map = new glLibrary.Map({
       container: id,
       style: stylesheet ?? url,
