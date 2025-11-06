@@ -120,7 +120,7 @@
     if (stylePresets.length) {
       const stylePresetValues = stylePresets.map((item, i) => {
         let selectedPrecompileOption;
-        if (map.id === item.id) {
+        if (map.id === item.id || item?.presets?.some(p => p.id === map.id)) {
           selectedPrecompileOption = map?.selectedPrecompileOption;
         }
 
