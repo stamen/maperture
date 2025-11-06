@@ -98,8 +98,6 @@
 
       stylesheet = await precompile.script(stylesheet, activePrecompileOptions);
 
-      console.log(stylesheet);
-
       map.setStyle(stylesheet);
     } else {
       map.setStyle(urlStr || style);
