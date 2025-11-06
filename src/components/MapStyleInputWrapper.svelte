@@ -74,6 +74,7 @@
       }
       case 'branch': {
         nextValue = { ...nextValue, defaultText: branch ?? '' };
+
         break;
       }
       case 'custom': {
@@ -138,6 +139,10 @@
               dropdownType: 'preset',
               selected: url === v?.url && type === v?.type,
               dropdownId: hat(),
+              ...(item.precompile && {
+                selectedPrecompileOption:
+                  selectedPrecompileOption ?? item.precompile.options.default,
+              }),
             })),
           }),
         };
@@ -154,6 +159,10 @@
             presets: item.presets.map(v => ({
               text: v.name,
               dropdownId: v.dropdownId,
+              ...(item.precompile && {
+                selectedPrecompileOption:
+                  selectedPrecompileOption ?? item.precompile.options.default,
+              }),
             })),
           }),
         };
@@ -163,11 +172,21 @@
     if (branchPatterns) {
       let patterns = [];
       for (const pattern of branchPatterns) {
+        let selectedPrecompileOption;
+        if (map.id === pattern.id) {
+          selectedPrecompileOption = map?.selectedPrecompileOption;
+        }
+
         let preset = {
           name: pattern.name ?? pattern.id,
           type: 'sublist',
           dropdownId: hat(),
           presets: [],
+          ...(pattern.precompile && {
+            precompile: pattern.precompile,
+            selectedPrecompileOption:
+              selectedPrecompileOption ?? pattern.precompile.options.default,
+          }),
         };
 
         if (pattern?.styles?.length) {
@@ -187,6 +206,12 @@
               ),
               pattern: pattern.pattern,
               dropdownId: hat(),
+              ...(pattern.precompile && {
+                precompile: pattern.precompile,
+                selectedPrecompileOption:
+                  selectedPrecompileOption ??
+                  pattern.precompile.options.default,
+              }),
             };
           });
 

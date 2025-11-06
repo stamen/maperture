@@ -4,6 +4,7 @@
   import { createEventDispatcher, onMount, onDestroy } from 'svelte';
   import { config as configStore } from '../stores';
   import { fetchUrl } from '../fetch-url';
+  import { createBranchUrl } from '../branch-utils';
 
   export let id;
   export let bearing;
@@ -72,7 +73,17 @@
 
   const updateMapStyle = async (map, url, style, activePrecompileOptions) => {
     if (!map) return;
-    let isUrl = !style && typeof url === 'string';
+
+    let urlStr = url;
+    if (!urlStr && mapStyle?.pattern) {
+      urlStr = createBranchUrl(
+        mapStyle?.pattern,
+        mapStyle?.branch,
+        mapStyle?.branchStyle
+      );
+    }
+
+    let isUrl = !style && typeof urlStr === 'string';
     let stylesheet = style;
 
     if (precompile) {
@@ -80,7 +91,7 @@
       if (!activePrecompileOptions) return;
 
       if (isUrl) {
-        stylesheet = await fetchUrl(url);
+        stylesheet = await fetchUrl(urlStr);
       }
 
       if (!stylesheet) return;
@@ -89,7 +100,7 @@
 
       map.setStyle(stylesheet);
     } else {
-      map.setStyle(url || style);
+      map.setStyle(urlStr || style);
     }
   };
 
