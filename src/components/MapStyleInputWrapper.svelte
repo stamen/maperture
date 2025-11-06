@@ -130,7 +130,6 @@
           selected: url === item?.url && type === item?.type,
           dropdownId: hat(),
           ...(item.precompile && {
-            precompile: item.precompile,
             selectedPrecompileOption:
               selectedPrecompileOption ?? item.precompile.options.default,
           }),
@@ -140,10 +139,9 @@
               dropdownType: 'preset',
               selected: url === v?.url && type === v?.type,
               dropdownId: hat(),
-              ...(item.precompile && {
-                precompile: item.precompile,
+              ...(v.precompile && {
                 selectedPrecompileOption:
-                  selectedPrecompileOption ?? item.precompile.options.default,
+                  selectedPrecompileOption ?? v.precompile.options.default,
               }),
             })),
           }),
@@ -304,6 +302,22 @@
       // that initial value from hash becomes the default for that pane
       if (next?.selected && next?.selectedPrecompileOption) {
         next.selectedPrecompileOption = next.precompile.options.default;
+      }
+
+      const foundSelectedPreset = next?.presets?.find(p => p?.selected);
+      if (
+        foundSelectedPreset &&
+        foundSelectedPreset?.selectedPrecompileOption
+      ) {
+        next = {
+          ...next,
+          presets: next.presets.map(n => {
+            if (n?.selected) {
+              n.selectedPrecompileOption = n.precompile.options.default;
+            }
+            return { ...n, precompile: n?.precompile };
+          }),
+        };
       }
 
       acc.push(next);

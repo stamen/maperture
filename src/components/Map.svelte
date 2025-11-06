@@ -46,6 +46,7 @@
       mapboxKey: $configStore.mapboxGlAccessToken,
       maptilerKey: $configStore.maptilerApiKey,
     };
+
     props = {
       id,
       mapStyle: {
