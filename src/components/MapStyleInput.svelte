@@ -263,10 +263,8 @@
                 <input
                   type="checkbox"
                   id={`${mapIdIndex}-${i}`}
-                  checked={dropdownValue?.selectedPrecompileOption &&
-                    dropdownValue.selectedPrecompileOption.includes(
-                      value.value
-                    )}
+                  checked={selected?.selectedPrecompileOption &&
+                    selected.selectedPrecompileOption.includes(value.value)}
                   on:click={() => onChangeCompileOption(value.value)}
                 />
                 <label for={`${mapIdIndex}-${i}`}
