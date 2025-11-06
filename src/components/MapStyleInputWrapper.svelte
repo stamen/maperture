@@ -159,10 +159,6 @@
             presets: item.presets.map(v => ({
               text: v.name,
               dropdownId: v.dropdownId,
-              ...(item.precompile && {
-                selectedPrecompileOption:
-                  selectedPrecompileOption ?? item.precompile.options.default,
-              }),
             })),
           }),
         };
