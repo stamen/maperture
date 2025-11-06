@@ -130,6 +130,7 @@
           selected: url === item?.url && type === item?.type,
           dropdownId: hat(),
           ...(item.precompile && {
+            precompile: item.precompile,
             selectedPrecompileOption:
               selectedPrecompileOption ?? item.precompile.options.default,
           }),
@@ -140,6 +141,7 @@
               selected: url === v?.url && type === v?.type,
               dropdownId: hat(),
               ...(item.precompile && {
+                precompile: item.precompile,
                 selectedPrecompileOption:
                   selectedPrecompileOption ?? item.precompile.options.default,
               }),
