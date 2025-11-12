@@ -25,9 +25,21 @@ const stylePresets = [
   },
   {
     id: 'stamen-toner-lite',
-    name: 'Stamen Toner (Lite)',
+    name: 'Stamen Toner Lite',
     type: 'maplibre-gl',
     url: 'https://tiles.stadiamaps.com/styles/stamen_toner_lite.json',
+  },
+  {
+    id: 'stamen-toner-dark',
+    name: 'Stamen Toner Dark',
+    type: 'maplibre-gl',
+    url: 'https://tiles.stadiamaps.com/styles/stamen_toner_dark.json',
+  },
+  {
+    id: 'stamen-toner-blacklite',
+    name: 'Stamen Toner Blacklite',
+    type: 'maplibre-gl',
+    url: 'https://tiles.stadiamaps.com/styles/stamen_toner_blacklite.json',
   },
   {
     name: 'Stamen Raster Layers',
@@ -121,31 +133,31 @@ const stylePresets = [
     presets: [
       {
         id: 'mapbox-streets',
-        name: 'Mapbox Streets',
+        name: 'Mapbox Streets v11',
         type: 'mapbox-gl',
         url: 'mapbox://styles/mapbox/streets-v11',
       },
       {
         id: 'mapbox-outdoors',
-        name: 'Mapbox Outdoors',
+        name: 'Mapbox Outdoors v11',
         type: 'mapbox-gl',
         url: 'mapbox://styles/mapbox/outdoors-v11',
       },
       {
         id: 'mapbox-light',
-        name: 'Mapbox Light',
+        name: 'Mapbox Light v10',
         type: 'mapbox-gl',
         url: 'mapbox://styles/mapbox/light-v10',
       },
       {
         id: 'mapbox-dark',
-        name: 'Mapbox Dark',
+        name: 'Mapbox Dark v10',
         type: 'mapbox-gl',
         url: 'mapbox://styles/mapbox/dark-v10',
       },
       {
         id: 'mapbox-satellite-streets',
-        name: 'Mapbox Satellite Streets',
+        name: 'Mapbox Satellite Streets v11',
         type: 'mapbox-gl',
         url: 'mapbox://styles/mapbox/satellite-streets-v11',
       },
