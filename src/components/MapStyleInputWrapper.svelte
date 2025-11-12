@@ -1,4 +1,5 @@
 <script>
+  import { cloneDeep } from 'es-toolkit/compat';
   import hat from 'hat';
   import {
     maps as mapsStore,
@@ -63,7 +64,7 @@
     if (!nextValue) return;
 
     // Don't mutate the dropdown values
-    nextValue = JSON.parse(JSON.stringify(nextValue));
+    nextValue = cloneDeep(nextValue);
 
     // Set default text for the selected item's text input
     switch (nextValue.dropdownType) {
@@ -73,6 +74,7 @@
       }
       case 'branch': {
         nextValue = { ...nextValue, defaultText: branch ?? '' };
+
         break;
       }
       case 'custom': {
@@ -116,20 +118,35 @@
 
     // Create values and displays for style presets
     if (stylePresets.length) {
-      const stylePresetValues = stylePresets.map(item => ({
-        ...item,
-        dropdownType: 'preset',
-        selected: url === item?.url && type === item?.type,
-        dropdownId: hat(),
-        ...(item.type === 'sublist' && {
-          presets: item.presets.map(v => ({
-            ...v,
-            dropdownType: 'preset',
-            selected: url === v?.url && type === v?.type,
-            dropdownId: hat(),
-          })),
-        }),
-      }));
+      const stylePresetValues = stylePresets.map((item, i) => {
+        let selectedPrecompileOption;
+        if (map.id === item.id || item?.presets?.some(p => p.id === map.id)) {
+          selectedPrecompileOption = map?.selectedPrecompileOption;
+        }
+
+        return {
+          ...item,
+          dropdownType: 'preset',
+          selected: url === item?.url && type === item?.type,
+          dropdownId: hat(),
+          ...(item.precompile && {
+            selectedPrecompileOption:
+              selectedPrecompileOption ?? item.precompile.options.default,
+          }),
+          ...(item.type === 'sublist' && {
+            presets: item.presets.map(v => ({
+              ...v,
+              dropdownType: 'preset',
+              selected: url === v?.url && type === v?.type,
+              dropdownId: hat(),
+              ...(v.precompile && {
+                selectedPrecompileOption:
+                  selectedPrecompileOption ?? v.precompile.options.default,
+              }),
+            })),
+          }),
+        };
+      });
 
       dropdownValues = dropdownValues.concat(stylePresetValues);
 
@@ -151,11 +168,21 @@
     if (branchPatterns) {
       let patterns = [];
       for (const pattern of branchPatterns) {
+        let selectedPrecompileOption;
+        if (map.id === pattern.id || map.branchId === pattern.id) {
+          selectedPrecompileOption = map?.selectedPrecompileOption;
+        }
+
         let preset = {
           name: pattern.name ?? pattern.id,
           type: 'sublist',
           dropdownId: hat(),
           presets: [],
+          ...(pattern.precompile && {
+            precompile: pattern.precompile,
+            selectedPrecompileOption:
+              selectedPrecompileOption ?? pattern.precompile.options.default,
+          }),
         };
 
         if (pattern?.styles?.length) {
@@ -175,6 +202,12 @@
               ),
               pattern: pattern.pattern,
               dropdownId: hat(),
+              ...(pattern.precompile && {
+                precompile: pattern.precompile,
+                selectedPrecompileOption:
+                  selectedPrecompileOption ??
+                  pattern.precompile.options.default,
+              }),
             };
           });
 
@@ -251,6 +284,7 @@
 
     dropdownValues = dropdownValues.reduce((acc, v) => {
       let next = v;
+
       if (next?.type === 'sublist') {
         next.presets = next.presets.map(v => ({
           ...v,
@@ -262,6 +296,30 @@
           selected: v.dropdownId === dropdownId,
         };
       }
+
+      // Since the initial value is set based on current value in the hash,
+      // we need to reset to the default when changing the style, otherwise
+      // that initial value from hash becomes the default for that pane
+      if (next?.selected && next?.selectedPrecompileOption) {
+        next.selectedPrecompileOption = next.precompile.options.default;
+      }
+
+      const foundSelectedPreset = next?.presets?.find(p => p?.selected);
+      if (
+        foundSelectedPreset &&
+        foundSelectedPreset?.selectedPrecompileOption
+      ) {
+        next = {
+          ...next,
+          presets: next.presets.map(n => {
+            if (n?.selected) {
+              n.selectedPrecompileOption = n.precompile.options.default;
+            }
+            return { ...n, precompile: n?.precompile };
+          }),
+        };
+      }
+
       acc.push(next);
       return acc;
     }, []);
@@ -284,8 +342,10 @@
   // Handle updating the map store
   const onUpdateMapStore = e => {
     const { value } = e.detail;
+
     if (!value.isPolling) {
       const nextMap = { ...value, index, renderer };
+
       delete nextMap.dropdownId;
       mapsStore.update(current => {
         return current.map((m, i) => (i === index ? nextMap : m));
@@ -336,6 +396,7 @@
       {rendererOptions}
       {rendererValue}
       {index}
+      {mapIdIndex}
       activeUrl={url}
       on:setUrl={onSetUrl}
       on:selectOption={onSelectOption}

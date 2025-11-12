@@ -30,12 +30,18 @@ Here, you can customize the following options:
 - `maptilerApiKey`: Your MapTiler API key to use with `maptiler-sdk`
 - `googleMapsAPIKey`: Your Google Maps API key to enable API usage
 - `stylePresets`: A list of styles with urls to show in the dropdowns. Styles must have the following keys:
-  - `id`: a unique id
-  - `name`: a display name
-  - `type`: the type of map or referencing a sublist of presets (`mapbox-gl`, `maplibre-gl`, `maptiler-sdk`, `google`, `leaflet`, `sublist`)
+  - `id`: A unique id
+  - `name`: A display name
+  - `type`: The type of map or referencing a sublist of presets (`mapbox-gl`, `maplibre-gl`, `maptiler-sdk`, `google`, `leaflet`, `sublist`)
   - `url`: (currently applies to `mapbox-gl`, `maplibre-gl`, `maptiler-sdk` and `leaflet` maps only) the style's url
   - `mapId`: (currently `google` only) the style's id
-  - [`presets`]: used only with `type: sublist`, this allows one level of nesting to add an additional nested list of style presets following this format
+  - [`presets`]: Used only with `type: sublist`, this allows one level of nesting to add an additional nested list of style presets following this format
+  - [`precompile`]: (optional) A config that allows you to use a custom script to precompile a stylesheet. With this set, your style will precompile before render based on the selected options. Only Mapbox and Maplibre stylesheets are supported.
+    - `script`: A function to run on the stylesheet that takes two arguments, a JSON stylesheet and an array of options from the available option values.
+    - `options`: Nested config for available options to pass to your compile script.
+      - `type`: UI to show in the Maperture interface for option values. Currently only `checkbox` is supported.
+      - `default`: The default option to pass to the compiler on initial render.
+      - `values`: An array of objects containing the `value` and `label` for individual options.
 - `branchPatterns`: An array of objects that specify how to build a URL to fetch a style living on a branch with the following keys:
   - `pattern`: a tokenized url pattern using `{branch}` and `{style}` tokens
   - `styles`: an array specifying specific styles you can view on the specified branch

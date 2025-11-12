@@ -3,6 +3,8 @@
   import throttle from 'lodash.throttle';
   import { createEventDispatcher, onMount, onDestroy } from 'svelte';
   import { config as configStore } from '../stores';
+  import { fetchUrl } from '../fetch-url';
+  import { createBranchUrl } from '../branch-utils';
 
   export let id;
   export let bearing;
@@ -51,7 +53,7 @@
   let mapViewProps = {};
 
   // We can set style (an object) here because mapStyle only changes when it needs to
-  $: ({ style, url } = mapStyle);
+  $: ({ style, url, precompile, selectedPrecompileOption } = mapStyle);
 
   // We group map-view props here as they are useful in a few contexts
   $: mapViewProps = { bearing, center, pitch, zoom };
@@ -69,9 +71,37 @@
     return !deepEqual(getCurrentMapView(), mapViewProps);
   };
 
-  const updateMapStyle = (map, url, style) => {
+  const updateMapStyle = async (map, url, style, activePrecompileOptions) => {
     if (!map) return;
-    map.setStyle(url || style);
+
+    let urlStr = url;
+    if (!urlStr && mapStyle?.pattern) {
+      urlStr = createBranchUrl(
+        mapStyle?.pattern,
+        mapStyle?.branch,
+        mapStyle?.branchStyle
+      );
+    }
+
+    let isUrl = !style && typeof urlStr === 'string';
+    let stylesheet = style;
+
+    if (precompile) {
+      // If we're precompiling and nothing is selected, wait for a default to come through
+      if (!activePrecompileOptions) return;
+
+      if (isUrl) {
+        stylesheet = await fetchUrl(urlStr);
+      }
+
+      if (!stylesheet) return;
+
+      stylesheet = await precompile.script(stylesheet, activePrecompileOptions);
+
+      map.setStyle(stylesheet);
+    } else {
+      map.setStyle(urlStr || style);
+    }
   };
 
   const updateMapFromProps = (map, mapView) => {
@@ -129,9 +159,29 @@
     await importRenderer();
     const glLibrary = renderer;
 
+    let isUrl = typeof url === 'string';
+    let stylesheet;
+
+    // This should get reset because the selectedPrecompileOption
+    // usually doesn't exist here yet. This prevents an invalid stylesheet getting through
+    if (precompile) {
+      const activePrecompileOptions =
+        selectedPrecompileOption ?? precompile?.options?.default;
+
+      if (!activePrecompileOptions) return;
+
+      if (isUrl) {
+        stylesheet = await fetchUrl(url);
+      }
+
+      if (!stylesheet) return;
+
+      stylesheet = await precompile.script(stylesheet, activePrecompileOptions);
+    }
+
     map = new glLibrary.Map({
       container: id,
-      style: url,
+      style: stylesheet ?? url,
       canvasContextAttributes: { preserveDrawingBuffer: true },
       preserveDrawingBuffer: true,
       ...mapViewProps,
@@ -193,7 +243,7 @@
   // either
   $: updateMapFromProps(map, mapViewProps);
 
-  $: updateMapStyle(map, url, style);
+  $: updateMapStyle(map, url, style, selectedPrecompileOption);
 
   // Show collisions on the map as desired
   $: map && (map.showCollisionBoxes = showCollisions);

@@ -31,6 +31,7 @@
   let props = {};
 
   $: mapId = `${map.id}-${map.index}`;
+  $: mapPrecompileOption = map?.selectedPrecompileOption;
 
   // Update stylesheet variable only if there's been actual changes
   let stylesheet = {};
@@ -45,6 +46,7 @@
       mapboxKey: $configStore.mapboxGlAccessToken,
       maptilerKey: $configStore.maptilerApiKey,
     };
+
     props = {
       id,
       mapStyle: {
@@ -140,14 +142,13 @@
   $: {
     // Add trigger for stylesheet changes for locally served styles
     stylesheet;
+    mapPrecompileOption;
     setProps(mapId, numberOfMaps);
   }
 
   $: setMapComponent(mapRenderer);
 
   $: mapStateProps = getMapStateProps($$restProps);
-
-  $: console.log(map);
 </script>
 
 <div class="map-container">

@@ -98,6 +98,27 @@ const stylePresets = [
     name: 'Maplibre Demo Tiles',
     type: 'maplibre-gl',
     url: 'https://demotiles.maplibre.org/style.json',
+    precompile: {
+      // Example script removing layers based on options
+      script: (stylesheet, options) => {
+        let nextStylesheet = { ...stylesheet };
+        nextStylesheet = {
+          ...nextStylesheet,
+          layers: nextStylesheet.layers.filter(l => !options.includes(l.id)),
+        };
+        return nextStylesheet;
+      },
+      options: {
+        type: 'checkbox',
+        // On initial render, background will be removed by the script
+        default: ['background'],
+        values: [
+          { label: 'Background', value: 'background' },
+          { label: 'Coastline', value: 'coastline' },
+          { label: 'Countries fill', value: 'countries-fill' },
+        ],
+      },
+    },
   },
   // In order for this to work you need to set the maptilerApiKey
   // {
