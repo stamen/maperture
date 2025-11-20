@@ -16,6 +16,7 @@
   export let mapStyle;
   export let numberOfMaps;
   export let onMapMount;
+  export let projection;
 
   export let mapRenderer;
 
@@ -155,6 +156,12 @@
     return html;
   };
 
+  const setProjection = () => {
+    map.setProjection({
+      type: projection,
+    });
+  };
+
   onMount(async () => {
     await importRenderer();
     const glLibrary = renderer;
@@ -186,6 +193,10 @@
       preserveDrawingBuffer: true,
       ...mapViewProps,
     });
+
+    if (projection) {
+      map.on('style.load', setProjection);
+    }
 
     onMapMount(map);
 

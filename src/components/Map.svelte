@@ -54,6 +54,7 @@
         url: normalizeUrl(map.url, keys),
       },
       numberOfMaps: num,
+      projection: map?.projection,
     };
     setMapComponent(mapRenderer);
   };
