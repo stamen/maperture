@@ -5,6 +5,7 @@
   import { config as configStore } from '../stores';
   import { fetchUrl } from '../fetch-url';
   import { createBranchUrl } from '../branch-utils';
+  import { MAPBOX_GL_MAX_PITCH } from '../constants';
 
   export let id;
   export let bearing;
@@ -53,7 +54,8 @@
   let mapViewProps = {};
 
   // We can set style (an object) here because mapStyle only changes when it needs to
-  $: ({ style, url, precompile, selectedPrecompileOption } = mapStyle);
+  $: ({ style, url, precompile, selectedPrecompileOption, projection } =
+    mapStyle);
 
   // We group map-view props here as they are useful in a few contexts
   $: mapViewProps = { bearing, center, pitch, zoom };
@@ -73,6 +75,8 @@
 
   const updateMapStyle = async (map, url, style, activePrecompileOptions) => {
     if (!map) return;
+
+    map.off('style.load', setProjection);
 
     let urlStr = url;
     if (!urlStr && mapStyle?.pattern) {
@@ -101,6 +105,10 @@
       map.setStyle(stylesheet);
     } else {
       map.setStyle(urlStr || style);
+    }
+
+    if (projection && mapRenderer === 'maplibre-gl') {
+      setTimeout(setProjection, 150);
     }
   };
 
@@ -155,6 +163,13 @@
     return html;
   };
 
+  const setProjection = () => {
+    if (!projection) return;
+    map.setProjection({
+      type: projection,
+    });
+  };
+
   onMount(async () => {
     await importRenderer();
     const glLibrary = renderer;
@@ -176,7 +191,12 @@
 
       if (!stylesheet) return;
 
-      stylesheet = await precompile.script(stylesheet, activePrecompileOptions);
+      if (precompile && precompile?.script) {
+        stylesheet = await precompile.script(
+          stylesheet,
+          activePrecompileOptions
+        );
+      }
     }
 
     map = new glLibrary.Map({
@@ -184,8 +204,16 @@
       style: stylesheet ?? url,
       canvasContextAttributes: { preserveDrawingBuffer: true },
       preserveDrawingBuffer: true,
+      maxPitch: MAPBOX_GL_MAX_PITCH,
       ...mapViewProps,
     });
+
+    if (projection && mapRenderer === 'maplibre-gl') {
+      map.on('style.load', () => {
+        // Hacky but style.load is not reliable
+        setTimeout(setProjection, 150);
+      });
+    }
 
     onMapMount(map);
 
