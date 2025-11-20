@@ -17,7 +17,6 @@
   export let mapStyle;
   export let numberOfMaps;
   export let onMapMount;
-  export let projection;
 
   export let mapRenderer;
 
@@ -55,7 +54,8 @@
   let mapViewProps = {};
 
   // We can set style (an object) here because mapStyle only changes when it needs to
-  $: ({ style, url, precompile, selectedPrecompileOption } = mapStyle);
+  $: ({ style, url, precompile, selectedPrecompileOption, projection } =
+    mapStyle);
 
   // We group map-view props here as they are useful in a few contexts
   $: mapViewProps = { bearing, center, pitch, zoom };
@@ -75,6 +75,8 @@
 
   const updateMapStyle = async (map, url, style, activePrecompileOptions) => {
     if (!map) return;
+
+    map.off('style.load', setProjection);
 
     let urlStr = url;
     if (!urlStr && mapStyle?.pattern) {
@@ -103,6 +105,10 @@
       map.setStyle(stylesheet);
     } else {
       map.setStyle(urlStr || style);
+    }
+
+    if (projection && mapRenderer === 'maplibre-gl') {
+      setProjection();
     }
   };
 
@@ -158,6 +164,7 @@
   };
 
   const setProjection = () => {
+    if (!projection) return;
     map.setProjection({
       type: projection,
     });
@@ -184,7 +191,12 @@
 
       if (!stylesheet) return;
 
-      stylesheet = await precompile.script(stylesheet, activePrecompileOptions);
+      if (precompile && precompile?.script) {
+        stylesheet = await precompile.script(
+          stylesheet,
+          activePrecompileOptions
+        );
+      }
     }
 
     map = new glLibrary.Map({
@@ -196,8 +208,11 @@
       ...mapViewProps,
     });
 
-    if (projection) {
-      map.on('style.load', setProjection);
+    if (projection && mapRenderer === 'maplibre-gl') {
+      map.on('style.load', () => {
+        // Hacky but style.load is not reliable
+        setTimeout(setProjection, 150);
+      });
     }
 
     onMapMount(map);
