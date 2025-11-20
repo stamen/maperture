@@ -108,7 +108,7 @@
     }
 
     if (projection && mapRenderer === 'maplibre-gl') {
-      setProjection();
+      setTimeout(setProjection, 150);
     }
   };
 
