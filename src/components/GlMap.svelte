@@ -5,6 +5,7 @@
   import { config as configStore } from '../stores';
   import { fetchUrl } from '../fetch-url';
   import { createBranchUrl } from '../branch-utils';
+  import { MAPBOX_GL_MAX_PITCH } from '../constants';
 
   export let id;
   export let bearing;
@@ -191,6 +192,7 @@
       style: stylesheet ?? url,
       canvasContextAttributes: { preserveDrawingBuffer: true },
       preserveDrawingBuffer: true,
+      maxPitch: MAPBOX_GL_MAX_PITCH,
       ...mapViewProps,
     });
 
