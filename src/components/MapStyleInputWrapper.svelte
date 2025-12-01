@@ -202,6 +202,7 @@
               ),
               pattern: pattern.pattern,
               dropdownId: hat(),
+              ...(pattern?.projection && { projection: pattern.projection }),
               ...(pattern.precompile && {
                 precompile: pattern.precompile,
                 selectedPrecompileOption:
