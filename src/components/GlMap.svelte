@@ -6,6 +6,9 @@
   import { fetchUrl } from '../fetch-url';
   import { createBranchUrl } from '../branch-utils';
   import { MAPBOX_GL_MAX_PITCH } from '../constants';
+  import { MapboxOverlay } from '@deck.gl/mapbox';
+  import { Tile3DLayer } from '@deck.gl/geo-layers';
+  import { Tiles3DLoader } from '@loaders.gl/3d-tiles';
 
   export let id;
   export let bearing;
