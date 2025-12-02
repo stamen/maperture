@@ -202,14 +202,37 @@
       }
     }
 
+    // ----------------------------------------------------------------------------------------
+
+    const threeDlayer = new Tile3DLayer({
+      id: 'tile-3d-layer',
+      data: `https://vector.hereapi.com/3dtiles/v1/3dlandmarks/tileset.json?apiKey=${$configStore?.hereApiKey}`,
+      loader: Tiles3DLoader,
+      onTilesetLoad: tileset => {
+        console.log('HERE 3D Tileset loaded:', tileset);
+      },
+      onTilesetError: e => console.log(e),
+      pickable: true,
+    });
+
     map = new glLibrary.Map({
       container: id,
-      style: stylesheet ?? url,
+      style: url,
       canvasContextAttributes: { preserveDrawingBuffer: true },
       preserveDrawingBuffer: true,
-      maxPitch: MAPBOX_GL_MAX_PITCH,
       ...mapViewProps,
     });
+
+    const deckOverlay = new MapboxOverlay({
+      interleaved: false,
+      layers: [threeDlayer],
+    });
+
+    map.on('load', () => {
+      map.addControl(deckOverlay);
+    });
+
+    // ---------------------------------------------------------------------------------
 
     if (projection && mapRenderer === 'maplibre-gl') {
       map.on('style.load', () => {
