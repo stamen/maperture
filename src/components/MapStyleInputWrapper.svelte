@@ -148,10 +148,10 @@
                 selectedPrecompileOption:
                   selectedPrecompileOption ?? v.precompile.options.default,
               }),
+              ...(v.deckGlLayer && {
+                landmarks3D,
+              }),
             })),
-            ...(v.deckGlLayer && {
-              landmarks3D,
-            }),
           }),
         };
       });
