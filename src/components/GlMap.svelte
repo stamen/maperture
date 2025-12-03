@@ -132,7 +132,7 @@
       map.setStyle(urlStr || style);
     }
 
-    if (deckGlLayer && landmarks3D) {
+    if (deckGlLayer && !!landmarks3D) {
       setTimeout(set3dLayer, 150);
     }
 

@@ -32,7 +32,7 @@
 
   $: mapId = `${map.id}-${map.index}`;
   $: mapPrecompileOption = map?.selectedPrecompileOption;
-  $: mapLandmarks3D = map?.mapLandmarks3D;
+  $: mapLandmarks3D = map?.landmarks3D;
 
   // Update stylesheet variable only if there's been actual changes
   let stylesheet = {};
