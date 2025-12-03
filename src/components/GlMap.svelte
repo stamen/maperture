@@ -66,6 +66,7 @@
     selectedPrecompileOption,
     projection,
     deckGlLayer,
+    landmarks3D,
   } = mapStyle);
 
   // We group map-view props here as they are useful in a few contexts
@@ -90,7 +91,8 @@
     style,
     activePrecompileOptions,
     projection,
-    deckGlLayer
+    deckGlLayer,
+    landmarks3D
   ) => {
     if (!map) return;
 
@@ -130,7 +132,7 @@
       map.setStyle(urlStr || style);
     }
 
-    if (deckGlLayer) {
+    if (deckGlLayer && landmarks3D) {
       setTimeout(set3dLayer, 150);
     }
 
@@ -204,9 +206,9 @@
       id: 'tile-3d-layer',
       data: deckGlData,
       loader: Tiles3DLoader,
-      onTilesetLoad: tileset => {
-        console.log('3D Tileset loaded:', tileset);
-      },
+      // onTilesetLoad: tileset => {
+      //   console.log('3D Tileset loaded:', tileset);
+      // },
       onTilesetError: e => console.log(e),
       ...(beforeId && { beforeId }),
     });
@@ -258,7 +260,7 @@
       ...mapViewProps,
     });
 
-    if (deckGlLayer) {
+    if (deckGlLayer && landmarks3D) {
       map.once('load', set3dLayer);
     }
 
@@ -331,7 +333,8 @@
     style,
     selectedPrecompileOption,
     projection,
-    deckGlLayer
+    deckGlLayer,
+    landmarks3D
   );
 
   // Show collisions on the map as desired

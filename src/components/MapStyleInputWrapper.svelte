@@ -120,8 +120,10 @@
     if (stylePresets.length) {
       const stylePresetValues = stylePresets.map((item, i) => {
         let selectedPrecompileOption;
+        let landmarks3D;
         if (map.id === item.id || item?.presets?.some(p => p.id === map.id)) {
           selectedPrecompileOption = map?.selectedPrecompileOption;
+          landmarks3D = !!map?.landmarks3D;
         }
 
         return {
@@ -132,6 +134,9 @@
           ...(item.precompile && {
             selectedPrecompileOption:
               selectedPrecompileOption ?? item.precompile.options.default,
+          }),
+          ...(item.deckGlLayer && {
+            landmarks3D,
           }),
           ...(item.type === 'sublist' && {
             presets: item.presets.map(v => ({
@@ -144,6 +149,9 @@
                   selectedPrecompileOption ?? v.precompile.options.default,
               }),
             })),
+            ...(v.deckGlLayer && {
+              landmarks3D,
+            }),
           }),
         };
       });
@@ -169,8 +177,10 @@
       let patterns = [];
       for (const pattern of branchPatterns) {
         let selectedPrecompileOption;
+        let landmarks3D;
         if (map.id === pattern.id || map.branchId === pattern.id) {
           selectedPrecompileOption = map?.selectedPrecompileOption;
+          landmarks3D = map?.landmarks3D;
         }
 
         let preset = {
@@ -182,6 +192,10 @@
             precompile: pattern.precompile,
             selectedPrecompileOption:
               selectedPrecompileOption ?? pattern.precompile.options.default,
+          }),
+          ...(pattern?.deckGlLayer && {
+            deckGlLayer: pattern.deckGlLayer,
+            landmarks3D,
           }),
         };
 
@@ -208,6 +222,10 @@
                 selectedPrecompileOption:
                   selectedPrecompileOption ??
                   pattern.precompile.options.default,
+              }),
+              ...(pattern?.deckGlLayer && {
+                deckGlLayer: pattern.deckGlLayer,
+                landmarks3D,
               }),
             };
           });
@@ -305,6 +323,10 @@
         next.selectedPrecompileOption = next.precompile.options.default;
       }
 
+      if (next?.selected && next?.landmarks3D) {
+        next.landmarks3D = false;
+      }
+
       const foundSelectedPreset = next?.presets?.find(p => p?.selected);
       if (
         foundSelectedPreset &&
@@ -315,6 +337,18 @@
           presets: next.presets.map(n => {
             if (n?.selected) {
               n.selectedPrecompileOption = n.precompile.options.default;
+            }
+            return { ...n, precompile: n?.precompile };
+          }),
+        };
+      }
+
+      if (foundSelectedPreset && foundSelectedPreset?.landmarks3D) {
+        next = {
+          ...next,
+          presets: next.presets.map(n => {
+            if (n?.selected) {
+              n.landmarks3D = false;
             }
             return { ...n, precompile: n?.precompile };
           }),

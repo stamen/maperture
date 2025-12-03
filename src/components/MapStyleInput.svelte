@@ -24,6 +24,8 @@
     ? dropdownValue?.precompile?.options
     : null;
 
+  let landmark3Dtoggle = dropdownValue?.landmarks3D ?? false;
+
   let focused = false;
   let error = null;
 
@@ -207,6 +209,12 @@
     selected = { ...selected, selectedPrecompileOption: active };
     handleMapStyleUpdate(selected);
   };
+
+  const onUpdateLandmarks = () => {
+    landmark3Dtoggle = !landmark3Dtoggle;
+    selected = { ...selected, landmarks3D: landmark3Dtoggle };
+    handleMapStyleUpdate(selected);
+  };
 </script>
 
 <div class="map-style-input">
@@ -275,6 +283,25 @@
           </div>
         </div>
       {/if}
+    {/if}
+  {/key}
+
+  <!-- Landmark toggles controls -->
+  {#key mapIdIndex}
+    {#if dropdownValue?.deckGlLayer}
+      <div class="checkbox-container">
+        <div class="checkbox-options">
+          <div class="checkbox-label">Landmarks 3D:</div>
+
+          <div class="checkbox-row">
+            <input
+              type="checkbox"
+              checked={selected?.landmarks3D}
+              on:click={onUpdateLandmarks}
+            />
+          </div>
+        </div>
+      </div>
     {/if}
   {/key}
 </div>

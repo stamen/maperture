@@ -32,6 +32,7 @@
 
   $: mapId = `${map.id}-${map.index}`;
   $: mapPrecompileOption = map?.selectedPrecompileOption;
+  $: mapLandmarks3D = map?.mapLandmarks3D;
 
   // Update stylesheet variable only if there's been actual changes
   let stylesheet = {};
@@ -143,6 +144,7 @@
     // Add trigger for stylesheet changes for locally served styles
     stylesheet;
     mapPrecompileOption;
+    mapLandmarks3D;
     setProps(mapId, numberOfMaps);
   }
 
