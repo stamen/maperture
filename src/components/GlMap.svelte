@@ -56,9 +56,17 @@
   let map;
   let mapViewProps = {};
 
+  let deckOverlay;
+
   // We can set style (an object) here because mapStyle only changes when it needs to
-  $: ({ style, url, precompile, selectedPrecompileOption, projection } =
-    mapStyle);
+  $: ({
+    style,
+    url,
+    precompile,
+    selectedPrecompileOption,
+    projection,
+    deckGlLayer,
+  } = mapStyle);
 
   // We group map-view props here as they are useful in a few contexts
   $: mapViewProps = { bearing, center, pitch, zoom };
@@ -76,10 +84,22 @@
     return !deepEqual(getCurrentMapView(), mapViewProps);
   };
 
-  const updateMapStyle = async (map, url, style, activePrecompileOptions) => {
+  const updateMapStyle = async (
+    map,
+    url,
+    style,
+    activePrecompileOptions,
+    projection,
+    deckGlLayer
+  ) => {
     if (!map) return;
 
     map.off('style.load', setProjection);
+
+    if (deckOverlay) {
+      map.removeControl(deckOverlay);
+      deckOverlay = null;
+    }
 
     let urlStr = url;
     if (!urlStr && mapStyle?.pattern) {
@@ -108,6 +128,10 @@
       map.setStyle(stylesheet);
     } else {
       map.setStyle(urlStr || style);
+    }
+
+    if (deckGlLayer) {
+      setTimeout(set3dLayer, 150);
     }
 
     if (projection && mapRenderer === 'maplibre-gl') {
@@ -173,6 +197,30 @@
     });
   };
 
+  const set3dLayer = () => {
+    const { data: deckGlData, beforeId } = deckGlLayer;
+
+    const threeDlayer = new Tile3DLayer({
+      id: 'tile-3d-layer',
+      data: deckGlData,
+      loader: Tiles3DLoader,
+      onTilesetLoad: tileset => {
+        console.log('3D Tileset loaded:', tileset);
+      },
+      onTilesetError: e => console.log(e),
+      ...(beforeId && { beforeId }),
+    });
+
+    if (!deckOverlay) {
+      deckOverlay = new MapboxOverlay({
+        interleaved: true,
+        layers: [threeDlayer],
+      });
+
+      map.addControl(deckOverlay);
+    }
+  };
+
   onMount(async () => {
     await importRenderer();
     const glLibrary = renderer;
@@ -202,19 +250,6 @@
       }
     }
 
-    // ----------------------------------------------------------------------------------------
-
-    const threeDlayer = new Tile3DLayer({
-      id: 'tile-3d-layer',
-      data: `https://vector.hereapi.com/3dtiles/v1/3dlandmarks/tileset.json?apiKey=${$configStore?.hereApiKey}`,
-      loader: Tiles3DLoader,
-      onTilesetLoad: tileset => {
-        console.log('HERE 3D Tileset loaded:', tileset);
-      },
-      onTilesetError: e => console.log(e),
-      pickable: true,
-    });
-
     map = new glLibrary.Map({
       container: id,
       style: url,
@@ -223,16 +258,9 @@
       ...mapViewProps,
     });
 
-    const deckOverlay = new MapboxOverlay({
-      interleaved: false,
-      layers: [threeDlayer],
-    });
-
-    map.on('load', () => {
-      map.addControl(deckOverlay);
-    });
-
-    // ---------------------------------------------------------------------------------
+    if (deckGlLayer) {
+      map.once('load', set3dLayer);
+    }
 
     if (projection && mapRenderer === 'maplibre-gl') {
       map.on('style.load', () => {
@@ -297,7 +325,14 @@
   // either
   $: updateMapFromProps(map, mapViewProps);
 
-  $: updateMapStyle(map, url, style, selectedPrecompileOption);
+  $: updateMapStyle(
+    map,
+    url,
+    style,
+    selectedPrecompileOption,
+    projection,
+    deckGlLayer
+  );
 
   // Show collisions on the map as desired
   $: map && (map.showCollisionBoxes = showCollisions);
