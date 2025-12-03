@@ -291,14 +291,19 @@
     {#if dropdownValue?.deckGlLayer}
       <div class="checkbox-container">
         <div class="checkbox-options">
-          <div class="checkbox-label">Landmarks 3D:</div>
+          <div class="checkbox-label">3D tiles:</div>
 
           <div class="checkbox-row">
             <input
               type="checkbox"
+              id={`${mapIdIndex}-3d`}
               checked={selected?.landmarks3D}
               on:click={onUpdateLandmarks}
             />
+
+            <label for={`${mapIdIndex}-3d`}
+              >{dropdownValue?.deckGlLayer?.label ?? null}</label
+            >
           </div>
         </div>
       </div>
