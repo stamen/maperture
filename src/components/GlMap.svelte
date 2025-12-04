@@ -133,29 +133,6 @@
 
       stylesheet = await precompile.script(stylesheet, activePrecompileOptions);
 
-      // TODO REMOVE IT IS EXAMPLE
-      stylesheet = {
-        ...stylesheet,
-        light: {
-          anchor: 'map',
-          position: [1.5, 22, 80],
-          color: 'rgb(255,0,0)',
-          intensity: 0.4,
-        },
-        layers: stylesheet.layers.map(l => {
-          if (l.id === 'building_extrusion') {
-            return {
-              ...l,
-              paint: {
-                ...l.paint,
-                'fill-extrusion-opacity': 1,
-              },
-            };
-          }
-          return l;
-        }),
-      };
-
       map.setStyle(stylesheet);
     } else {
       map.setStyle(urlStr || style);
@@ -250,17 +227,21 @@
     if (light) {
       let { anchor, color, intensity, position } = light;
 
+      if (!color) {
+        color = 'rgb(255, 255, 255)';
+      }
+
       color = Color(color).rgb().array();
 
       ambientLight = new AmbientLight({
         color: color,
-        intensity: intensity * 2,
+        intensity: intensity * 5,
       });
 
       if (position) {
         directionalLight = new DirectionalLight({
           color: color,
-          intensity: intensity * 15,
+          intensity: intensity * 10,
           direction: translateMapboxToDeckGl(position),
         });
 
@@ -277,7 +258,6 @@
       id: 'tile-3d-layer',
       data: deckGlData,
       loader: Tiles3DLoader,
-
       // opacity: 0.75,
       // onTilesetLoad: tileset => {
       //   console.log('3D Tileset loaded:', tileset);
@@ -327,29 +307,6 @@
           stylesheet,
           activePrecompileOptions
         );
-
-        // TODO REMOVE IT IS EXAMPLE
-        stylesheet = {
-          ...stylesheet,
-          light: {
-            anchor: 'map',
-            position: [1.5, 22, 80],
-            color: 'rgb(255,0,0)',
-            intensity: 0.4,
-          },
-          layers: stylesheet.layers.map(l => {
-            if (l.id === 'building_extrusion') {
-              return {
-                ...l,
-                paint: {
-                  ...l.paint,
-                  'fill-extrusion-opacity': 1,
-                },
-              };
-            }
-            return l;
-          }),
-        };
       }
     }
 
