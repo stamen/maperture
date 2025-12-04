@@ -14,10 +14,17 @@
   export let rendererValue;
   export let activeUrl;
   export let index;
+  export let mapIdIndex;
 
   let selected;
 
   let textInput;
+
+  $: precompileOptions = dropdownValue?.precompile
+    ? dropdownValue?.precompile?.options
+    : null;
+
+  let landmark3Dtoggle = dropdownValue?.landmarks3D ?? false;
 
   let focused = false;
   let error = null;
@@ -193,6 +200,21 @@
 
   // When the selected value changes, update text input and potentially fetch style
   $: onChangeSelected(dropdownValue);
+
+  const onChangeCompileOption = value => {
+    let active = selected?.selectedPrecompileOption ?? [];
+    active = active.includes(value)
+      ? active.filter(v => v !== value)
+      : active.concat([value]);
+    selected = { ...selected, selectedPrecompileOption: active };
+    handleMapStyleUpdate(selected);
+  };
+
+  const onUpdateLandmarks = () => {
+    landmark3Dtoggle = !landmark3Dtoggle;
+    selected = { ...selected, landmarks3D: landmark3Dtoggle };
+    handleMapStyleUpdate(selected);
+  };
 </script>
 
 <div class="map-style-input">
@@ -236,9 +258,82 @@
       direction="up"
     />
   </div>
+
+  <!-- Precompile controls -->
+  {#key mapIdIndex}
+    {#if precompileOptions?.type === 'checkbox'}
+      {#if precompileOptions.values.length}
+        <div class="checkbox-container">
+          <div class="checkbox-options">
+            <div class="checkbox-label">Compile options:</div>
+            {#each precompileOptions.values as value, i}
+              <div class="checkbox-row">
+                <input
+                  type="checkbox"
+                  id={`${mapIdIndex}-${i}`}
+                  checked={selected?.selectedPrecompileOption &&
+                    selected.selectedPrecompileOption.includes(value.value)}
+                  on:click={() => onChangeCompileOption(value.value)}
+                />
+                <label for={`${mapIdIndex}-${i}`}
+                  >{value?.label ?? value.value}</label
+                >
+              </div>
+            {/each}
+          </div>
+        </div>
+      {/if}
+    {/if}
+  {/key}
+
+  <!-- Landmark toggles controls -->
+  {#key mapIdIndex}
+    {#if dropdownValue?.deckGlLayer}
+      <div class="checkbox-container">
+        <div class="checkbox-options">
+          <div class="checkbox-label">3D tiles:</div>
+
+          <div class="checkbox-row">
+            <input
+              type="checkbox"
+              id={`${mapIdIndex}-3d`}
+              checked={selected?.landmarks3D}
+              on:click={onUpdateLandmarks}
+            />
+
+            <label for={`${mapIdIndex}-3d`}
+              >{dropdownValue?.deckGlLayer?.label ?? null}</label
+            >
+          </div>
+        </div>
+      </div>
+    {/if}
+  {/key}
 </div>
 
 <style>
+  .checkbox-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .checkbox-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .checkbox-label {
+    font-weight: bold;
+  }
+
   .map-style-input {
     margin-top: 6px;
     display: flex;

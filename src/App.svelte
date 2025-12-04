@@ -1,4 +1,5 @@
 <script>
+  import { cloneDeep } from 'es-toolkit/compat';
   import mapboxgl from 'mapbox-gl';
   import maplibregl from 'maplibre-gl';
   import { onMount } from 'svelte';
@@ -26,6 +27,7 @@
 
   // config is set only once on load and is assumed to be loaded from a module
   const config = makeConfig(localConfig);
+
   const { mapboxGlAccessToken, stylePresetUrls } = config;
   configStore.set(config);
 
@@ -81,6 +83,7 @@
           ...map,
           index,
         }));
+
         mapsStore.set(newMaps);
       }
     }
@@ -92,10 +95,12 @@
   mapsStore.subscribe(maps => {
     // The isPolling key never makes it to the hash so we can know if prop updates downstream
     // in MapStyleInputWrapper are coming from polled styles or from history
-    const nextMaps = JSON.parse(JSON.stringify(maps)).map(m => {
+    // cloneDeep copies over functions in case those are the values
+    const nextMaps = cloneDeep(maps).map(m => {
       delete m.isPolling;
       return m;
     });
+
     settings = { ...settings, maps: nextMaps };
   });
 

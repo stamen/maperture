@@ -3,6 +3,18 @@
   import throttle from 'lodash.throttle';
   import { createEventDispatcher, onMount, onDestroy } from 'svelte';
   import { config as configStore } from '../stores';
+  import { fetchUrl } from '../fetch-url';
+  import { createBranchUrl } from '../branch-utils';
+  import { MAPBOX_GL_MAX_PITCH } from '../constants';
+  import { MapboxOverlay } from '@deck.gl/mapbox';
+  import { Tile3DLayer } from '@deck.gl/geo-layers';
+  import { Tiles3DLoader } from '@loaders.gl/3d-tiles';
+  import Color from 'color';
+  import {
+    LightingEffect,
+    AmbientLight,
+    DirectionalLight,
+  } from '@deck.gl/core';
 
   export let id;
   export let bearing;
@@ -50,8 +62,18 @@
   let map;
   let mapViewProps = {};
 
+  let deckOverlay;
+
   // We can set style (an object) here because mapStyle only changes when it needs to
-  $: ({ style, url } = mapStyle);
+  $: ({
+    style,
+    url,
+    precompile,
+    selectedPrecompileOption,
+    projection,
+    deckGlLayer,
+    landmarks3D,
+  } = mapStyle);
 
   // We group map-view props here as they are useful in a few contexts
   $: mapViewProps = { bearing, center, pitch, zoom };
@@ -69,9 +91,60 @@
     return !deepEqual(getCurrentMapView(), mapViewProps);
   };
 
-  const updateMapStyle = (map, url, style) => {
+  const updateMapStyle = async (
+    map,
+    url,
+    style,
+    activePrecompileOptions,
+    projection,
+    deckGlLayer,
+    landmarks3D
+  ) => {
     if (!map) return;
-    map.setStyle(url || style);
+
+    map.off('style.load', setProjection);
+
+    if (deckOverlay) {
+      map.removeControl(deckOverlay);
+      deckOverlay = null;
+    }
+
+    let urlStr = url;
+    if (!urlStr && mapStyle?.pattern) {
+      urlStr = createBranchUrl(
+        mapStyle?.pattern,
+        mapStyle?.branch,
+        mapStyle?.branchStyle
+      );
+    }
+
+    let isUrl = !style && typeof urlStr === 'string';
+    let stylesheet = style;
+
+    if (precompile) {
+      // If we're precompiling and nothing is selected, wait for a default to come through
+      if (!activePrecompileOptions) return;
+
+      if (isUrl) {
+        stylesheet = await fetchUrl(urlStr);
+      }
+
+      if (!stylesheet) return;
+
+      stylesheet = await precompile.script(stylesheet, activePrecompileOptions);
+
+      map.setStyle(stylesheet);
+    } else {
+      map.setStyle(urlStr || style);
+    }
+
+    if (deckGlLayer && !!landmarks3D) {
+      setTimeout(set3dLayer, 150);
+    }
+
+    if (projection && mapRenderer === 'maplibre-gl') {
+      setTimeout(setProjection, 150);
+    }
   };
 
   const updateMapFromProps = (map, mapView) => {
@@ -125,9 +198,113 @@
     return html;
   };
 
+  const setProjection = () => {
+    if (!projection) return;
+    map.setProjection({
+      type: projection,
+    });
+  };
+
+  function translateMapboxToDeckGl(mapboxLightPosition) {
+    const pos = [
+      mapboxLightPosition[2],
+      ((mapboxLightPosition[1] - 90) % 180) * -1,
+      mapboxLightPosition[0],
+    ];
+
+    return pos;
+  }
+
+  const set3dLayer = () => {
+    const stylesheet = map.getStyle();
+    const light = stylesheet?.light;
+    const { data: deckGlData, beforeId } = deckGlLayer;
+
+    let ambientLight;
+    let directionalLight;
+    let lightingEffect;
+
+    if (light) {
+      let { anchor, color, intensity, position } = light;
+
+      if (!color) {
+        color = 'rgb(255, 255, 255)';
+      }
+
+      color = Color(color).rgb().array();
+
+      ambientLight = new AmbientLight({
+        color: color,
+        intensity: intensity * 5,
+      });
+
+      if (position) {
+        directionalLight = new DirectionalLight({
+          color: color,
+          intensity: intensity * 10,
+          direction: translateMapboxToDeckGl(position),
+        });
+
+        lightingEffect = new LightingEffect({
+          ambientLight,
+          directionalLight,
+        });
+      } else {
+        lightingEffect = new LightingEffect({ ambientLight });
+      }
+    }
+
+    const threeDlayer = new Tile3DLayer({
+      id: 'tile-3d-layer',
+      data: deckGlData,
+      loader: Tiles3DLoader,
+      // opacity: 0.75,
+      // onTilesetLoad: tileset => {
+      //   console.log('3D Tileset loaded:', tileset);
+      // },
+      onTilesetError: e => console.log(e),
+      ...(beforeId && { beforeId }),
+    });
+
+    if (!deckOverlay) {
+      deckOverlay = new MapboxOverlay({
+        interleaved: true,
+        layers: [threeDlayer],
+        ...(lightingEffect && { effects: [lightingEffect] }),
+      });
+
+      map.addControl(deckOverlay);
+    }
+  };
+
   onMount(async () => {
     await importRenderer();
     const glLibrary = renderer;
+
+    let isUrl = typeof url === 'string';
+    let stylesheet;
+
+    // This should get reset because the selectedPrecompileOption
+    // usually doesn't exist here yet. This prevents an invalid stylesheet getting through
+    if (precompile) {
+      const activePrecompileOptions =
+        selectedPrecompileOption ?? precompile?.options?.default;
+
+      if (!activePrecompileOptions) return;
+
+      if (isUrl) {
+        stylesheet = await fetchUrl(url);
+      }
+
+      if (!stylesheet) return;
+
+      if (precompile && precompile?.script) {
+        stylesheet = await precompile.script(
+          stylesheet,
+          activePrecompileOptions
+        );
+      }
+    }
 
     map = new glLibrary.Map({
       container: id,
@@ -136,6 +313,17 @@
       preserveDrawingBuffer: true,
       ...mapViewProps,
     });
+
+    if (deckGlLayer && landmarks3D) {
+      map.once('load', set3dLayer);
+    }
+
+    if (projection && mapRenderer === 'maplibre-gl') {
+      map.on('style.load', () => {
+        // Hacky but style.load is not reliable
+        setTimeout(setProjection, 150);
+      });
+    }
 
     onMapMount(map);
 
@@ -193,7 +381,15 @@
   // either
   $: updateMapFromProps(map, mapViewProps);
 
-  $: updateMapStyle(map, url, style);
+  $: updateMapStyle(
+    map,
+    url,
+    style,
+    selectedPrecompileOption,
+    projection,
+    deckGlLayer,
+    landmarks3D
+  );
 
   // Show collisions on the map as desired
   $: map && (map.showCollisionBoxes = showCollisions);

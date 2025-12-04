@@ -49,6 +49,9 @@ export default {
       'process.env.BASE_PATH': process.env.BASE_PATH
         ? process.env.BASE_PATH
         : '/',
+      'process.env.NODE_ENV': JSON.stringify(
+        process.env.NODE_ENV || 'development'
+      ),
     }),
     svelte({
       compilerOptions: {
@@ -72,6 +75,7 @@ export default {
       browser: true,
       dedupe: ['svelte'],
       preferBuiltins: false,
+      extensions: ['.mjs', '.js', '.json', '.node'],
     }),
     commonjs(),
 
