@@ -9,6 +9,12 @@
   import { MapboxOverlay } from '@deck.gl/mapbox';
   import { Tile3DLayer } from '@deck.gl/geo-layers';
   import { Tiles3DLoader } from '@loaders.gl/3d-tiles';
+  import Color from 'color';
+  import {
+    LightingEffect,
+    AmbientLight,
+    DirectionalLight,
+  } from '@deck.gl/core';
 
   export let id;
   export let bearing;
@@ -127,6 +133,29 @@
 
       stylesheet = await precompile.script(stylesheet, activePrecompileOptions);
 
+      // TODO REMOVE IT IS EXAMPLE
+      stylesheet = {
+        ...stylesheet,
+        light: {
+          anchor: 'map',
+          position: [1.5, 22, 80],
+          color: 'rgb(255,0,0)',
+          intensity: 0.4,
+        },
+        layers: stylesheet.layers.map(l => {
+          if (l.id === 'building_extrusion') {
+            return {
+              ...l,
+              paint: {
+                ...l.paint,
+                'fill-extrusion-opacity': 1,
+              },
+            };
+          }
+          return l;
+        }),
+      };
+
       map.setStyle(stylesheet);
     } else {
       map.setStyle(urlStr || style);
@@ -199,13 +228,57 @@
     });
   };
 
+  function translateMapboxToDeckGl(mapboxLightPosition) {
+    const pos = [
+      mapboxLightPosition[2],
+      ((mapboxLightPosition[1] - 90) % 180) * -1,
+      mapboxLightPosition[0],
+    ];
+
+    return pos;
+  }
+
   const set3dLayer = () => {
+    const stylesheet = map.getStyle();
+    const light = stylesheet?.light;
     const { data: deckGlData, beforeId } = deckGlLayer;
+
+    let ambientLight;
+    let directionalLight;
+    let lightingEffect;
+
+    if (light) {
+      let { anchor, color, intensity, position } = light;
+
+      color = Color(color).rgb().array();
+
+      ambientLight = new AmbientLight({
+        color: color,
+        intensity: intensity * 2,
+      });
+
+      if (position) {
+        directionalLight = new DirectionalLight({
+          color: color,
+          intensity: intensity * 15,
+          direction: translateMapboxToDeckGl(position),
+        });
+
+        lightingEffect = new LightingEffect({
+          ambientLight,
+          directionalLight,
+        });
+      } else {
+        lightingEffect = new LightingEffect({ ambientLight });
+      }
+    }
 
     const threeDlayer = new Tile3DLayer({
       id: 'tile-3d-layer',
       data: deckGlData,
       loader: Tiles3DLoader,
+
+      // opacity: 0.75,
       // onTilesetLoad: tileset => {
       //   console.log('3D Tileset loaded:', tileset);
       // },
@@ -217,6 +290,11 @@
       deckOverlay = new MapboxOverlay({
         interleaved: true,
         layers: [threeDlayer],
+        ...(lightingEffect && { effects: [lightingEffect] }),
+      });
+
+      deckOverlay.setProps({
+        toneMappingExposure: 5,
       });
 
       map.addControl(deckOverlay);
@@ -249,6 +327,29 @@
           stylesheet,
           activePrecompileOptions
         );
+
+        // TODO REMOVE IT IS EXAMPLE
+        stylesheet = {
+          ...stylesheet,
+          light: {
+            anchor: 'map',
+            position: [1.5, 22, 80],
+            color: 'rgb(255,0,0)',
+            intensity: 0.4,
+          },
+          layers: stylesheet.layers.map(l => {
+            if (l.id === 'building_extrusion') {
+              return {
+                ...l,
+                paint: {
+                  ...l.paint,
+                  'fill-extrusion-opacity': 1,
+                },
+              };
+            }
+            return l;
+          }),
+        };
       }
     }
 

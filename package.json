@@ -46,6 +46,7 @@
     "@loaders.gl/core": "4.2",
     "@maptiler/sdk": "^3.0.1",
     "autoprefixer": "^10.4.14",
+    "color": "^5.0.3",
     "deep-equal": "^2.0.5",
     "es-toolkit": "^1.40.0",
     "hat": "^0.0.3",
