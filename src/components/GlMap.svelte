@@ -273,10 +273,6 @@
         ...(lightingEffect && { effects: [lightingEffect] }),
       });
 
-      deckOverlay.setProps({
-        toneMappingExposure: 5,
-      });
-
       map.addControl(deckOverlay);
     }
   };
