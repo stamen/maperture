@@ -87,6 +87,10 @@ const encodeMaps = (maps, config) => {
       }
     }
 
+    if (m?.landmarks3D) {
+      encodeMap.landmarks3D = m.landmarks3D;
+    }
+
     return encodeMap;
   });
 
@@ -110,6 +114,10 @@ const decodeMaps = (str, config) => {
       // If a precompile option is selected, set that property
       if (m?.selectedPrecompileOption) {
         configMap.selectedPrecompileOption = m?.selectedPrecompileOption;
+      }
+
+      if (m?.landmarks3D) {
+        configMap.landmarks3D = m?.landmarks3D;
       }
 
       return {

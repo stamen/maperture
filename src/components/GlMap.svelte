@@ -6,6 +6,15 @@
   import { fetchUrl } from '../fetch-url';
   import { createBranchUrl } from '../branch-utils';
   import { MAPBOX_GL_MAX_PITCH } from '../constants';
+  import { MapboxOverlay } from '@deck.gl/mapbox';
+  import { Tile3DLayer } from '@deck.gl/geo-layers';
+  import { Tiles3DLoader } from '@loaders.gl/3d-tiles';
+  import Color from 'color';
+  import {
+    LightingEffect,
+    AmbientLight,
+    DirectionalLight,
+  } from '@deck.gl/core';
 
   export let id;
   export let bearing;
@@ -53,9 +62,18 @@
   let map;
   let mapViewProps = {};
 
+  let deckOverlay;
+
   // We can set style (an object) here because mapStyle only changes when it needs to
-  $: ({ style, url, precompile, selectedPrecompileOption, projection } =
-    mapStyle);
+  $: ({
+    style,
+    url,
+    precompile,
+    selectedPrecompileOption,
+    projection,
+    deckGlLayer,
+    landmarks3D,
+  } = mapStyle);
 
   // We group map-view props here as they are useful in a few contexts
   $: mapViewProps = { bearing, center, pitch, zoom };
@@ -73,10 +91,23 @@
     return !deepEqual(getCurrentMapView(), mapViewProps);
   };
 
-  const updateMapStyle = async (map, url, style, activePrecompileOptions) => {
+  const updateMapStyle = async (
+    map,
+    url,
+    style,
+    activePrecompileOptions,
+    projection,
+    deckGlLayer,
+    landmarks3D
+  ) => {
     if (!map) return;
 
     map.off('style.load', setProjection);
+
+    if (deckOverlay) {
+      map.removeControl(deckOverlay);
+      deckOverlay = null;
+    }
 
     let urlStr = url;
     if (!urlStr && mapStyle?.pattern) {
@@ -105,6 +136,10 @@
       map.setStyle(stylesheet);
     } else {
       map.setStyle(urlStr || style);
+    }
+
+    if (deckGlLayer && !!landmarks3D) {
+      setTimeout(set3dLayer, 150);
     }
 
     if (projection && mapRenderer === 'maplibre-gl') {
@@ -170,6 +205,82 @@
     });
   };
 
+  function translateMapboxToDeckGl(mapboxLightPosition) {
+    const pos = [
+      mapboxLightPosition[2],
+      ((mapboxLightPosition[1] - 90) % 180) * -1,
+      mapboxLightPosition[0],
+    ];
+
+    return pos;
+  }
+
+  const set3dLayer = () => {
+    const stylesheet = map.getStyle();
+    const light = stylesheet?.light;
+    const { data: deckGlData, beforeId } = deckGlLayer;
+
+    let ambientLight;
+    let directionalLight;
+    let lightingEffect;
+
+    if (light) {
+      let { anchor, color, intensity, position } = light;
+
+      if (!color) {
+        color = 'rgb(255, 255, 255)';
+      }
+
+      color = Color(color).rgb().array();
+
+      ambientLight = new AmbientLight({
+        color: color,
+        intensity: intensity * 5,
+      });
+
+      if (position) {
+        directionalLight = new DirectionalLight({
+          color: color,
+          intensity: intensity * 10,
+          direction: translateMapboxToDeckGl(position),
+        });
+
+        lightingEffect = new LightingEffect({
+          ambientLight,
+          directionalLight,
+        });
+      } else {
+        lightingEffect = new LightingEffect({ ambientLight });
+      }
+    }
+
+    const threeDlayer = new Tile3DLayer({
+      id: 'tile-3d-layer',
+      data: deckGlData,
+      loader: Tiles3DLoader,
+      // opacity: 0.75,
+      // onTilesetLoad: tileset => {
+      //   console.log('3D Tileset loaded:', tileset);
+      // },
+      onTilesetError: e => console.log(e),
+      ...(beforeId && { beforeId }),
+    });
+
+    if (!deckOverlay) {
+      deckOverlay = new MapboxOverlay({
+        interleaved: true,
+        layers: [threeDlayer],
+        ...(lightingEffect && { effects: [lightingEffect] }),
+      });
+
+      deckOverlay.setProps({
+        toneMappingExposure: 5,
+      });
+
+      map.addControl(deckOverlay);
+    }
+  };
+
   onMount(async () => {
     await importRenderer();
     const glLibrary = renderer;
@@ -201,12 +312,15 @@
 
     map = new glLibrary.Map({
       container: id,
-      style: stylesheet ?? url,
+      style: url,
       canvasContextAttributes: { preserveDrawingBuffer: true },
       preserveDrawingBuffer: true,
-      maxPitch: MAPBOX_GL_MAX_PITCH,
       ...mapViewProps,
     });
+
+    if (deckGlLayer && landmarks3D) {
+      map.once('load', set3dLayer);
+    }
 
     if (projection && mapRenderer === 'maplibre-gl') {
       map.on('style.load', () => {
@@ -271,7 +385,15 @@
   // either
   $: updateMapFromProps(map, mapViewProps);
 
-  $: updateMapStyle(map, url, style, selectedPrecompileOption);
+  $: updateMapStyle(
+    map,
+    url,
+    style,
+    selectedPrecompileOption,
+    projection,
+    deckGlLayer,
+    landmarks3D
+  );
 
   // Show collisions on the map as desired
   $: map && (map.showCollisionBoxes = showCollisions);
