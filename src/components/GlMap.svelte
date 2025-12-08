@@ -218,13 +218,36 @@
   const set3dLayer = () => {
     const stylesheet = map.getStyle();
     const light = stylesheet?.light;
-    const { data: deckGlData, beforeId } = deckGlLayer;
+    const { data: deckGlData, beforeId, light: deckGlLight } = deckGlLayer;
 
     let ambientLight;
     let directionalLight;
     let lightingEffect;
 
-    if (light) {
+    // Temp pass through, this is redundant
+    if (deckGlLight) {
+      const { ambient, directional } = deckGlLight;
+
+      if (ambient) {
+        if (!ambient.color) {
+          ambient.color = 'rgb(255, 255, 255)';
+        }
+        ambient.color = Color(ambient.color).rgb().array();
+        ambientLight = new AmbientLight(ambient);
+      }
+      if (directional) {
+        if (!directional.color) {
+          directional.color = 'rgb(255, 255, 255)';
+        }
+        directional.color = Color(directional.color).rgb().array();
+        directionalLight = new DirectionalLight(directional);
+      }
+
+      lightingEffect = new LightingEffect({
+        ...(ambientLight && { ambientLight }),
+        ...(directionalLight && { directionalLight }),
+      });
+    } else if (light) {
       let { anchor, color, intensity, position } = light;
 
       if (!color) {
