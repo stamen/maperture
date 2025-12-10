@@ -7,7 +7,7 @@
   import { createBranchUrl } from '../branch-utils';
   import { MAPBOX_GL_MAX_PITCH } from '../constants';
   import { MapboxOverlay } from '@deck.gl/mapbox';
-  import { Tile3DLayer } from '@deck.gl/geo-layers';
+  import { Tile3DLayer, TerrainLayer } from '@deck.gl/geo-layers';
   import { Tiles3DLoader } from '@loaders.gl/3d-tiles';
   import Color from 'color';
   import {
@@ -17,6 +17,7 @@
     PointLight,
     _CameraLight as CameraLight,
   } from '@deck.gl/core';
+  import { _TerrainExtension as TerrainExtension } from '@deck.gl/extensions';
 
   export let id;
   export let bearing;
@@ -220,7 +221,13 @@
   const set3dLayer = () => {
     const stylesheet = map.getStyle();
     const light = stylesheet?.light;
-    const { data: deckGlData, beforeId, light: deckGlLight } = deckGlLayer;
+    const terrain = stylesheet?.terrain;
+    const {
+      data: deckGlData,
+      beforeId,
+      light: deckGlLight,
+      opacity: deckGlOpacity,
+    } = deckGlLayer;
 
     let ambientLight;
     let directionalLight;
@@ -300,23 +307,56 @@
       }
     }
 
+    let terrainLayer;
+    let terrainExtension;
+
+    if (terrain) {
+      const { source: terrainSource } = terrain;
+      const terrainSourceObj = stylesheet?.sources?.[terrainSource];
+      const elevationData =
+        terrainSourceObj?.url ?? terrainSourceObj?.tiles?.[0];
+
+      terrainLayer = new TerrainLayer({
+        id: 'terrain',
+        minZoom: 0,
+        maxZoom: 23,
+        strategy: 'no-overlap',
+        // Mapbox settings, see https://deck.gl/docs/api-reference/geo-layers/terrain-layer
+        elevationDecoder: {
+          rScaler: 6553.6,
+          gScaler: 25.6,
+          bScaler: 0.1,
+          offset: -10000,
+        },
+        elevationData,
+        color: [255, 255, 255, 0],
+        operation: 'terrain+draw',
+      });
+
+      terrainExtension = new TerrainExtension();
+    }
+
     const threeDlayer = new Tile3DLayer({
       id: 'tile-3d-layer',
       data: deckGlData,
       loader: Tiles3DLoader,
-      // opacity: 0.75,
+      opacity: deckGlOpacity ?? 1,
       // onTilesetLoad: tileset => {
       //   console.log('3D Tileset loaded:', tileset);
       // },
       onTilesetError: e => console.log(e),
       ...(beforeId && { beforeId }),
+      ...(terrainExtension && { extensions: [terrainExtension] }),
     });
 
     if (!deckOverlay) {
       deckOverlay = new MapboxOverlay({
         interleaved: true,
-        layers: [threeDlayer],
-        ...(lightingEffect && { effects: [lightingEffect] }),
+        // Boolen filter in case terrain isn't available
+        layers: [terrainLayer, threeDlayer].filter(Boolean),
+        ...(lightingEffect && {
+          effects: [lightingEffect],
+        }),
       });
 
       map.addControl(deckOverlay);
@@ -354,7 +394,7 @@
 
     map = new glLibrary.Map({
       container: id,
-      style: url,
+      style: stylesheet ?? url,
       canvasContextAttributes: { preserveDrawingBuffer: true },
       preserveDrawingBuffer: true,
       ...mapViewProps,

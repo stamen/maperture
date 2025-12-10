@@ -43,6 +43,15 @@
     gl-matrix "^3.0.0"
     mjolnir.js "^2.7.0"
 
+"@deck.gl/extensions@9.0":
+  version "9.0.41"
+  resolved "https://registry.yarnpkg.com/@deck.gl/extensions/-/extensions-9.0.41.tgz#1396aa869628759eb301c0f07a0d602c05604b99"
+  integrity sha512-rvPAlKwv4seED1v+n+O+ACGjC9UI7nx/WF5PiSNFUcLqHsiC1QbAoiJ0t/SC2ox2BrrJgYOlPxdll892sC6eFg==
+  dependencies:
+    "@luma.gl/constants" "~9.0.27"
+    "@luma.gl/shadertools" "~9.0.27"
+    "@math.gl/core" "^4.0.0"
+
 "@deck.gl/geo-layers@9.0":
   version "9.0.41"
   resolved "https://registry.yarnpkg.com/@deck.gl/geo-layers/-/geo-layers-9.0.41.tgz#6fe1db36e4bcb016e70faac1f2757677f72fbd92"
