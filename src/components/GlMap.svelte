@@ -397,6 +397,7 @@
       style: stylesheet ?? url,
       canvasContextAttributes: { preserveDrawingBuffer: true },
       preserveDrawingBuffer: true,
+      maxPitch: MAPBOX_GL_MAX_PITCH,
       ...mapViewProps,
     });
 
