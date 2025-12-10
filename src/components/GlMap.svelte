@@ -14,6 +14,8 @@
     LightingEffect,
     AmbientLight,
     DirectionalLight,
+    PointLight,
+    _CameraLight as CameraLight,
   } from '@deck.gl/core';
 
   export let id;
@@ -222,11 +224,13 @@
 
     let ambientLight;
     let directionalLight;
+    let pointLight;
+    let cameraLight;
     let lightingEffect;
 
     // Temp pass through, this is redundant
     if (deckGlLight) {
-      const { ambient, directional } = deckGlLight;
+      const { ambient, directional, point, camera } = deckGlLight;
 
       if (ambient) {
         if (!ambient.color) {
@@ -235,6 +239,7 @@
         ambient.color = Color(ambient.color).rgb().array();
         ambientLight = new AmbientLight(ambient);
       }
+
       if (directional) {
         if (!directional.color) {
           directional.color = 'rgb(255, 255, 255)';
@@ -243,9 +248,27 @@
         directionalLight = new DirectionalLight(directional);
       }
 
+      if (point) {
+        if (!point.color) {
+          point.color = 'rgb(255, 255, 255)';
+        }
+        point.color = Color(point.color).rgb().array();
+        pointLight = new PointLight(point);
+      }
+
+      if (camera) {
+        if (!camera.color) {
+          camera.color = 'rgb(255, 255, 255)';
+        }
+        camera.color = Color(camera.color).rgb().array();
+        cameraLight = new CameraLight(camera);
+      }
+
       lightingEffect = new LightingEffect({
         ...(ambientLight && { ambientLight }),
         ...(directionalLight && { directionalLight }),
+        ...(pointLight && { pointLight }),
+        ...(cameraLight && { cameraLight }),
       });
     } else if (light) {
       let { anchor, color, intensity, position } = light;
