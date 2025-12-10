@@ -311,7 +311,7 @@
     let terrainExtension;
 
     if (terrain) {
-      const { source: terrainSource } = terrain;
+      const { source: terrainSource, exaggeration } = terrain;
       const terrainSourceObj = stylesheet?.sources?.[terrainSource];
       const elevationData =
         terrainSourceObj?.url ?? terrainSourceObj?.tiles?.[0];
@@ -323,10 +323,10 @@
         strategy: 'no-overlap',
         // Mapbox settings, see https://deck.gl/docs/api-reference/geo-layers/terrain-layer
         elevationDecoder: {
-          rScaler: 6553.6,
-          gScaler: 25.6,
-          bScaler: 0.1,
-          offset: -10000,
+          rScaler: 6553.6 * exaggeration,
+          gScaler: 25.6 * exaggeration,
+          bScaler: 0.1 * exaggeration,
+          offset: -10000 * exaggeration,
         },
         elevationData,
         color: [255, 255, 255, 0],
