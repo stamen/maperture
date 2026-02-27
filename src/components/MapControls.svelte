@@ -3,6 +3,7 @@
   import html2canvas from 'html2canvas';
   import {
     faCamera,
+    faDownload,
     faPlus,
     faExpand,
     faCompress,
@@ -78,6 +79,65 @@
   };
 
   const downloadScreenshot = async () => {
+    const mapsView = document.getElementsByClassName('maps')[0];
+
+    let adjustedLabels = [
+      ...document.getElementsByClassName('screenshot-label-transparent'),
+    ];
+    adjustedLabels.forEach(el => {
+      el.classList.remove('screenshot-label-transparent');
+      el.classList.add('screenshot-label');
+    });
+
+    let adjustedBorders = [];
+    // Remove border on mirror mode screenshot
+    if (viewMode === 'mirror') {
+      adjustedBorders = [
+        ...document.getElementsByClassName('map-container-border'),
+      ];
+      adjustedBorders.forEach(el => {
+        el.classList.remove('map-container-border');
+        el.classList.add('map-container-border-transparent');
+      });
+    }
+
+    const ignoreElements = el => {
+      if (el.className && typeof el.className === 'string') {
+        return el.className.includes('map-label');
+      }
+      return false;
+    };
+
+    html2canvas(mapsView, { ignoreElements }).then(canvas => {
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        const prefix = 'screenshot'; // Ideally get from currently selected map type(s)
+        link.download = `${prefix}-${mapState.zoom}_${mapState.center.lat}_${mapState.center.lng}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      });
+    });
+
+    // Cleanup labels
+    adjustedLabels.forEach(el => {
+      el.classList.remove('screenshot-label');
+      el.classList.add('screenshot-label-transparent');
+    });
+
+    // Cleanup for mirror mode border
+    if (viewMode === 'mirror') {
+      adjustedBorders.forEach(el => {
+        el.classList.remove('map-container-border-transparent');
+        el.classList.add('map-container-border');
+      });
+    }
+  };
+
+  const copyScreenshotToClipboard = async () => {
     const mapsView = document.getElementsByClassName('maps')[0];
 
     let adjustedLabels = [
@@ -219,13 +279,23 @@
             <Fa icon={faPlus} /> Add map
           </button>
           <button
-            on:click={downloadScreenshot}
+            on:click={copyScreenshotToClipboard}
             disabled={viewMode === 'swipe'}
             title={viewMode === 'swipe'
               ? 'Must be in phone or mirror mode to screenshot.'
               : 'Copy image to clipboard'}
           >
             <Fa icon={faCamera} />
+            Copy image
+          </button>
+          <button
+            on:click={downloadScreenshot}
+            disabled={viewMode === 'swipe'}
+            title={viewMode === 'swipe'
+              ? 'Must be in phone or mirror mode to screenshot.'
+              : 'Copy image to clipboard'}
+          >
+            <Fa icon={faDownload} />
             Copy image
           </button>
         </div>
