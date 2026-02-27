@@ -296,7 +296,6 @@
               : 'Copy image to clipboard'}
           >
             <Fa icon={faDownload} />
-            Copy image
           </button>
         </div>
       </div>
