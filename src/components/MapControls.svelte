@@ -113,8 +113,8 @@
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        const prefix = 'screenshot'; // Ideally get from currently selected map type(s)
-        link.download = `${prefix}-${mapState.zoom}_${mapState.center.lat}_${mapState.center.lng}.png`;
+        const prefix = 'screenshot'; // Ideally get from currently selected map type(s), or even better from a prefix optionally defined in the config
+        link.download = `${prefix}-${mapState.zoom}_${mapState.center.lat}_${mapState.center.lng}_${mapState.pitch}_${mapState.bearing}.png`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
