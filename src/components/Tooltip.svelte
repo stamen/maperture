@@ -34,7 +34,7 @@
   .tooltip {
     border: 1px solid #ddd;
     box-shadow: 1px 1px 1px #ddd;
-    background: white;
+    background: black;
     border-radius: 4px;
     padding: 4px;
     position: absolute;

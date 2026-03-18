@@ -39,13 +39,14 @@
 
 <style>
   .map-label {
-    background: white;
-    box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
-    padding: 1em;
+    background: black;
+    padding: 0.75em;
     display: flex;
     flex-direction: column;
     position: relative;
     max-width: 300px;
+    border: 2px solid white;
+    border-radius: 10px;
   }
 
   .map-name {
@@ -54,6 +55,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    color: yellow;
   }
 
   .close-button {
@@ -67,6 +69,7 @@
 
   .close-button:hover {
     cursor: pointer;
+    background-color: yellow;
     color: black;
   }
 

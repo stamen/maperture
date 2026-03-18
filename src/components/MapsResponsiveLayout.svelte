@@ -123,8 +123,7 @@
     position: absolute;
     left: 1em;
     bottom: 2em;
-    background: white;
-    box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
+    background: black;
     padding: 1em;
     display: flex;
     flex-direction: column;
@@ -155,6 +154,7 @@
     margin-top: 3px;
     display: flex;
     flex-direction: column;
+    border-radius: 4px;
   }
 
   /* Removes the arrow buttons from number inputs */

@@ -165,40 +165,33 @@
     padding: 6px;
     display: flex;
     align-items: center;
-    color: darkgray;
+    color: yellow;
     font-weight: bold;
   }
 
   .menu {
     position: absolute;
-    background-color: white;
+    background-color: black;
     max-height: 300px;
     overflow-y: auto;
     /* Account for borders */
     width: calc(100% - 2px);
-    border-left: 1px solid lightgray;
-    border-right: 1px solid lightgray;
     z-index: 3;
   }
 
   .menu-top {
-    border-top-right-radius: 6px;
-    border-top-left-radius: 6px;
-    border-top: 1px solid lightgray;
     /* Account for borders */
     bottom: calc(32px + 2px);
   }
 
   .menu-bottom {
-    border-bottom-right-radius: 6px;
-    border-bottom-left-radius: 6px;
-    border-bottom: 1px solid lightgray;
     /* Account for borders */
     top: calc(32px + 2px);
   }
 
   .submenu {
-    background-color: #f9f9f9;
+    background-color: black;
+    color: white;
   }
 
   .submenu .menu-item {
@@ -207,6 +200,8 @@
 
   .submenu .menu-item:hover {
     padding-left: 2rem;
+    color: black;
+    background-color: yellow;
   }
 
   .menu-item {
@@ -216,23 +211,25 @@
     display: flex;
     align-items: center;
     cursor: pointer;
+    color: white;
   }
 
   .menu-item:hover {
     height: 32px;
     padding-left: 6px;
     padding-right: 6px;
-    background-color: lightgray;
+    color: black;
+    background-color: yellow;
   }
 
   .active {
-    background-color: blue;
-    color: white;
+    background-color: yellow;
+    color: black;
   }
 
   .active:hover {
-    background-color: blue;
-    color: white;
+    background-color: yellow;
+    color: black;
   }
 
   .label-container {
@@ -258,8 +255,12 @@
     justify-content: center;
   }
 
+  .caret-container .active {
+    color: black;
+  }
+
   .caret-right {
-    border-left: solid 5px black;
+    border-left: solid 5px white;
     border-top: solid 5px transparent;
     border-bottom: solid 5px transparent;
     height: 0;
@@ -269,7 +270,7 @@
   .caret-down {
     border-left: solid 5px transparent;
     border-right: solid 5px transparent;
-    border-top: solid 5px black;
+    border-top: solid 5px white;
     height: 0;
     width: 0;
   }
@@ -277,7 +278,7 @@
   .caret-up {
     border-left: solid 5px transparent;
     border-right: solid 5px transparent;
-    border-bottom: solid 5px black;
+    border-bottom: solid 5px white;
     height: 0;
     width: 0;
   }

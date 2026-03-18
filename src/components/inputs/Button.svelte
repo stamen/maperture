@@ -8,11 +8,11 @@
 <style>
   button {
     background: none;
-    border: none;
     cursor: pointer;
     font-size: 0.75em;
     font-weight: normal;
     padding: 0;
     margin: 0;
+    border-radius: 4px;
   }
 </style>

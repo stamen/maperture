@@ -29,17 +29,17 @@
 <style>
   .toggle {
     height: 32px;
-    border: 1px solid lightgray;
     padding-left: 6px;
     padding-right: 6px;
-    border-radius: 6px;
+    border-radius: 4px;
     display: flex;
     align-items: center;
     cursor: pointer;
+    background-color: #444;
   }
 
   .toggle:hover {
-    background-color: #f9f9f9;
+    background-color: #494949;
   }
 
   .active-toggle-top {
@@ -76,7 +76,7 @@
   }
 
   .caret-right {
-    border-left: solid 5px black;
+    border-left: solid 5px white;
     border-top: solid 5px transparent;
     border-bottom: solid 5px transparent;
     height: 0;
@@ -86,7 +86,7 @@
   .caret-down {
     border-left: solid 5px transparent;
     border-right: solid 5px transparent;
-    border-top: solid 5px black;
+    border-top: solid 5px white;
     height: 0;
     width: 0;
   }
@@ -94,7 +94,7 @@
   .caret-up {
     border-left: solid 5px transparent;
     border-right: solid 5px transparent;
-    border-bottom: solid 5px black;
+    border-bottom: solid 5px white;
     height: 0;
     width: 0;
   }

@@ -274,10 +274,10 @@
 
 <style>
   .map-controls {
-    background: white;
-    border-bottom: 1px solid #eee;
-    box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
-    padding: 1em;
+    background: black;
+    border: 2px solid white;
+    border-radius: 10px;
+    padding: 0.75em;
     pointer-events: all;
   }
 
@@ -336,7 +336,7 @@
   }
 
   .link-button:hover {
-    color: #666;
+    color: yellow;
     cursor: pointer;
   }
 

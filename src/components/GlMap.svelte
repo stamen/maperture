@@ -253,10 +253,12 @@
     font-size: 16px;
     line-height: 16px;
     margin-bottom: 6px;
+    color: black;
   }
 
   :global(.popup-source) {
     font-weight: 600;
+    color: black;
   }
 
   :global(.popup-source-layer) {
@@ -273,6 +275,7 @@
     width: 100%;
     padding-bottom: 6px;
     border-bottom: 1px solid lightgray;
+    color: black;
   }
 
   :global(.popup-no-properties) {
@@ -290,5 +293,18 @@
 
   :global(.mapboxgl-control-container .mapboxgl-ctrl-logo) {
     display: none;
+  }
+
+  :global(.maplibregl-ctrl-top-right) {
+    display: none;
+  }
+
+  :global(.maplibregl-popup-close-button) {
+    color: black;
+  }
+
+  :global(.maplibregl-popup-close-button:hover) {
+    color: black;
+    background-color: yellow;
   }
 </style>
