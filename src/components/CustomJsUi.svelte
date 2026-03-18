@@ -129,11 +129,6 @@
     gap: 0.5rem;
   }
 
-  .checkbox {
-    color: black;
-    background-color: yellow;
-  }
-
   .checkbox-container {
     display: flex;
     flex-direction: column;
