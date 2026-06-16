@@ -129,7 +129,9 @@
         return {
           ...item,
           dropdownType: 'preset',
-          selected: url === item?.url && type === item?.type,
+          selected: map.id
+            ? map.id === item.id
+            : url === item?.url && type === item?.type,
           dropdownId: hat(),
           ...(item.precompile && {
             selectedPrecompileOption:
@@ -142,7 +144,9 @@
             presets: item.presets.map(v => ({
               ...v,
               dropdownType: 'preset',
-              selected: url === v?.url && type === v?.type,
+              selected: map.id
+                ? map.id === v.id
+                : url === v?.url && type === v?.type,
               dropdownId: hat(),
               ...(v.precompile && {
                 selectedPrecompileOption:

@@ -4,6 +4,7 @@
 - Don't set RTL text plugin if already in progress
 - Add branch name to screenshots if looking at branch pattern
 - Add precompile option
+- Add download screenshot button
 
 ## 0.17.0
 
