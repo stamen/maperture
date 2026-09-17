@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+    <title>Maperture (example consumer)</title>
+    <link rel="stylesheet" href="./dist/bundle.css" />
+  </head>
+  <body>
+    <script type="module">
+      import { startApp } from './dist/bundle.js';
+      import * as localConfig from './config.js';
+
+      startApp(document.body, { localConfig });
+    </script>
+  </body>
+</html>

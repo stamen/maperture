@@ -1,7 +1,10 @@
 /node_modules/
-/public/build/
-/public/presets/
-/public/config/local.js
+/config/local.js
+/example/dist/
+
+# Old (Svelte 4 / Rollup) app, kept locally for side-by-side reference
+# during the Svelte 5 rebuild. Not part of this branch's history.
+/legacy/
 
 .DS_Store
 yarn-error.log

@@ -1,11 +1,7 @@
-// Importing global css to be bundled
-import globalCss from './global.css';
+import { mount } from 'svelte';
+import './global.css';
 import App from './App.svelte';
 
-const startApp = (target, props) =>
-  new App({
-    target,
-    props,
-  });
+const startApp = (target, props) => mount(App, { target, props });
 
 export { startApp };

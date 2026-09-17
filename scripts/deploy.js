@@ -1,21 +1,33 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const path = require('path');
-const ghpages = require('gh-pages');
+// Assembles a standalone demo site (built dist/ + index.html + the gh-pages
+// config) in a scratch directory, the same shape as `example/`, and publishes
+// it to the gh-pages branch. Assumes `dist/` has already been built (see the
+// `deploy` script in package.json).
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import ghpages from 'gh-pages';
 
-const ghPagesConfig = fs.readFileSync(
-  path.resolve(__dirname, '../public/config/gh-pages.js'),
-  'utf8'
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(__dirname, '..');
+const demoDir = path.resolve(root, '.gh-pages-demo');
+
+fs.rmSync(demoDir, { recursive: true, force: true });
+fs.mkdirSync(demoDir);
+
+fs.cpSync(path.resolve(root, 'dist'), path.resolve(demoDir, 'dist'), {
+  recursive: true,
+});
+fs.copyFileSync(
+  path.resolve(root, 'config/gh-pages.js'),
+  path.resolve(demoDir, 'config.js'),
+);
+fs.copyFileSync(
+  path.resolve(root, 'example/index.html'),
+  path.resolve(demoDir, 'index.html'),
 );
 
-const localConfigPath = path.resolve(__dirname, '../public/config/local.js');
-
-const actualConfig = fs.readFileSync(localConfigPath, 'utf8');
-
-fs.writeFileSync(localConfigPath, ghPagesConfig);
-
-ghpages.publish('public', err => {
+ghpages.publish(demoDir, err => {
+  fs.rmSync(demoDir, { recursive: true, force: true });
   if (err) console.error(err);
-  // After deploy restore local.js to whatever user was using locally
-  fs.writeFileSync(localConfigPath, actualConfig);
 });

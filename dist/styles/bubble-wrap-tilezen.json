@@ -1,0 +1,13 @@
+{
+  "global": { "sdk_api_key": "eha4tpICRbeVM9xTlVoDSQ" },
+  "import": [
+    "https://www.nextzen.org/carto/bubble-wrap-style/10/bubble-wrap-style.zip",
+    "https://www.nextzen.org/carto/bubble-wrap-style/10/themes/label-7.zip",
+    "https://www.nextzen.org/carto/bubble-wrap-style/10/themes/bubble-wrap-road-shields-usa.zip",
+    "https://www.nextzen.org/carto/bubble-wrap-style/10/themes/bubble-wrap-road-shields-international.zip"
+  ],
+  "sources": {
+    "normals": { "max_zoom": 0 },
+    "normals-elevation": { "max_zoom": 0 }
+  }
+}

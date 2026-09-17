@@ -3,6 +3,7 @@
   "author": "Stamen Design <info@stamen.com> (https://stamen.com)",
   "description": "Stamen's map compare tool",
   "version": "0.17.0",
+  "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -10,28 +11,23 @@
   },
   "private": true,
   "scripts": {
-    "build": "rollup -c",
-    "build-package": "rm -rf dist && rollup -c rollup.config.package.js",
-    "dev": "rollup -c -w",
-    "start": "sirv public --no-clear",
+    "dev": "vite",
+    "build": "vite build --config vite.lib.config.js",
+    "build-example": "yarn build && rm -rf example/dist && cp -r dist example/dist",
+    "serve-example": "yarn build-example && sirv example --no-clear --port 5000",
     "prepare": "husky install",
     "deploy": "yarn build && node scripts/deploy.js"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^21.0.2",
-    "@rollup/plugin-node-resolve": "^11.0.0",
-    "@rollup/plugin-replace": "^4.0.0",
+    "@sveltejs/vite-plugin-svelte": "^7.3.0",
     "gh-pages": "^4.0.0",
     "husky": "^7.0.0",
-    "prettier": "^2.6.0",
-    "prettier-plugin-svelte": "^2.6.0",
-    "pretty-quick": "^3.1.3",
-    "rollup": "^2.3.4",
-    "rollup-plugin-livereload": "^2.0.0",
-    "rollup-plugin-postcss": "^4.0.2",
-    "rollup-plugin-svelte": "^7.0.0",
-    "rollup-plugin-terser": "^7.0.0",
-    "svelte": "^3.0.0"
+    "prettier": "^3.9.7",
+    "prettier-plugin-svelte": "^4.1.1",
+    "pretty-quick": "^4.2.2",
+    "sirv-cli": "^1.0.0",
+    "svelte": "^5.57.0",
+    "vite": "^8.3.0"
   },
   "dependencies": {
     "@beyonk/svelte-mapbox": "^8.1.4",
@@ -48,7 +44,6 @@
     "mapbox-gl": "^3.10.0",
     "maplibre-gl": "^5.12.0",
     "postcss": "^8.4.23",
-    "sirv-cli": "^1.0.0",
     "stamen-attribution": "github:stamen/stamen-attribution#v0.1.0",
     "svelte-fa": "^2.4.0",
     "tangram": "^0.21.1"
