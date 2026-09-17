@@ -1,6 +1,5 @@
 <script>
   import mapboxgl from 'mapbox-gl';
-  import maplibregl from 'maplibre-gl';
   import { onMount } from 'svelte';
   import {
     maps as mapsStore,
@@ -180,14 +179,10 @@
   $: if (settings || height || width) mapState = createMapState();
 
   // Set RTL plugin once rather than per map
+  // MapLibre GL JS v6 supports complex scripts natively and no longer has this API
   if (mapboxgl.getRTLTextPluginStatus() === 'unavailable') {
     mapboxgl.setRTLTextPlugin(
       'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.0/mapbox-gl-rtl-text.js'
-    );
-  }
-  if (maplibregl.getRTLTextPluginStatus() === 'unavailable') {
-    maplibregl.setRTLTextPlugin(
-      'https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js'
     );
   }
 </script>
