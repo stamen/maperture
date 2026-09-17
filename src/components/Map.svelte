@@ -1,4 +1,5 @@
 <script>
+  import { untrack } from 'svelte';
   import isEqual from 'lodash.isequal';
   import GlMap from './GlMap.svelte';
   import MapLabel from './MapLabel.svelte';
@@ -35,11 +36,17 @@
   // Only use this when locations are unlinked
   let localMapState = $derived($mapLocationsStore?.[map.index] ?? {});
 
-  // Update stylesheet variable only if there's been actual changes
+  // Update stylesheet variable only if there's been actual changes. This
+  // reads `stylesheet` via untrack() specifically so the effect depends
+  // only on `map` — not on its own output — which is the same class of bug
+  // as https://svelte.dev/e/effect_update_depth_exceeded (see App.svelte's
+  // handleMapState). It's dormant today since nothing currently reassigns
+  // map.style, but will matter once style-switching is un-stubbed.
   let stylesheet = $state(map?.style);
   $effect(() => {
-    if (!isEqual(stylesheet, map?.style)) {
-      stylesheet = map?.style;
+    const nextStyle = map?.style;
+    if (!isEqual(untrack(() => stylesheet), nextStyle)) {
+      stylesheet = nextStyle;
     }
   });
 

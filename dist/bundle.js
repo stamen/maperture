@@ -37550,7 +37550,8 @@ function gs(e, t) {
 	qe(t, !0);
 	let n = () => ct(X, "$mapLocationsStore", a), r = () => ct(ia, "$configStore", a), i = () => ct(oa, "$linkLocationsStore", a), [a, o] = lt(), s = Zi(t, "highlightDifferences", 3, !1), c = Zi(t, "labelStyle", 3, ""), l = /* @__PURE__ */ Ji(t, fs), u = /* @__PURE__ */ St(() => t.map.renderer ?? t.map.type), d = is, f = /* @__PURE__ */ St(() => `${t.map.id}-${t.map.index}`), p = /* @__PURE__ */ St(() => n()?.[t.map.index] ?? {}), m = /* @__PURE__ */ Xt(tn(t.map?.style));
 	Tn(() => {
-		(0, pa.default)(Y(m), t.map?.style) || G(m, t.map?.style, !0);
+		let e = t.map?.style;
+		(0, pa.default)(Cr(() => Y(m)), e) || G(m, e, !0);
 	});
 	let h = /* @__PURE__ */ St(() => {
 		let e = {
@@ -38311,7 +38312,7 @@ function oc(e, t) {
 		}, !0);
 	}), oa.subscribe((e) => {
 		if (!e && !n()) {
-			let e = Y(s).maps.map(() => Y(c));
+			let e = Y(s).maps.map(() => ({ ...Y(c) }));
 			X.set(e);
 		}
 		e && n() && X.set(null);

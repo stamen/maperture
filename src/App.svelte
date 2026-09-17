@@ -53,7 +53,7 @@
 
   linkLocationsStore.subscribe(value => {
     if (!value && !$mapLocationsStore) {
-      const mapLocations = settings.maps.map(() => mapState);
+      const mapLocations = settings.maps.map(() => ({ ...mapState }));
       mapLocationsStore.set(mapLocations);
     }
     if (value && $mapLocationsStore) {
