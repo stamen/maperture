@@ -2,6 +2,7 @@
   import maplibregl from 'maplibre-gl';
   import 'maplibre-gl/dist/maplibre-gl.css';
   import deepEqual from 'deep-equal';
+  import throttle from 'lodash.throttle';
   import { onMount, onDestroy } from 'svelte';
 
   // TODO(svelte-5-port): mapbox-gl and maptiler-sdk support (dynamically
@@ -37,7 +38,8 @@
     zoom: map.getZoom(),
   });
 
-  const shouldUpdateMapView = mapView => !deepEqual(getCurrentMapView(), mapView);
+  const shouldUpdateMapView = mapView =>
+    !deepEqual(getCurrentMapView(), mapView);
 
   onMount(() => {
     map = new maplibregl.Map({
@@ -49,6 +51,17 @@
     });
 
     onMapMount(map);
+
+    // Clicking (e.g. to drag-pan) focuses the canvas automatically, but
+    // scrolling to zoom doesn't — so a zoom-only interaction would otherwise
+    // never satisfy handleMove's isFocused check below, and its resulting
+    // 'move' event would silently fail to sync to the other maps.
+    const throttledWheelHandler = throttle(() => {
+      document.getElementById(id)?.querySelector('canvas[tabindex="0"]')?.focus();
+    }, 250);
+    document
+      .getElementById(id)
+      ?.addEventListener('wheel', throttledWheelHandler, { passive: true });
 
     const handleMove = ({ origin }) => {
       const isFocused =

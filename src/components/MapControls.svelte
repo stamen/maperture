@@ -1,5 +1,7 @@
 <script>
   import { shortcut } from '../shortcut';
+  import { faLink, faLinkSlash } from '@fortawesome/free-solid-svg-icons';
+  import Fa from 'svelte-fa/src/fa.svelte';
   import ViewModeControl from './ViewModeControl.svelte';
   import {
     maps as mapsStore,
@@ -99,9 +101,17 @@
   <div class="map-controls">
     <div class="control-row">
       <div class="control-section">
-        <button class="link-button" onclick={toggleLinkLocations}>
-          {$linkLocationsStore ? 'Unlink locations' : 'Link locations'}
-        </button>
+        <div
+          class="link-button"
+          style="margin-right: 6px"
+          title={$linkLocationsStore ? 'Unlink locations' : 'Link locations'}
+          onclick={toggleLinkLocations}
+          onkeydown={() => false}
+          role="button"
+          tabindex="0"
+        >
+          <Fa icon={$linkLocationsStore ? faLink : faLinkSlash} />
+        </div>
       </div>
 
       <div class="control-section">
