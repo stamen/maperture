@@ -1,5 +1,6 @@
 <script>
   import { showDisplays as showDisplaysStore } from '../stores';
+  import MapStyleInputWrapper from './MapStyleInputWrapper.svelte';
 
   let { index, name, onClose, disableClose, mapState, stylesheet, mapIdIndex } =
     $props();
@@ -11,14 +12,11 @@
       &times;
     </button>
     <div class="map-name">{name}</div>
-    <!--
-      TODO(svelte-5-port): MapStyleInputWrapper (style/renderer picker,
-      branch patterns, custom JS injection) and MapLocationControl (manual
-      coordinate entry) are deferred — see the framing-pass plan. This note
-      stands in for both so the gap is visible rather than silent.
-    -->
     <div class="options-container">
-      <div class="deferred-note">style &amp; location controls: TODO</div>
+      <MapStyleInputWrapper {index} {stylesheet} />
+      <!-- TODO(svelte-5-port): MapLocationControl (manual coordinate entry,
+           shown here when locations are unlinked) is still deferred. -->
+      <div class="deferred-note">location controls: TODO</div>
     </div>
   </div>
 {/if}

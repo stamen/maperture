@@ -1,7 +1,10 @@
 <script>
   import { untrack } from 'svelte';
   import isEqual from 'lodash.isequal';
+  import GoogleMap from './GoogleMap.svelte';
   import GlMap from './GlMap.svelte';
+  import LeafletMap from './LeafletMap.svelte';
+  import TangramMap from './TangramMap.svelte';
   import MapLabel from './MapLabel.svelte';
   import {
     maps as mapsStore,
@@ -22,14 +25,21 @@
     ...restProps
   } = $props();
 
-  // TODO(svelte-5-port): the renderer switch (google/leaflet/tangram, and
-  // mapbox-gl/maptiler-sdk within GlMap) is deferred — every map renders
-  // through GlMap/maplibre-gl for now, regardless of its configured
-  // renderer/type. MapStyleInputWrapper normally writes a `renderer` field
-  // onto the map object when a style is picked; until that's ported, fall
-  // back to `type` so existing config data still resolves to something.
+  // MapStyleInputWrapper writes a `renderer` field onto the map object once
+  // a style is picked; fall back to `type` so a map that's never been
+  // touched in the style picker (e.g. one straight from config) still
+  // resolves to something.
   let mapRenderer = $derived(map.renderer ?? map.type);
-  const MapComponent = GlMap;
+
+  const RENDERER_COMPONENTS = {
+    google: GoogleMap,
+    leaflet: LeafletMap,
+    tangram: TangramMap,
+  };
+  // Anything not in the map above (mapbox-gl/maplibre-gl/maptiler-sdk, or an
+  // unrecognized value) goes through GlMap, which picks the actual JS
+  // library dynamically based on the `mapRenderer` prop it's passed.
+  let MapComponent = $derived(RENDERER_COMPONENTS[mapRenderer] ?? GlMap);
 
   let mapId = $derived(`${map.id}-${map.index}`);
 
@@ -45,7 +55,12 @@
   let stylesheet = $state(map?.style);
   $effect(() => {
     const nextStyle = map?.style;
-    if (!isEqual(untrack(() => stylesheet), nextStyle)) {
+    if (
+      !isEqual(
+        untrack(() => stylesheet),
+        nextStyle,
+      )
+    ) {
       stylesheet = nextStyle;
     }
   });
@@ -73,12 +88,12 @@
     mapsStore.update(current =>
       current
         .filter((_, i) => i !== map.index)
-        .map((item, i) => ({ ...item, index: i }))
+        .map((item, i) => ({ ...item, index: i })),
     );
 
     if (!$linkLocationsStore) {
       mapLocationsStore.update(current =>
-        current.filter((_, i) => i !== map.index)
+        current.filter((_, i) => i !== map.index),
       );
     }
   };
@@ -104,7 +119,7 @@
   const handleMapMove = ({ options }) => {
     if (!$linkLocationsStore) {
       mapLocationsStore.update(value =>
-        value.map((v, i) => (i === map.index ? options : v))
+        value.map((v, i) => (i === map.index ? options : v)),
       );
     } else {
       onMapMove({ options });
@@ -127,14 +142,16 @@
       {map.name ?? map.id}
     {/if}
   </div>
-  <div class="map" class:highlight-diff={highlightDifferences}>
-    <MapComponent
-      {onMapMount}
-      {...props}
-      {...mapStateProps}
-      onMapMove={handleMapMove}
-    />
-  </div>
+  {#key mapRenderer}
+    <div class="map" class:highlight-diff={highlightDifferences}>
+      <MapComponent
+        {onMapMount}
+        {...props}
+        {...mapStateProps}
+        onMapMove={handleMapMove}
+      />
+    </div>
+  {/key}
   <!-- Use the number of maps and index to reset map on adding and removing maps -->
   <!-- We don't want to use the map id here or we'll unnecessarily remount the component for every new style -->
   {#key `${numberOfMaps}-${map.index}`}

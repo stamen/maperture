@@ -1,5 +1,4 @@
 <script>
-  import maplibregl from 'maplibre-gl';
   import {
     maps as mapsStore,
     stylePresets as stylePresetsStore,
@@ -86,7 +85,10 @@
   // potentially cycling straight back into whatever just called the
   // handler. See https://svelte.dev/e/effect_update_depth_exceeded.
   const handleMapState = ({ options }) => {
-    const nextMapState = validateMapState({ ...mapState, ...options }, settings.maps);
+    const nextMapState = validateMapState(
+      { ...mapState, ...options },
+      settings.maps,
+    );
     if (isEqual(nextMapState, mapState)) return;
     settings = { ...settings, ...nextMapState };
   };
@@ -105,17 +107,6 @@
     }
     settings = { ...settings, ...dimensions };
   };
-
-  // Set RTL plugin once rather than per map
-  // TODO(svelte-5-port): mapbox-gl's RTL bootstrap is dropped along with the
-  // rest of mapbox-gl rendering support (see Map.svelte) — every map goes
-  // through maplibre-gl for now, and importing mapbox-gl just for this was
-  // costing ~2MB of eagerly-loaded/pre-bundled JS on every dev cold start.
-  if (maplibregl.getRTLTextPluginStatus() === 'unavailable') {
-    maplibregl.setRTLTextPlugin(
-      'https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js',
-    );
-  }
 </script>
 
 <svelte:head>

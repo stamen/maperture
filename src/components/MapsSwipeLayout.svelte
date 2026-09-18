@@ -26,11 +26,9 @@
   let leftWidth = $derived(width - rightWidth);
 
   let themeLeftMapLabel = $derived(
-    `right: unset; margin-right:unset; left:0; margin-left:1em; max-width:calc(${leftWidth}px - 6em)`
+    `right: unset; margin-right:unset; left:0; margin-left:1em; max-width:calc(${leftWidth}px - 6em)`,
   );
-  let themeRightMapLabel = $derived(
-    `max-width:calc(${rightWidth}px - 6em)`
-  );
+  let themeRightMapLabel = $derived(`max-width:calc(${rightWidth}px - 6em)`);
 </script>
 
 <div

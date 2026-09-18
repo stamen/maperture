@@ -9,7 +9,7 @@
 
   let numberOfMaps = $derived(maps.length);
   let rowOrColumn = $derived(
-    rowExceptions.includes(numberOfMaps) ? 'row' : 'column'
+    rowExceptions.includes(numberOfMaps) ? 'row' : 'column',
   );
 
   const getSections = maps => {

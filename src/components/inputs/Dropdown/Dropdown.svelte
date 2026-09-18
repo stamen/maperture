@@ -19,7 +19,7 @@
         }));
       }
       return next;
-    })
+    }),
   );
 
   let topLevelOpen = $state(false);
@@ -34,7 +34,7 @@
     } else {
       const presetOptions = idOptions.filter(o => o.options);
       const activeOption = presetOptions.find(o =>
-        o.options.some(v => v.value === activeValue)
+        o.options.some(v => v.value === activeValue),
       );
       if (activeOption) {
         subLevelOpen = activeOption.id;
@@ -51,7 +51,7 @@
       .filter(v => !v?.header)
       .map(v => (v?.options ? v?.options : v))
       .flat()
-      .find(v => v.value === activeValue)?.label
+      .find(v => v.value === activeValue)?.label,
   );
 
   const onClick = v => {

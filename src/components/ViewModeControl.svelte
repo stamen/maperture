@@ -17,11 +17,11 @@
       next = VIEW_MODES.filter(mode => mode !== 'responsive');
     } else if (mapsNum > 2 && mapsNum <= 4) {
       next = VIEW_MODES.filter(
-        mode => mode !== 'swipe' && mode !== 'responsive'
+        mode => mode !== 'swipe' && mode !== 'responsive',
       );
     } else if (mapsNum > 4) {
       next = VIEW_MODES.filter(
-        mode => mode !== 'swipe' && mode !== 'phone' && mode !== 'responsive'
+        mode => mode !== 'swipe' && mode !== 'phone' && mode !== 'responsive',
       );
     }
 
@@ -34,9 +34,7 @@
 
   // The mode we should actually be in: the incoming prop if it's still a
   // valid choice, otherwise the first allowed one.
-  let effectiveMode = $derived(
-    viewModes.includes(mode) ? mode : viewModes[0]
-  );
+  let effectiveMode = $derived(viewModes.includes(mode) ? mode : viewModes[0]);
 
   // Tell the parent whenever the effective mode disagrees with what it
   // thinks we're in — covers both mapsNum/linking auto-correction and (via
