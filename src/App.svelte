@@ -8,10 +8,13 @@
   } from './stores';
   import { makeConfig } from './make-config';
   import { validateMapState } from './map-state-utils';
+  import { createHashString, writeHash } from './query';
+  import { getSettings } from './settings';
   import Maps from './components/Maps.svelte';
   import MapControls from './components/MapControls.svelte';
   import { addLink } from 'stamen-attribution';
   import isEqual from 'lodash.isequal';
+  import throttle from 'lodash.throttle';
 
   addLink('https://stamen.com/blog/', 'Learn more');
   addLink('https://github.com/stamen/maperture', 'Fork on Github');
@@ -23,15 +26,58 @@
   const { mapboxGlAccessToken } = config;
   configStore.set(config);
 
-  // TODO(svelte-5-port): URL hash persistence (query.js/settings.js) and
-  // remote style-preset-URL polling (presets-utils.js) are deferred for
-  // now — state only reflects config defaults, so reloading or sharing a
-  // URL won't restore the current view yet.
-  let settings = $state({
-    ...config.mapState,
-    viewMode: config.viewMode,
-    maps: config.maps,
-    stylePresets: config.stylePresets,
+  // settings contains all of the current state of the app that we might
+  // want to persist in the URL — getSettings layers config defaults under
+  // whatever's in the current URL hash.
+  let settings = $state(getSettings(config));
+
+  // TODO(svelte-5-port): remote style-preset-URL polling (presets-utils.js)
+  // is still deferred — a stylePresetUrls config entry won't fetch anything
+  // yet.
+
+  // Plain (non-reactive) flag: set right before *we* write the hash, so the
+  // 'hashchange' handler below can tell "the URL just changed because we
+  // wrote it" apart from "the user navigated/edited the URL themselves" and
+  // skip redundantly re-reading what we just wrote.
+  let writingHash = false;
+
+  const hashShouldUpdate = () =>
+    location.hash.slice(1) !== createHashString(settings, config)?.nextHash;
+
+  window.addEventListener('hashchange', () => {
+    if (!writingHash && hashShouldUpdate()) {
+      const nextSettings = getSettings(config);
+      settings = nextSettings;
+
+      if (settings.maps.length) {
+        const newMaps = settings.maps.map((map, index) => ({
+          ...map,
+          index,
+        }));
+        mapsStore.set(newMaps);
+      }
+    }
+
+    // Reset so we will see the next change
+    writingHash = false;
+  });
+
+  // Throttled since this can get invoked many times when moving the map
+  // around.
+  const throttledWriteHash = throttle(() => {
+    if (hashShouldUpdate()) {
+      writingHash = true;
+      writeHash(settings, config);
+    }
+  }, 250);
+
+  // A plain side effect on the browser's URL, not on any Svelte state —
+  // this can't loop back into itself the way the reactivity bugs elsewhere
+  // in this app did. Depends on `settings` as a whole, matching every
+  // handler below always reassigning it wholesale on a real change.
+  $effect(() => {
+    settings;
+    throttledWriteHash();
   });
 
   mapsStore.set(settings.maps.map((map, index) => ({ ...map, index })));

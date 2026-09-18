@@ -3008,7 +3008,127 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		return !1;
 	}
 	t.exports = qt;
-})))()), aa = (e, t) => Math.round(e * 10 ** t) / 10 ** t, oa = /* @__PURE__ */ t(((e, t) => {
+})))(), 1), aa = (e, t) => Math.round(e * 10 ** t) / 10 ** t, oa = "{branch}", $ = "{style}", sa = (e, t, n) => e.replace(oa, t).replace($, n), ca;
+Xi.subscribe((e) => ca = e);
+var la = ["locations"], ua = [
+	"showCollisions",
+	"showBoundaries",
+	"showDiff"
+], da = [
+	"bearing",
+	"center",
+	"pitch",
+	"zoom"
+], fa = [
+	"bearing",
+	"lat",
+	"lng",
+	"pitch",
+	"zoom"
+], pa = ["map", "stylePresets"];
+function ma(e) {
+	let t = e.map ? `map=${e.map}` : "";
+	return Object.entries(e).forEach(([e, n], r) => {
+		pa.includes(e) || (t = `${t}${t === "" ? "" : "&"}${e}=${encodeURIComponent(n)}`);
+	}), t;
+}
+var ha = (e, t) => [...t.filter((e) => e.type !== "sublist"), ...t.filter((e) => e.type === "sublist").flatMap((e) => e.presets)].find((t) => t.id === e), ga = (e, t) => {
+	let n = t.find((t) => t.id === e.branchId);
+	return n ? {
+		...n,
+		url: sa(n.pattern, e.branch, e.branchStyle)
+	} : null;
+}, _a = (e, t) => {
+	let n = e.map((e) => {
+		let n = { id: e.id }, r;
+		return e.branchId ? (r = ga(e, t?.branchPatterns ?? []), n = {
+			branchId: r.id,
+			branchStyle: e.branchStyle,
+			branch: e.branch
+		}) : r = ha(e.id, t.stylePresets), r ? (e.renderer !== r.renderer && (n.renderer = e.renderer), n) : Object.fromEntries(Object.entries(e).filter(([e]) => e !== "style"));
+	});
+	return JSON.stringify(n);
+}, va = (e, t) => JSON.parse(e).map((e) => {
+	let n = ha(e.id, t?.stylePresets ?? []);
+	return n ||= ga(e, t?.branchPatterns ?? []), n ? {
+		...n,
+		...e
+	} : e;
+}).filter((e) => e), ya = ({ zoom: e, center: t, pitch: n, bearing: r }) => [
+	aa(e, 2),
+	aa(t.lat, 4),
+	aa(t.lng, 4),
+	aa(n ?? 0, 1),
+	aa(r ?? 0, 1)
+].join("/"), ba = (e) => {
+	let [t, n, r, i, a] = e.split("/");
+	return {
+		bearing: a,
+		center: {
+			lat: n,
+			lng: r
+		},
+		pitch: i,
+		zoom: t
+	};
+};
+function xa(e) {
+	let t = e.split("#")[1];
+	if (!t) return {};
+	let n = Object.fromEntries(t.split("&").map((e) => e.split("=").map(decodeURIComponent)));
+	return n.map && (n = {
+		...n,
+		...ba(n.map)
+	}), n.locations && (n.locations = JSON.stringify(JSON.parse(n.locations).map((e) => ba(e)))), n;
+}
+var Sa = (e) => Object.keys(e).reduce((t, n) => {
+	let r = e[n];
+	return ua.includes(n) && !r || r !== null && (t[n] = r), t;
+}, {}), Ca = (e, t) => {
+	let n = Object.fromEntries(Object.entries(e).filter(([e, t]) => !da.includes(e) && e !== "locations").map(([e, n]) => {
+		let r = n;
+		return e === "maps" ? r = _a(n, t) : la.includes(e) && (r = JSON.stringify(n)), [e, r];
+	}));
+	n = Sa(n);
+	let r = Ta(window.location.hash, t), i = Object.entries(n).some((e) => {
+		let [t, n] = e;
+		if (pa.includes(t)) return !1;
+		try {
+			n = JSON.parse(n);
+		} catch {}
+		return !(0, ia.default)(n, r?.[t]);
+	}), a = { ...n };
+	return a = ca ? {
+		map: ya(e),
+		...a
+	} : {
+		locations: JSON.stringify(e.locations.map((e) => ya(e))),
+		...a
+	}, {
+		nextHash: ma(a),
+		requiresHistoryItem: i
+	};
+};
+function wa(e, t) {
+	let { nextHash: n, requiresHistoryItem: r } = Ca(e, t);
+	r ? window.location.hash = n : window.location.replace(`${window.location.pathname}#${n}`);
+}
+function Ta(e, t) {
+	let n = Object.fromEntries(Object.entries(xa(e)).filter(([e, t]) => !!t).map(([e, n]) => e === "maps" ? [e, va(n, t)] : la.includes(e) ? [e, JSON.parse(n)] : ua.includes(e) ? [e, n === "true"] : fa.includes(e) ? [e, +n || 0] : [e, n]));
+	return n.map && delete n.map, n;
+}
+//#endregion
+//#region src/settings.js
+var Ea = (e) => {
+	let { mapState: t, maps: n, viewMode: r, stylePresets: i } = e;
+	return {
+		...t,
+		viewMode: r,
+		maps: n,
+		stylePresets: i,
+		...Ta(window.location.hash, e)
+	};
+}, Da = /* @__PURE__ */ t(((e, t) => {
 	var n = "Expected a function", r = NaN, i = /^\s+|\s+$/g, a = /^[-+]0x[0-9a-f]+$/i, o = /^0b[01]+$/i, s = /^0o[0-7]+$/i, c = parseInt, l = typeof global == "object" && global && global.Object === Object && global, u = typeof self == "object" && self && self.Object === Object && self, d = l || u || Function("return this")(), f = Object.prototype.toString, p = Math.max, m = Math.min, h = function() {
 		return d.Date.now();
 	};
@@ -3087,16 +3207,16 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		return n || s.test(e) ? c(e.slice(2), n ? 2 : 8) : a.test(e) ? r : +e;
 	}
 	t.exports = _;
-})), $ = /* @__PURE__ */ t(((e, t) => {
+})), Oa = /* @__PURE__ */ t(((e, t) => {
 	var n = Object.prototype.toString;
 	t.exports = function(e) {
 		var t = n.call(e), r = t === "[object Arguments]";
 		return r ||= t !== "[object Array]" && typeof e == "object" && !!e && typeof e.length == "number" && e.length >= 0 && n.call(e.callee) === "[object Function]", r;
 	};
-})), sa = /* @__PURE__ */ t(((e, t) => {
+})), ka = /* @__PURE__ */ t(((e, t) => {
 	var n;
 	if (!Object.keys) {
-		var r = Object.prototype.hasOwnProperty, i = Object.prototype.toString, a = $(), o = Object.prototype.propertyIsEnumerable, s = !o.call({ toString: null }, "toString"), c = o.call(function() {}, "prototype"), l = [
+		var r = Object.prototype.hasOwnProperty, i = Object.prototype.toString, a = Oa(), o = Object.prototype.propertyIsEnumerable, s = !o.call({ toString: null }, "toString"), c = o.call(function() {}, "prototype"), l = [
 			"toString",
 			"toLocaleString",
 			"valueOf",
@@ -3163,10 +3283,10 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		};
 	}
 	t.exports = n;
-})), ca = /* @__PURE__ */ t(((e, t) => {
-	var n = Array.prototype.slice, r = $(), i = Object.keys, a = i ? function(e) {
+})), Aa = /* @__PURE__ */ t(((e, t) => {
+	var n = Array.prototype.slice, r = Oa(), i = Object.keys, a = i ? function(e) {
 		return i(e);
-	} : sa(), o = Object.keys;
+	} : ka(), o = Object.keys;
 	a.shim = function() {
 		return Object.keys ? function() {
 			var e = Object.keys(arguments);
@@ -3175,7 +3295,7 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 			return r(e) ? o(n.call(e)) : o(e);
 		}) : Object.keys = a, Object.keys || a;
 	}, t.exports = a;
-})), la = /* @__PURE__ */ t(((e, t) => {
+})), ja = /* @__PURE__ */ t(((e, t) => {
 	var n = Object.defineProperty || !1;
 	if (n) try {
 		n({}, "a", { value: 1 });
@@ -3183,22 +3303,22 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		n = !1;
 	}
 	t.exports = n;
-})), ua = /* @__PURE__ */ t(((e, t) => {
+})), Ma = /* @__PURE__ */ t(((e, t) => {
 	t.exports = SyntaxError;
-})), da = /* @__PURE__ */ t(((e, t) => {
+})), Na = /* @__PURE__ */ t(((e, t) => {
 	t.exports = TypeError;
-})), fa = /* @__PURE__ */ t(((e, t) => {
+})), Pa = /* @__PURE__ */ t(((e, t) => {
 	t.exports = Object.getOwnPropertyDescriptor;
-})), pa = /* @__PURE__ */ t(((e, t) => {
-	var n = fa();
+})), Fa = /* @__PURE__ */ t(((e, t) => {
+	var n = Pa();
 	if (n) try {
 		n([], "length");
 	} catch {
 		n = null;
 	}
 	t.exports = n;
-})), ma = /* @__PURE__ */ t(((e, t) => {
-	var n = la(), r = ua(), i = da(), a = pa();
+})), Ia = /* @__PURE__ */ t(((e, t) => {
+	var n = ja(), r = Ma(), i = Na(), a = Fa();
 	t.exports = function(e, t, o) {
 		if (!e || typeof e != "object" && typeof e != "function") throw new i("`obj` must be an object or a function`");
 		if (typeof t != "string" && typeof t != "symbol") throw new i("`property` must be a string or a symbol`");
@@ -3216,8 +3336,8 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		else if (u || !s && !c && !l) e[t] = o;
 		else throw new r("This environment does not support defining a property as non-configurable, non-writable, or non-enumerable.");
 	};
-})), ha = /* @__PURE__ */ t(((e, t) => {
-	var n = la(), r = function() {
+})), La = /* @__PURE__ */ t(((e, t) => {
+	var n = ja(), r = function() {
 		return !!n;
 	};
 	r.hasArrayLengthDefineBug = function() {
@@ -3228,10 +3348,10 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 			return !0;
 		}
 	}, t.exports = r;
-})), ga = /* @__PURE__ */ t(((e, t) => {
-	var n = ca(), r = typeof Symbol == "function" && typeof Symbol("foo") == "symbol", i = Object.prototype.toString, a = Array.prototype.concat, o = ma(), s = function(e) {
+})), Ra = /* @__PURE__ */ t(((e, t) => {
+	var n = Aa(), r = typeof Symbol == "function" && typeof Symbol("foo") == "symbol", i = Object.prototype.toString, a = Array.prototype.concat, o = Ia(), s = function(e) {
 		return typeof e == "function" && i.call(e) === "[object Function]";
-	}, c = ha()(), l = function(e, t, n, r) {
+	}, c = La()(), l = function(e, t, n, r) {
 		if (t in e) {
 			if (r === !0) {
 				if (e[t] === n) return;
@@ -3244,40 +3364,40 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		for (var s = 0; s < o.length; s += 1) l(e, o[s], t[o[s]], i[o[s]]);
 	};
 	u.supportsDescriptors = !!c, t.exports = u;
-})), _a = /* @__PURE__ */ t(((e, t) => {
+})), za = /* @__PURE__ */ t(((e, t) => {
 	t.exports = Object;
-})), va = /* @__PURE__ */ t(((e, t) => {
+})), Ba = /* @__PURE__ */ t(((e, t) => {
 	t.exports = Error;
-})), ya = /* @__PURE__ */ t(((e, t) => {
+})), Va = /* @__PURE__ */ t(((e, t) => {
 	t.exports = EvalError;
-})), ba = /* @__PURE__ */ t(((e, t) => {
+})), Ha = /* @__PURE__ */ t(((e, t) => {
 	t.exports = RangeError;
-})), xa = /* @__PURE__ */ t(((e, t) => {
+})), Ua = /* @__PURE__ */ t(((e, t) => {
 	t.exports = ReferenceError;
-})), Sa = /* @__PURE__ */ t(((e, t) => {
+})), Wa = /* @__PURE__ */ t(((e, t) => {
 	t.exports = URIError;
-})), Ca = /* @__PURE__ */ t(((e, t) => {
+})), Ga = /* @__PURE__ */ t(((e, t) => {
 	t.exports = Math.abs;
-})), wa = /* @__PURE__ */ t(((e, t) => {
+})), Ka = /* @__PURE__ */ t(((e, t) => {
 	t.exports = Math.floor;
-})), Ta = /* @__PURE__ */ t(((e, t) => {
+})), qa = /* @__PURE__ */ t(((e, t) => {
 	t.exports = Math.max;
-})), Ea = /* @__PURE__ */ t(((e, t) => {
+})), Ja = /* @__PURE__ */ t(((e, t) => {
 	t.exports = Math.min;
-})), Da = /* @__PURE__ */ t(((e, t) => {
+})), Ya = /* @__PURE__ */ t(((e, t) => {
 	t.exports = Math.pow;
-})), Oa = /* @__PURE__ */ t(((e, t) => {
+})), Xa = /* @__PURE__ */ t(((e, t) => {
 	t.exports = Math.round;
-})), ka = /* @__PURE__ */ t(((e, t) => {
+})), Za = /* @__PURE__ */ t(((e, t) => {
 	t.exports = Number.isNaN || function(e) {
 		return e !== e;
 	};
-})), Aa = /* @__PURE__ */ t(((e, t) => {
-	var n = ka();
+})), Qa = /* @__PURE__ */ t(((e, t) => {
+	var n = Za();
 	t.exports = function(e) {
 		return n(e) || e === 0 ? e : e < 0 ? -1 : 1;
 	};
-})), ja = /* @__PURE__ */ t(((e, t) => {
+})), $a = /* @__PURE__ */ t(((e, t) => {
 	t.exports = function() {
 		if (typeof Symbol != "function" || typeof Object.getOwnPropertySymbols != "function") return !1;
 		if (typeof Symbol.iterator == "symbol") return !0;
@@ -3294,16 +3414,16 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		}
 		return !0;
 	};
-})), Ma = /* @__PURE__ */ t(((e, t) => {
-	var n = typeof Symbol < "u" && Symbol, r = ja();
+})), eo = /* @__PURE__ */ t(((e, t) => {
+	var n = typeof Symbol < "u" && Symbol, r = $a();
 	t.exports = function() {
 		return typeof n != "function" || typeof Symbol != "function" || typeof n("foo") != "symbol" || typeof Symbol("bar") != "symbol" ? !1 : r();
 	};
-})), Na = /* @__PURE__ */ t(((e, t) => {
+})), to = /* @__PURE__ */ t(((e, t) => {
 	t.exports = typeof Reflect < "u" && Reflect.getPrototypeOf || null;
-})), Pa = /* @__PURE__ */ t(((e, t) => {
-	t.exports = _a().getPrototypeOf || null;
-})), Fa = /* @__PURE__ */ t(((e, t) => {
+})), no = /* @__PURE__ */ t(((e, t) => {
+	t.exports = za().getPrototypeOf || null;
+})), ro = /* @__PURE__ */ t(((e, t) => {
 	var n = Object.prototype.toString, r = Math.max, i = "[object Function]", a = function(e, t) {
 		for (var n = [], r = 0; r < e.length; r += 1) n[r] = e[r];
 		for (var i = 0; i < t.length; i += 1) n[i + e.length] = t[i];
@@ -3331,26 +3451,26 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		}
 		return l;
 	};
-})), Ia = /* @__PURE__ */ t(((e, t) => {
-	var n = Fa();
+})), io = /* @__PURE__ */ t(((e, t) => {
+	var n = ro();
 	t.exports = Function.prototype.bind || n;
-})), La = /* @__PURE__ */ t(((e, t) => {
+})), ao = /* @__PURE__ */ t(((e, t) => {
 	t.exports = Function.prototype.call;
-})), Ra = /* @__PURE__ */ t(((e, t) => {
+})), oo = /* @__PURE__ */ t(((e, t) => {
 	t.exports = Function.prototype.apply;
-})), za = /* @__PURE__ */ t(((e, t) => {
+})), so = /* @__PURE__ */ t(((e, t) => {
 	t.exports = typeof Reflect < "u" && Reflect && Reflect.apply;
-})), Ba = /* @__PURE__ */ t(((e, t) => {
-	var n = Ia(), r = Ra(), i = La();
-	t.exports = za() || n.call(i, r);
-})), Va = /* @__PURE__ */ t(((e, t) => {
-	var n = Ia(), r = da(), i = La(), a = Ba();
+})), co = /* @__PURE__ */ t(((e, t) => {
+	var n = io(), r = oo(), i = ao();
+	t.exports = so() || n.call(i, r);
+})), lo = /* @__PURE__ */ t(((e, t) => {
+	var n = io(), r = Na(), i = ao(), a = co();
 	t.exports = function(e) {
 		if (e.length < 1 || typeof e[0] != "function") throw new r("a function is required");
 		return a(n, i, e);
 	};
-})), Ha = /* @__PURE__ */ t(((e, t) => {
-	var n = Va(), r = pa(), i;
+})), uo = /* @__PURE__ */ t(((e, t) => {
+	var n = lo(), r = Fa(), i;
 	try {
 		i = [].__proto__ === Array.prototype;
 	} catch (e) {
@@ -3360,8 +3480,8 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 	t.exports = a && typeof a.get == "function" ? n([a.get]) : typeof s == "function" && function(e) {
 		return s(e == null ? e : o(e));
 	};
-})), Ua = /* @__PURE__ */ t(((e, t) => {
-	var n = Na(), r = Pa(), i = Ha();
+})), fo = /* @__PURE__ */ t(((e, t) => {
+	var n = to(), r = no(), i = uo();
 	t.exports = n ? function(e) {
 		return n(e);
 	} : r ? function(e) {
@@ -3370,15 +3490,15 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 	} : i ? function(e) {
 		return i(e);
 	} : null;
-})), Wa = /* @__PURE__ */ t(((e, t) => {
+})), po = /* @__PURE__ */ t(((e, t) => {
 	var n = Function.prototype.call, r = Object.prototype.hasOwnProperty;
-	t.exports = Ia().call(n, r);
-})), Ga = /* @__PURE__ */ t(((e, t) => {
-	var n, r = _a(), i = va(), a = ya(), o = ba(), s = xa(), c = ua(), l = da(), u = Sa(), d = Ca(), f = wa(), p = Ta(), m = Ea(), h = Da(), g = Oa(), _ = Aa(), v = Function, y = function(e) {
+	t.exports = io().call(n, r);
+})), mo = /* @__PURE__ */ t(((e, t) => {
+	var n, r = za(), i = Ba(), a = Va(), o = Ha(), s = Ua(), c = Ma(), l = Na(), u = Wa(), d = Ga(), f = Ka(), p = qa(), m = Ja(), h = Ya(), g = Xa(), _ = Qa(), v = Function, y = function(e) {
 		try {
 			return v("\"use strict\"; return (" + e + ").constructor;")();
 		} catch {}
-	}, b = pa(), x = la(), S = function() {
+	}, b = Fa(), x = ja(), S = function() {
 		throw new l();
 	}, C = b ? function() {
 		try {
@@ -3390,7 +3510,7 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 				return S;
 			}
 		}
-	}() : S, w = Ma()(), T = Ua(), E = Pa(), D = Na(), O = Ra(), k = La(), A = {}, ee = typeof Uint8Array > "u" || !T ? n : T(Uint8Array), j = {
+	}() : S, w = eo()(), T = fo(), E = no(), D = to(), O = oo(), k = ao(), A = {}, ee = typeof Uint8Array > "u" || !T ? n : T(Uint8Array), j = {
 		__proto__: null,
 		"%AggregateError%": typeof AggregateError > "u" ? n : AggregateError,
 		"%Array%": Array,
@@ -3580,7 +3700,7 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		"%URIErrorPrototype%": ["URIError", "prototype"],
 		"%WeakMapPrototype%": ["WeakMap", "prototype"],
 		"%WeakSetPrototype%": ["WeakSet", "prototype"]
-	}, N = Ia(), ne = Wa(), re = N.call(k, Array.prototype.concat), P = N.call(O, Array.prototype.splice), ie = N.call(k, String.prototype.replace), ae = N.call(k, String.prototype.slice), oe = N.call(k, RegExp.prototype.exec), se = /[^%.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|%$))/g, ce = /\\(\\)?/g, le = function(e) {
+	}, N = io(), ne = po(), re = N.call(k, Array.prototype.concat), P = N.call(O, Array.prototype.splice), ie = N.call(k, String.prototype.replace), ae = N.call(k, String.prototype.slice), oe = N.call(k, RegExp.prototype.exec), se = /[^%.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|%$))/g, ce = /\\(\\)?/g, le = function(e) {
 		var t = ae(e, 0, 1), n = ae(e, -1);
 		if (t === "%" && n !== "%") throw new c("invalid intrinsic syntax, expected closing `%`");
 		if (n === "%" && t !== "%") throw new c("invalid intrinsic syntax, expected opening `%`");
@@ -3625,8 +3745,8 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		}
 		return o;
 	};
-})), Ka = /* @__PURE__ */ t(((e, t) => {
-	var n = Ga(), r = ma(), i = ha()(), a = pa(), o = da(), s = n("%Math.floor%");
+})), ho = /* @__PURE__ */ t(((e, t) => {
+	var n = mo(), r = Ia(), i = La()(), a = Fa(), o = Na(), s = n("%Math.floor%");
 	t.exports = function(e, t) {
 		if (typeof e != "function") throw new o("`fn` is not a function");
 		if (typeof t != "number" || t < 0 || t > 4294967295 || s(t) !== t) throw new o("`length` must be a positive 32-bit integer");
@@ -3637,25 +3757,25 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		}
 		return (c || l || !n) && (i ? r(e, "length", t, !0, !0) : r(e, "length", t)), e;
 	};
-})), qa = /* @__PURE__ */ t(((e, t) => {
-	var n = Ia(), r = Ra(), i = Ba();
+})), go = /* @__PURE__ */ t(((e, t) => {
+	var n = io(), r = oo(), i = co();
 	t.exports = function() {
 		return i(n, r, arguments);
 	};
-})), Ja = /* @__PURE__ */ t(((e, t) => {
-	var n = Ka(), r = la(), i = Va(), a = qa();
+})), _o = /* @__PURE__ */ t(((e, t) => {
+	var n = ho(), r = ja(), i = lo(), a = go();
 	t.exports = function(e) {
 		var t = i(arguments), r = e.length - (arguments.length - 1);
 		return n(t, 1 + (r > 0 ? r : 0), !0);
 	}, r ? r(t.exports, "apply", { value: a }) : t.exports.apply = a;
-})), Ya = /* @__PURE__ */ t(((e, t) => {
-	var n = Ga(), r = Va(), i = r([n("%String.prototype.indexOf%")]);
+})), vo = /* @__PURE__ */ t(((e, t) => {
+	var n = mo(), r = lo(), i = r([n("%String.prototype.indexOf%")]);
 	t.exports = function(e, t) {
 		var a = n(e, !!t);
 		return typeof a == "function" && i(e, ".prototype.") > -1 ? r([a]) : a;
 	};
-})), Xa = /* @__PURE__ */ t(((e, t) => {
-	var n = ca(), r = ja()(), i = Ya(), a = _a(), o = i("Array.prototype.push"), s = i("Object.prototype.propertyIsEnumerable"), c = r ? a.getOwnPropertySymbols : null;
+})), yo = /* @__PURE__ */ t(((e, t) => {
+	var n = Aa(), r = $a()(), i = vo(), a = za(), o = i("Array.prototype.push"), s = i("Object.prototype.propertyIsEnumerable"), c = r ? a.getOwnPropertySymbols : null;
 	t.exports = function(e, t) {
 		if (e == null) throw TypeError("target must be an object");
 		var i = a(e);
@@ -3673,8 +3793,8 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		}
 		return i;
 	};
-})), Za = /* @__PURE__ */ t(((e, t) => {
-	var n = Xa(), r = function() {
+})), bo = /* @__PURE__ */ t(((e, t) => {
+	var n = yo(), r = function() {
 		if (!Object.assign) return !1;
 		for (var e = "abcdefghijklmnopqrst", t = e.split(""), n = {}, r = 0; r < t.length; ++r) n[t[r]] = t[r];
 		var i = Object.assign({}, n), a = "";
@@ -3693,16 +3813,16 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 	t.exports = function() {
 		return !Object.assign || r() || i() ? n : Object.assign;
 	};
-})), Qa = /* @__PURE__ */ t(((e, t) => {
-	var n = ga(), r = Za();
+})), xo = /* @__PURE__ */ t(((e, t) => {
+	var n = Ra(), r = bo();
 	t.exports = function() {
 		var e = r();
 		return n(Object, { assign: e }, { assign: function() {
 			return Object.assign !== e;
 		} }), e;
 	};
-})), $a = /* @__PURE__ */ t(((e, t) => {
-	var n = ga(), r = Ja(), i = Xa(), a = Za(), o = Qa(), s = r.apply(a()), c = function(e, t) {
+})), So = /* @__PURE__ */ t(((e, t) => {
+	var n = Ra(), r = _o(), i = yo(), a = bo(), o = xo(), s = r.apply(a()), c = function(e, t) {
 		return s(Object, arguments);
 	};
 	n(c, {
@@ -3710,13 +3830,13 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		implementation: i,
 		shim: o
 	}), t.exports = c;
-})), eo = /* @__PURE__ */ t(((e, t) => {
-	var n = Ga(), r = Ja(), i = r(n("String.prototype.indexOf"));
+})), Co = /* @__PURE__ */ t(((e, t) => {
+	var n = mo(), r = _o(), i = r(n("String.prototype.indexOf"));
 	t.exports = function(e, t) {
 		var a = n(e, !!t);
 		return typeof a == "function" && i(e, ".prototype.") > -1 ? r(a) : a;
 	};
-})), to = /* @__PURE__ */ t(((e, t) => {
+})), wo = /* @__PURE__ */ t(((e, t) => {
 	var n = function() {
 		return typeof function() {}.name == "string";
 	}, r = Object.getOwnPropertyDescriptor;
@@ -3734,21 +3854,21 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 	n.boundFunctionsHaveNames = function() {
 		return n() && typeof i == "function" && function() {}.bind().name !== "";
 	}, t.exports = n;
-})), no = /* @__PURE__ */ t(((e, t) => {
-	var n = ma(), r = ha()(), i = to().functionsHaveConfigurableNames(), a = da();
+})), To = /* @__PURE__ */ t(((e, t) => {
+	var n = Ia(), r = La()(), i = wo().functionsHaveConfigurableNames(), a = Na();
 	t.exports = function(e, t) {
 		if (typeof e != "function") throw new a("`fn` is not a function");
 		return (!(arguments.length > 2 && arguments[2]) || i) && (r ? n(e, "name", t, !0, !0) : n(e, "name", t)), e;
 	};
-})), ro = /* @__PURE__ */ t(((e, t) => {
-	var n = no(), r = da(), i = Object;
+})), Eo = /* @__PURE__ */ t(((e, t) => {
+	var n = To(), r = Na(), i = Object;
 	t.exports = n(function() {
 		if (this == null || this !== i(this)) throw new r("RegExp.prototype.flags getter called on non-object");
 		var e = "";
 		return this.hasIndices && (e += "d"), this.global && (e += "g"), this.ignoreCase && (e += "i"), this.multiline && (e += "m"), this.dotAll && (e += "s"), this.unicode && (e += "u"), this.unicodeSets && (e += "v"), this.sticky && (e += "y"), e;
 	}, "get flags", !0);
-})), io = /* @__PURE__ */ t(((e, t) => {
-	var n = ro(), r = ga().supportsDescriptors, i = Object.getOwnPropertyDescriptor;
+})), Do = /* @__PURE__ */ t(((e, t) => {
+	var n = Eo(), r = Ra().supportsDescriptors, i = Object.getOwnPropertyDescriptor;
 	t.exports = function() {
 		if (r && /a/gim.flags === "gim") {
 			var e = i(RegExp.prototype, "flags");
@@ -3763,8 +3883,8 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		}
 		return n;
 	};
-})), ao = /* @__PURE__ */ t(((e, t) => {
-	var n = ga().supportsDescriptors, r = io(), i = pa(), a = Object.defineProperty, o = va(), s = Ua(), c = /a/;
+})), Oo = /* @__PURE__ */ t(((e, t) => {
+	var n = Ra().supportsDescriptors, r = Do(), i = Fa(), a = Object.defineProperty, o = Ba(), s = fo(), c = /a/;
 	t.exports = function() {
 		if (!n || !s) throw new o("RegExp.prototype.flags requires a true ES5 environment that supports property descriptors");
 		var e = r(), t = s(c), l = i(t, "flags");
@@ -3774,20 +3894,20 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 			get: e
 		}), e;
 	};
-})), oo = /* @__PURE__ */ t(((e, t) => {
-	var n = ga(), r = Ja(), i = ro(), a = io(), o = ao(), s = r(a());
+})), ko = /* @__PURE__ */ t(((e, t) => {
+	var n = Ra(), r = _o(), i = Eo(), a = Do(), o = Oo(), s = r(a());
 	n(s, {
 		getPolyfill: a,
 		implementation: i,
 		shim: o
 	}), t.exports = s;
-})), so = /* @__PURE__ */ t(((e, t) => {
-	var n = ja();
+})), Ao = /* @__PURE__ */ t(((e, t) => {
+	var n = $a();
 	t.exports = function() {
 		return n() && !!Symbol.toStringTag;
 	};
-})), co = /* @__PURE__ */ t(((e, t) => {
-	var n = so()(), r = Ya()("Object.prototype.toString"), i = function(e) {
+})), jo = /* @__PURE__ */ t(((e, t) => {
+	var n = Ao()(), r = vo()("Object.prototype.toString"), i = function(e) {
 		return n && e && typeof e == "object" && Symbol.toStringTag in e ? !1 : r(e) === "[object Arguments]";
 	}, a = function(e) {
 		return i(e) ? !0 : typeof e == "object" && !!e && "length" in e && typeof e.length == "number" && e.length >= 0 && r(e) !== "[object Array]" && "callee" in e && r(e.callee) === "[object Function]";
@@ -3795,9 +3915,9 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		return i(arguments);
 	}();
 	i.isLegacyArguments = a, t.exports = o ? i : a;
-})), lo = /* @__PURE__ */ t(((e, t) => {
+})), Mo = /* @__PURE__ */ t(((e, t) => {
 	t.exports = {};
-})), uo = /* @__PURE__ */ t(((e, t) => {
+})), No = /* @__PURE__ */ t(((e, t) => {
 	var n = typeof Map == "function" && Map.prototype, r = Object.getOwnPropertyDescriptor && n ? Object.getOwnPropertyDescriptor(Map.prototype, "size") : null, i = n && r && typeof r.get == "function" ? r.get : null, a = n && Map.prototype.forEach, o = typeof Set == "function" && Set.prototype, s = Object.getOwnPropertyDescriptor && o ? Object.getOwnPropertyDescriptor(Set.prototype, "size") : null, c = o && s && typeof s.get == "function" ? s.get : null, l = o && Set.prototype.forEach, u = typeof WeakMap == "function" && WeakMap.prototype ? WeakMap.prototype.has : null, d = typeof WeakSet == "function" && WeakSet.prototype ? WeakSet.prototype.has : null, f = typeof WeakRef == "function" && WeakRef.prototype ? WeakRef.prototype.deref : null, p = Boolean.prototype.valueOf, m = Object.prototype.toString, h = Function.prototype.toString, g = String.prototype.match, _ = String.prototype.slice, v = String.prototype.replace, y = String.prototype.toUpperCase, b = String.prototype.toLowerCase, x = RegExp.prototype.test, S = Array.prototype.concat, C = Array.prototype.join, w = Array.prototype.slice, T = Math.floor, E = typeof BigInt == "function" ? BigInt.prototype.valueOf : null, D = Object.getOwnPropertySymbols, O = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? Symbol.prototype.toString : null, k = typeof Symbol == "function" && typeof Symbol.iterator == "object", A = typeof Symbol == "function" && Symbol.toStringTag ? Symbol.toStringTag : null, ee = Object.prototype.propertyIsEnumerable, j = (typeof Reflect == "function" ? Reflect.getPrototypeOf : Object.getPrototypeOf) || ([].__proto__ === Array.prototype ? function(e) {
 		return e.__proto__;
 	} : null);
@@ -3813,7 +3933,7 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		}
 		return v.call(t, n, "$&_");
 	}
-	var M = lo(), N = M.custom, ne = me(N) ? N : null, re = {
+	var M = Mo(), N = M.custom, ne = me(N) ? N : null, re = {
 		__proto__: null,
 		double: "\"",
 		single: "'"
@@ -4098,8 +4218,8 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		if (typeof D == "function") for (var l = 0; l < a.length; l++) ee.call(e, a[l]) && r.push("[" + t(a[l]) + "]: " + t(e[a[l]], e));
 		return r;
 	}
-})), fo = /* @__PURE__ */ t(((e, t) => {
-	var n = uo(), r = da(), i = function(e, t, n) {
+})), Po = /* @__PURE__ */ t(((e, t) => {
+	var n = No(), r = Na(), i = function(e, t, n) {
 		for (var r = e, i; (i = r.next) != null; r = i) if (i.key === t) return r.next = i.next, n || (i.next = e.next, e.next = i), i;
 	}, a = function(e, t) {
 		if (e) {
@@ -4139,8 +4259,8 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		};
 		return t;
 	};
-})), po = /* @__PURE__ */ t(((e, t) => {
-	var n = Ga(), r = Ya(), i = uo(), a = da(), o = n("%Map%", !0), s = r("Map.prototype.get", !0), c = r("Map.prototype.set", !0), l = r("Map.prototype.has", !0), u = r("Map.prototype.delete", !0), d = r("Map.prototype.size", !0);
+})), Fo = /* @__PURE__ */ t(((e, t) => {
+	var n = mo(), r = vo(), i = No(), a = Na(), o = n("%Map%", !0), s = r("Map.prototype.get", !0), c = r("Map.prototype.set", !0), l = r("Map.prototype.has", !0), u = r("Map.prototype.delete", !0), d = r("Map.prototype.size", !0);
 	t.exports = !!o && function() {
 		var e, t = {
 			assert: function(e) {
@@ -4165,8 +4285,8 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		};
 		return t;
 	};
-})), mo = /* @__PURE__ */ t(((e, t) => {
-	var n = Ga(), r = Ya(), i = uo(), a = po(), o = da(), s = n("%WeakMap%", !0), c = r("WeakMap.prototype.get", !0), l = r("WeakMap.prototype.set", !0), u = r("WeakMap.prototype.has", !0), d = r("WeakMap.prototype.delete", !0);
+})), Io = /* @__PURE__ */ t(((e, t) => {
+	var n = mo(), r = vo(), i = No(), a = Fo(), o = Na(), s = n("%WeakMap%", !0), c = r("WeakMap.prototype.get", !0), l = r("WeakMap.prototype.set", !0), u = r("WeakMap.prototype.has", !0), d = r("WeakMap.prototype.delete", !0);
 	t.exports = s ? function() {
 		var e, t, n = {
 			assert: function(e) {
@@ -4190,8 +4310,8 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		};
 		return n;
 	} : a;
-})), ho = /* @__PURE__ */ t(((e, t) => {
-	var n = da(), r = uo(), i = fo(), a = po(), o = mo() || a || i;
+})), Lo = /* @__PURE__ */ t(((e, t) => {
+	var n = Na(), r = No(), i = Po(), a = Fo(), o = Io() || a || i;
 	t.exports = function() {
 		var e, t = {
 			assert: function(e) {
@@ -4212,8 +4332,8 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		};
 		return t;
 	};
-})), go = /* @__PURE__ */ t(((e, t) => {
-	var n = Wa(), r = ho()(), i = da(), a = {
+})), Ro = /* @__PURE__ */ t(((e, t) => {
+	var n = po(), r = Lo()(), i = Na(), a = {
 		assert: function(e, t) {
 			if (!e || typeof e != "object" && typeof e != "function") throw new i("`O` is not an object");
 			if (typeof t != "string") throw new i("`slot` must be a string");
@@ -4239,8 +4359,8 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		}
 	};
 	Object.freeze && Object.freeze(a), t.exports = a;
-})), _o = /* @__PURE__ */ t(((e, t) => {
-	var n = go(), r = ua(), i = typeof StopIteration == "object" ? StopIteration : null;
+})), zo = /* @__PURE__ */ t(((e, t) => {
+	var n = Ro(), r = Ma(), i = typeof StopIteration == "object" ? StopIteration : null;
 	t.exports = function(e) {
 		if (!i) throw new r("this environment lacks StopIteration");
 		n.set(e, "[[Done]]", !1);
@@ -4261,23 +4381,23 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		} };
 		return n.set(t, "[[Iterator]]", e), t;
 	};
-})), vo = /* @__PURE__ */ t(((e, t) => {
+})), Bo = /* @__PURE__ */ t(((e, t) => {
 	var n = {}.toString;
 	t.exports = Array.isArray || function(e) {
 		return n.call(e) == "[object Array]";
 	};
-})), yo = /* @__PURE__ */ t(((e, t) => {
-	var n = Ya(), r = n("String.prototype.valueOf"), i = function(e) {
+})), Vo = /* @__PURE__ */ t(((e, t) => {
+	var n = vo(), r = n("String.prototype.valueOf"), i = function(e) {
 		try {
 			return r(e), !0;
 		} catch {
 			return !1;
 		}
-	}, a = n("Object.prototype.toString"), o = "[object String]", s = so()();
+	}, a = n("Object.prototype.toString"), o = "[object String]", s = Ao()();
 	t.exports = function(e) {
 		return typeof e == "string" ? !0 : !e || typeof e != "object" ? !1 : s ? i(e) : a(e) === o;
 	};
-})), bo = /* @__PURE__ */ t(((e, t) => {
+})), Ho = /* @__PURE__ */ t(((e, t) => {
 	var n = typeof Map == "function" && Map.prototype ? Map : null, r = typeof Set == "function" && Set.prototype ? Set : null, i;
 	n || (i = function(e) {
 		return !1;
@@ -4297,7 +4417,7 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		} catch {}
 		return !1;
 	};
-})), xo = /* @__PURE__ */ t(((e, t) => {
+})), Uo = /* @__PURE__ */ t(((e, t) => {
 	var n = typeof Map == "function" && Map.prototype ? Map : null, r = typeof Set == "function" && Set.prototype ? Set : null, i;
 	r || (i = function(e) {
 		return !1;
@@ -4317,16 +4437,16 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		} catch {}
 		return !1;
 	};
-})), So = /* @__PURE__ */ t(((e, t) => {
-	var n = co(), r = _o();
-	if (Ma()() || ja()()) {
+})), Wo = /* @__PURE__ */ t(((e, t) => {
+	var n = jo(), r = zo();
+	if (eo()() || $a()()) {
 		var i = Symbol.iterator;
 		t.exports = function(e) {
 			if (e != null && e[i] !== void 0) return e[i]();
 			if (n(e)) return Array.prototype[i].call(e);
 		};
 	} else {
-		var a = vo(), o = yo(), s = Ga(), c = s("%Map%", !0), l = s("%Set%", !0), u = eo(), d = u("Array.prototype.push"), f = u("String.prototype.charCodeAt"), p = u("String.prototype.slice"), m = function(e, t) {
+		var a = Bo(), o = Vo(), s = mo(), c = s("%Map%", !0), l = s("%Set%", !0), u = Co(), d = u("Array.prototype.push"), f = u("String.prototype.charCodeAt"), p = u("String.prototype.slice"), m = function(e, t) {
 			var n = e.length;
 			if (t + 1 >= n) return t + 1;
 			var r = f(e, t);
@@ -4360,7 +4480,7 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 			if (e != null) return g(e, !0);
 		};
 		else {
-			var _ = bo(), v = xo(), y = u("Map.prototype.forEach", !0), b = u("Set.prototype.forEach", !0);
+			var _ = Ho(), v = Uo(), y = u("Map.prototype.forEach", !0), b = u("Set.prototype.forEach", !0);
 			if (typeof process > "u" || !process.versions || !process.versions.node) var x = u("Map.prototype.iterator", !0), S = u("Set.prototype.iterator", !0);
 			var C = u("Map.prototype.@@iterator", !0) || u("Map.prototype._es6-shim iterator_", !0), w = u("Set.prototype.@@iterator", !0) || u("Set.prototype._es6-shim iterator_", !0), T = function(e) {
 				if (_(e)) {
@@ -4389,35 +4509,35 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 			};
 		}
 	}
-})), Co = /* @__PURE__ */ t(((e, t) => {
+})), Go = /* @__PURE__ */ t(((e, t) => {
 	var n = function(e) {
 		return e !== e;
 	};
 	t.exports = function(e, t) {
 		return e === 0 && t === 0 ? 1 / e == 1 / t : !!(e === t || n(e) && n(t));
 	};
-})), wo = /* @__PURE__ */ t(((e, t) => {
-	var n = Co();
+})), Ko = /* @__PURE__ */ t(((e, t) => {
+	var n = Go();
 	t.exports = function() {
 		return typeof Object.is == "function" ? Object.is : n;
 	};
-})), To = /* @__PURE__ */ t(((e, t) => {
-	var n = wo(), r = ga();
+})), qo = /* @__PURE__ */ t(((e, t) => {
+	var n = Ko(), r = Ra();
 	t.exports = function() {
 		var e = n();
 		return r(Object, { is: e }, { is: function() {
 			return Object.is !== e;
 		} }), e;
 	};
-})), Eo = /* @__PURE__ */ t(((e, t) => {
-	var n = ga(), r = Ja(), i = Co(), a = wo(), o = To(), s = r(a(), Object);
+})), Jo = /* @__PURE__ */ t(((e, t) => {
+	var n = Ra(), r = _o(), i = Go(), a = Ko(), o = qo(), s = r(a(), Object);
 	n(s, {
 		getPolyfill: a,
 		implementation: i,
 		shim: o
 	}), t.exports = s;
-})), Do = /* @__PURE__ */ t(((e, t) => {
-	var n = Ja(), r = Ya(), i = Ga()("%ArrayBuffer%", !0), a = r("ArrayBuffer.prototype.byteLength", !0), o = r("Object.prototype.toString"), s = !!i && !a && new i(0).slice, c = !!s && n(s);
+})), Yo = /* @__PURE__ */ t(((e, t) => {
+	var n = _o(), r = vo(), i = mo()("%ArrayBuffer%", !0), a = r("ArrayBuffer.prototype.byteLength", !0), o = r("Object.prototype.toString"), s = !!i && !a && new i(0).slice, c = !!s && n(s);
 	t.exports = a || c ? function(e) {
 		if (!e || typeof e != "object") return !1;
 		try {
@@ -4430,19 +4550,19 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 	} : function(e) {
 		return !1;
 	};
-})), Oo = /* @__PURE__ */ t(((e, t) => {
-	var n = Ya(), r = n("Date.prototype.getDay"), i = function(e) {
+})), Xo = /* @__PURE__ */ t(((e, t) => {
+	var n = vo(), r = n("Date.prototype.getDay"), i = function(e) {
 		try {
 			return r(e), !0;
 		} catch {
 			return !1;
 		}
-	}, a = n("Object.prototype.toString"), o = "[object Date]", s = so()();
+	}, a = n("Object.prototype.toString"), o = "[object Date]", s = Ao()();
 	t.exports = function(e) {
 		return typeof e != "object" || !e ? !1 : s ? i(e) : a(e) === o;
 	};
-})), ko = /* @__PURE__ */ t(((e, t) => {
-	var n = Ya(), r = so()(), i = Wa(), a = pa(), o;
+})), Zo = /* @__PURE__ */ t(((e, t) => {
+	var n = vo(), r = Ao()(), i = po(), a = Fa(), o;
 	if (r) {
 		var s = n("RegExp.prototype.exec"), c = {}, l = function() {
 			throw c;
@@ -4467,8 +4587,8 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		};
 	}
 	t.exports = o;
-})), Ao = /* @__PURE__ */ t(((e, t) => {
-	var n = Ya()("SharedArrayBuffer.prototype.byteLength", !0);
+})), Qo = /* @__PURE__ */ t(((e, t) => {
+	var n = vo()("SharedArrayBuffer.prototype.byteLength", !0);
 	t.exports = n ? function(e) {
 		if (!e || typeof e != "object") return !1;
 		try {
@@ -4479,38 +4599,38 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 	} : function(e) {
 		return !1;
 	};
-})), jo = /* @__PURE__ */ t(((e, t) => {
-	var n = Ya(), r = n("Number.prototype.toString"), i = function(e) {
+})), $o = /* @__PURE__ */ t(((e, t) => {
+	var n = vo(), r = n("Number.prototype.toString"), i = function(e) {
 		try {
 			return r(e), !0;
 		} catch {
 			return !1;
 		}
-	}, a = n("Object.prototype.toString"), o = "[object Number]", s = so()();
+	}, a = n("Object.prototype.toString"), o = "[object Number]", s = Ao()();
 	t.exports = function(e) {
 		return typeof e == "number" ? !0 : !e || typeof e != "object" ? !1 : s ? i(e) : a(e) === o;
 	};
-})), Mo = /* @__PURE__ */ t(((e, t) => {
-	var n = Ya(), r = n("Boolean.prototype.toString"), i = n("Object.prototype.toString"), a = function(e) {
+})), es = /* @__PURE__ */ t(((e, t) => {
+	var n = vo(), r = n("Boolean.prototype.toString"), i = n("Object.prototype.toString"), a = function(e) {
 		try {
 			return r(e), !0;
 		} catch {
 			return !1;
 		}
-	}, o = "[object Boolean]", s = so()();
+	}, o = "[object Boolean]", s = Ao()();
 	t.exports = function(e) {
 		return typeof e == "boolean" ? !0 : typeof e != "object" || !e ? !1 : s ? a(e) : i(e) === o;
 	};
-})), No = /* @__PURE__ */ t(((e, t) => {
-	var n = Ya(), r = ko(), i = n("RegExp.prototype.exec"), a = da();
+})), ts = /* @__PURE__ */ t(((e, t) => {
+	var n = vo(), r = Zo(), i = n("RegExp.prototype.exec"), a = Na();
 	t.exports = function(e) {
 		if (!r(e)) throw new a("`regex` must be a RegExp");
 		return function(t) {
 			return i(e, t) !== null;
 		};
 	};
-})), Po = /* @__PURE__ */ t(((e, t) => {
-	var n = Ya(), r = n("Object.prototype.toString"), i = Ma()(), a = No();
+})), ns = /* @__PURE__ */ t(((e, t) => {
+	var n = vo(), r = n("Object.prototype.toString"), i = eo()(), a = ts();
 	if (i) {
 		var o = n("Symbol.prototype.toString"), s = a(/^Symbol\(.*\)$/), c = function(e) {
 			return typeof e.valueOf() == "symbol" && s(o(e));
@@ -4527,13 +4647,13 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 	} else t.exports = function(e) {
 		return !1;
 	};
-})), Fo = /* @__PURE__ */ t(((e, t) => {
+})), rs = /* @__PURE__ */ t(((e, t) => {
 	var n = typeof BigInt < "u" && BigInt;
 	t.exports = function() {
 		return typeof n == "function" && typeof BigInt == "function" && typeof n(42) == "bigint" && typeof BigInt(42) == "bigint";
 	};
-})), Io = /* @__PURE__ */ t(((e, t) => {
-	if (Fo()()) {
+})), is = /* @__PURE__ */ t(((e, t) => {
+	if (rs()()) {
 		var n = BigInt.prototype.valueOf, r = function(e) {
 			try {
 				return n.call(e), !0;
@@ -4546,8 +4666,8 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 	} else t.exports = function(e) {
 		return !1;
 	};
-})), Lo = /* @__PURE__ */ t(((e, t) => {
-	var n = yo(), r = jo(), i = Mo(), a = Po(), o = Io();
+})), as = /* @__PURE__ */ t(((e, t) => {
+	var n = Vo(), r = $o(), i = es(), a = ns(), o = is();
 	t.exports = function(e) {
 		if (e == null || typeof e != "object" && typeof e != "function") return null;
 		if (n(e)) return "String";
@@ -4556,7 +4676,7 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		if (a(e)) return "Symbol";
 		if (o(e)) return "BigInt";
 	};
-})), Ro = /* @__PURE__ */ t(((e, t) => {
+})), os = /* @__PURE__ */ t(((e, t) => {
 	var n = typeof WeakMap == "function" && WeakMap.prototype ? WeakMap : null, r = typeof WeakSet == "function" && WeakSet.prototype ? WeakSet : null, i;
 	n || (i = function(e) {
 		return !1;
@@ -4576,8 +4696,8 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		} catch {}
 		return !1;
 	};
-})), zo = /* @__PURE__ */ t(((e, t) => {
-	var n = Ga(), r = Ya(), i = n("%WeakSet%", !0), a = r("WeakSet.prototype.has", !0);
+})), ss = /* @__PURE__ */ t(((e, t) => {
+	var n = mo(), r = vo(), i = n("%WeakSet%", !0), a = r("WeakSet.prototype.has", !0);
 	if (a) {
 		var o = r("WeakMap.prototype.has", !0);
 		t.exports = function(e) {
@@ -4595,8 +4715,8 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 	} else t.exports = function(e) {
 		return !1;
 	};
-})), Bo = /* @__PURE__ */ t(((e, t) => {
-	var n = bo(), r = xo(), i = Ro(), a = zo();
+})), cs = /* @__PURE__ */ t(((e, t) => {
+	var n = Ho(), r = Uo(), i = os(), a = ss();
 	t.exports = function(e) {
 		if (e && typeof e == "object") {
 			if (n(e)) return "Map";
@@ -4606,7 +4726,7 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		}
 		return !1;
 	};
-})), Vo = /* @__PURE__ */ t(((e, t) => {
+})), ls = /* @__PURE__ */ t(((e, t) => {
 	var n = Function.prototype.toString, r = typeof Reflect == "object" && Reflect !== null && Reflect.apply, i, a;
 	if (typeof r == "function" && typeof Object.defineProperty == "function") try {
 		i = Object.defineProperty({}, "length", { get: function() {
@@ -4661,8 +4781,8 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		var t = l.call(e);
 		return t !== d && t !== f && !/^\[object HTML/.test(t) ? !1 : c(e);
 	};
-})), Ho = /* @__PURE__ */ t(((e, t) => {
-	var n = Vo(), r = Object.prototype.toString, i = Object.prototype.hasOwnProperty, a = function(e, t, n) {
+})), us = /* @__PURE__ */ t(((e, t) => {
+	var n = ls(), r = Object.prototype.toString, i = Object.prototype.hasOwnProperty, a = function(e, t, n) {
 		for (var r = 0, a = e.length; r < a; r++) i.call(e, r) && (n == null ? t(e[r], r, e) : t.call(n, e[r], r, e));
 	}, o = function(e, t, n) {
 		for (var r = 0, i = e.length; r < i; r++) n == null ? t(e.charAt(r), r, e) : t.call(n, e.charAt(r), r, e);
@@ -4677,7 +4797,7 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		var i;
 		arguments.length >= 3 && (i = r), c(e) ? a(e, t, i) : typeof e == "string" ? o(e, t, i) : s(e, t, i);
 	};
-})), Uo = /* @__PURE__ */ t(((e, t) => {
+})), ds = /* @__PURE__ */ t(((e, t) => {
 	t.exports = [
 		"Float16Array",
 		"Float32Array",
@@ -4692,14 +4812,14 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		"BigInt64Array",
 		"BigUint64Array"
 	];
-})), Wo = /* @__PURE__ */ t(((e, t) => {
-	var n = Uo(), r = typeof globalThis > "u" ? global : globalThis;
+})), fs = /* @__PURE__ */ t(((e, t) => {
+	var n = ds(), r = typeof globalThis > "u" ? global : globalThis;
 	t.exports = function() {
 		for (var e = [], t = 0; t < n.length; t++) typeof r[n[t]] == "function" && (e[e.length] = n[t]);
 		return e;
 	};
-})), Go = /* @__PURE__ */ t(((e, t) => {
-	var n = Ho(), r = Wo(), i = Ja(), a = Ya(), o = pa(), s = Ua(), c = a("Object.prototype.toString"), l = so()(), u = typeof globalThis > "u" ? global : globalThis, d = r(), f = a("String.prototype.slice"), p = a("Array.prototype.indexOf", !0) || function(e, t) {
+})), ps = /* @__PURE__ */ t(((e, t) => {
+	var n = us(), r = fs(), i = _o(), a = vo(), o = Fa(), s = fo(), c = a("Object.prototype.toString"), l = Ao()(), u = typeof globalThis > "u" ? global : globalThis, d = r(), f = a("String.prototype.slice"), p = a("Array.prototype.indexOf", !0) || function(e, t) {
 		for (var n = 0; n < e.length; n += 1) if (e[n] === t) return n;
 		return -1;
 	}, m = { __proto__: null };
@@ -4736,13 +4856,13 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 		}
 		return o ? h(e) : null;
 	};
-})), Ko = /* @__PURE__ */ t(((e, t) => {
-	var n = Ya()("ArrayBuffer.prototype.byteLength", !0), r = Do();
+})), ms = /* @__PURE__ */ t(((e, t) => {
+	var n = vo()("ArrayBuffer.prototype.byteLength", !0), r = Yo();
 	t.exports = function(e) {
 		return r(e) ? n ? n(e) : e.byteLength : NaN;
 	};
-})), qo = /* @__PURE__ */ t(((e, t) => {
-	var n = $a(), r = eo(), i = oo(), a = Ga(), o = So(), s = ho(), c = Eo(), l = co(), u = vo(), d = Do(), f = Oo(), p = ko(), m = Ao(), h = ca(), g = Lo(), _ = Bo(), v = Go(), y = Ko(), b = r("SharedArrayBuffer.prototype.byteLength", !0), x = r("Date.prototype.getTime"), S = Object.getPrototypeOf, C = r("Object.prototype.toString"), w = a("%Set%", !0), T = r("Map.prototype.has", !0), E = r("Map.prototype.get", !0), D = r("Map.prototype.size", !0), O = r("Set.prototype.add", !0), k = r("Set.prototype.delete", !0), A = r("Set.prototype.has", !0), ee = r("Set.prototype.size", !0);
+})), hs = /* @__PURE__ */ t(((e, t) => {
+	var n = So(), r = Co(), i = ko(), a = mo(), o = Wo(), s = Lo(), c = Jo(), l = jo(), u = Bo(), d = Yo(), f = Xo(), p = Zo(), m = Qo(), h = Aa(), g = as(), _ = cs(), v = ps(), y = ms(), b = r("SharedArrayBuffer.prototype.byteLength", !0), x = r("Date.prototype.getTime"), S = Object.getPrototypeOf, C = r("Object.prototype.toString"), w = a("%Set%", !0), T = r("Map.prototype.has", !0), E = r("Map.prototype.get", !0), D = r("Map.prototype.size", !0), O = r("Set.prototype.add", !0), k = r("Set.prototype.delete", !0), A = r("Set.prototype.has", !0), ee = r("Set.prototype.size", !0);
 	function j(e, t, n, r) {
 		for (var i = o(e), a; (a = i.next()) && !a.done;) if (re(t, a.value, n, r)) return k(e, a.value), !0;
 		return !1;
@@ -4849,8 +4969,8 @@ var Ki = nt([]), qi = nt([]), Ji = nt([]), Yi = nt(!0), Xi = nt(!0), Zi = nt([])
 	t.exports = function(e, t, n) {
 		return re(e, t, n, s());
 	};
-})), Jo = /* @__PURE__ */ e(oa()), Yo = /* @__PURE__ */ e(qo());
-function Xo(e, t, n, r) {
+})), gs = /* @__PURE__ */ e(Da()), _s = /* @__PURE__ */ e(hs());
+function vs(e, t, n, r) {
 	function i(e) {
 		return e instanceof n ? e : new n(function(t) {
 			t(e);
@@ -4877,12 +4997,12 @@ function Xo(e, t, n, r) {
 		c((r = r.apply(e, t || [])).next());
 	});
 }
-function Zo(e) {
+function ys(e) {
 	return e && e.__esModule && Object.prototype.hasOwnProperty.call(e, "default") ? e.default : e;
 }
-var Qo, $o;
-function es() {
-	return $o ? Qo : ($o = 1, Qo = function e(t, n) {
+var bs, xs;
+function Ss() {
+	return xs ? bs : (xs = 1, bs = function e(t, n) {
 		if (t === n) return !0;
 		if (t && n && typeof t == "object" && typeof n == "object") {
 			if (t.constructor !== n.constructor) return !1;
@@ -4904,16 +5024,16 @@ function es() {
 			return !0;
 		}
 		return t !== t && n !== n;
-	}, Qo);
+	}, bs);
 }
-var ts = /*@__PURE__*/ Zo(es()), ns = "__googleMapsScriptId", rs;
+var Cs = /*@__PURE__*/ ys(Ss()), ws = "__googleMapsScriptId", Ts;
 (function(e) {
 	e[e.INITIALIZED = 0] = "INITIALIZED", e[e.LOADING = 1] = "LOADING", e[e.SUCCESS = 2] = "SUCCESS", e[e.FAILURE = 3] = "FAILURE";
-})(rs ||= {});
-var is = class e {
-	constructor({ apiKey: t, authReferrerPolicy: n, channel: r, client: i, id: a = ns, language: o, libraries: s = [], mapIds: c, nonce: l, region: u, retries: d = 3, url: f = "https://maps.googleapis.com/maps/api/js", version: p }) {
+})(Ts ||= {});
+var Es = class e {
+	constructor({ apiKey: t, authReferrerPolicy: n, channel: r, client: i, id: a = ws, language: o, libraries: s = [], mapIds: c, nonce: l, region: u, retries: d = 3, url: f = "https://maps.googleapis.com/maps/api/js", version: p }) {
 		if (this.callbacks = [], this.done = !1, this.loading = !1, this.errors = [], this.apiKey = t, this.authReferrerPolicy = n, this.channel = r, this.client = i, this.id = a || "__googleMapsScriptId", this.language = o, this.libraries = s, this.mapIds = c, this.nonce = l, this.region = u, this.retries = d, this.url = f, this.version = p, e.instance) {
-			if (!ts(this.options, e.instance.options)) throw Error(`Loader must not be called again with different options. ${JSON.stringify(this.options)} !== ${JSON.stringify(e.instance.options)}`);
+			if (!Cs(this.options, e.instance.options)) throw Error(`Loader must not be called again with different options. ${JSON.stringify(this.options)} !== ${JSON.stringify(e.instance.options)}`);
 			return e.instance;
 		}
 		e.instance = this;
@@ -4935,7 +5055,7 @@ var is = class e {
 		};
 	}
 	get status() {
-		return this.errors.length ? rs.FAILURE : this.done ? rs.SUCCESS : this.loading ? rs.LOADING : rs.INITIALIZED;
+		return this.errors.length ? Ts.FAILURE : this.done ? Ts.SUCCESS : this.loading ? Ts.LOADING : Ts.INITIALIZED;
 	}
 	get failed() {
 		return this.done && !this.loading && this.errors.length >= this.retries + 1;
@@ -4983,7 +5103,7 @@ var is = class e {
 		Object.keys(e).forEach((t) => !e[t] && delete e[t]), (window == null ? void 0 : window.google)?.maps?.importLibrary || ((e) => {
 			let t, n, r, i = "The Google Maps JavaScript API", a = "google", o = "importLibrary", s = "__ib__", c = document, l = window;
 			l = l[a] || (l[a] = {});
-			let u = l.maps || (l.maps = {}), d = /* @__PURE__ */ new Set(), f = new URLSearchParams(), p = () => t ||= new Promise((o, l) => Xo(this, void 0, void 0, function* () {
+			let u = l.maps || (l.maps = {}), d = /* @__PURE__ */ new Set(), f = new URLSearchParams(), p = () => t ||= new Promise((o, l) => vs(this, void 0, void 0, function* () {
 				for (r in yield n = c.createElement("script"), n.id = this.id, f.set("libraries", [...d] + ""), e) f.set(r.replace(/[A-Z]/g, (e) => "_" + e[0].toLowerCase()), e[r]);
 				f.set("callback", a + ".maps." + s), n.src = this.url + "?" + f, u[s] = o, n.onerror = () => t = l(Error(i + " could not load.")), n.nonce = this.nonce || c.querySelector("script[nonce]")?.nonce || "", c.head.append(n);
 			}));
@@ -5026,10 +5146,10 @@ var is = class e {
 			}
 		}
 	}
-}, as = /* @__PURE__ */ zr("<div class=\"map svelte-1rr4847\"></div>");
-function os(e, t) {
+}, Ds = /* @__PURE__ */ zr("<div class=\"map svelte-1rr4847\"></div>");
+function Os(e, t) {
 	He(t, !0);
-	let n = () => ot(Ji, "$configStore", r), [r, i] = st(), a = /* @__PURE__ */ Yt(void 0), o = new is({
+	let n = () => ot(Ji, "$configStore", r), [r, i] = st(), a = /* @__PURE__ */ Yt(void 0), o = new Es({
 		apiKey: n().googleMapsAPIKey,
 		version: "beta"
 	}), s = /* @__PURE__ */ bt(() => t.mapStyle?.mapId), c = /* @__PURE__ */ bt(() => ({
@@ -5055,7 +5175,7 @@ function os(e, t) {
 		zoom: aa(e.zoom, 2)
 	}), d = () => {
 		let e = u(l()), t = u(K(c));
-		return !(0, Yo.default)(e, t);
+		return !(0, _s.default)(e, t);
 	};
 	Ui(() => {
 		o.load().then(() => {
@@ -5072,7 +5192,7 @@ function os(e, t) {
 				fullscreenControl: !1,
 				zoomControl: !1
 			}), !0), t.onMapMount(K(a));
-			let n = (0, Jo.default)(() => {
+			let n = (0, gs.default)(() => {
 				document.getElementById(t.id)?.querySelector("div[tabindex=\"0\"]")?.focus();
 			}, 250);
 			document.getElementById(t.id).addEventListener("wheel", n, { passive: !0 }), K(a).addListener("center_changed", e), K(a).addListener("heading_changed", e), K(a).addListener("tilt_changed", e), K(a).addListener("zoom_changed", e);
@@ -5099,13 +5219,13 @@ function os(e, t) {
 		});
 		return n.observe(e), () => n.disconnect();
 	});
-	var f = as();
+	var f = Ds();
 	Pn(() => Oi(f, "id", t.id)), Ur(e, f), Ue(), i();
 }
 //#endregion
 //#region src/components/GlMap.svelte
-var ss = /* @__PURE__ */ zr("<div class=\"map svelte-xrg3bf\"></div>");
-function cs(t, n) {
+var ks = /* @__PURE__ */ zr("<div class=\"map svelte-xrg3bf\"></div>");
+function As(t, n) {
 	He(n, !0);
 	let r = () => ot(Ji, "$configStore", i), [i, a] = st(), o, s = /* @__PURE__ */ Yt(void 0), c = (e) => {
 		e.getRTLTextPluginStatus() === "unavailable" && (n.mapRenderer === "maplibre-gl" ? e.setRTLTextPlugin("https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js") : e.setRTLTextPlugin("https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.0/mapbox-gl-rtl-text.js"));
@@ -5127,7 +5247,7 @@ function cs(t, n) {
 		center: K(s).getCenter(),
 		pitch: K(s).getPitch(),
 		zoom: K(s).getZoom()
-	}), m = (e) => !(0, Yo.default)(p(), e);
+	}), m = (e) => !(0, _s.default)(p(), e);
 	Ui(() => {
 		let e;
 		return (async () => {
@@ -5138,7 +5258,7 @@ function cs(t, n) {
 				preserveDrawingBuffer: !0,
 				...K(f)
 			}), !0), n.onMapMount(K(s));
-			let t = (0, Jo.default)(() => {
+			let t = (0, gs.default)(() => {
 				document.getElementById(n.id)?.querySelector("canvas[tabindex=\"0\"]")?.focus();
 			}, 250);
 			document.getElementById(n.id)?.addEventListener("wheel", t, { passive: !0 });
@@ -5165,12 +5285,12 @@ function cs(t, n) {
 	}), Tn(() => {
 		K(s) && (K(s).showTileBoundaries = n.showBoundaries);
 	});
-	var h = ss();
+	var h = ks();
 	Pn(() => Oi(h, "id", n.id)), Ur(t, h), Ue(), a();
 }
 //#endregion
 //#region node_modules/leaflet/dist/leaflet.css
-var ls = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
+var js = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 	(function(n, r) {
 		typeof e == "object" && t !== void 0 ? r(e) : typeof define == "function" && define.amd ? define(["exports"], r) : (n = typeof globalThis < "u" ? globalThis : n || self, r(n.leaflet = {}));
 	})(e, (function(e) {
@@ -9746,8 +9866,8 @@ var ls = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 			return window.L = ci, this;
 		}, window.L = e;
 	}));
-})))()), us = /* @__PURE__ */ zr("<div class=\"map svelte-q84nf3\"></div>");
-function ds(e, t) {
+})))()), Ms = /* @__PURE__ */ zr("<div class=\"map svelte-q84nf3\"></div>");
+function Ns(e, t) {
 	He(t, !0);
 	let n = /* @__PURE__ */ Yt(void 0), r, i = /* @__PURE__ */ bt(() => t.mapStyle.url), a = /* @__PURE__ */ bt(() => ({
 		center: t.center,
@@ -9755,14 +9875,14 @@ function ds(e, t) {
 	})), o = () => ({
 		center: K(n).getCenter(),
 		zoom: K(n).getZoom() - 1
-	}), s = (e) => !(0, Yo.default)(o(), e);
+	}), s = (e) => !(0, _s.default)(o(), e);
 	Ui(() => {
-		B(n, ls.map(t.id, {
+		B(n, js.map(t.id, {
 			zoomControl: !1,
 			zoomDelta: .25,
 			zoomSnap: 0
 		}).setView(K(a).center, K(a).zoom + 1), !0), K(n).attributionControl.setPrefix(""), t.onMapMount(K(n));
-		let e = (0, Jo.default)(() => {
+		let e = (0, gs.default)(() => {
 			document.getElementById(t.id)?.focus();
 		}, 250);
 		document.getElementById(t.id).addEventListener("wheel", e, { passive: !0 });
@@ -9777,7 +9897,7 @@ function ds(e, t) {
 	}), Tn(() => {
 		K(n) && s(K(a)) && K(n).setView(K(a).center, K(a).zoom + 1, { animate: !1 });
 	}), Tn(() => {
-		K(n) && (r && r.remove(), r = t.overrideLayer ?? ls.tileLayer(K(i), { detectRetina: !0 }), r.addTo(K(n)));
+		K(n) && (r && r.remove(), r = t.overrideLayer ?? js.tileLayer(K(i), { detectRetina: !0 }), r.addTo(K(n)));
 	}), Tn(() => {
 		if (!K(n) || !t.numberOfMaps) return;
 		let e;
@@ -9788,12 +9908,12 @@ function ds(e, t) {
 			}), e.observe(r));
 		}), () => e?.disconnect();
 	});
-	var c = us();
+	var c = Ms();
 	Pn(() => Oi(c, "id", t.id)), Ur(e, c), Ue();
 }
 //#endregion
 //#region src/components/TangramMap.svelte
-var fs = (/* @__PURE__ */ t(((e, t) => {
+var Ps = (/* @__PURE__ */ t(((e, t) => {
 	(function(n, r) {
 		typeof e == "object" && t !== void 0 ? t.exports = r() : typeof define == "function" && define.amd ? define(r) : (n ||= self, n.Tangram = r());
 	})(e, (function() {
@@ -27499,22 +27619,22 @@ while (r === o[++i] && r === o[++i] && r === o[++i] && r === o[++i] && r === o[+
 		} catch {}
 		return n;
 	}));
-})))(), ps = /* @__PURE__ */ new Set([
+})))(), Fs = /* @__PURE__ */ new Set([
 	"$$slots",
 	"$$events",
 	"$$legacy",
 	"mapStyle"
 ]);
-function ms(e, t) {
+function Is(e, t) {
 	He(t, !0);
-	let n = /* @__PURE__ */ Q(t, ps), r = /* @__PURE__ */ bt(() => t.mapStyle.url), i = /* @__PURE__ */ Yt(void 0);
+	let n = /* @__PURE__ */ Q(t, Fs), r = /* @__PURE__ */ bt(() => t.mapStyle.url), i = /* @__PURE__ */ Yt(void 0);
 	Tn(() => {
 		let e = K(r), t = br(() => K(i));
-		(t == null || t.options.scene !== e) && B(i, (0, fs.leafletLayer)({
+		(t == null || t.options.scene !== e) && B(i, (0, Ps.leafletLayer)({
 			scene: e,
 			webGLContextOptions: { preserveDrawingBuffer: !0 }
 		}), !0);
-	}), ds(e, Vi({
+	}), Ns(e, Vi({
 		get mapStyle() {
 			return t.mapStyle;
 		},
@@ -27524,15 +27644,15 @@ function ms(e, t) {
 	}, () => n)), Ue();
 }
 //#endregion
-//#region src/branch-utils.js
-var hs = "{branch}", gs = "{style}", _s = (e, t, n) => e.replace(hs, t).replace(gs, n), vs = "custom", ys = (e) => `preset:${e}`, bs = (e, t) => `branch:${e}:${t}`, xs = ({ stylePresets: e = [], branchPatterns: t = [] }) => {
+//#region src/style-options.js
+var Ls = "custom", Rs = (e) => `preset:${e}`, zs = (e, t) => `branch:${e}:${t}`, Bs = ({ stylePresets: e = [], branchPatterns: t = [] }) => {
 	let n = /* @__PURE__ */ new Map(), r = [];
 	if (e.length) {
 		let t = e.map((e) => {
 			if (e.type === "sublist") return {
 				label: e.name,
 				sublist: (e.presets ?? []).map((e) => {
-					let t = ys(e.id);
+					let t = Rs(e.id);
 					return n.set(t, {
 						...e,
 						key: t,
@@ -27543,7 +27663,7 @@ var hs = "{branch}", gs = "{style}", _s = (e, t, n) => e.replace(hs, t).replace(
 					};
 				})
 			};
-			let t = ys(e.id);
+			let t = Rs(e.id);
 			return n.set(t, {
 				...e,
 				key: t,
@@ -27564,7 +27684,7 @@ var hs = "{branch}", gs = "{style}", _s = (e, t, n) => e.replace(hs, t).replace(
 		return {
 			label: i,
 			sublist: e.styles.map((t) => {
-				let a = bs(r, t);
+				let a = zs(r, t);
 				return n.set(a, {
 					key: a,
 					kind: "branch",
@@ -27584,8 +27704,8 @@ var hs = "{branch}", gs = "{style}", _s = (e, t, n) => e.replace(hs, t).replace(
 	return i.length && r.push({
 		header: "Styles on a branch",
 		items: i
-	}), n.set(vs, {
-		key: vs,
+	}), n.set(Ls, {
+		key: Ls,
 		kind: "custom",
 		name: "Fetch URL at...",
 		type: "mapbox-gl",
@@ -27593,17 +27713,17 @@ var hs = "{branch}", gs = "{style}", _s = (e, t, n) => e.replace(hs, t).replace(
 	}), r.push({
 		header: "Custom",
 		items: [{
-			key: vs,
+			key: Ls,
 			label: "Fetch URL at..."
 		}]
 	}), {
 		groups: r,
 		options: n
 	};
-}, Ss = (e, t) => e.kind === "preset" ? t.url === e.url && t.type === e.type : e.kind === "branch" && !!t.branch && _s(e.pattern, t.branch, e.branchStyle) === t.url && e.type === t.type, Cs = ({ options: e, map: t }) => {
-	for (let n of e.values()) if (Ss(n, t)) return n.key;
-	return vs;
-}, ws = ({ option: e, map: t }) => e.kind === "branch" ? {
+}, Vs = (e, t) => e.kind === "preset" ? t.url === e.url && t.type === e.type : e.kind === "branch" && !!t.branch && sa(e.pattern, t.branch, e.branchStyle) === t.url && e.type === t.type, Hs = ({ options: e, map: t }) => {
+	for (let n of e.values()) if (Vs(n, t)) return n.key;
+	return Ls;
+}, Us = ({ option: e, map: t }) => e.kind === "branch" ? {
 	...e,
 	defaultText: t?.branch ?? ""
 } : e.kind === "custom" ? {
@@ -27613,11 +27733,11 @@ var hs = "{branch}", gs = "{style}", _s = (e, t, n) => e.replace(hs, t).replace(
 } : {
 	...e,
 	defaultText: ""
-}, Ts = (e) => typeof e == "string" && e.startsWith("mapbox://"), Es = (e, t) => {
-	if (!Ts(e) || !t) return e;
+}, Ws = (e) => typeof e == "string" && e.startsWith("mapbox://"), Gs = (e, t) => {
+	if (!Ws(e) || !t) return e;
 	let [, , , n, r] = e.split("/");
 	return `https://api.mapbox.com/styles/v1/${n}/${r}?title=true&access_token=${t}`;
-}, Ds = (e) => {
+}, Ks = (e) => {
 	if (!e) return !1;
 	let t;
 	try {
@@ -27626,18 +27746,18 @@ var hs = "{branch}", gs = "{style}", _s = (e, t, n) => e.replace(hs, t).replace(
 		return !1;
 	}
 	return t.host === "api.maptiler.com" && !t.searchParams.has("key");
-}, Os = (e, t) => {
+}, qs = (e, t) => {
 	if (!t) return e;
 	let n = new URL(e);
-	return t && Ds(e) && n.searchParams.append("key", t), n.toString();
-}, ks = (e, t) => {
+	return t && Ks(e) && n.searchParams.append("key", t), n.toString();
+}, Js = (e, t) => {
 	let { mapboxKey: n, maptilerKey: r } = t, i = e;
-	return Ts(e) && n ? i = Es(i, n) : Ds(e) && r && (i = Os(i, r)), i;
-}, As = {
+	return Ws(e) && n ? i = Gs(i, n) : Ks(e) && r && (i = qs(i, r)), i;
+}, Ys = {
 	name: "Mapbox GL JS",
 	value: "mapbox-gl"
-}, js = [
-	As,
+}, Xs = [
+	Ys,
 	{
 		name: "Maplibre GL JS",
 		value: "maplibre-gl"
@@ -27646,7 +27766,7 @@ var hs = "{branch}", gs = "{style}", _s = (e, t, n) => e.replace(hs, t).replace(
 		name: "MapTiler SDK",
 		value: "maptiler-sdk"
 	}
-], Ms = {
+], Zs = {
 	google: [{
 		name: "Google Maps",
 		value: "google"
@@ -27659,40 +27779,40 @@ var hs = "{branch}", gs = "{style}", _s = (e, t, n) => e.replace(hs, t).replace(
 		name: "Tangram (Leaflet)",
 		value: "tangram"
 	}],
-	"vector-gl": js,
-	"mapbox-gl": js,
-	"maplibre-gl": js,
-	"maptiler-sdk": js
-}, Ns = (e, t) => {
+	"vector-gl": Xs,
+	"mapbox-gl": Xs,
+	"maplibre-gl": Xs,
+	"maptiler-sdk": Xs
+}, Qs = (e, t) => {
 	let n = !1;
-	return e.type === "mapbox-gl" ? (e.url && Ts(e.url) ? n = !0 : t && (n = Object.values(t).some((e) => Ts(e?.url) || (e?.tiles ?? []).some((e) => Ts(e)))), n ? [As] : Ms[e.type]) : Ms[e.type];
-}, Ps = 3e3, Fs = /^(?:[a-z+]+:)?\/\//i, Is = (e) => e ? e.includes("localhost") || !Fs.test(e) : !1, Ls = (e, { isStillActive: t, fetchStyle: n, onChange: r, onError: i }) => {
-	t(e) && Is(e) && setTimeout(async () => {
+	return e.type === "mapbox-gl" ? (e.url && Ws(e.url) ? n = !0 : t && (n = Object.values(t).some((e) => Ws(e?.url) || (e?.tiles ?? []).some((e) => Ws(e)))), n ? [Ys] : Zs[e.type]) : Zs[e.type];
+}, $s = 3e3, ec = /^(?:[a-z+]+:)?\/\//i, tc = (e) => e ? e.includes("localhost") || !ec.test(e) : !1, nc = (e, { isStillActive: t, fetchStyle: n, onChange: r, onError: i }) => {
+	t(e) && tc(e) && setTimeout(async () => {
 		if (t(e)) {
 			try {
 				r(await n(e));
 			} catch (e) {
 				i?.(e);
 			}
-			Ls(e, {
+			nc(e, {
 				isStillActive: t,
 				fetchStyle: n,
 				onChange: r,
 				onError: i
 			});
 		}
-	}, Ps);
-}, Rs, zs;
-Ji.subscribe((e) => ({mapboxGlAccessToken: Rs, maptilerApiKey: zs} = e));
-var Bs = async (e) => {
-	let t = Ts(e), n = e;
+	}, $s);
+}, rc, ic;
+Ji.subscribe((e) => ({mapboxGlAccessToken: rc, maptilerApiKey: ic} = e));
+var ac = async (e) => {
+	let t = Ws(e), n = e;
 	try {
 		n = new URL(e);
 		let t = {
-			mapboxKey: Rs,
-			maptilerKey: zs
+			mapboxKey: rc,
+			maptilerKey: ic
 		};
-		n = ks(n.toString(), t);
+		n = Js(n.toString(), t);
 	} catch {}
 	let r;
 	try {
@@ -27707,9 +27827,9 @@ var Bs = async (e) => {
 	let i = await r.json();
 	if (t && i.message) throw { message: i.message };
 	return i;
-}, Vs = /* @__PURE__ */ zr("<div role=\"button\" tabindex=\"0\"><div class=\"caret-container svelte-cs3inr\"><div></div></div> <div class=\"label-container svelte-cs3inr\"><div class=\"label svelte-cs3inr\"> </div></div></div>");
-function Hs(e, t) {
-	var n = Vs(), r = V(n), i = fn(r), a = pn(r, 2), o = fn(V(a), !0);
+}, oc = /* @__PURE__ */ zr("<div role=\"button\" tabindex=\"0\"><div class=\"caret-container svelte-cs3inr\"><div></div></div> <div class=\"label-container svelte-cs3inr\"><div class=\"label svelte-cs3inr\"> </div></div></div>");
+function sc(e, t) {
+	var n = oc(), r = V(n), i = fn(r), a = pn(r, 2), o = fn(V(a), !0);
 	I(a), I(n), Pn(() => {
 		bi(n, 1, `toggle ${t.topLevelOpen && (t.direction === "up" ? "active-toggle-top" : "active-toggle-bottom")}`, "svelte-cs3inr"), bi(i, 1, mi(t.topLevelOpen ? `caret-${t.direction}` : "caret-right"), "svelte-cs3inr"), Jr(o, t.activeLabel ?? t.placeholder);
 	}), Ar("click", n, function(...e) {
@@ -27719,8 +27839,8 @@ function Hs(e, t) {
 jr(["click", "keydown"]);
 //#endregion
 //#region src/components/inputs/Dropdown/Dropdown.svelte
-var Us = /* @__PURE__ */ zr("<div class=\"header svelte-1bid2en\"><div class=\"label-container svelte-1bid2en\"><div class=\"label svelte-1bid2en\"> </div></div></div>"), Ws = /* @__PURE__ */ zr("<div role=\"button\" tabindex=\"0\"><div class=\"label-container svelte-1bid2en\"><div class=\"label svelte-1bid2en\"> </div></div></div>"), Gs = /* @__PURE__ */ zr("<div class=\"submenu svelte-1bid2en\"></div>"), Ks = /* @__PURE__ */ zr("<div class=\"dropdown svelte-1bid2en\"><div role=\"button\" tabindex=\"0\"><div class=\"caret-container svelte-1bid2en\"><div></div></div> <div class=\"label-container svelte-1bid2en\"><div class=\"label svelte-1bid2en\"> </div></div></div> <!></div>"), qs = /* @__PURE__ */ zr("<div role=\"button\" tabindex=\"0\"><div class=\"caret-container svelte-1bid2en\"></div> <div class=\"label-container svelte-1bid2en\"><div class=\"label svelte-1bid2en\"> </div></div></div>"), Js = /* @__PURE__ */ zr("<div></div>"), Ys = /* @__PURE__ */ zr("<div class=\"dropdown svelte-1bid2en\"><!> <!> <!></div>");
-function Xs(e, t) {
+var cc = /* @__PURE__ */ zr("<div class=\"header svelte-1bid2en\"><div class=\"label-container svelte-1bid2en\"><div class=\"label svelte-1bid2en\"> </div></div></div>"), lc = /* @__PURE__ */ zr("<div role=\"button\" tabindex=\"0\"><div class=\"label-container svelte-1bid2en\"><div class=\"label svelte-1bid2en\"> </div></div></div>"), uc = /* @__PURE__ */ zr("<div class=\"submenu svelte-1bid2en\"></div>"), dc = /* @__PURE__ */ zr("<div class=\"dropdown svelte-1bid2en\"><div role=\"button\" tabindex=\"0\"><div class=\"caret-container svelte-1bid2en\"><div></div></div> <div class=\"label-container svelte-1bid2en\"><div class=\"label svelte-1bid2en\"> </div></div></div> <!></div>"), fc = /* @__PURE__ */ zr("<div role=\"button\" tabindex=\"0\"><div class=\"caret-container svelte-1bid2en\"></div> <div class=\"label-container svelte-1bid2en\"><div class=\"label svelte-1bid2en\"> </div></div></div>"), pc = /* @__PURE__ */ zr("<div></div>"), mc = /* @__PURE__ */ zr("<div class=\"dropdown svelte-1bid2en\"><!> <!> <!></div>");
+function hc(e, t) {
 	He(t, !0);
 	let n = Hi(t, "direction", 3, "up"), r = Hi(t, "placeholder", 3, ""), i = /* @__PURE__ */ bt(() => t.options.map((e, t) => {
 		let n = {
@@ -27742,8 +27862,8 @@ function Xs(e, t) {
 	}, l = /* @__PURE__ */ bt(() => K(i).filter((e) => !e?.header).map((e) => e?.options ? e?.options : e).flat().find((e) => e.value === t.activeValue)?.label), u = (e) => {
 		t.onSelect(e), B(a, !1), B(o, null);
 	};
-	var d = Ys(), f = V(d), p = (e) => {
-		Hs(e, {
+	var d = mc(), f = V(d), p = (e) => {
+		sc(e, {
 			openTopLevel: s,
 			get topLevelOpen() {
 				return K(a);
@@ -27763,18 +27883,18 @@ function Xs(e, t) {
 		n() === "down" && e(p);
 	});
 	var m = pn(f, 2), h = (e) => {
-		var r = Js();
+		var r = pc();
 		ai(r, 21, () => K(i), ni, (e, n) => {
 			var r = q(), i = dn(r), a = (e) => {
-				var t = Us(), r = V(t), i = fn(V(r), !0);
+				var t = cc(), r = V(t), i = fn(V(r), !0);
 				I(r), I(t), Pn(() => Jr(i, K(n)?.header)), Ur(e, t);
 			}, s = (e) => {
-				var r = Ks(), i = V(r), a = V(i), s = fn(a), l = pn(a, 2), d = fn(V(l), !0);
+				var r = dc(), i = V(r), a = V(i), s = fn(a), l = pn(a, 2), d = fn(V(l), !0);
 				I(l), I(i);
 				var f = pn(i, 2), p = (e) => {
-					var r = Gs();
+					var r = uc();
 					ai(r, 21, () => K(n)?.options, ni, (e, n) => {
-						var r = Ws(), i = V(r), a = fn(V(i), !0);
+						var r = lc(), i = V(r), a = fn(V(i), !0);
 						I(i), I(r), Pn(() => {
 							bi(r, 1, `menu-item ${t.activeValue === K(n).value && "active"}`, "svelte-1bid2en"), Oi(r, "title", K(n).label), Jr(a, K(n).label);
 						}), Ar("click", r, () => u(K(n).value)), Ar("keydown", r, () => !1), Ur(e, r);
@@ -27786,7 +27906,7 @@ function Xs(e, t) {
 					bi(i, 1, `menu-item ${t.activeValue === K(n).value && "active"}`, "svelte-1bid2en"), Oi(i, "title", K(n).label), bi(s, 1, mi(K(o) === K(n).id ? "caret-down" : "caret-right"), "svelte-1bid2en"), Jr(d, K(n).label);
 				}), Ar("click", i, () => c(K(n).id)), Ar("keydown", i, () => !1), Ur(e, r);
 			}, l = (e) => {
-				var r = qs(), i = pn(V(r), 2), a = fn(V(i), !0);
+				var r = fc(), i = pn(V(r), 2), a = fn(V(i), !0);
 				I(i), I(r), Pn(() => {
 					bi(r, 1, `menu-item ${t.activeValue === K(n).value && "active"}`, "svelte-1bid2en"), Oi(r, "title", K(n).label), Jr(a, K(n).label);
 				}), Ar("click", r, () => u(K(n).value)), Ar("keydown", r, () => !1), Ur(e, r);
@@ -27800,7 +27920,7 @@ function Xs(e, t) {
 		K(a) && e(h);
 	});
 	var g = pn(m, 2), _ = (e) => {
-		Hs(e, {
+		sc(e, {
 			openTopLevel: s,
 			get topLevelOpen() {
 				return K(a);
@@ -27823,8 +27943,8 @@ function Xs(e, t) {
 jr(["click", "keydown"]);
 //#endregion
 //#region src/components/inputs/StylesDropdown.svelte
-var Zs = /* @__PURE__ */ zr("<div><!></div>");
-function Qs(e, t) {
+var gc = /* @__PURE__ */ zr("<div><!></div>");
+function _c(e, t) {
 	He(t, !0);
 	let n = /* @__PURE__ */ Yt("up");
 	Ui(() => {
@@ -27841,8 +27961,8 @@ function Qs(e, t) {
 		label: e.label,
 		value: e.key
 	})]));
-	var i = Zs();
-	Xs(V(i), {
+	var i = gc();
+	hc(V(i), {
 		get options() {
 			return K(r);
 		},
@@ -27859,7 +27979,7 @@ function Qs(e, t) {
 }
 //#endregion
 //#region src/shortcut.js
-var $s = (e, t) => {
+var vc = (e, t) => {
 	let n, r = () => window.removeEventListener("keydown", n), i = () => {
 		r(), t && (n = (n) => {
 			!!t.alt == n.altKey && !!t.shift == n.shiftKey && !!t.control == (n.ctrlKey || n.metaKey) && t.code == n.code && (n.preventDefault(), t.callback ? t.callback() : e.click());
@@ -27869,22 +27989,22 @@ var $s = (e, t) => {
 		update: i,
 		destroy: r
 	};
-}, ec = /* @__PURE__ */ zr("<div class=\"error-message svelte-1go2blu\"> </div>"), tc = /* @__PURE__ */ zr("<div class=\"custom-input svelte-1go2blu\"><input/> <button>Submit</button></div> <!>", 1);
-function nc(e, t) {
+}, yc = /* @__PURE__ */ zr("<div class=\"error-message svelte-1go2blu\"> </div>"), bc = /* @__PURE__ */ zr("<div class=\"custom-input svelte-1go2blu\"><input/> <button>Submit</button></div> <!>", 1);
+function xc(e, t) {
 	He(t, !0);
 	let n = /* @__PURE__ */ Yt(tn(t.option.defaultText)), r = /* @__PURE__ */ Yt(!1), i = /* @__PURE__ */ Yt(null), a = t.option.key;
 	Tn(() => {
 		t.option.key !== a && (a = t.option.key, B(n, t.option.defaultText, !0), B(i, null));
 	});
 	let o = async () => {
-		let e = t.option.kind === "branch" ? _s(t.option.pattern, K(n), t.option.branchStyle) : K(n);
+		let e = t.option.kind === "branch" ? sa(t.option.pattern, K(n), t.option.branchStyle) : K(n);
 		if (t.option.url !== e) {
 			if (e.includes("localhost")) {
 				let [t, n] = e.split("localhost");
 				t || (e = `http://localhost${n}`);
 			}
 			try {
-				let r = await Bs(e);
+				let r = await ac(e);
 				t.onApply({
 					...t.option,
 					url: e,
@@ -27900,16 +28020,16 @@ function nc(e, t) {
 	}, c = () => B(r, !0), l = () => {
 		B(r, !1), K(i) && B(n, t.option.defaultText, !0);
 	};
-	var u = tc(), d = dn(u), f = V(d);
+	var u = bc(), d = dn(u), f = V(d);
 	Ei(f);
 	let p;
 	var m = pn(f, 2);
-	di(m, (e, t) => $s?.(e, t), () => ({
+	di(m, (e, t) => vc?.(e, t), () => ({
 		code: "Enter",
 		callback: s
 	})), I(d);
 	var h = pn(d, 2), g = (e) => {
-		var t = ec(), n = fn(t, !0);
+		var t = yc(), n = fn(t, !0);
 		Pn(() => Jr(n, K(i))), Ur(e, t);
 	};
 	$r(h, (e) => {
@@ -27921,16 +28041,16 @@ function nc(e, t) {
 jr(["input", "click"]);
 //#endregion
 //#region src/components/RendererPicker.svelte
-var rc = /* @__PURE__ */ zr("<div class=\"renderer-control svelte-1xoctvr\"><span class=\"nowrap svelte-1xoctvr\">Rendered with</span> <!></div>");
-function ic(e, t) {
+var Sc = /* @__PURE__ */ zr("<div class=\"renderer-control svelte-1xoctvr\"><span class=\"nowrap svelte-1xoctvr\">Rendered with</span> <!></div>");
+function Cc(e, t) {
 	He(t, !0);
-	var n = rc(), r = pn(V(n), 2);
+	var n = Sc(), r = pn(V(n), 2);
 	{
 		let e = /* @__PURE__ */ bt(() => t.rendererOptions.map((e) => ({
 			label: e.name,
 			value: e.value
 		})));
-		Xs(r, {
+		hc(r, {
 			get options() {
 				return K(e);
 			},
@@ -27947,8 +28067,8 @@ function ic(e, t) {
 }
 //#endregion
 //#region src/components/MapStyleInput.svelte
-var ac = /* @__PURE__ */ zr("<div class=\"error-message svelte-963llt\"> </div>"), oc = /* @__PURE__ */ zr("<div class=\"map-style-input svelte-963llt\"><!> <!> <!> <!></div>");
-function sc(e, t) {
+var wc = /* @__PURE__ */ zr("<div class=\"error-message svelte-963llt\"> </div>"), Tc = /* @__PURE__ */ zr("<div class=\"map-style-input svelte-963llt\"><!> <!> <!> <!></div>");
+function Ec(e, t) {
 	He(t, !0);
 	let n = /* @__PURE__ */ Yt(null), r = t.selectedOption.key;
 	Tn(() => {
@@ -27957,7 +28077,7 @@ function sc(e, t) {
 				t.onApply({ ...t.selectedOption });
 				return;
 			}
-			Bs(t.selectedOption.url).then((e) => t.onApply({
+			ac(t.selectedOption.url).then((e) => t.onApply({
 				...t.selectedOption,
 				style: e
 			})).catch((e) => {
@@ -27965,8 +28085,8 @@ function sc(e, t) {
 			});
 		}
 	});
-	var i = oc(), a = V(i);
-	Qs(a, {
+	var i = Tc(), a = V(i);
+	_c(a, {
 		get groups() {
 			return t.groups;
 		},
@@ -27981,7 +28101,7 @@ function sc(e, t) {
 		}
 	});
 	var o = pn(a, 2), s = (e) => {
-		nc(e, {
+		xc(e, {
 			get option() {
 				return t.selectedOption;
 			},
@@ -27994,12 +28114,12 @@ function sc(e, t) {
 		(t.selectedOption.kind === "branch" || t.selectedOption.kind === "custom") && e(s);
 	});
 	var c = pn(o, 2), l = (e) => {
-		var t = ac(), r = fn(t, !0);
+		var t = wc(), r = fn(t, !0);
 		Pn(() => Jr(r, K(n))), Ur(e, t);
 	};
 	$r(c, (e) => {
 		K(n) && e(l);
-	}), ic(pn(c, 2), {
+	}), Cc(pn(c, 2), {
 		get rendererOptions() {
 			return t.rendererOptions;
 		},
@@ -28013,13 +28133,13 @@ function sc(e, t) {
 }
 //#endregion
 //#region src/components/MapStyleInputWrapper.svelte
-var cc = /* @__PURE__ */ zr("<div class=\"map-style-input-wrapper svelte-1lewsrk\"><!></div>");
-function lc(e, t) {
+var Dc = /* @__PURE__ */ zr("<div class=\"map-style-input-wrapper svelte-1lewsrk\"><!></div>");
+function Oc(e, t) {
 	He(t, !0);
 	let n = () => ot(Ki, "$mapsStore", a), r = () => ot(qi, "$stylePresetsStore", a), i = () => ot(Ji, "$configStore", a), [a, o] = st(), s = /* @__PURE__ */ bt(() => n().find((e) => e.index === t.index)), c = (e) => {
-		Ls(e, {
+		nc(e, {
 			isStillActive: (e) => K(s)?.url === e,
-			fetchStyle: Bs,
+			fetchStyle: ac,
 			onChange: (e) => v({
 				style: e,
 				isPolling: !0
@@ -28030,10 +28150,10 @@ function lc(e, t) {
 	Ui(() => {
 		K(s)?.url && c(K(s).url);
 	});
-	let l = /* @__PURE__ */ bt(() => xs({
+	let l = /* @__PURE__ */ bt(() => Bs({
 		stylePresets: r(),
 		branchPatterns: i().branchPatterns
-	})), u = /* @__PURE__ */ bt(() => K(l).groups), d = /* @__PURE__ */ bt(() => K(l).options), f = /* @__PURE__ */ Yt(tn(K(s) ? Cs({
+	})), u = /* @__PURE__ */ bt(() => K(l).groups), d = /* @__PURE__ */ bt(() => K(l).options), f = /* @__PURE__ */ Yt(tn(K(s) ? Hs({
 		options: K(d),
 		map: K(s)
 	}) : "custom"));
@@ -28041,15 +28161,15 @@ function lc(e, t) {
 		let e = K(s);
 		if (!e) return;
 		let t = br(() => K(d).get(K(f)));
-		t && t.kind === "preset" && (e.type !== t.type || e.url !== t.url) && B(f, Cs({
+		t && t.kind === "preset" && (e.type !== t.type || e.url !== t.url) && B(f, Hs({
 			options: K(d),
 			map: e
 		}), !0);
 	});
-	let p = /* @__PURE__ */ bt(() => ws({
+	let p = /* @__PURE__ */ bt(() => Us({
 		option: K(d).get(K(f)),
 		map: K(s)
-	})), m = /* @__PURE__ */ bt(() => Ns(K(p), t.stylesheet?.sources)), h = /* @__PURE__ */ bt(() => {
+	})), m = /* @__PURE__ */ bt(() => Qs(K(p), t.stylesheet?.sources)), h = /* @__PURE__ */ bt(() => {
 		let e = K(m).map((e) => e.value);
 		return K(s)?.renderer && e.includes(K(s).renderer) ? K(s).renderer : e.includes(K(p).type) ? K(p).type : e[0];
 	}), g = (e) => {
@@ -28076,8 +28196,8 @@ function lc(e, t) {
 		};
 		Ki.update((e) => e.map((e, n) => n === t.index ? o : e)), c(o.url);
 	};
-	var y = cc(), b = V(y), x = (e) => {
-		sc(e, {
+	var y = Dc(), b = V(y), x = (e) => {
+		Ec(e, {
 			get groups() {
 				return K(u);
 			},
@@ -28104,12 +28224,12 @@ function lc(e, t) {
 }
 //#endregion
 //#region src/components/MapLabel.svelte
-var uc = /* @__PURE__ */ zr("<div class=\"map-label svelte-1hbs0bo\"><button class=\"close-button svelte-1hbs0bo\">&times;</button> <div class=\"map-name svelte-1hbs0bo\"> </div> <div class=\"options-container svelte-1hbs0bo\"><!> <div class=\"deferred-note svelte-1hbs0bo\">location controls: TODO</div></div></div>");
-function dc(e, t) {
+var kc = /* @__PURE__ */ zr("<div class=\"map-label svelte-1hbs0bo\"><button class=\"close-button svelte-1hbs0bo\">&times;</button> <div class=\"map-name svelte-1hbs0bo\"> </div> <div class=\"options-container svelte-1hbs0bo\"><!> <div class=\"deferred-note svelte-1hbs0bo\">location controls: TODO</div></div></div>");
+function Ac(e, t) {
 	let n = () => ot(Yi, "$showDisplaysStore", r), [r, i] = st();
 	var a = q(), o = dn(a), s = (e) => {
-		var n = uc(), r = V(n), i = pn(r, 2), a = fn(i, !0), o = pn(i, 2);
-		lc(V(o), {
+		var n = kc(), r = V(n), i = pn(r, 2), a = fn(i, !0), o = pn(i, 2);
+		Oc(V(o), {
 			get index() {
 				return t.index;
 			},
@@ -28129,7 +28249,7 @@ function dc(e, t) {
 jr(["click"]);
 //#endregion
 //#region src/components/Map.svelte
-var fc = /* @__PURE__ */ new Set([
+var jc = /* @__PURE__ */ new Set([
 	"$$slots",
 	"$$events",
 	"$$legacy",
@@ -28138,14 +28258,14 @@ var fc = /* @__PURE__ */ new Set([
 	"highlightDifferences",
 	"labelStyle",
 	"onMapMove"
-]), pc = /* @__PURE__ */ zr("<div class=\"screenshot-text svelte-c20cna\"> <span class=\"screenshot-label-bold svelte-c20cna\"> </span></div>"), mc = /* @__PURE__ */ zr("<div><!></div>"), hc = /* @__PURE__ */ zr("<div class=\"map-container svelte-c20cna\"><div class=\"screenshot-label-transparent svelte-c20cna\"><!></div> <!>  <!></div>");
-function gc(e, t) {
+]), Mc = /* @__PURE__ */ zr("<div class=\"screenshot-text svelte-c20cna\"> <span class=\"screenshot-label-bold svelte-c20cna\"> </span></div>"), Nc = /* @__PURE__ */ zr("<div><!></div>"), Pc = /* @__PURE__ */ zr("<div class=\"map-container svelte-c20cna\"><div class=\"screenshot-label-transparent svelte-c20cna\"><!></div> <!>  <!></div>");
+function Fc(e, t) {
 	He(t, !0);
-	let n = () => ot(Zi, "$mapLocationsStore", a), r = () => ot(Ji, "$configStore", a), i = () => ot(Xi, "$linkLocationsStore", a), [a, o] = st(), s = Hi(t, "highlightDifferences", 3, !1), c = Hi(t, "labelStyle", 3, ""), l = /* @__PURE__ */ Q(t, fc), u = /* @__PURE__ */ bt(() => t.map.renderer ?? t.map.type), d = {
-		google: os,
-		leaflet: ds,
-		tangram: ms
-	}, f = /* @__PURE__ */ bt(() => d[K(u)] ?? cs), p = /* @__PURE__ */ bt(() => `${t.map.id}-${t.map.index}`), m = /* @__PURE__ */ bt(() => n()?.[t.map.index] ?? {}), h = /* @__PURE__ */ Yt(tn(t.map?.style));
+	let n = () => ot(Zi, "$mapLocationsStore", a), r = () => ot(Ji, "$configStore", a), i = () => ot(Xi, "$linkLocationsStore", a), [a, o] = st(), s = Hi(t, "highlightDifferences", 3, !1), c = Hi(t, "labelStyle", 3, ""), l = /* @__PURE__ */ Q(t, jc), u = /* @__PURE__ */ bt(() => t.map.renderer ?? t.map.type), d = {
+		google: Os,
+		leaflet: Ns,
+		tangram: Is
+	}, f = /* @__PURE__ */ bt(() => d[K(u)] ?? As), p = /* @__PURE__ */ bt(() => `${t.map.id}-${t.map.index}`), m = /* @__PURE__ */ bt(() => n()?.[t.map.index] ?? {}), h = /* @__PURE__ */ Yt(tn(t.map?.style));
 	Tn(() => {
 		let e = t.map?.style;
 		(0, ia.default)(br(() => K(h)), e) || B(h, e, !0);
@@ -28159,7 +28279,7 @@ function gc(e, t) {
 			id: K(p),
 			mapStyle: {
 				...t.map,
-				url: t.map.isPolling ? void 0 : ks(t.map.url, e)
+				url: t.map.isPolling ? void 0 : Js(t.map.url, e)
 			},
 			numberOfMaps: t.numberOfMaps,
 			mapRenderer: K(u)
@@ -28190,8 +28310,8 @@ function gc(e, t) {
 			[t.map.index]: e
 		}));
 	};
-	var S = hc(), C = V(S), w = V(C), T = (e) => {
-		var n = pc(), r = V(n), i = fn(pn(r));
+	var S = Pc(), C = V(S), w = V(C), T = (e) => {
+		var n = Mc(), r = V(n), i = fn(pn(r));
 		I(n), Pn(() => {
 			Jr(r, `${t.map.screenshotName ?? t.map.name ?? t.map.id ?? ""} `), Jr(i, ` ${t.map.branch ?? ""}`);
 		}), Ur(e, n);
@@ -28204,16 +28324,16 @@ function gc(e, t) {
 	}), I(C);
 	var D = pn(C, 2);
 	ti(D, () => K(u), (e) => {
-		var t = mc();
+		var t = Nc();
 		let n;
 		ui(V(t), () => K(f), (e, t) => {
 			t(e, Vi({ onMapMount: x }, () => K(g), () => K(y), { onMapMove: b }));
 		}), I(t), Pn(() => n = bi(t, 1, "map svelte-c20cna", null, n, { "highlight-diff": s() })), Ur(e, t);
 	}), ti(pn(D, 2), () => `${t.numberOfMaps}-${t.map.index}`, (e) => {
-		var n = mc(), r = V(n);
+		var n = Nc(), r = V(n);
 		{
 			let e = /* @__PURE__ */ bt(() => t.numberOfMaps <= 1);
-			dc(r, {
+			Ac(r, {
 				get index() {
 					return t.map.index;
 				},
@@ -28243,20 +28363,20 @@ function gc(e, t) {
 }
 //#endregion
 //#region src/components/MapsMirrorLayout.svelte
-var _c = /* @__PURE__ */ zr("<div class=\"map-container map-container-border svelte-230aji\"><!></div>"), vc = /* @__PURE__ */ zr("<div class=\"section svelte-230aji\"></div>"), yc = /* @__PURE__ */ zr("<div><div class=\"maps svelte-230aji\"></div></div>");
-function bc(e, t) {
+var Ic = /* @__PURE__ */ zr("<div class=\"map-container map-container-border svelte-230aji\"><!></div>"), Lc = /* @__PURE__ */ zr("<div class=\"section svelte-230aji\"></div>"), Rc = /* @__PURE__ */ zr("<div><div class=\"maps svelte-230aji\"></div></div>");
+function zc(e, t) {
 	He(t, !0);
 	let n = Hi(t, "maps", 19, () => []), r = [2, 6], i = /* @__PURE__ */ bt(() => n().length), a = /* @__PURE__ */ bt(() => r.includes(K(i)) ? "row" : "column"), o = (e) => {
 		let t = Math.round(Math.sqrt(e.length)), n = Math.floor(e.length / t), r = [...e], i = [];
 		for (; r.length;) i.push(r.slice(0, n)), r = r.slice(n);
 		return i;
 	}, s = /* @__PURE__ */ bt(() => o(n()));
-	var c = yc(), l = V(c);
+	var c = Rc(), l = V(c);
 	ai(l, 21, () => K(s), ni, (e, n) => {
-		var r = vc();
+		var r = Lc();
 		ai(r, 21, () => K(n), (e) => e.index, (e, n) => {
-			var r = _c();
-			gc(V(r), Vi({ get map() {
+			var r = Ic();
+			Fc(V(r), Vi({ get map() {
 				return K(n);
 			} }, () => t.mapState, {
 				get numberOfMaps() {
@@ -28271,13 +28391,13 @@ function bc(e, t) {
 }
 //#endregion
 //#region src/components/MapsPhoneLayout.svelte
-var xc = /* @__PURE__ */ zr("<div class=\"map-container svelte-xgnor3\"><!></div>"), Sc = /* @__PURE__ */ zr("<div class=\"viewer-container svelte-xgnor3\"><div class=\"maps phone svelte-xgnor3\"></div></div>");
-function Cc(e, t) {
+var Bc = /* @__PURE__ */ zr("<div class=\"map-container svelte-xgnor3\"><!></div>"), Vc = /* @__PURE__ */ zr("<div class=\"viewer-container svelte-xgnor3\"><div class=\"maps phone svelte-xgnor3\"></div></div>");
+function Hc(e, t) {
 	He(t, !0);
-	var n = Sc(), r = V(n);
+	var n = Vc(), r = V(n);
 	ai(r, 21, () => t.maps, (e) => e.index, (e, n) => {
-		var r = xc();
-		gc(V(r), Vi({ get map() {
+		var r = Bc();
+		Fc(V(r), Vi({ get map() {
 			return K(n);
 		} }, () => t.mapState, {
 			labelStyle: "position: absolute; margin-top: 48px; left: 0; right: 0; bottom: unset; max-width: unset;",
@@ -28292,8 +28412,8 @@ function Cc(e, t) {
 }
 //#endregion
 //#region src/components/MapsSwipeLayout.svelte
-var wc = /* @__PURE__ */ zr("<div class=\"map-container svelte-ahidsd\"><!></div>"), Tc = /* @__PURE__ */ zr("<div><!> <div class=\"slider svelte-ahidsd\"></div></div>");
-function Ec(e, t) {
+var Uc = /* @__PURE__ */ zr("<div class=\"map-container svelte-ahidsd\"><!></div>"), Wc = /* @__PURE__ */ zr("<div><!> <div class=\"slider svelte-ahidsd\"></div></div>");
+function Gc(e, t) {
 	He(t, !0);
 	let n = /* @__PURE__ */ Yt(!1), r = /* @__PURE__ */ Yt(0), i = /* @__PURE__ */ Yt(0), a = /* @__PURE__ */ Yt(0);
 	Tn(() => {
@@ -28302,14 +28422,14 @@ function Ec(e, t) {
 	let o = () => B(n, !0), s = () => B(n, !1), c = (e) => {
 		K(n) && e.clientX !== 0 && B(r, e.clientX - 5 / 2);
 	}, l = /* @__PURE__ */ bt(() => K(i) - K(r)), u = /* @__PURE__ */ bt(() => K(i) - K(l)), d = /* @__PURE__ */ bt(() => `right: unset; margin-right:unset; left:0; margin-left:1em; max-width:calc(${K(u)}px - 6em)`), f = /* @__PURE__ */ bt(() => `max-width:calc(${K(l)}px - 6em)`);
-	var p = Tc();
+	var p = Wc();
 	let m;
 	var h = V(p);
 	ai(h, 17, () => t.maps, (e) => e.index, (e, n) => {
-		var o = wc(), s = V(o);
+		var o = Uc(), s = V(o);
 		{
 			let e = /* @__PURE__ */ bt(() => K(n).index === 1 && t.mapState?.showDiff), r = /* @__PURE__ */ bt(() => K(n).index === 0 ? K(d) : K(f));
-			gc(s, Vi({ get map() {
+			Fc(s, Vi({ get map() {
 				return K(n);
 			} }, () => t.mapState, {
 				get numberOfMaps() {
@@ -28340,8 +28460,8 @@ jr([
 ]);
 //#endregion
 //#region src/components/MapsResponsiveLayout.svelte
-var Dc = /* @__PURE__ */ zr("<div class=\"maps responsive svelte-g8hzd\"><div class=\"map-container svelte-g8hzd\"><!></div> <div class=\"responsive-input svelte-g8hzd\"><div class=\"dimension-input svelte-g8hzd\"><span>Height:</span> <div class=\"input-container svelte-g8hzd\"><input type=\"number\" class=\"input svelte-g8hzd\"/></div></div> <div class=\"dimension-input svelte-g8hzd\"><span>Width:</span> <div class=\"input-container svelte-g8hzd\"><input type=\"number\" class=\"input svelte-g8hzd\"/></div></div> <div class=\"buttons svelte-g8hzd\"><button>Set Dimensions</button> <button>Reset</button></div></div></div>");
-function Oc(e, t) {
+var Kc = /* @__PURE__ */ zr("<div class=\"maps responsive svelte-g8hzd\"><div class=\"map-container svelte-g8hzd\"><!></div> <div class=\"responsive-input svelte-g8hzd\"><div class=\"dimension-input svelte-g8hzd\"><span>Height:</span> <div class=\"input-container svelte-g8hzd\"><input type=\"number\" class=\"input svelte-g8hzd\"/></div></div> <div class=\"dimension-input svelte-g8hzd\"><span>Width:</span> <div class=\"input-container svelte-g8hzd\"><input type=\"number\" class=\"input svelte-g8hzd\"/></div></div> <div class=\"buttons svelte-g8hzd\"><button>Set Dimensions</button> <button>Reset</button></div></div></div>");
+function qc(e, t) {
 	He(t, !0);
 	let n = /* @__PURE__ */ Yt(tn(t.mapState.height || "100%")), r = /* @__PURE__ */ Yt(tn(t.mapState.width || "100%")), i = /* @__PURE__ */ Yt(tn(t.mapState.height || "")), a = /* @__PURE__ */ Yt(tn(t.mapState.width || "")), o = /* @__PURE__ */ Yt(!1), s = /* @__PURE__ */ Yt(!1), c = /* @__PURE__ */ bt(() => t.maps[0]), l = /* @__PURE__ */ bt(() => t.maps?.length ?? 0), u = /* @__PURE__ */ bt(() => {
 		let { width: e, height: n, ...r } = t.mapState;
@@ -28360,8 +28480,8 @@ function Oc(e, t) {
 			width: null
 		} });
 	};
-	var m = Dc(), h = V(m), g = V(h), _ = (e) => {
-		gc(e, Vi({ get map() {
+	var m = Kc(), h = V(m), g = V(h), _ = (e) => {
+		Fc(e, Vi({ get map() {
 			return K(c);
 		} }, () => K(u), {
 			get numberOfMaps() {
@@ -28381,7 +28501,7 @@ function Oc(e, t) {
 	var S = pn(y, 2), C = pn(V(S), 2), w = V(C);
 	Ei(w), I(C), I(S);
 	var T = pn(S, 2), E = V(T);
-	di(E, (e, t) => $s?.(e, t), () => ({
+	di(E, (e, t) => vc?.(e, t), () => ({
 		code: "Enter",
 		callback: f
 	}));
@@ -28393,14 +28513,14 @@ function Oc(e, t) {
 jr(["click"]);
 //#endregion
 //#region src/components/Maps.svelte
-function kc(e, t) {
+function Jc(e, t) {
 	He(t, !0);
 	let n = {
-		phone: Cc,
-		mirror: bc,
-		responsive: Oc,
-		swipe: Ec
-	}, r = /* @__PURE__ */ bt(() => n[t.viewMode] ?? Ec), i = ({ options: e }) => {
+		phone: Hc,
+		mirror: zc,
+		responsive: qc,
+		swipe: Gc
+	}, r = /* @__PURE__ */ bt(() => n[t.viewMode] ?? Gc), i = ({ options: e }) => {
 		t.onMapState({ options: e });
 	}, a = ({ options: e }) => {
 		t.onSetDimensions(e);
@@ -28427,7 +28547,7 @@ function kc(e, t) {
 }
 //#endregion
 //#region node_modules/@fortawesome/free-solid-svg-icons/index.mjs
-var Ac = {
+var Yc = {
 	prefix: "fas",
 	iconName: "link",
 	icon: [
@@ -28437,7 +28557,7 @@ var Ac = {
 		"f0c1",
 		"M579.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L422.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C206.5 251.2 213 330 263 380c56.5 56.5 148 56.5 204.5 0L579.8 267.7zM60.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C74 372 74 321 105.5 289.5L217.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C433.5 260.8 427 182 377 132c-56.5-56.5-148-56.5-204.5 0L60.2 244.3z"
 	]
-}, jc = {
+}, Xc = {
 	prefix: "fas",
 	iconName: "link-slash",
 	icon: [
@@ -28457,8 +28577,8 @@ var Ac = {
 ze();
 //#endregion
 //#region node_modules/svelte-fa/src/utils.js
-var Mc = parseFloat;
-function Nc(e, t = ";") {
+var Zc = parseFloat;
+function Qc(e, t = ";") {
 	let n;
 	if (Array.isArray(e)) n = e.filter((e) => e);
 	else {
@@ -28467,9 +28587,9 @@ function Nc(e, t = ";") {
 	}
 	return n.join(t);
 }
-function Pc(e, t, n, r) {
+function $c(e, t, n, r) {
 	let i, a, o, s, c, l = "-.125em";
-	return r && (c = "center", a = "1.25em"), n && (i = n), t && (t == "lg" ? (s = "1.33333em", o = ".75em", l = "-.225em") : s = t == "xs" ? ".75em" : t == "sm" ? ".875em" : t.replace("x", "em")), Nc([Nc({
+	return r && (c = "center", a = "1.25em"), n && (i = n), t && (t == "lg" ? (s = "1.33333em", o = ".75em", l = "-.225em") : s = t == "xs" ? ".75em" : t == "sm" ? ".875em" : t.replace("x", "em")), Qc([Qc({
 		float: i,
 		width: a,
 		height: "1em",
@@ -28481,18 +28601,18 @@ function Pc(e, t, n, r) {
 		overflow: "visible"
 	}), e]);
 }
-function Fc(e, t, n, r, i, a = 1, o = "", s = "") {
+function el(e, t, n, r, i, a = 1, o = "", s = "") {
 	let c = 1, l = 1;
-	return i && (i == "horizontal" ? c = -1 : i == "vertical" ? l = -1 : c = l = -1), Nc([
-		`translate(${Mc(t) * a}${o},${Mc(n) * a}${o})`,
-		`scale(${c * Mc(e)},${l * Mc(e)})`,
+	return i && (i == "horizontal" ? c = -1 : i == "vertical" ? l = -1 : c = l = -1), Qc([
+		`translate(${Zc(t) * a}${o},${Zc(n) * a}${o})`,
+		`scale(${c * Zc(e)},${l * Zc(e)})`,
 		r && `rotate(${r}${s})`
 	], " ");
 }
 //#endregion
 //#region node_modules/svelte-fa/src/fa.svelte
-var Ic = /* @__PURE__ */ Vr("<path class=\"svelte-yruc9f\"></path>"), Lc = /* @__PURE__ */ Vr("<path class=\"svelte-yruc9f\"></path><path class=\"svelte-yruc9f\"></path>", 1), Rc = /* @__PURE__ */ Vr("<svg aria-hidden=\"true\" role=\"img\" xmlns=\"http://www.w3.org/2000/svg\"><g class=\"svelte-yruc9f\"><g class=\"svelte-yruc9f\"><!></g></g></svg>");
-function zc(e, t) {
+var tl = /* @__PURE__ */ Vr("<path class=\"svelte-yruc9f\"></path>"), nl = /* @__PURE__ */ Vr("<path class=\"svelte-yruc9f\"></path><path class=\"svelte-yruc9f\"></path>", 1), rl = /* @__PURE__ */ Vr("<svg aria-hidden=\"true\" role=\"img\" xmlns=\"http://www.w3.org/2000/svg\"><g class=\"svelte-yruc9f\"><g class=\"svelte-yruc9f\"><!></g></g></svg>");
+function il(e, t) {
 	He(t, !1);
 	let n = Hi(t, "class", 8, ""), r = Hi(t, "id", 8, ""), i = Hi(t, "style", 8, ""), a = Hi(t, "icon", 8), o = Hi(t, "size", 8, ""), s = Hi(t, "color", 8, ""), c = Hi(t, "fw", 8, !1), l = Hi(t, "pull", 8, ""), u = Hi(t, "scale", 8, 1), d = Hi(t, "translateX", 8, 0), f = Hi(t, "translateY", 8, 0), p = Hi(t, "rotate", 8, ""), m = Hi(t, "flip", 8, !1), h = Hi(t, "spin", 8, !1), g = Hi(t, "pulse", 8, !1), _ = Hi(t, "primaryColor", 8, ""), v = Hi(t, "secondaryColor", 8, ""), y = Hi(t, "primaryOpacity", 8, 1), b = Hi(t, "secondaryOpacity", 8, .4), x = Hi(t, "swapOpacity", 8, !1), S = /* @__PURE__ */ Xt(), C = /* @__PURE__ */ Xt(), w = /* @__PURE__ */ Xt(), T = /* @__PURE__ */ Xt();
 	An(() => xr(a()), () => {
@@ -28504,25 +28624,25 @@ function zc(e, t) {
 			""
 		]);
 	}), An(() => (xr(n()), xr(h()), xr(g())), () => {
-		B(C, Nc([
+		B(C, Qc([
 			n(),
 			"svelte-fa",
 			h() && "spin",
 			g() && "pulse"
 		], " "));
 	}), An(() => (xr(i()), xr(o()), xr(l()), xr(c())), () => {
-		B(w, Pc(i(), o(), l(), c()));
+		B(w, $c(i(), o(), l(), c()));
 	}), An(() => (xr(u()), xr(d()), xr(f()), xr(p()), xr(m())), () => {
-		B(T, Fc(u(), d(), f(), p(), m(), 512));
+		B(T, el(u(), d(), f(), p(), m(), 512));
 	}), jn(), Li();
 	var E = q(), D = dn(E), O = (e) => {
-		var t = Rc(), n = V(t), i = V(n), a = V(i), o = (e) => {
-			var t = Ic();
+		var t = rl(), n = V(t), i = V(n), a = V(i), o = (e) => {
+			var t = tl();
 			Pn(() => {
 				Oi(t, "d", (K(S), br(() => K(S)[4]))), Oi(t, "fill", s() || _() || "currentColor"), Oi(t, "transform", (K(S), br(() => `translate(${K(S)[0] / -2} ${K(S)[1] / -2})`)));
 			}), Ur(e, t);
 		}, c = (e) => {
-			var t = Lc(), n = dn(t), r = pn(n);
+			var t = nl(), n = dn(t), r = pn(n);
 			Pn(() => {
 				Oi(n, "d", (K(S), br(() => K(S)[4][0]))), Oi(n, "fill", v() || s() || "currentColor"), Oi(n, "fill-opacity", x() == 0 ? b() : y()), Oi(n, "transform", (K(S), br(() => `translate(${K(S)[0] / -2} ${K(S)[1] / -2})`))), Oi(r, "d", (K(S), br(() => K(S)[4][1]))), Oi(r, "fill", _() || s() || "currentColor"), Oi(r, "fill-opacity", x() == 0 ? y() : b()), Oi(r, "transform", (K(S), br(() => `translate(${K(S)[0] / -2} ${K(S)[1] / -2})`)));
 			}), Ur(e, t);
@@ -28539,8 +28659,8 @@ function zc(e, t) {
 }
 //#endregion
 //#region src/components/ViewModeControl.svelte
-var Bc = /* @__PURE__ */ zr("<div class=\"dropdown-container svelte-1ez7zcb\"><!></div>");
-function Vc(e, t) {
+var al = /* @__PURE__ */ zr("<div class=\"dropdown-container svelte-1ez7zcb\"><!></div>");
+function ol(e, t) {
 	He(t, !0);
 	let n = () => ot(Xi, "$linkLocationsStore", r), [r, i] = st(), a = /* @__PURE__ */ bt(() => {
 		let e = ea;
@@ -28552,13 +28672,13 @@ function Vc(e, t) {
 	let s = (e) => {
 		t.onViewMode({ mode: e });
 	};
-	var c = Bc(), l = V(c);
+	var c = al(), l = V(c);
 	{
 		let e = /* @__PURE__ */ bt(() => K(a).map((e) => ({
 			label: e,
 			value: e
 		})));
-		Xs(l, {
+		hc(l, {
 			get options() {
 				return K(e);
 			},
@@ -28573,8 +28693,8 @@ function Vc(e, t) {
 }
 //#endregion
 //#region src/components/MapControls.svelte
-var Hc = /* @__PURE__ */ zr("<label class=\"checkbox-container svelte-jgqmfg\"><span class=\"checkbox-label svelte-jgqmfg\">Highlight <span class=\"hotkey svelte-jgqmfg\">D</span>ifferences</span> <input type=\"checkbox\"/></label>"), Uc = /* @__PURE__ */ zr("<div class=\"map-controls svelte-jgqmfg\"><div class=\"control-row svelte-jgqmfg\"><div class=\"control-section svelte-jgqmfg\"><div class=\"link-button svelte-jgqmfg\" style=\"margin-right: 6px\" role=\"button\" tabindex=\"0\"><!></div></div> <div class=\"control-section svelte-jgqmfg\"><!></div> <div class=\"control-section svelte-jgqmfg\"><div class=\"checkboxes svelte-jgqmfg\"><label class=\"checkbox-container svelte-jgqmfg\"><span class=\"checkbox-label svelte-jgqmfg\">Label <span class=\"hotkey svelte-jgqmfg\">C</span>ollisions</span> <input type=\"checkbox\"/></label> <label class=\"checkbox-container svelte-jgqmfg\"><span class=\"checkbox-label svelte-jgqmfg\"><span class=\"hotkey svelte-jgqmfg\">T</span>ile Boundaries</span> <input type=\"checkbox\"/></label> <!></div></div> <div class=\"control-section svelte-jgqmfg\"><button>+ Add map</button></div> <div class=\"control-section svelte-jgqmfg\"><button class=\"fullscreen-btn svelte-jgqmfg\" title=\"Hide UI\">Hide UI</button></div></div></div>"), Wc = /* @__PURE__ */ zr("<button class=\"fullscreen-btn show-ui svelte-jgqmfg\" title=\"Show UI\">Show UI</button>");
-function Gc(e, t) {
+var sl = /* @__PURE__ */ zr("<label class=\"checkbox-container svelte-jgqmfg\"><span class=\"checkbox-label svelte-jgqmfg\">Highlight <span class=\"hotkey svelte-jgqmfg\">D</span>ifferences</span> <input type=\"checkbox\"/></label>"), cl = /* @__PURE__ */ zr("<div class=\"map-controls svelte-jgqmfg\"><div class=\"control-row svelte-jgqmfg\"><div class=\"control-section svelte-jgqmfg\"><div class=\"link-button svelte-jgqmfg\" style=\"margin-right: 6px\" role=\"button\" tabindex=\"0\"><!></div></div> <div class=\"control-section svelte-jgqmfg\"><!></div> <div class=\"control-section svelte-jgqmfg\"><div class=\"checkboxes svelte-jgqmfg\"><label class=\"checkbox-container svelte-jgqmfg\"><span class=\"checkbox-label svelte-jgqmfg\">Label <span class=\"hotkey svelte-jgqmfg\">C</span>ollisions</span> <input type=\"checkbox\"/></label> <label class=\"checkbox-container svelte-jgqmfg\"><span class=\"checkbox-label svelte-jgqmfg\"><span class=\"hotkey svelte-jgqmfg\">T</span>ile Boundaries</span> <input type=\"checkbox\"/></label> <!></div></div> <div class=\"control-section svelte-jgqmfg\"><button>+ Add map</button></div> <div class=\"control-section svelte-jgqmfg\"><button class=\"fullscreen-btn svelte-jgqmfg\" title=\"Hide UI\">Hide UI</button></div></div></div>"), ll = /* @__PURE__ */ zr("<button class=\"fullscreen-btn show-ui svelte-jgqmfg\" title=\"Show UI\">Show UI</button>");
+function ul(e, t) {
 	He(t, !0);
 	let n = () => ot(Xi, "$linkLocationsStore", i), r = () => ot(Yi, "$showDisplaysStore", i), [i, a] = st(), o = /* @__PURE__ */ Yt(tn(t.showCollisions)), s = /* @__PURE__ */ Yt(tn(t.showBoundaries)), c = /* @__PURE__ */ Yt(tn(t.showDiff)), l = /* @__PURE__ */ bt(() => t.viewMode === "swipe" && K(c)), u = /* @__PURE__ */ Yt(tn([]));
 	Ki.subscribe((e) => B(u, e, !0));
@@ -28609,16 +28729,16 @@ function Gc(e, t) {
 	var y = q();
 	kr("keydown", nn, v);
 	var b = dn(y), x = (e) => {
-		var r = Uc(), i = V(r), a = V(i), c = V(a), d = V(c);
+		var r = cl(), i = V(r), a = V(i), c = V(a), d = V(c);
 		{
-			let e = /* @__PURE__ */ bt(() => n() ? Ac : jc);
-			zc(d, { get icon() {
+			let e = /* @__PURE__ */ bt(() => n() ? Yc : Xc);
+			il(d, { get icon() {
 				return K(e);
 			} });
 		}
 		I(c), I(a);
 		var v = pn(a, 2);
-		Vc(V(v), {
+		ol(V(v), {
 			get mode() {
 				return t.viewMode;
 			},
@@ -28634,14 +28754,14 @@ function Gc(e, t) {
 		var C = pn(x, 2), w = pn(V(C), 2);
 		Ei(w), I(C);
 		var T = pn(C, 2), E = (e) => {
-			var t = Hc(), n = pn(V(t), 2);
+			var t = sl(), n = pn(V(t), 2);
 			Ei(n), I(t), Pn(() => Di(n, K(l))), Ar("change", n, (e) => m(e.target.checked)), Ur(e, t);
 		};
 		$r(T, (e) => {
 			t.viewMode === "swipe" && e(E);
 		}), I(b), I(y);
 		var D = pn(y, 2), O = fn(D), k = pn(D, 2), A = V(k);
-		di(A, (e, t) => $s?.(e, t), () => ({
+		di(A, (e, t) => vc?.(e, t), () => ({
 			shift: !0,
 			control: !0,
 			code: "KeyF",
@@ -28650,8 +28770,8 @@ function Gc(e, t) {
 			Oi(c, "title", n() ? "Unlink locations" : "Link locations"), Di(S, K(o)), Di(w, K(s)), O.disabled = K(u).length >= 8, Oi(O, "title", K(u).length >= 8 ? "Maximum of 8 maps allowed." : "");
 		}), Ar("click", c, _), Ar("keydown", c, () => !1), Ar("change", S, (e) => f(e.target.checked)), Ar("change", w, (e) => p(e.target.checked)), Ar("click", O, h), Ar("click", A, g), Ur(e, r);
 	}, S = (e) => {
-		var t = Wc();
-		di(t, (e, t) => $s?.(e, t), () => ({
+		var t = ll();
+		di(t, (e, t) => vc?.(e, t), () => ({
 			shift: !0,
 			control: !0,
 			code: "KeyF",
@@ -28669,7 +28789,7 @@ jr([
 ]);
 //#endregion
 //#region src/App.svelte?svelte&type=style&lang.css
-var Kc = (/* @__PURE__ */ t(((e, t) => {
+var dl = (/* @__PURE__ */ t(((e, t) => {
 	Object.defineProperty(t.exports, "__esModule", { value: !0 }), t.exports.updateStyle = t.exports.addLink = void 0;
 	var n = {};
 	Object.defineProperty(n, "__esModule", { value: !0 }), n.stamenSvg = void 0, n.stamenSvg = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!-- Generator: Adobe Illustrator 24.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->\n<svg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n	 viewBox=\"0 0 98.6 21.7\" style=\"enable-background:new 0 0 98.6 21.7;\" xml:space=\"preserve\">\n<g id=\"palnts\">\n</g>\n<path d=\"M4.1,14.8c0.1,0.9,0.4,1.6,0.8,2.1c0.7,0.8,1.9,1.3,3.7,1.3c1,0,1.9-0.1,2.5-0.3c1.2-0.4,1.8-1.2,1.8-2.4\n	c0-0.7-0.3-1.2-0.9-1.6c-0.6-0.4-1.6-0.7-2.9-1l-2.2-0.5c-2.2-0.5-3.7-1-4.5-1.6C1,9.9,0.3,8.4,0.3,6.4c0-1.8,0.7-3.4,2-4.6\n	C3.7,0.6,5.7,0,8.4,0c2.2,0,4.1,0.6,5.6,1.7c1.6,1.2,2.4,2.8,2.4,5h-4.1c-0.1-1.2-0.6-2.1-1.7-2.6C9.9,3.7,9.1,3.6,8.1,3.6\n	c-1.1,0-2,0.2-2.7,0.7s-1,1.1-1,1.9c0,0.7,0.3,1.3,1,1.6C5.7,8,6.7,8.3,8.1,8.6l3.6,0.9c1.6,0.4,2.8,0.9,3.6,1.5\n	c1.2,1,1.8,2.4,1.8,4.2c0,1.9-0.7,3.4-2.2,4.7c-1.5,1.2-3.5,1.9-6.2,1.9S3.9,21.2,2.3,20C0.8,18.7,0,17,0,14.8H4.1z\" fill='white'/>\n<path d=\"M17.6,8.9V6.1h2.1V1.9h3.9v4.2h2.5v2.8h-2.5v8c0,0.6,0.1,1,0.2,1.2c0.2,0.2,0.6,0.2,1.5,0.2c0.1,0,0.2,0,0.4,0\n	c0.1,0,0.3,0,0.4,0v3l-1.9,0.1c-1.9,0.1-3.2-0.3-3.9-1c-0.4-0.5-0.7-1.2-0.7-2.1V8.9H17.6z\" fill='white'/>\n<path d=\"M34.8,11.9c0.7-0.1,1.3-0.2,1.6-0.3c0.6-0.2,0.9-0.6,0.9-1.1c0-0.6-0.2-1.1-0.7-1.3s-1.1-0.4-1.9-0.4c-1,0-1.6,0.2-2,0.7\n	c-0.3,0.3-0.5,0.8-0.6,1.4h-3.8c0.1-1.3,0.5-2.4,1.1-3.3c1.1-1.3,2.9-2,5.4-2c1.7,0,3.2,0.3,4.5,1s1.9,1.9,1.9,3.7v7\n	c0,0.5,0,1.1,0,1.8c0,0.5,0.1,0.9,0.2,1.1s0.3,0.3,0.6,0.5v0.6h-4.3c-0.1-0.3-0.2-0.6-0.3-0.9c0-0.3-0.1-0.6-0.1-0.9\n	c-0.6,0.6-1.2,1.1-1.9,1.5c-0.9,0.5-1.8,0.7-2.9,0.7c-1.4,0-2.5-0.4-3.4-1.2c-0.9-0.8-1.4-1.9-1.4-3.3c0-1.9,0.7-3.2,2.2-4.1\n	c0.8-0.5,2-0.8,3.5-1L34.8,11.9z M37.2,13.8c-0.3,0.2-0.5,0.3-0.8,0.4c-0.3,0.1-0.6,0.2-1.1,0.3l-0.9,0.2c-0.8,0.1-1.5,0.3-1.8,0.5\n	c-0.6,0.4-0.9,0.9-0.9,1.7c0,0.7,0.2,1.2,0.6,1.5c0.4,0.3,0.8,0.5,1.4,0.5c0.9,0,1.7-0.3,2.4-0.8s1.1-1.4,1.1-2.8\n	C37.2,15.3,37.2,13.8,37.2,13.8z\" fill='white'/>\n<path d=\"M63.1,6c0.7,0.3,1.2,0.7,1.8,1.4c0.4,0.5,0.7,1.2,0.9,2c0.1,0.5,0.1,1.3,0.1,2.2v9.6h-4.1v-9.7c0-0.6-0.1-1.1-0.3-1.4\n	c-0.4-0.7-1-1.1-2-1.1c-1.1,0-1.9,0.5-2.3,1.4c-0.2,0.5-0.3,1.1-0.3,1.7v9.1h-4v-9.1c0-0.9-0.1-1.6-0.3-2c-0.3-0.7-1-1.1-2-1.1\n	c-1.1,0-1.9,0.4-2.3,1.1c-0.2,0.4-0.3,1-0.3,1.9v9.2h-4V6h3.9v2.2c0.5-0.8,1-1.4,1.4-1.7c0.8-0.6,1.8-0.9,3-0.9s2.1,0.3,2.8,0.8\n	c0.6,0.5,1,1.1,1.3,1.8c0.5-0.9,1.2-1.6,1.9-2C59.1,5.8,60,5.6,61,5.6C61.7,5.6,62.4,5.8,63.1,6z\" fill='white'/>\n<path d=\"M78.9,6.3c1.1,0.5,1.9,1.2,2.6,2.3c0.6,0.9,1,2,1.2,3.1c0.1,0.7,0.2,1.7,0.1,3H71.7c0.1,1.5,0.6,2.6,1.6,3.2\n	c0.6,0.4,1.3,0.6,2.2,0.6c0.9,0,1.6-0.2,2.2-0.7c0.3-0.3,0.6-0.6,0.8-1h4.1c-0.1,0.9-0.6,1.8-1.5,2.8c-1.4,1.5-3.3,2.2-5.7,2.2\n	c-2,0-3.8-0.6-5.4-1.9s-2.3-3.3-2.3-6.1c0-2.6,0.7-4.7,2.1-6.1s3.2-2.1,5.4-2.1C76.6,5.6,77.8,5.8,78.9,6.3z M72.9,9.7\n	c-0.6,0.6-0.9,1.4-1.1,2.4h6.9c-0.1-1.1-0.4-1.9-1.1-2.4s-1.4-0.8-2.4-0.8C74.2,8.8,73.5,9.1,72.9,9.7z\" fill='white'/>\n<path d=\"M97.1,6.8c1,0.8,1.5,2.2,1.5,4.1v10.3h-4.1v-9.3c0-0.8-0.1-1.4-0.3-1.8c-0.4-0.8-1.1-1.2-2.2-1.2c-1.3,0-2.3,0.6-2.8,1.7\n	C89,11.2,88.8,12,88.8,13v8.2h-4V6h3.9v2.2c0.5-0.8,1-1.3,1.4-1.7C91,5.9,92,5.6,93.3,5.6C94.8,5.6,96.1,6,97.1,6.8z\" fill='white'/>\n</svg>";
@@ -28760,20 +28880,33 @@ var Kc = (/* @__PURE__ */ t(((e, t) => {
 		l(n, i), l(r, i), m = !0;
 	};
 	t.exports.addLink = h;
-})))(), qc = /* @__PURE__ */ zr("<base href=\"process.env.BASE_PATH\"/>"), Jc = /* @__PURE__ */ zr("<main class=\"svelte-1n46o8q\"><!> <div class=\"attribution-space svelte-1n46o8q\"></div> <div class=\"map-controls-container svelte-1n46o8q\"><!></div></main>");
-function Yc(e, t) {
+})))(), fl = /* @__PURE__ */ zr("<base href=\"process.env.BASE_PATH\"/>"), pl = /* @__PURE__ */ zr("<main class=\"svelte-1n46o8q\"><!> <div class=\"attribution-space svelte-1n46o8q\"></div> <div class=\"map-controls-container svelte-1n46o8q\"><!></div></main>");
+function ml(e, t) {
 	He(t, !0);
 	let n = () => ot(Zi, "$mapLocationsStore", r), [r, i] = st();
-	(0, Kc.addLink)("https://stamen.com/blog/", "Learn more"), (0, Kc.addLink)("https://github.com/stamen/maperture", "Fork on Github");
+	(0, dl.addLink)("https://stamen.com/blog/", "Learn more"), (0, dl.addLink)("https://github.com/stamen/maperture", "Fork on Github");
 	let a = $i(t.localConfig), { mapboxGlAccessToken: o } = a;
 	Ji.set(a);
-	let s = /* @__PURE__ */ Yt(tn({
-		...a.mapState,
-		viewMode: a.viewMode,
-		maps: a.maps,
-		stylePresets: a.stylePresets
-	}));
-	Ki.set(K(s).maps.map((e, t) => ({
+	let s = /* @__PURE__ */ Yt(tn(Ea(a))), c = !1, l = () => location.hash.slice(1) !== Ca(K(s), a)?.nextHash;
+	window.addEventListener("hashchange", () => {
+		if (!c && l()) {
+			let e = Ea(a);
+			if (B(s, e, !0), K(s).maps.length) {
+				let e = K(s).maps.map((e, t) => ({
+					...e,
+					index: t
+				}));
+				Ki.set(e);
+			}
+		}
+		c = !1;
+	});
+	let u = (0, gs.default)(() => {
+		l() && (c = !0, wa(K(s), a));
+	}, 250);
+	Tn(() => {
+		K(s), u();
+	}), Ki.set(K(s).maps.map((e, t) => ({
 		...e,
 		index: t
 	}))), qi.set(K(s).stylePresets), Zi.set(K(s)?.locations ?? null), n() && n().length && Xi.set(!1), Ki.subscribe((e) => {
@@ -28788,12 +28921,12 @@ function Yc(e, t) {
 		}, !0);
 	}), Xi.subscribe((e) => {
 		if (!e && !n()) {
-			let e = K(s).maps.map(() => ({ ...K(c) }));
+			let e = K(s).maps.map(() => ({ ...K(d) }));
 			Zi.set(e);
 		}
 		e && n() && Zi.set(null);
 	});
-	let c = /* @__PURE__ */ bt(() => ra({
+	let d = /* @__PURE__ */ bt(() => ra({
 		bearing: K(s).bearing,
 		center: K(s).center,
 		pitch: K(s).pitch,
@@ -28803,62 +28936,62 @@ function Yc(e, t) {
 		zoom: K(s).zoom,
 		...K(s).height && { height: K(s).height },
 		...K(s).width && { width: K(s).width }
-	}, K(s).maps)), l = ({ options: e }) => {
+	}, K(s).maps)), f = ({ options: e }) => {
 		let t = ra({
-			...K(c),
+			...K(d),
 			...e
 		}, K(s).maps);
-		(0, ia.default)(t, K(c)) || B(s, {
+		(0, ia.default)(t, K(d)) || B(s, {
 			...K(s),
 			...t
 		}, !0);
-	}, u = ({ mode: e }) => {
+	}, p = ({ mode: e }) => {
 		e !== K(s).viewMode && B(s, {
 			...K(s),
 			viewMode: e
 		}, !0);
-	}, d = (e) => {
+	}, m = (e) => {
 		(e.height !== K(s).height || e.width !== K(s).width) && B(s, {
 			...K(s),
 			...e
 		}, !0);
 	};
-	var f = Jc();
+	var h = pl();
 	Z("1n46o8q", (e) => {
-		Ur(e, qc());
+		Ur(e, fl());
 	});
-	var p = V(f);
-	kc(p, {
+	var g = V(h);
+	Jc(g, {
 		get maps() {
 			return K(s).maps;
 		},
 		get mapState() {
-			return K(c);
+			return K(d);
 		},
 		get viewMode() {
 			return K(s).viewMode;
 		},
-		onMapState: l,
-		onSetDimensions: d
+		onMapState: f,
+		onSetDimensions: m
 	});
-	var m = pn(p, 4);
-	Gc(V(m), Vi({ get mapboxGlAccessToken() {
+	var _ = pn(g, 4);
+	ul(V(_), Vi({ get mapboxGlAccessToken() {
 		return o;
-	} }, () => K(c), {
+	} }, () => K(d), {
 		get viewMode() {
 			return K(s).viewMode;
 		},
-		onMapState: l,
-		onViewMode: u
-	})), I(m), I(f), Ur(e, f), Ue(), i();
+		onMapState: f,
+		onViewMode: p
+	})), I(_), I(h), Ur(e, h), Ue(), i();
 }
 //#endregion
 //#region src/main.js
-var Xc = (e, t) => Yr(Yc, {
+var hl = (e, t) => Yr(ml, {
 	target: e,
 	props: t
 });
 //#endregion
-export { Xc as startApp };
+export { hl as startApp };
 
 //# sourceMappingURL=bundle.js.map
