@@ -1,5 +1,5 @@
 <script>
-  import { untrack } from 'svelte';
+  import { onMount, untrack } from 'svelte';
   import {
     maps as mapsStore,
     stylePresets as stylePresetsStore,
@@ -11,11 +11,30 @@
     withDefaultText,
   } from '../style-options';
   import { getRenderers } from '../renderers';
+  import { poll as pollStyleUrl } from '../style-polling';
+  import { fetchUrl } from '../fetch-url';
   import MapStyleInput from './MapStyleInput.svelte';
 
   let { index, stylesheet } = $props();
 
   let map = $derived($mapsStore.find(m => m.index === index));
+
+  // Poll whatever's currently applied to this map, regardless of whether it
+  // got there via a preset, a branch style, or a custom URL — see
+  // style-polling.js for why this is triggered imperatively (from onApply
+  // and once on mount) rather than from a $effect watching map.url.
+  const startPolling = url => {
+    pollStyleUrl(url, {
+      isStillActive: candidateUrl => map?.url === candidateUrl,
+      fetchStyle: fetchUrl,
+      onChange: style => onApply({ style, isPolling: true }),
+      onError: err => console.error('Failed to poll style from URL:', err),
+    });
+  };
+
+  onMount(() => {
+    if (map?.url) startPolling(map.url);
+  });
 
   let { groups, options } = $derived(
     buildStyleOptions({
@@ -93,6 +112,7 @@
     mapsStore.update(current =>
       current.map((m, i) => (i === index ? nextMap : m)),
     );
+    startPolling(nextMap.url);
   };
 </script>
 
@@ -101,7 +121,6 @@
     <MapStyleInput
       {groups}
       {selectedOption}
-      activeUrl={map.url}
       {rendererOptions}
       {rendererValue}
       {index}

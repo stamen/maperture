@@ -77,7 +77,14 @@
       id: mapId,
       mapStyle: {
         ...map,
-        url: normalizeUrl(map.url, keys),
+        // GlMap prefers `url` over `style` (it needs to be given the actual
+        // URL, not fetched-then-repassed content, so relative sprite/glyph
+        // refs inside the style resolve correctly) — except when this
+        // content just came from polling the same URL for local edits.
+        // Re-handing it that same URL again is a no-op there (it already
+        // has that exact style loaded), so it must get the freshly-fetched
+        // object directly instead, or a local edit would never show up.
+        url: map.isPolling ? undefined : normalizeUrl(map.url, keys),
       },
       numberOfMaps,
       mapRenderer,

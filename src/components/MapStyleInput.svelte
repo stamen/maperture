@@ -7,7 +7,6 @@
   let {
     groups,
     selectedOption,
-    activeUrl,
     rendererOptions,
     rendererValue,
     index,
@@ -51,7 +50,7 @@
   />
 
   {#if selectedOption.kind === 'branch' || selectedOption.kind === 'custom'}
-    <StyleUrlInput option={selectedOption} {activeUrl} {onApply} />
+    <StyleUrlInput option={selectedOption} {onApply} />
   {/if}
 
   {#if presetError}

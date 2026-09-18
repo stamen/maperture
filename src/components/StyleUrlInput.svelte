@@ -1,31 +1,20 @@
 <script>
-  import { onDestroy, onMount } from 'svelte';
   import { createBranchUrl } from '../branch-utils';
   import { shortcut } from '../shortcut';
   import { fetchUrl } from '../fetch-url';
 
   // Renders the free-text URL/branch-name entry for the 'branch' and
-  // 'custom' option kinds — fetching the style at that URL, polling it while
-  // it's served from localhost (so local style edits show up live), and
-  // reporting the result back up. The parent (MapStyleInput) owns what
-  // "apply this to the map" means; this only knows how to turn a URL into a
+  // 'custom' option kinds — fetching the style at that URL once on submit
+  // and reporting the result back up. Ongoing localhost polling is handled
+  // centrally by MapStyleInputWrapper (see style-polling.js) for whatever's
+  // actually applied to the map, regardless of which kind of option it came
+  // from — this only knows how to turn a freshly-submitted URL into a
   // fetched style.
-  let { option, activeUrl, onApply } = $props();
+  let { option, onApply } = $props();
 
   let textInput = $state(option.defaultText);
   let focused = $state(false);
   let error = $state(null);
-  let allowPolling = true;
-
-  onDestroy(() => {
-    allowPolling = false;
-  });
-
-  onMount(() => {
-    // Continue polling if the style already applied to the map (before this
-    // component mounted) happens to be a local one.
-    poll(option.url);
-  });
 
   // Re-seed the input text whenever a *different* option is selected (not
   // on every re-render of the same one, so the user's in-progress typing
@@ -38,45 +27,6 @@
       error = null;
     }
   });
-
-  const isLocalUrl = url => {
-    const absolutePathRegex = /^(?:[a-z+]+:)?\/\//i;
-    return url.includes('localhost') || !absolutePathRegex.test(url);
-  };
-
-  const poll = url => {
-    const pollCondition = str =>
-      allowPolling && !!str && activeUrl === str && isLocalUrl(str);
-
-    if (pollCondition(url)) {
-      setTimeout(() => pollCondition(url) && fetchStyle(url, true), 3000);
-    }
-  };
-
-  const fetchStyle = async (url, isPolling = false) => {
-    try {
-      const data = await fetchUrl(url);
-      if (data && typeof data === 'object') {
-        poll(url);
-        if (isPolling) {
-          // The map already has the right url/type/branch from the initial
-          // apply below; a poll only needs to refresh the style content.
-          onApply({ style: data, isPolling: true });
-        } else {
-          onApply({
-            ...option,
-            url,
-            style: data,
-            ...(option.kind === 'branch' && { branch: textInput }),
-          });
-        }
-        return { status: '200' };
-      }
-    } catch (err) {
-      error = new Error(err.message);
-      return { status: err.status };
-    }
-  };
 
   const submitUrl = async () => {
     let nextUrl =
@@ -94,8 +44,17 @@
       }
     }
 
-    const { status } = await fetchStyle(nextUrl);
-    if (status === '200') poll(nextUrl);
+    try {
+      const style = await fetchUrl(nextUrl);
+      onApply({
+        ...option,
+        url: nextUrl,
+        style,
+        ...(option.kind === 'branch' && { branch: textInput }),
+      });
+    } catch (err) {
+      error = new Error(err.message);
+    }
   };
 
   const onKeySubmit = () => {
