@@ -120,10 +120,16 @@ const stylePresets = [
         url: `https://maps.geo.${region}.amazonaws.com/v2/styles/Monochrome/descriptor?key=${amazonLocationApiKey}&color-scheme=Dark`,
       },
       {
-        id: 'amazon-location-hybrid',
-        name: 'AWS Satellite Hybrid',
+        id: 'amazon-location-hybrid-light',
+        name: 'AWS Satellite Hybrid Light',
         type: 'maplibre-gl',
         url: `https://maps.geo.${region}.amazonaws.com/v2/styles/Hybrid/descriptor?key=${amazonLocationApiKey}&color-scheme=Light`,
+      },
+      {
+        id: 'amazon-location-hybrid-dark',
+        name: 'AWS Satellite Hybrid Dark',
+        type: 'maplibre-gl',
+        url: `https://maps.geo.${region}.amazonaws.com/v2/styles/Hybrid/descriptor?key=${amazonLocationApiKey}&color-scheme=Dark`,
       },
     ],
   },
