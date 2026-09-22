@@ -4,9 +4,6 @@
   import { onMount, onDestroy } from 'svelte';
   import { config as configStore } from '../stores';
 
-  // TODO(svelte-5-port): click-to-inspect popups (the original's
-  // getPopupHtmlString + click handler) are still deferred — everything
-  // else (multi-renderer switching, resize handling) is restored.
   let {
     id,
     bearing,
@@ -24,6 +21,8 @@
 
   let renderer;
   let map = $state();
+  let popup = null;
+  let isPopupOpen = false;
 
   // RTL plugin setup lives here (rather than eagerly at app startup) so it
   // stays scoped to whichever renderer library a map actually ends up
@@ -92,6 +91,52 @@
   const shouldUpdateMapView = mapView =>
     !deepEqual(getCurrentMapView(), mapView);
 
+  // The Mapbox/Maplibre popup requires HTML as a string
+  // This means class names for the popup need to live in global.css
+  // because Svelte won't compile unused CSS classes that live in this component
+  const getPopupHtmlString = features => {
+    const dedupedFeatures = features.reduce((acc, feature) => {
+      const { source, sourceLayer, properties } = feature;
+      const isDuplicate = acc.some(f => {
+        const isSameSource =
+          f.source === source && f.sourceLayer === sourceLayer;
+        const hasSameProperties = Object.keys(properties).every(
+          p => properties[p] === f.properties[p],
+        );
+        return isSameSource && hasSameProperties;
+      });
+
+      if (!isDuplicate) {
+        acc.push(feature);
+      }
+      return acc;
+    }, []);
+
+    let html = '<div class="popup">';
+    for (const feature of dedupedFeatures) {
+      html += `<div class="popup-feature">`;
+      const { properties, layer } = feature;
+      html += `<div class="popup-label-heading">layer id</div>`;
+      html += `<div class="popup-layer-id">${layer.id}</div>`;
+      html += `<div class="popup-label-heading">source: source-layer</div>`;
+      html += `<div class="popup-source-layer"><span class="popup-source">${feature.source}:</span> ${feature.sourceLayer}</div>`;
+      if (properties && Object.keys(properties).length) {
+        html += `<div class="popup-label-heading">properties</div>`;
+        Object.keys(properties)
+          .sort()
+          .forEach(key => {
+            const propertyValue = properties[key];
+            html += `<p class="popup-property"><span class="popup-property-id">${key}:</span> <span class="popup-property-value">${propertyValue}</span></p>`;
+          });
+      } else {
+        html += `<p class="popup-no-properties">No properties</p>`;
+      }
+      html += `</div>`;
+    }
+    html += '</div>';
+    return html;
+  };
+
   onMount(() => {
     let resizeObserver;
 
@@ -135,6 +180,27 @@
       map.on('move', e => {
         if (!e?.resize) {
           handleMove(e);
+        }
+      });
+
+      map.on('click', e => {
+        let renderedFeatures = map.queryRenderedFeatures(e.point);
+        if (!renderedFeatures.length) return;
+        if (!isPopupOpen) {
+          popup = new glLibrary.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML(getPopupHtmlString(renderedFeatures))
+            .setMaxWidth(360)
+            .addTo(map);
+
+          isPopupOpen = true;
+
+          popup.on('close', () => {
+            isPopupOpen = false;
+          });
+        } else {
+          popup.remove();
+          popup = null;
         }
       });
 
@@ -187,6 +253,69 @@
 <style>
   .map {
     height: 100%;
+  }
+
+  :global(.popup-label-heading) {
+    font-size: 14px;
+    color: #666;
+    font-weight: 200;
+    font-style: italic;
+  }
+
+  :global(.popup) {
+    min-width: 180px;
+    padding-right: 12px;
+    max-height: 240px;
+    overflow: auto;
+  }
+
+  :global(.popup-feature) {
+    margin-top: 18px;
+    margin-left: 3px;
+  }
+
+  :global(.popup-feature):first-child {
+    margin-top: 0;
+  }
+
+  :global(.popup-layer-id) {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 16px;
+    margin-bottom: 6px;
+  }
+
+  :global(.popup-source) {
+    font-weight: 600;
+  }
+
+  :global(.popup-source-layer) {
+    font-size: 14px;
+    line-height: 14px;
+    margin-bottom: 6px;
+    color: #666;
+  }
+
+  :global(.popup-property) {
+    line-height: 6px;
+    margin-top: 6px;
+    margin-bottom: 3px;
+    width: 100%;
+    padding-bottom: 6px;
+    border-bottom: 1px solid lightgray;
+  }
+
+  :global(.popup-no-properties) {
+    border-bottom: 0px !important;
+    color: lightgray;
+  }
+
+  :global(.popup-property-id) {
+    font-weight: bold;
+  }
+
+  :global(.popup-property-value) {
+    float: right;
   }
 
   :global(.mapboxgl-control-container .mapboxgl-ctrl-logo) {

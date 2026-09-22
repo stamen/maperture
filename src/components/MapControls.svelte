@@ -1,8 +1,18 @@
 <script>
   import { shortcut } from '../shortcut';
-  import { faLink, faLinkSlash } from '@fortawesome/free-solid-svg-icons';
+  import {
+    faLink,
+    faLinkSlash,
+    faCamera,
+  } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa/src/fa.svelte';
+  import html2canvas from 'html2canvas';
+  import { Geocoder } from '@beyonk/svelte-mapbox';
+  import { getMapStateMessages } from '../map-state-utils';
   import ViewModeControl from './ViewModeControl.svelte';
+  import Tooltip from './Tooltip.svelte';
+  import MapLocationControl from './MapLocationControl.svelte';
+  import MapLocationDropdown from './MapLocationDropdown.svelte';
   import {
     maps as mapsStore,
     showDisplays as showDisplaysStore,
@@ -10,13 +20,12 @@
     mapLocations as mapLocationsStore,
   } from '../stores';
 
-  // TODO(svelte-5-port): geocoder search, screenshot/copy-image, and the
-  // per-map location controls (MapLocationControl/MapLocationDropdown) are
-  // deferred along with the rest of the style/location UI — see MapLabel's
-  // TODO. This keeps only the controls that are already fully wired up
-  // (view mode, collisions/boundaries/diff toggles, add map, link/unlink,
-  // hide UI).
   let {
+    bearing,
+    center,
+    mapboxGlAccessToken,
+    pitch,
+    zoom,
     showCollisions: showCollisionsProp,
     showBoundaries: showBoundariesProp,
     showDiff: showDiffProp,
@@ -37,6 +46,10 @@
 
   let maps = $state([]);
   mapsStore.subscribe(value => (maps = value));
+
+  let mapStateValidationMessages = $derived(
+    getMapStateMessages({ bearing, center, pitch, zoom }, maps),
+  );
 
   // Called directly from user interactions below (checkboxes, keyboard
   // shortcuts) rather than from an $effect watching this component's own
@@ -65,6 +78,72 @@
   const setShowDiff = value => {
     showDiff = value;
     notifyMapState();
+  };
+
+  const handleGeocoderResult = ({ detail }) => {
+    const { result } = detail;
+    const options = {
+      center: {
+        lat: result.center[1],
+        lng: result.center[0],
+      },
+      zoom: 17,
+    };
+    if (result.bbox) {
+      options.zoom = 14;
+    }
+    onMapState({ options });
+  };
+
+  const downloadScreenshot = async () => {
+    const mapsView = document.getElementsByClassName('maps')[0];
+
+    let adjustedLabels = [
+      ...document.getElementsByClassName('screenshot-label-transparent'),
+    ];
+    adjustedLabels.forEach(el => {
+      el.classList.remove('screenshot-label-transparent');
+      el.classList.add('screenshot-label');
+    });
+
+    let adjustedBorders = [];
+    // Remove border on mirror mode screenshot
+    if (viewMode === 'mirror') {
+      adjustedBorders = [
+        ...document.getElementsByClassName('map-container-border'),
+      ];
+      adjustedBorders.forEach(el => {
+        el.classList.remove('map-container-border');
+        el.classList.add('map-container-border-transparent');
+      });
+    }
+
+    const ignoreElements = el => {
+      if (el.className && typeof el.className === 'string') {
+        return el.className.includes('map-label');
+      }
+      return false;
+    };
+
+    html2canvas(mapsView, { ignoreElements }).then(canvas => {
+      canvas.toBlob(blob =>
+        navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]),
+      );
+    });
+
+    // Cleanup labels
+    adjustedLabels.forEach(el => {
+      el.classList.remove('screenshot-label');
+      el.classList.add('screenshot-label-transparent');
+    });
+
+    // Cleanup for mirror mode border
+    if (viewMode === 'mirror') {
+      adjustedBorders.forEach(el => {
+        el.classList.remove('map-container-border-transparent');
+        el.classList.add('map-container-border');
+      });
+    }
   };
 
   const addMapPane = () => {
@@ -112,10 +191,27 @@
         >
           <Fa icon={$linkLocationsStore ? faLink : faLinkSlash} />
         </div>
+        {#if $linkLocationsStore}
+          <MapLocationControl {bearing} {center} {pitch} {zoom} {onMapState} />
+        {/if}
       </div>
 
       <div class="control-section">
         <ViewModeControl mode={viewMode} mapsNum={maps.length} {onViewMode} />
+      </div>
+
+      <div class="control-section">
+        {#if mapboxGlAccessToken}
+          <Geocoder
+            accessToken={mapboxGlAccessToken}
+            geocoder={null}
+            on:result={handleGeocoderResult}
+          />
+        {/if}
+      </div>
+
+      <div class="control-section">
+        <MapLocationDropdown {bearing} {center} {pitch} {zoom} {onMapState} />
       </div>
 
       <div class="control-section">
@@ -141,27 +237,42 @@
             />
           </label>
           {#if viewMode === 'swipe'}
-            <label class="checkbox-container">
-              <span class="checkbox-label"
-                >Highlight <span class="hotkey">D</span>ifferences</span
-              >
-              <input
-                type="checkbox"
-                checked={effectiveShowDiff}
-                onchange={e => setShowDiff(e.target.checked)}
-              />
-            </label>
+            <Tooltip title="Highlights visual differences between two styles.">
+              <label class="checkbox-container">
+                <span class="checkbox-label"
+                  >Highlight <span class="hotkey">D</span>ifferences</span
+                >
+                <input
+                  type="checkbox"
+                  checked={effectiveShowDiff}
+                  onchange={e => setShowDiff(e.target.checked)}
+                />
+              </label>
+            </Tooltip>
           {/if}
         </div>
       </div>
       <div class="control-section">
-        <button
-          onclick={addMapPane}
-          disabled={maps.length >= 8}
-          title={maps.length >= 8 ? 'Maximum of 8 maps allowed.' : ''}
-        >
-          + Add map
-        </button>
+        <div class="buttons">
+          <button
+            style="margin-right: 6px"
+            onclick={addMapPane}
+            disabled={maps.length >= 8}
+            title={maps.length >= 8 ? 'Maximum of 8 maps allowed.' : ''}
+          >
+            + Add map
+          </button>
+          <button
+            onclick={downloadScreenshot}
+            disabled={viewMode === 'swipe'}
+            title={viewMode === 'swipe'
+              ? 'Must be in phone or mirror mode to screenshot.'
+              : 'Copy image to clipboard'}
+          >
+            <Fa icon={faCamera} />
+            Copy image
+          </button>
+        </div>
       </div>
       <div class="control-section">
         <button
@@ -179,6 +290,13 @@
         </button>
       </div>
     </div>
+    {#if mapStateValidationMessages.length > 0}
+      <div class="validation-messages">
+        {#each mapStateValidationMessages as m}
+          <div class={`validation-message-${m.type}`}>{m.message}</div>
+        {/each}
+      </div>
+    {/if}
   </div>
 {:else}
   <button
@@ -217,6 +335,20 @@
   .control-section {
     margin: 0 1em;
     display: flex;
+  }
+
+  .buttons {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .validation-messages {
+    font-size: 0.8em;
+    margin-top: 1.5em;
+  }
+
+  .validation-message-warning {
+    color: #c1810c;
   }
 
   .checkboxes {

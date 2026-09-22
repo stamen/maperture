@@ -10,11 +10,13 @@
   import { validateMapState } from './map-state-utils';
   import { createHashString, writeHash } from './query';
   import { getSettings } from './settings';
+  import { loadPresetsFromUrl } from './presets-utils';
   import Maps from './components/Maps.svelte';
   import MapControls from './components/MapControls.svelte';
   import { addLink } from 'stamen-attribution';
   import isEqual from 'lodash.isequal';
   import throttle from 'lodash.throttle';
+  import { onMount } from 'svelte';
 
   addLink('https://stamen.com/blog/', 'Learn more');
   addLink('https://github.com/stamen/maperture', 'Fork on Github');
@@ -23,7 +25,7 @@
 
   // config is set only once on load and is assumed to be loaded from a module
   const config = makeConfig(localConfig);
-  const { mapboxGlAccessToken } = config;
+  const { mapboxGlAccessToken, stylePresetUrls } = config;
   configStore.set(config);
 
   // settings contains all of the current state of the app that we might
@@ -31,9 +33,15 @@
   // whatever's in the current URL hash.
   let settings = $state(getSettings(config));
 
-  // TODO(svelte-5-port): remote style-preset-URL polling (presets-utils.js)
-  // is still deferred — a stylePresetUrls config entry won't fetch anything
-  // yet.
+  // If we have URLs for preset files, fetch them and append to the store.
+  onMount(() => {
+    if (stylePresetUrls.length > 0) {
+      stylePresetUrls.forEach(async url => {
+        const presets = await loadPresetsFromUrl(url);
+        stylePresetsStore.update(current => [...current, ...presets]);
+      });
+    }
+  });
 
   // Plain (non-reactive) flag: set right before *we* write the hash, so the
   // 'hashchange' handler below can tell "the URL just changed because we

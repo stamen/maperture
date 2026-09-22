@@ -1,9 +1,27 @@
 <script>
-  import { showDisplays as showDisplaysStore } from '../stores';
+  import {
+    showDisplays as showDisplaysStore,
+    linkLocations as linkLocationsStore,
+  } from '../stores';
   import MapStyleInputWrapper from './MapStyleInputWrapper.svelte';
+  import MapLocationControl from './MapLocationControl.svelte';
 
-  let { index, name, onClose, disableClose, mapState, stylesheet, mapIdIndex } =
-    $props();
+  let {
+    index,
+    name,
+    onClose,
+    disableClose,
+    mapState,
+    stylesheet,
+    mapIdIndex,
+    onMapState,
+  } = $props();
+
+  let locationProps = $derived.by(() => {
+    // eslint-disable-next-line no-unused-vars
+    const { showBoundaries, showCollisions, ...rest } = mapState;
+    return rest;
+  });
 </script>
 
 {#if $showDisplaysStore}
@@ -14,9 +32,11 @@
     <div class="map-name">{name}</div>
     <div class="options-container">
       <MapStyleInputWrapper {index} {stylesheet} />
-      <!-- TODO(svelte-5-port): MapLocationControl (manual coordinate entry,
-           shown here when locations are unlinked) is still deferred. -->
-      <div class="deferred-note">location controls: TODO</div>
+      {#if !$linkLocationsStore && Object.keys(locationProps).length}
+        <div class="location-control">
+          <MapLocationControl {...locationProps} {onMapState} />
+        </div>
+      {/if}
     </div>
   </div>
 {/if}
@@ -66,10 +86,9 @@
     justify-content: center;
   }
 
-  .deferred-note {
-    margin-top: 6px;
-    font-size: 0.75em;
-    font-style: italic;
-    color: darkgray;
+  .location-control {
+    margin-top: 12px;
+    display: flex;
+    justify-content: left;
   }
 </style>
