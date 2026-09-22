@@ -18,12 +18,14 @@ const branchKey = (patternKey, style) => `branch:${patternKey}:${style}`;
 
 // options: Map<key, optionData>. optionData always has `kind`
 // ('preset' | 'branch' | 'custom') plus whatever fields that kind needs.
-export const buildStyleOptions = ({
-  stylePresets = [],
-  branchPatterns = [],
-}) => {
+export const buildStyleOptions = ({ stylePresets = [], branchPatterns }) => {
   const options = new Map();
   const groups = [];
+
+  // `??`, not a default param — a config with no branch patterns configured
+  // (like config/gh-pages.js) sets this to `null`, not `undefined`, which a
+  // default param wouldn't catch.
+  branchPatterns ??= [];
 
   if (stylePresets.length) {
     const items = stylePresets.map(preset => {

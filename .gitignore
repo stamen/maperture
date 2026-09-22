@@ -1,6 +1,7 @@
 /node_modules/
 /config/local.js
 /example/dist/
+/.gh-pages-demo/
 
 # Old (Svelte 4 / Rollup) app, kept locally for side-by-side reference
 # during the Svelte 5 rebuild. Not part of this branch's history.

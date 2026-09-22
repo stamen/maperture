@@ -17,17 +17,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
-      - name: install & build
-        shell: bash
-        run: |
-          yarn install --network-concurrency 1
-          cp public/config/gh-pages.js public/config/local.js
-          BASE_PATH=/maperture/ yarn build
-      - name: deploy
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: public
-      - name: cleanup
-        shell: bash
-        run: |
-          rm public/config/local.js
+      - name: install
+        run: yarn install --network-concurrency 1
+      - name: build & deploy
+        run: BASE_PATH=/maperture/ yarn deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

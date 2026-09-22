@@ -27748,9 +27748,9 @@ function Ks(e, t) {
 }
 //#endregion
 //#region src/style-options.js
-var qs = "custom", Js = (e) => `preset:${e}`, Ys = (e, t) => `branch:${e}:${t}`, Xs = ({ stylePresets: e = [], branchPatterns: t = [] }) => {
+var qs = "custom", Js = (e) => `preset:${e}`, Ys = (e, t) => `branch:${e}:${t}`, Xs = ({ stylePresets: e = [], branchPatterns: t }) => {
 	let n = /* @__PURE__ */ new Map(), r = [];
-	if (e.length) {
+	if (t ??= [], e.length) {
 		let t = e.map((e) => {
 			if (e.type === "sublist") return {
 				label: e.name,

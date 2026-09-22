@@ -27,7 +27,26 @@ fs.copyFileSync(
   path.resolve(demoDir, 'index.html'),
 );
 
-ghpages.publish(demoDir, err => {
+// In GitHub Actions, `actions/checkout` authenticates the *checked-out*
+// repo's origin remote (via an extraheader in its local git config), but
+// gh-pages clones the remote URL fresh into its own cache dir, which
+// doesn't inherit that config — so it needs an explicitly token-embedded
+// repo URL and a committer identity instead of relying on local git config.
+const publishOptions =
+  process.env.GITHUB_ACTIONS === 'true'
+    ? {
+        repo: `https://x-access-token:${process.env.GITHUB_TOKEN}@github.com/${process.env.GITHUB_REPOSITORY}.git`,
+        user: {
+          name: 'github-actions[bot]',
+          email: 'github-actions[bot]@users.noreply.github.com',
+        },
+      }
+    : {};
+
+ghpages.publish(demoDir, publishOptions, err => {
   fs.rmSync(demoDir, { recursive: true, force: true });
-  if (err) console.error(err);
+  if (err) {
+    console.error(err);
+    process.exit(1);
+  }
 });
