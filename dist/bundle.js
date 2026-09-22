@@ -5302,9 +5302,26 @@ function Rs(e, t) {
 	Fn(() => Ai(f, "id", t.id)), K(e, f), We(), i();
 }
 //#endregion
-//#region src/components/GlMap.svelte
-var zs = /* @__PURE__ */ Br("<div class=\"map svelte-xrg3bf\"></div>");
-function Bs(t, n) {
+//#region src/map-popup.js
+var zs = (e) => {
+	let t = e.reduce((e, t) => {
+		let { source: n, sourceLayer: r, properties: i } = t;
+		return e.some((e) => {
+			let t = e.source === n && e.sourceLayer === r, a = Object.keys(i).every((t) => i[t] === e.properties[t]);
+			return t && a;
+		}) || e.push(t), e;
+	}, []), n = "<div class=\"popup\">";
+	for (let e of t) {
+		n += "<div class=\"popup-feature\">";
+		let { properties: t, layer: r } = e;
+		n += "<div class=\"popup-label-heading\">layer id</div>", n += `<div class="popup-layer-id">${r.id}</div>`, n += "<div class=\"popup-label-heading\">source: source-layer</div>", n += `<div class="popup-source-layer"><span class="popup-source">${e.source}:</span> ${e.sourceLayer}</div>`, t && Object.keys(t).length ? (n += "<div class=\"popup-label-heading\">properties</div>", Object.keys(t).sort().forEach((e) => {
+			let r = t[e];
+			n += `<p class="popup-property"><span class="popup-property-id">${e}:</span> <span class="popup-property-value">${r}</span></p>`;
+		})) : n += "<p class=\"popup-no-properties\">No properties</p>", n += "</div>";
+	}
+	return n += "</div>", n;
+}, Bs = /* @__PURE__ */ Br("<div class=\"map svelte-xrg3bf\"></div>");
+function Vs(t, n) {
 	Ue(n, !0);
 	let r = () => st(ta, "$configStore", i), [i, a] = ct(), o, s = /* @__PURE__ */ Xt(void 0), c = null, l = !1, u = (e) => {
 		e.getRTLTextPluginStatus() === "unavailable" && (n.mapRenderer === "maplibre-gl" ? e.setRTLTextPlugin("https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js") : e.setRTLTextPlugin("https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.0/mapbox-gl-rtl-text.js"));
@@ -5326,24 +5343,7 @@ function Bs(t, n) {
 		center: G(s).getCenter(),
 		pitch: G(s).getPitch(),
 		zoom: G(s).getZoom()
-	}), g = (e) => !(0, Ds.default)(h(), e), _ = (e) => {
-		let t = e.reduce((e, t) => {
-			let { source: n, sourceLayer: r, properties: i } = t;
-			return e.some((e) => {
-				let t = e.source === n && e.sourceLayer === r, a = Object.keys(i).every((t) => i[t] === e.properties[t]);
-				return t && a;
-			}) || e.push(t), e;
-		}, []), n = "<div class=\"popup\">";
-		for (let e of t) {
-			n += "<div class=\"popup-feature\">";
-			let { properties: t, layer: r } = e;
-			n += "<div class=\"popup-label-heading\">layer id</div>", n += `<div class="popup-layer-id">${r.id}</div>`, n += "<div class=\"popup-label-heading\">source: source-layer</div>", n += `<div class="popup-source-layer"><span class="popup-source">${e.source}:</span> ${e.sourceLayer}</div>`, t && Object.keys(t).length ? (n += "<div class=\"popup-label-heading\">properties</div>", Object.keys(t).sort().forEach((e) => {
-				let r = t[e];
-				n += `<p class="popup-property"><span class="popup-property-id">${e}:</span> <span class="popup-property-value">${r}</span></p>`;
-			})) : n += "<p class=\"popup-no-properties\">No properties</p>", n += "</div>";
-		}
-		return n += "</div>", n;
-	};
+	}), g = (e) => !(0, Ds.default)(h(), e);
 	Ji(() => {
 		let e;
 		return (async () => {
@@ -5367,7 +5367,7 @@ function Bs(t, n) {
 				e?.resize || i(e);
 			}), G(s).on("click", (e) => {
 				let n = G(s).queryRenderedFeatures(e.point);
-				n.length && (l ? (c.remove(), c = null) : (c = new t.Popup().setLngLat(e.lngLat).setHTML(_(n)).setMaxWidth(360).addTo(G(s)), l = !0, c.on("close", () => {
+				n.length && (l ? (c.remove(), c = null) : (c = new t.Popup().setLngLat(e.lngLat).setHTML(zs(n)).setMaxWidth(360).addTo(G(s)), l = !0, c.on("close", () => {
 					l = !1;
 				})));
 			}), n.mapRenderer !== "maplibre-gl" && n.mapRenderer !== "maptiler-sdk" && G(s).once("render", () => {
@@ -5388,12 +5388,12 @@ function Bs(t, n) {
 	}), En(() => {
 		G(s) && (G(s).showTileBoundaries = n.showBoundaries);
 	});
-	var v = zs();
-	Fn(() => Ai(v, "id", n.id)), K(t, v), We(), a();
+	var _ = Bs();
+	Fn(() => Ai(_, "id", n.id)), K(t, _), We(), a();
 }
 //#endregion
 //#region node_modules/leaflet/dist/leaflet.css
-var Vs = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
+var Hs = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 	(function(n, r) {
 		typeof e == "object" && t !== void 0 ? r(e) : typeof define == "function" && define.amd ? define(["exports"], r) : (n = typeof globalThis < "u" ? globalThis : n || self, r(n.leaflet = {}));
 	})(e, (function(e) {
@@ -9969,8 +9969,8 @@ var Vs = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 			return window.L = li, this;
 		}, window.L = e;
 	}));
-})))()), Hs = /* @__PURE__ */ Br("<div class=\"map svelte-q84nf3\"></div>");
-function Us(e, t) {
+})))()), Us = /* @__PURE__ */ Br("<div class=\"map svelte-q84nf3\"></div>");
+function Ws(e, t) {
 	Ue(t, !0);
 	let n = /* @__PURE__ */ Xt(void 0), r, i = /* @__PURE__ */ xt(() => t.mapStyle.url), a = /* @__PURE__ */ xt(() => ({
 		center: t.center,
@@ -9980,7 +9980,7 @@ function Us(e, t) {
 		zoom: G(n).getZoom() - 1
 	}), s = (e) => !(0, Ds.default)(o(), e);
 	Ji(() => {
-		z(n, Vs.map(t.id, {
+		z(n, Hs.map(t.id, {
 			zoomControl: !1,
 			zoomDelta: .25,
 			zoomSnap: 0
@@ -10000,7 +10000,7 @@ function Us(e, t) {
 	}), En(() => {
 		G(n) && s(G(a)) && G(n).setView(G(a).center, G(a).zoom + 1, { animate: !1 });
 	}), En(() => {
-		G(n) && (r && r.remove(), r = t.overrideLayer ?? Vs.tileLayer(G(i), { detectRetina: !0 }), r.addTo(G(n)));
+		G(n) && (r && r.remove(), r = t.overrideLayer ?? Hs.tileLayer(G(i), { detectRetina: !0 }), r.addTo(G(n)));
 	}), En(() => {
 		if (!G(n) || !t.numberOfMaps) return;
 		let e;
@@ -10011,12 +10011,12 @@ function Us(e, t) {
 			}), e.observe(r));
 		}), () => e?.disconnect();
 	});
-	var c = Hs();
+	var c = Us();
 	Fn(() => Ai(c, "id", t.id)), K(e, c), We();
 }
 //#endregion
 //#region src/components/TangramMap.svelte
-var Ws = (/* @__PURE__ */ t(((e, t) => {
+var Gs = (/* @__PURE__ */ t(((e, t) => {
 	(function(n, r) {
 		typeof e == "object" && t !== void 0 ? t.exports = r() : typeof define == "function" && define.amd ? define(r) : (n ||= self, n.Tangram = r());
 	})(e, (function() {
@@ -27722,22 +27722,22 @@ while (r === o[++i] && r === o[++i] && r === o[++i] && r === o[++i] && r === o[+
 		} catch {}
 		return n;
 	}));
-})))(), Gs = /* @__PURE__ */ new Set([
+})))(), Ks = /* @__PURE__ */ new Set([
 	"$$slots",
 	"$$events",
 	"$$legacy",
 	"mapStyle"
 ]);
-function Ks(e, t) {
+function qs(e, t) {
 	Ue(t, !0);
-	let n = /* @__PURE__ */ Wi(t, Gs), r = /* @__PURE__ */ xt(() => t.mapStyle.url), i = /* @__PURE__ */ Xt(void 0);
+	let n = /* @__PURE__ */ Wi(t, Ks), r = /* @__PURE__ */ xt(() => t.mapStyle.url), i = /* @__PURE__ */ Xt(void 0);
 	En(() => {
 		let e = G(r), t = xr(() => G(i));
-		(t == null || t.options.scene !== e) && z(i, (0, Ws.leafletLayer)({
+		(t == null || t.options.scene !== e) && z(i, (0, Gs.leafletLayer)({
 			scene: e,
 			webGLContextOptions: { preserveDrawingBuffer: !0 }
 		}), !0);
-	}), Us(e, Ki({
+	}), Ws(e, Ki({
 		get mapStyle() {
 			return t.mapStyle;
 		},
@@ -27748,14 +27748,14 @@ function Ks(e, t) {
 }
 //#endregion
 //#region src/style-options.js
-var qs = "custom", Js = (e) => `preset:${e}`, Ys = (e, t) => `branch:${e}:${t}`, Xs = ({ stylePresets: e = [], branchPatterns: t }) => {
+var Js = "custom", Ys = (e) => `preset:${e}`, Xs = (e, t) => `branch:${e}:${t}`, Zs = ({ stylePresets: e = [], branchPatterns: t }) => {
 	let n = /* @__PURE__ */ new Map(), r = [];
 	if (t ??= [], e.length) {
 		let t = e.map((e) => {
 			if (e.type === "sublist") return {
 				label: e.name,
 				sublist: (e.presets ?? []).map((e) => {
-					let t = Js(e.id);
+					let t = Ys(e.id);
 					return n.set(t, {
 						...e,
 						key: t,
@@ -27766,7 +27766,7 @@ var qs = "custom", Js = (e) => `preset:${e}`, Ys = (e, t) => `branch:${e}:${t}`,
 					};
 				})
 			};
-			let t = Js(e.id);
+			let t = Ys(e.id);
 			return n.set(t, {
 				...e,
 				key: t,
@@ -27787,7 +27787,7 @@ var qs = "custom", Js = (e) => `preset:${e}`, Ys = (e, t) => `branch:${e}:${t}`,
 		return {
 			label: i,
 			sublist: e.styles.map((t) => {
-				let a = Ys(r, t);
+				let a = Xs(r, t);
 				return n.set(a, {
 					key: a,
 					kind: "branch",
@@ -27807,8 +27807,8 @@ var qs = "custom", Js = (e) => `preset:${e}`, Ys = (e, t) => `branch:${e}:${t}`,
 	return i.length && r.push({
 		header: "Styles on a branch",
 		items: i
-	}), n.set(qs, {
-		key: qs,
+	}), n.set(Js, {
+		key: Js,
 		kind: "custom",
 		name: "Fetch URL at...",
 		type: "mapbox-gl",
@@ -27816,17 +27816,17 @@ var qs = "custom", Js = (e) => `preset:${e}`, Ys = (e, t) => `branch:${e}:${t}`,
 	}), r.push({
 		header: "Custom",
 		items: [{
-			key: qs,
+			key: Js,
 			label: "Fetch URL at..."
 		}]
 	}), {
 		groups: r,
 		options: n
 	};
-}, Zs = (e, t) => e.kind === "preset" ? t.url === e.url && t.type === e.type : e.kind === "branch" && !!t.branch && ga(e.pattern, t.branch, e.branchStyle) === t.url && e.type === t.type, Qs = ({ options: e, map: t }) => {
-	for (let n of e.values()) if (Zs(n, t)) return n.key;
-	return qs;
-}, $s = ({ option: e, map: t }) => e.kind === "branch" ? {
+}, Qs = (e, t) => e.kind === "preset" ? t.url === e.url && t.type === e.type : e.kind === "branch" && !!t.branch && ga(e.pattern, t.branch, e.branchStyle) === t.url && e.type === t.type, $s = ({ options: e, map: t }) => {
+	for (let n of e.values()) if (Qs(n, t)) return n.key;
+	return Js;
+}, ec = ({ option: e, map: t }) => e.kind === "branch" ? {
 	...e,
 	defaultText: t?.branch ?? ""
 } : e.kind === "custom" ? {
@@ -27836,11 +27836,11 @@ var qs = "custom", Js = (e) => `preset:${e}`, Ys = (e, t) => `branch:${e}:${t}`,
 } : {
 	...e,
 	defaultText: ""
-}, ec = (e) => typeof e == "string" && e.startsWith("mapbox://"), tc = (e, t) => {
-	if (!ec(e) || !t) return e;
+}, tc = (e) => typeof e == "string" && e.startsWith("mapbox://"), nc = (e, t) => {
+	if (!tc(e) || !t) return e;
 	let [, , , n, r] = e.split("/");
 	return `https://api.mapbox.com/styles/v1/${n}/${r}?title=true&access_token=${t}`;
-}, nc = (e) => {
+}, rc = (e) => {
 	if (!e) return !1;
 	let t;
 	try {
@@ -27849,18 +27849,18 @@ var qs = "custom", Js = (e) => `preset:${e}`, Ys = (e, t) => `branch:${e}:${t}`,
 		return !1;
 	}
 	return t.host === "api.maptiler.com" && !t.searchParams.has("key");
-}, rc = (e, t) => {
+}, ic = (e, t) => {
 	if (!t) return e;
 	let n = new URL(e);
-	return t && nc(e) && n.searchParams.append("key", t), n.toString();
-}, ic = (e, t) => {
+	return t && rc(e) && n.searchParams.append("key", t), n.toString();
+}, ac = (e, t) => {
 	let { mapboxKey: n, maptilerKey: r } = t, i = e;
-	return ec(e) && n ? i = tc(i, n) : nc(e) && r && (i = rc(i, r)), i;
-}, ac = {
+	return tc(e) && n ? i = nc(i, n) : rc(e) && r && (i = ic(i, r)), i;
+}, oc = {
 	name: "Mapbox GL JS",
 	value: "mapbox-gl"
-}, oc = [
-	ac,
+}, sc = [
+	oc,
 	{
 		name: "Maplibre GL JS",
 		value: "maplibre-gl"
@@ -27869,7 +27869,7 @@ var qs = "custom", Js = (e) => `preset:${e}`, Ys = (e, t) => `branch:${e}:${t}`,
 		name: "MapTiler SDK",
 		value: "maptiler-sdk"
 	}
-], sc = {
+], cc = {
 	google: [{
 		name: "Google Maps",
 		value: "google"
@@ -27882,40 +27882,40 @@ var qs = "custom", Js = (e) => `preset:${e}`, Ys = (e, t) => `branch:${e}:${t}`,
 		name: "Tangram (Leaflet)",
 		value: "tangram"
 	}],
-	"vector-gl": oc,
-	"mapbox-gl": oc,
-	"maplibre-gl": oc,
-	"maptiler-sdk": oc
-}, cc = (e, t) => {
+	"vector-gl": sc,
+	"mapbox-gl": sc,
+	"maplibre-gl": sc,
+	"maptiler-sdk": sc
+}, lc = (e, t) => {
 	let n = !1;
-	return e.type === "mapbox-gl" ? (e.url && ec(e.url) ? n = !0 : t && (n = Object.values(t).some((e) => ec(e?.url) || (e?.tiles ?? []).some((e) => ec(e)))), n ? [ac] : sc[e.type]) : sc[e.type];
-}, lc = 3e3, uc = /^(?:[a-z+]+:)?\/\//i, dc = (e) => e ? e.includes("localhost") || !uc.test(e) : !1, fc = (e, { isStillActive: t, fetchStyle: n, onChange: r, onError: i }) => {
-	t(e) && dc(e) && setTimeout(async () => {
+	return e.type === "mapbox-gl" ? (e.url && tc(e.url) ? n = !0 : t && (n = Object.values(t).some((e) => tc(e?.url) || (e?.tiles ?? []).some((e) => tc(e)))), n ? [oc] : cc[e.type]) : cc[e.type];
+}, uc = 3e3, dc = /^(?:[a-z+]+:)?\/\//i, fc = (e) => e ? e.includes("localhost") || !dc.test(e) : !1, pc = (e, { isStillActive: t, fetchStyle: n, onChange: r, onError: i }) => {
+	t(e) && fc(e) && setTimeout(async () => {
 		if (t(e)) {
 			try {
 				r(await n(e));
 			} catch (e) {
 				i?.(e);
 			}
-			fc(e, {
+			pc(e, {
 				isStillActive: t,
 				fetchStyle: n,
 				onChange: r,
 				onError: i
 			});
 		}
-	}, lc);
-}, pc, mc;
-ta.subscribe((e) => ({mapboxGlAccessToken: pc, maptilerApiKey: mc} = e));
-var hc = async (e) => {
-	let t = ec(e), n = e;
+	}, uc);
+}, mc, hc;
+ta.subscribe((e) => ({mapboxGlAccessToken: mc, maptilerApiKey: hc} = e));
+var gc = async (e) => {
+	let t = tc(e), n = e;
 	try {
 		n = new URL(e);
 		let t = {
-			mapboxKey: pc,
-			maptilerKey: mc
+			mapboxKey: mc,
+			maptilerKey: hc
 		};
-		n = ic(n.toString(), t);
+		n = ac(n.toString(), t);
 	} catch {}
 	let r;
 	try {
@@ -27930,9 +27930,9 @@ var hc = async (e) => {
 	let i = await r.json();
 	if (t && i.message) throw { message: i.message };
 	return i;
-}, gc = /* @__PURE__ */ Br("<div role=\"button\" tabindex=\"0\"><div class=\"caret-container svelte-cs3inr\"><div></div></div> <div class=\"label-container svelte-cs3inr\"><div class=\"label svelte-cs3inr\"> </div></div></div>");
-function _c(e, t) {
-	var n = gc(), r = B(n), i = pn(r), a = mn(r, 2), o = pn(B(a), !0);
+}, _c = /* @__PURE__ */ Br("<div role=\"button\" tabindex=\"0\"><div class=\"caret-container svelte-cs3inr\"><div></div></div> <div class=\"label-container svelte-cs3inr\"><div class=\"label svelte-cs3inr\"> </div></div></div>");
+function vc(e, t) {
+	var n = _c(), r = B(n), i = pn(r), a = mn(r, 2), o = pn(B(a), !0);
 	F(a), F(n), Fn(() => {
 		Si(n, 1, `toggle ${t.topLevelOpen && (t.direction === "up" ? "active-toggle-top" : "active-toggle-bottom")}`, "svelte-cs3inr"), Si(i, 1, gi(t.topLevelOpen ? `caret-${t.direction}` : "caret-right"), "svelte-cs3inr"), Yr(o, t.activeLabel ?? t.placeholder);
 	}), jr("click", n, function(...e) {
@@ -27942,8 +27942,8 @@ function _c(e, t) {
 Mr(["click", "keydown"]);
 //#endregion
 //#region src/components/inputs/Dropdown/Dropdown.svelte
-var vc = /* @__PURE__ */ Br("<div class=\"header svelte-1bid2en\"><div class=\"label-container svelte-1bid2en\"><div class=\"label svelte-1bid2en\"> </div></div></div>"), yc = /* @__PURE__ */ Br("<div role=\"button\" tabindex=\"0\"><div class=\"label-container svelte-1bid2en\"><div class=\"label svelte-1bid2en\"> </div></div></div>"), bc = /* @__PURE__ */ Br("<div class=\"submenu svelte-1bid2en\"></div>"), xc = /* @__PURE__ */ Br("<div class=\"dropdown svelte-1bid2en\"><div role=\"button\" tabindex=\"0\"><div class=\"caret-container svelte-1bid2en\"><div></div></div> <div class=\"label-container svelte-1bid2en\"><div class=\"label svelte-1bid2en\"> </div></div></div> <!></div>"), Sc = /* @__PURE__ */ Br("<div role=\"button\" tabindex=\"0\"><div class=\"caret-container svelte-1bid2en\"></div> <div class=\"label-container svelte-1bid2en\"><div class=\"label svelte-1bid2en\"> </div></div></div>"), Cc = /* @__PURE__ */ Br("<div></div>"), wc = /* @__PURE__ */ Br("<div class=\"dropdown svelte-1bid2en\"><!> <!> <!></div>");
-function Tc(e, t) {
+var yc = /* @__PURE__ */ Br("<div class=\"header svelte-1bid2en\"><div class=\"label-container svelte-1bid2en\"><div class=\"label svelte-1bid2en\"> </div></div></div>"), bc = /* @__PURE__ */ Br("<div role=\"button\" tabindex=\"0\"><div class=\"label-container svelte-1bid2en\"><div class=\"label svelte-1bid2en\"> </div></div></div>"), xc = /* @__PURE__ */ Br("<div class=\"submenu svelte-1bid2en\"></div>"), Sc = /* @__PURE__ */ Br("<div class=\"dropdown svelte-1bid2en\"><div role=\"button\" tabindex=\"0\"><div class=\"caret-container svelte-1bid2en\"><div></div></div> <div class=\"label-container svelte-1bid2en\"><div class=\"label svelte-1bid2en\"> </div></div></div> <!></div>"), Cc = /* @__PURE__ */ Br("<div role=\"button\" tabindex=\"0\"><div class=\"caret-container svelte-1bid2en\"></div> <div class=\"label-container svelte-1bid2en\"><div class=\"label svelte-1bid2en\"> </div></div></div>"), wc = /* @__PURE__ */ Br("<div></div>"), Tc = /* @__PURE__ */ Br("<div class=\"dropdown svelte-1bid2en\"><!> <!> <!></div>");
+function Ec(e, t) {
 	Ue(t, !0);
 	let n = qi(t, "direction", 3, "up"), r = qi(t, "placeholder", 3, ""), i = /* @__PURE__ */ xt(() => t.options.map((e, t) => {
 		let n = {
@@ -27965,8 +27965,8 @@ function Tc(e, t) {
 	}, l = /* @__PURE__ */ xt(() => G(i).filter((e) => !e?.header).map((e) => e?.options ? e?.options : e).flat().find((e) => e.value === t.activeValue)?.label), u = (e) => {
 		t.onSelect(e), z(a, !1), z(o, null);
 	};
-	var d = wc(), f = B(d), p = (e) => {
-		_c(e, {
+	var d = Tc(), f = B(d), p = (e) => {
+		vc(e, {
 			openTopLevel: s,
 			get topLevelOpen() {
 				return G(a);
@@ -27986,18 +27986,18 @@ function Tc(e, t) {
 		n() === "down" && e(p);
 	});
 	var m = mn(f, 2), h = (e) => {
-		var r = Cc();
+		var r = wc();
 		oi(r, 21, () => G(i), ri, (e, n) => {
 			var r = Wr(), i = fn(r), a = (e) => {
-				var t = vc(), r = B(t), i = pn(B(r), !0);
+				var t = yc(), r = B(t), i = pn(B(r), !0);
 				F(r), F(t), Fn(() => Yr(i, G(n)?.header)), K(e, t);
 			}, s = (e) => {
-				var r = xc(), i = B(r), a = B(i), s = pn(a), l = mn(a, 2), d = pn(B(l), !0);
+				var r = Sc(), i = B(r), a = B(i), s = pn(a), l = mn(a, 2), d = pn(B(l), !0);
 				F(l), F(i);
 				var f = mn(i, 2), p = (e) => {
-					var r = bc();
+					var r = xc();
 					oi(r, 21, () => G(n)?.options, ri, (e, n) => {
-						var r = yc(), i = B(r), a = pn(B(i), !0);
+						var r = bc(), i = B(r), a = pn(B(i), !0);
 						F(i), F(r), Fn(() => {
 							Si(r, 1, `menu-item ${t.activeValue === G(n).value && "active"}`, "svelte-1bid2en"), Ai(r, "title", G(n).label), Yr(a, G(n).label);
 						}), jr("click", r, () => u(G(n).value)), jr("keydown", r, () => !1), K(e, r);
@@ -28009,7 +28009,7 @@ function Tc(e, t) {
 					Si(i, 1, `menu-item ${t.activeValue === G(n).value && "active"}`, "svelte-1bid2en"), Ai(i, "title", G(n).label), Si(s, 1, gi(G(o) === G(n).id ? "caret-down" : "caret-right"), "svelte-1bid2en"), Yr(d, G(n).label);
 				}), jr("click", i, () => c(G(n).id)), jr("keydown", i, () => !1), K(e, r);
 			}, l = (e) => {
-				var r = Sc(), i = mn(B(r), 2), a = pn(B(i), !0);
+				var r = Cc(), i = mn(B(r), 2), a = pn(B(i), !0);
 				F(i), F(r), Fn(() => {
 					Si(r, 1, `menu-item ${t.activeValue === G(n).value && "active"}`, "svelte-1bid2en"), Ai(r, "title", G(n).label), Yr(a, G(n).label);
 				}), jr("click", r, () => u(G(n).value)), jr("keydown", r, () => !1), K(e, r);
@@ -28023,7 +28023,7 @@ function Tc(e, t) {
 		G(a) && e(h);
 	});
 	var g = mn(m, 2), _ = (e) => {
-		_c(e, {
+		vc(e, {
 			openTopLevel: s,
 			get topLevelOpen() {
 				return G(a);
@@ -28046,8 +28046,8 @@ function Tc(e, t) {
 Mr(["click", "keydown"]);
 //#endregion
 //#region src/components/inputs/StylesDropdown.svelte
-var Ec = /* @__PURE__ */ Br("<div><!></div>");
-function Dc(e, t) {
+var Dc = /* @__PURE__ */ Br("<div><!></div>");
+function Oc(e, t) {
 	Ue(t, !0);
 	let n = /* @__PURE__ */ Xt("up");
 	Ji(() => {
@@ -28064,8 +28064,8 @@ function Dc(e, t) {
 		label: e.label,
 		value: e.key
 	})]));
-	var i = Ec();
-	Tc(B(i), {
+	var i = Dc();
+	Ec(B(i), {
 		get options() {
 			return G(r);
 		},
@@ -28082,7 +28082,7 @@ function Dc(e, t) {
 }
 //#endregion
 //#region src/shortcut.js
-var Oc = (e, t) => {
+var $ = (e, t) => {
 	let n, r = () => window.removeEventListener("keydown", n), i = () => {
 		r(), t && (n = (n) => {
 			!!t.alt == n.altKey && !!t.shift == n.shiftKey && !!t.control == (n.ctrlKey || n.metaKey) && t.code == n.code && (n.preventDefault(), t.callback ? t.callback() : e.click());
@@ -28092,8 +28092,8 @@ var Oc = (e, t) => {
 		update: i,
 		destroy: r
 	};
-}, $ = /* @__PURE__ */ Br("<div class=\"error-message svelte-1go2blu\"> </div>"), kc = /* @__PURE__ */ Br("<div class=\"custom-input svelte-1go2blu\"><input/> <button>Submit</button></div> <!>", 1);
-function Ac(e, t) {
+}, kc = /* @__PURE__ */ Br("<div class=\"error-message svelte-1go2blu\"> </div>"), Ac = /* @__PURE__ */ Br("<div class=\"custom-input svelte-1go2blu\"><input/> <button>Submit</button></div> <!>", 1);
+function jc(e, t) {
 	Ue(t, !0);
 	let n = /* @__PURE__ */ Xt(nn(t.option.defaultText)), r = /* @__PURE__ */ Xt(!1), i = /* @__PURE__ */ Xt(null), a = t.option.key;
 	En(() => {
@@ -28107,7 +28107,7 @@ function Ac(e, t) {
 				t || (e = `http://localhost${n}`);
 			}
 			try {
-				let r = await hc(e);
+				let r = await gc(e);
 				t.onApply({
 					...t.option,
 					url: e,
@@ -28123,16 +28123,16 @@ function Ac(e, t) {
 	}, c = () => z(r, !0), l = () => {
 		z(r, !1), G(i) && z(n, t.option.defaultText, !0);
 	};
-	var u = kc(), d = fn(u), f = B(d);
+	var u = Ac(), d = fn(u), f = B(d);
 	Oi(f);
 	let p;
 	var m = mn(f, 2);
-	pi(m, (e, t) => Oc?.(e, t), () => ({
+	pi(m, (e, t) => $?.(e, t), () => ({
 		code: "Enter",
 		callback: s
 	})), F(d);
 	var h = mn(d, 2), g = (e) => {
-		var t = $(), n = pn(t, !0);
+		var t = kc(), n = pn(t, !0);
 		Fn(() => Yr(n, G(i))), K(e, t);
 	};
 	ei(h, (e) => {
@@ -28144,16 +28144,16 @@ function Ac(e, t) {
 Mr(["input", "click"]);
 //#endregion
 //#region src/components/RendererPicker.svelte
-var jc = /* @__PURE__ */ Br("<div class=\"renderer-control svelte-1xoctvr\"><span class=\"nowrap svelte-1xoctvr\">Rendered with</span> <!></div>");
-function Mc(e, t) {
+var Mc = /* @__PURE__ */ Br("<div class=\"renderer-control svelte-1xoctvr\"><span class=\"nowrap svelte-1xoctvr\">Rendered with</span> <!></div>");
+function Nc(e, t) {
 	Ue(t, !0);
-	var n = jc(), r = mn(B(n), 2);
+	var n = Mc(), r = mn(B(n), 2);
 	{
 		let e = /* @__PURE__ */ xt(() => t.rendererOptions.map((e) => ({
 			label: e.name,
 			value: e.value
 		})));
-		Tc(r, {
+		Ec(r, {
 			get options() {
 				return G(e);
 			},
@@ -28170,8 +28170,8 @@ function Mc(e, t) {
 }
 //#endregion
 //#region src/components/MapStyleInput.svelte
-var Nc = /* @__PURE__ */ Br("<div class=\"error-message svelte-963llt\"> </div>"), Pc = /* @__PURE__ */ Br("<div class=\"map-style-input svelte-963llt\"><!> <!> <!> <!></div>");
-function Fc(e, t) {
+var Pc = /* @__PURE__ */ Br("<div class=\"error-message svelte-963llt\"> </div>"), Fc = /* @__PURE__ */ Br("<div class=\"map-style-input svelte-963llt\"><!> <!> <!> <!></div>");
+function Ic(e, t) {
 	Ue(t, !0);
 	let n = /* @__PURE__ */ Xt(null), r = t.selectedOption.key;
 	En(() => {
@@ -28180,7 +28180,7 @@ function Fc(e, t) {
 				t.onApply({ ...t.selectedOption });
 				return;
 			}
-			hc(t.selectedOption.url).then((e) => t.onApply({
+			gc(t.selectedOption.url).then((e) => t.onApply({
 				...t.selectedOption,
 				style: e
 			})).catch((e) => {
@@ -28188,8 +28188,8 @@ function Fc(e, t) {
 			});
 		}
 	});
-	var i = Pc(), a = B(i);
-	Dc(a, {
+	var i = Fc(), a = B(i);
+	Oc(a, {
 		get groups() {
 			return t.groups;
 		},
@@ -28204,7 +28204,7 @@ function Fc(e, t) {
 		}
 	});
 	var o = mn(a, 2), s = (e) => {
-		Ac(e, {
+		jc(e, {
 			get option() {
 				return t.selectedOption;
 			},
@@ -28217,12 +28217,12 @@ function Fc(e, t) {
 		(t.selectedOption.kind === "branch" || t.selectedOption.kind === "custom") && e(s);
 	});
 	var c = mn(o, 2), l = (e) => {
-		var t = Nc(), r = pn(t, !0);
+		var t = Pc(), r = pn(t, !0);
 		Fn(() => Yr(r, G(n))), K(e, t);
 	};
 	ei(c, (e) => {
 		G(n) && e(l);
-	}), Mc(mn(c, 2), {
+	}), Nc(mn(c, 2), {
 		get rendererOptions() {
 			return t.rendererOptions;
 		},
@@ -28236,13 +28236,13 @@ function Fc(e, t) {
 }
 //#endregion
 //#region src/components/MapStyleInputWrapper.svelte
-var Ic = /* @__PURE__ */ Br("<div class=\"map-style-input-wrapper svelte-1lewsrk\"><!></div>");
-function Lc(e, t) {
+var Lc = /* @__PURE__ */ Br("<div class=\"map-style-input-wrapper svelte-1lewsrk\"><!></div>");
+function Rc(e, t) {
 	Ue(t, !0);
 	let n = () => st($i, "$mapsStore", a), r = () => st(ea, "$stylePresetsStore", a), i = () => st(ta, "$configStore", a), [a, o] = ct(), s = /* @__PURE__ */ xt(() => n().find((e) => e.index === t.index)), c = (e) => {
-		fc(e, {
+		pc(e, {
 			isStillActive: (e) => G(s)?.url === e,
-			fetchStyle: hc,
+			fetchStyle: gc,
 			onChange: (e) => v({
 				style: e,
 				isPolling: !0
@@ -28253,10 +28253,10 @@ function Lc(e, t) {
 	Ji(() => {
 		G(s)?.url && c(G(s).url);
 	});
-	let l = /* @__PURE__ */ xt(() => Xs({
+	let l = /* @__PURE__ */ xt(() => Zs({
 		stylePresets: r(),
 		branchPatterns: i().branchPatterns
-	})), u = /* @__PURE__ */ xt(() => G(l).groups), d = /* @__PURE__ */ xt(() => G(l).options), f = /* @__PURE__ */ Xt(nn(G(s) ? Qs({
+	})), u = /* @__PURE__ */ xt(() => G(l).groups), d = /* @__PURE__ */ xt(() => G(l).options), f = /* @__PURE__ */ Xt(nn(G(s) ? $s({
 		options: G(d),
 		map: G(s)
 	}) : "custom"));
@@ -28264,15 +28264,15 @@ function Lc(e, t) {
 		let e = G(s);
 		if (!e) return;
 		let t = xr(() => G(d).get(G(f)));
-		t && t.kind === "preset" && (e.type !== t.type || e.url !== t.url) && z(f, Qs({
+		t && t.kind === "preset" && (e.type !== t.type || e.url !== t.url) && z(f, $s({
 			options: G(d),
 			map: e
 		}), !0);
 	});
-	let p = /* @__PURE__ */ xt(() => $s({
+	let p = /* @__PURE__ */ xt(() => ec({
 		option: G(d).get(G(f)),
 		map: G(s)
-	})), m = /* @__PURE__ */ xt(() => cc(G(p), t.stylesheet?.sources)), h = /* @__PURE__ */ xt(() => {
+	})), m = /* @__PURE__ */ xt(() => lc(G(p), t.stylesheet?.sources)), h = /* @__PURE__ */ xt(() => {
 		let e = G(m).map((e) => e.value);
 		return G(s)?.renderer && e.includes(G(s).renderer) ? G(s).renderer : e.includes(G(p).type) ? G(p).type : e[0];
 	}), g = (e) => {
@@ -28299,8 +28299,8 @@ function Lc(e, t) {
 		};
 		$i.update((e) => e.map((e, n) => n === t.index ? o : e)), c(o.url);
 	};
-	var y = Ic(), b = B(y), x = (e) => {
-		Fc(e, {
+	var y = Lc(), b = B(y), x = (e) => {
+		Ic(e, {
 			get groups() {
 				return G(u);
 			},
@@ -28327,9 +28327,9 @@ function Lc(e, t) {
 }
 //#endregion
 //#region src/components/inputs/Button.svelte
-var Rc = /* @__PURE__ */ Br("<button class=\"svelte-118028m\"><!></button>");
-function zc(e, t) {
-	var n = Rc();
+var zc = /* @__PURE__ */ Br("<button class=\"svelte-118028m\"><!></button>");
+function Bc(e, t) {
+	var n = zc();
 	di(B(n), () => t.children ?? m), F(n), jr("click", n, function(...e) {
 		t.onclick?.apply(this, e);
 	}), K(e, n);
@@ -28337,8 +28337,8 @@ function zc(e, t) {
 Mr(["click"]);
 //#endregion
 //#region src/components/MapLocationControl.svelte
-var Bc = /* @__PURE__ */ Br("<div class=\"state-record svelte-pescne\"><input style=\"height:18px\" type=\"text\"/><label class=\"input-label svelte-pescne\">enter zoom/lat/lng[/pitch/bearing]</label></div>"), Vc = /* @__PURE__ */ Br("<div class=\"map-state-container svelte-pescne\"><div class=\"map-state svelte-pescne\" role=\"button\" tabindex=\"0\"> </div> <div class=\"location-actions svelte-pescne\"><div class=\"svelte-pescne\"><!></div> <div class=\"svelte-pescne\"><!></div></div></div>"), Hc = /* @__PURE__ */ Br("<div><!></div>");
-function Uc(e, t) {
+var Vc = /* @__PURE__ */ Br("<div class=\"state-record svelte-pescne\"><input style=\"height:18px\" type=\"text\"/><label class=\"input-label svelte-pescne\">enter zoom/lat/lng[/pitch/bearing]</label></div>"), Hc = /* @__PURE__ */ Br("<div class=\"map-state-container svelte-pescne\"><div class=\"map-state svelte-pescne\" role=\"button\" tabindex=\"0\"> </div> <div class=\"location-actions svelte-pescne\"><div class=\"svelte-pescne\"><!></div> <div class=\"svelte-pescne\"><!></div></div></div>"), Uc = /* @__PURE__ */ Br("<div><!></div>");
+function Wc(e, t) {
 	Ue(t, !0);
 	let n = /* @__PURE__ */ Xt(!1), r = /* @__PURE__ */ Xt(""), i, a = /* @__PURE__ */ xt(() => t.center.lat), o = /* @__PURE__ */ xt(() => t.center.lng), s = /* @__PURE__ */ xt(() => {
 		let e = [
@@ -28382,14 +28382,14 @@ function Uc(e, t) {
 			lat: +i
 		}), o !== void 0 && (l.pitch = +o), s !== void 0 && (l.bearing = +s), t.onMapState({ options: l });
 	};
-	var m = Hc(), h = B(m), g = (e) => {
-		var t = Bc(), n = B(t);
+	var m = Uc(), h = B(m), g = (e) => {
+		var t = Vc(), n = B(t);
 		Oi(n), Bi(n, (e) => i = e, () => i), xe(), F(t), jr("keydown", n, (e) => {
 			e.key === "Enter" && p(), e.key === "Escape" && d();
 		}), Ar("focus", n, (e) => e.target.select()), Pi(n, () => G(r), (e) => z(r, e)), K(e, t);
 	}, _ = (e) => {
-		var t = Vc(), n = B(t), r = pn(n, !0), i = mn(n, 2), a = B(i);
-		zc(B(a), {
+		var t = Hc(), n = B(t), r = pn(n, !0), i = mn(n, 2), a = B(i);
+		Bc(B(a), {
 			onclick: u,
 			children: (e, t) => {
 				xe(), K(e, Ur("change"));
@@ -28397,7 +28397,7 @@ function Uc(e, t) {
 			$$slots: { default: !0 }
 		}), F(a);
 		var o = mn(a, 2);
-		zc(B(o), {
+		Bc(B(o), {
 			onclick: l,
 			children: (e, t) => {
 				xe();
@@ -28414,16 +28414,16 @@ function Uc(e, t) {
 Mr(["keydown", "click"]);
 //#endregion
 //#region src/components/MapLabel.svelte
-var Wc = /* @__PURE__ */ Br("<div class=\"location-control svelte-1hbs0bo\"><!></div>"), Gc = /* @__PURE__ */ Br("<div class=\"map-label svelte-1hbs0bo\"><button class=\"close-button svelte-1hbs0bo\">&times;</button> <div class=\"map-name svelte-1hbs0bo\"> </div> <div class=\"options-container svelte-1hbs0bo\"><!> <!></div></div>");
-function Kc(e, t) {
+var Gc = /* @__PURE__ */ Br("<div class=\"location-control svelte-1hbs0bo\"><!></div>"), Kc = /* @__PURE__ */ Br("<div class=\"map-label svelte-1hbs0bo\"><button class=\"close-button svelte-1hbs0bo\">&times;</button> <div class=\"map-name svelte-1hbs0bo\"> </div> <div class=\"options-container svelte-1hbs0bo\"><!> <!></div></div>");
+function qc(e, t) {
 	Ue(t, !0);
 	let n = () => st(na, "$showDisplaysStore", i), r = () => st(ra, "$linkLocationsStore", i), [i, a] = ct(), o = /* @__PURE__ */ xt(() => {
 		let { showBoundaries: e, showCollisions: n, ...r } = t.mapState;
 		return r;
 	});
 	var s = Wr(), c = fn(s), l = (e) => {
-		var n = Gc(), i = B(n), a = mn(i, 2), s = pn(a, !0), c = mn(a, 2), l = B(c);
-		Lc(l, {
+		var n = Kc(), i = B(n), a = mn(i, 2), s = pn(a, !0), c = mn(a, 2), l = B(c);
+		Rc(l, {
 			get index() {
 				return t.index;
 			},
@@ -28432,8 +28432,8 @@ function Kc(e, t) {
 			}
 		});
 		var u = mn(l, 2), d = (e) => {
-			var n = Wc();
-			Uc(B(n), Ki(() => G(o), { get onMapState() {
+			var n = Gc();
+			Wc(B(n), Ki(() => G(o), { get onMapState() {
 				return t.onMapState;
 			} })), F(n), K(e, n);
 		}, f = /* @__PURE__ */ xt(() => !r() && Object.keys(G(o)).length);
@@ -28452,7 +28452,7 @@ function Kc(e, t) {
 Mr(["click"]);
 //#endregion
 //#region src/components/Map.svelte
-var qc = /* @__PURE__ */ new Set([
+var Jc = /* @__PURE__ */ new Set([
 	"$$slots",
 	"$$events",
 	"$$legacy",
@@ -28461,14 +28461,14 @@ var qc = /* @__PURE__ */ new Set([
 	"highlightDifferences",
 	"labelStyle",
 	"onMapMove"
-]), Jc = /* @__PURE__ */ Br("<div class=\"screenshot-text svelte-c20cna\"> <span class=\"screenshot-label-bold svelte-c20cna\"> </span></div>"), Yc = /* @__PURE__ */ Br("<div><!></div>"), Xc = /* @__PURE__ */ Br("<div class=\"map-container svelte-c20cna\"><div class=\"screenshot-label-transparent svelte-c20cna\"><!></div> <!>  <!></div>");
-function Zc(e, t) {
+]), Yc = /* @__PURE__ */ Br("<div class=\"screenshot-text svelte-c20cna\"> <span class=\"screenshot-label-bold svelte-c20cna\"> </span></div>"), Xc = /* @__PURE__ */ Br("<div><!></div>"), Zc = /* @__PURE__ */ Br("<div class=\"map-container svelte-c20cna\"><div class=\"screenshot-label-transparent svelte-c20cna\"><!></div> <!>  <!></div>");
+function Qc(e, t) {
 	Ue(t, !0);
-	let n = () => st(ia, "$mapLocationsStore", a), r = () => st(ta, "$configStore", a), i = () => st(ra, "$linkLocationsStore", a), [a, o] = ct(), s = qi(t, "highlightDifferences", 3, !1), c = qi(t, "labelStyle", 3, ""), l = /* @__PURE__ */ Wi(t, qc), u = /* @__PURE__ */ xt(() => t.map.renderer ?? t.map.type), d = {
+	let n = () => st(ia, "$mapLocationsStore", a), r = () => st(ta, "$configStore", a), i = () => st(ra, "$linkLocationsStore", a), [a, o] = ct(), s = qi(t, "highlightDifferences", 3, !1), c = qi(t, "labelStyle", 3, ""), l = /* @__PURE__ */ Wi(t, Jc), u = /* @__PURE__ */ xt(() => t.map.renderer ?? t.map.type), d = {
 		google: Rs,
-		leaflet: Us,
-		tangram: Ks
-	}, f = /* @__PURE__ */ xt(() => d[G(u)] ?? Bs), p = /* @__PURE__ */ xt(() => `${t.map.id}-${t.map.index}`), m = /* @__PURE__ */ xt(() => n()?.[t.map.index] ?? {}), h = /* @__PURE__ */ Xt(nn(t.map?.style));
+		leaflet: Ws,
+		tangram: qs
+	}, f = /* @__PURE__ */ xt(() => d[G(u)] ?? Vs), p = /* @__PURE__ */ xt(() => `${t.map.id}-${t.map.index}`), m = /* @__PURE__ */ xt(() => n()?.[t.map.index] ?? {}), h = /* @__PURE__ */ Xt(nn(t.map?.style));
 	En(() => {
 		let e = t.map?.style;
 		(0, fa.default)(xr(() => G(h)), e) || z(h, e, !0);
@@ -28482,7 +28482,7 @@ function Zc(e, t) {
 			id: G(p),
 			mapStyle: {
 				...t.map,
-				url: t.map.isPolling ? void 0 : ic(t.map.url, e)
+				url: t.map.isPolling ? void 0 : ac(t.map.url, e)
 			},
 			numberOfMaps: t.numberOfMaps,
 			mapRenderer: G(u)
@@ -28513,8 +28513,8 @@ function Zc(e, t) {
 			[t.map.index]: e
 		}));
 	};
-	var S = Xc(), C = B(S), w = B(C), T = (e) => {
-		var n = Jc(), r = B(n), i = pn(mn(r));
+	var S = Zc(), C = B(S), w = B(C), T = (e) => {
+		var n = Yc(), r = B(n), i = pn(mn(r));
 		F(n), Fn(() => {
 			Yr(r, `${t.map.screenshotName ?? t.map.name ?? t.map.id ?? ""} `), Yr(i, ` ${t.map.branch ?? ""}`);
 		}), K(e, n);
@@ -28527,16 +28527,16 @@ function Zc(e, t) {
 	}), F(C);
 	var D = mn(C, 2);
 	ni(D, () => G(u), (e) => {
-		var t = Yc();
+		var t = Xc();
 		let n;
 		X(B(t), () => G(f), (e, t) => {
 			t(e, Ki({ onMapMount: x }, () => G(g), () => G(y), { onMapMove: b }));
 		}), F(t), Fn(() => n = Si(t, 1, "map svelte-c20cna", null, n, { "highlight-diff": s() })), K(e, t);
 	}), ni(mn(D, 2), () => `${t.numberOfMaps}-${t.map.index}`, (e) => {
-		var n = Yc(), r = B(n);
+		var n = Xc(), r = B(n);
 		{
 			let e = /* @__PURE__ */ xt(() => t.numberOfMaps <= 1);
-			Kc(r, {
+			qc(r, {
 				get index() {
 					return t.map.index;
 				},
@@ -28566,20 +28566,20 @@ function Zc(e, t) {
 }
 //#endregion
 //#region src/components/MapsMirrorLayout.svelte
-var Qc = /* @__PURE__ */ Br("<div class=\"map-container map-container-border svelte-230aji\"><!></div>"), $c = /* @__PURE__ */ Br("<div class=\"section svelte-230aji\"></div>"), el = /* @__PURE__ */ Br("<div><div class=\"maps svelte-230aji\"></div></div>");
-function tl(e, t) {
+var $c = /* @__PURE__ */ Br("<div class=\"map-container map-container-border svelte-230aji\"><!></div>"), el = /* @__PURE__ */ Br("<div class=\"section svelte-230aji\"></div>"), tl = /* @__PURE__ */ Br("<div><div class=\"maps svelte-230aji\"></div></div>");
+function nl(e, t) {
 	Ue(t, !0);
 	let n = qi(t, "maps", 19, () => []), r = [2, 6], i = /* @__PURE__ */ xt(() => n().length), a = /* @__PURE__ */ xt(() => r.includes(G(i)) ? "row" : "column"), o = (e) => {
 		let t = Math.round(Math.sqrt(e.length)), n = Math.floor(e.length / t), r = [...e], i = [];
 		for (; r.length;) i.push(r.slice(0, n)), r = r.slice(n);
 		return i;
 	}, s = /* @__PURE__ */ xt(() => o(n()));
-	var c = el(), l = B(c);
+	var c = tl(), l = B(c);
 	oi(l, 21, () => G(s), ri, (e, n) => {
-		var r = $c();
+		var r = el();
 		oi(r, 21, () => G(n), (e) => e.index, (e, n) => {
-			var r = Qc();
-			Zc(B(r), Ki({ get map() {
+			var r = $c();
+			Qc(B(r), Ki({ get map() {
 				return G(n);
 			} }, () => t.mapState, {
 				get numberOfMaps() {
@@ -28594,13 +28594,13 @@ function tl(e, t) {
 }
 //#endregion
 //#region src/components/MapsPhoneLayout.svelte
-var nl = /* @__PURE__ */ Br("<div class=\"map-container svelte-xgnor3\"><!></div>"), rl = /* @__PURE__ */ Br("<div class=\"viewer-container svelte-xgnor3\"><div class=\"maps phone svelte-xgnor3\"></div></div>");
-function il(e, t) {
+var rl = /* @__PURE__ */ Br("<div class=\"map-container svelte-xgnor3\"><!></div>"), il = /* @__PURE__ */ Br("<div class=\"viewer-container svelte-xgnor3\"><div class=\"maps phone svelte-xgnor3\"></div></div>");
+function al(e, t) {
 	Ue(t, !0);
-	var n = rl(), r = B(n);
+	var n = il(), r = B(n);
 	oi(r, 21, () => t.maps, (e) => e.index, (e, n) => {
-		var r = nl();
-		Zc(B(r), Ki({ get map() {
+		var r = rl();
+		Qc(B(r), Ki({ get map() {
 			return G(n);
 		} }, () => t.mapState, {
 			labelStyle: "position: absolute; margin-top: 48px; left: 0; right: 0; bottom: unset; max-width: unset;",
@@ -28615,8 +28615,8 @@ function il(e, t) {
 }
 //#endregion
 //#region src/components/MapsSwipeLayout.svelte
-var al = /* @__PURE__ */ Br("<div class=\"map-container svelte-ahidsd\"><!></div>"), ol = /* @__PURE__ */ Br("<div><!> <div class=\"slider svelte-ahidsd\"></div></div>");
-function sl(e, t) {
+var ol = /* @__PURE__ */ Br("<div class=\"map-container svelte-ahidsd\"><!></div>"), sl = /* @__PURE__ */ Br("<div><!> <div class=\"slider svelte-ahidsd\"></div></div>");
+function cl(e, t) {
 	Ue(t, !0);
 	let n = /* @__PURE__ */ Xt(!1), r = /* @__PURE__ */ Xt(0), i = /* @__PURE__ */ Xt(0), a = /* @__PURE__ */ Xt(0);
 	En(() => {
@@ -28625,14 +28625,14 @@ function sl(e, t) {
 	let o = () => z(n, !0), s = () => z(n, !1), c = (e) => {
 		G(n) && e.clientX !== 0 && z(r, e.clientX - 5 / 2);
 	}, l = /* @__PURE__ */ xt(() => G(i) - G(r)), u = /* @__PURE__ */ xt(() => G(i) - G(l)), d = /* @__PURE__ */ xt(() => `right: unset; margin-right:unset; left:0; margin-left:1em; max-width:calc(${G(u)}px - 6em)`), f = /* @__PURE__ */ xt(() => `max-width:calc(${G(l)}px - 6em)`);
-	var p = ol();
+	var p = sl();
 	let m;
 	var h = B(p);
 	oi(h, 17, () => t.maps, (e) => e.index, (e, n) => {
-		var o = al(), s = B(o);
+		var o = ol(), s = B(o);
 		{
 			let e = /* @__PURE__ */ xt(() => G(n).index === 1 && t.mapState?.showDiff), r = /* @__PURE__ */ xt(() => G(n).index === 0 ? G(d) : G(f));
-			Zc(s, Ki({ get map() {
+			Qc(s, Ki({ get map() {
 				return G(n);
 			} }, () => t.mapState, {
 				get numberOfMaps() {
@@ -28663,8 +28663,8 @@ Mr([
 ]);
 //#endregion
 //#region src/components/MapsResponsiveLayout.svelte
-var cl = /* @__PURE__ */ Br("<div class=\"maps responsive svelte-g8hzd\"><div class=\"map-container svelte-g8hzd\"><!></div> <div class=\"responsive-input svelte-g8hzd\"><div class=\"dimension-input svelte-g8hzd\"><span>Height:</span> <div class=\"input-container svelte-g8hzd\"><input type=\"number\" class=\"input svelte-g8hzd\"/></div></div> <div class=\"dimension-input svelte-g8hzd\"><span>Width:</span> <div class=\"input-container svelte-g8hzd\"><input type=\"number\" class=\"input svelte-g8hzd\"/></div></div> <div class=\"buttons svelte-g8hzd\"><button>Set Dimensions</button> <button>Reset</button></div></div></div>");
-function ll(e, t) {
+var ll = /* @__PURE__ */ Br("<div class=\"maps responsive svelte-g8hzd\"><div class=\"map-container svelte-g8hzd\"><!></div> <div class=\"responsive-input svelte-g8hzd\"><div class=\"dimension-input svelte-g8hzd\"><span>Height:</span> <div class=\"input-container svelte-g8hzd\"><input type=\"number\" class=\"input svelte-g8hzd\"/></div></div> <div class=\"dimension-input svelte-g8hzd\"><span>Width:</span> <div class=\"input-container svelte-g8hzd\"><input type=\"number\" class=\"input svelte-g8hzd\"/></div></div> <div class=\"buttons svelte-g8hzd\"><button>Set Dimensions</button> <button>Reset</button></div></div></div>");
+function ul(e, t) {
 	Ue(t, !0);
 	let n = /* @__PURE__ */ Xt(nn(t.mapState.height || "100%")), r = /* @__PURE__ */ Xt(nn(t.mapState.width || "100%")), i = /* @__PURE__ */ Xt(nn(t.mapState.height || "")), a = /* @__PURE__ */ Xt(nn(t.mapState.width || "")), o = /* @__PURE__ */ Xt(!1), s = /* @__PURE__ */ Xt(!1), c = /* @__PURE__ */ xt(() => t.maps[0]), l = /* @__PURE__ */ xt(() => t.maps?.length ?? 0), u = /* @__PURE__ */ xt(() => {
 		let { width: e, height: n, ...r } = t.mapState;
@@ -28683,8 +28683,8 @@ function ll(e, t) {
 			width: null
 		} });
 	};
-	var m = cl(), h = B(m), g = B(h), _ = (e) => {
-		Zc(e, Ki({ get map() {
+	var m = ll(), h = B(m), g = B(h), _ = (e) => {
+		Qc(e, Ki({ get map() {
 			return G(c);
 		} }, () => G(u), {
 			get numberOfMaps() {
@@ -28704,7 +28704,7 @@ function ll(e, t) {
 	var S = mn(y, 2), C = mn(B(S), 2), w = B(C);
 	Oi(w), F(C), F(S);
 	var T = mn(S, 2), E = B(T);
-	pi(E, (e, t) => Oc?.(e, t), () => ({
+	pi(E, (e, t) => $?.(e, t), () => ({
 		code: "Enter",
 		callback: f
 	}));
@@ -28716,14 +28716,14 @@ function ll(e, t) {
 Mr(["click"]);
 //#endregion
 //#region src/components/Maps.svelte
-function ul(e, t) {
+function dl(e, t) {
 	Ue(t, !0);
 	let n = {
-		phone: il,
-		mirror: tl,
-		responsive: ll,
-		swipe: sl
-	}, r = /* @__PURE__ */ xt(() => n[t.viewMode] ?? sl), i = ({ options: e }) => {
+		phone: al,
+		mirror: nl,
+		responsive: ul,
+		swipe: cl
+	}, r = /* @__PURE__ */ xt(() => n[t.viewMode] ?? cl), i = ({ options: e }) => {
 		t.onMapState({ options: e });
 	}, a = ({ options: e }) => {
 		t.onSetDimensions(e);
@@ -28750,7 +28750,7 @@ function ul(e, t) {
 }
 //#endregion
 //#region node_modules/@fortawesome/free-solid-svg-icons/index.mjs
-var dl = {
+var fl = {
 	prefix: "fas",
 	iconName: "camera",
 	icon: [
@@ -28760,7 +28760,7 @@ var dl = {
 		"f030",
 		"M149.1 64.8L138.7 96 64 96C28.7 96 0 124.7 0 160L0 416c0 35.3 28.7 64 64 64l384 0c35.3 0 64-28.7 64-64l0-256c0-35.3-28.7-64-64-64l-74.7 0L362.9 64.8C356.4 45.2 338.1 32 317.4 32L194.6 32c-20.7 0-39 13.2-45.5 32.8zM256 192a96 96 0 1 1 0 192 96 96 0 1 1 0-192z"
 	]
-}, fl = {
+}, pl = {
 	prefix: "fas",
 	iconName: "link",
 	icon: [
@@ -28770,7 +28770,7 @@ var dl = {
 		"f0c1",
 		"M579.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L422.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C206.5 251.2 213 330 263 380c56.5 56.5 148 56.5 204.5 0L579.8 267.7zM60.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C74 372 74 321 105.5 289.5L217.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C433.5 260.8 427 182 377 132c-56.5-56.5-148-56.5-204.5 0L60.2 244.3z"
 	]
-}, pl = {
+}, ml = {
 	prefix: "fas",
 	iconName: "link-slash",
 	icon: [
@@ -28790,8 +28790,8 @@ var dl = {
 Be();
 //#endregion
 //#region node_modules/svelte-fa/src/utils.js
-var ml = parseFloat;
-function hl(e, t = ";") {
+var hl = parseFloat;
+function gl(e, t = ";") {
 	let n;
 	if (Array.isArray(e)) n = e.filter((e) => e);
 	else {
@@ -28800,9 +28800,9 @@ function hl(e, t = ";") {
 	}
 	return n.join(t);
 }
-function gl(e, t, n, r) {
+function _l(e, t, n, r) {
 	let i, a, o, s, c, l = "-.125em";
-	return r && (c = "center", a = "1.25em"), n && (i = n), t && (t == "lg" ? (s = "1.33333em", o = ".75em", l = "-.225em") : s = t == "xs" ? ".75em" : t == "sm" ? ".875em" : t.replace("x", "em")), hl([hl({
+	return r && (c = "center", a = "1.25em"), n && (i = n), t && (t == "lg" ? (s = "1.33333em", o = ".75em", l = "-.225em") : s = t == "xs" ? ".75em" : t == "sm" ? ".875em" : t.replace("x", "em")), gl([gl({
 		float: i,
 		width: a,
 		height: "1em",
@@ -28814,18 +28814,18 @@ function gl(e, t, n, r) {
 		overflow: "visible"
 	}), e]);
 }
-function _l(e, t, n, r, i, a = 1, o = "", s = "") {
+function vl(e, t, n, r, i, a = 1, o = "", s = "") {
 	let c = 1, l = 1;
-	return i && (i == "horizontal" ? c = -1 : i == "vertical" ? l = -1 : c = l = -1), hl([
-		`translate(${ml(t) * a}${o},${ml(n) * a}${o})`,
-		`scale(${c * ml(e)},${l * ml(e)})`,
+	return i && (i == "horizontal" ? c = -1 : i == "vertical" ? l = -1 : c = l = -1), gl([
+		`translate(${hl(t) * a}${o},${hl(n) * a}${o})`,
+		`scale(${c * hl(e)},${l * hl(e)})`,
 		r && `rotate(${r}${s})`
 	], " ");
 }
 //#endregion
 //#region node_modules/svelte-fa/src/fa.svelte
-var vl = /* @__PURE__ */ Hr("<path class=\"svelte-yruc9f\"></path>"), yl = /* @__PURE__ */ Hr("<path class=\"svelte-yruc9f\"></path><path class=\"svelte-yruc9f\"></path>", 1), bl = /* @__PURE__ */ Hr("<svg aria-hidden=\"true\" role=\"img\" xmlns=\"http://www.w3.org/2000/svg\"><g class=\"svelte-yruc9f\"><g class=\"svelte-yruc9f\"><!></g></g></svg>");
-function xl(e, t) {
+var yl = /* @__PURE__ */ Hr("<path class=\"svelte-yruc9f\"></path>"), bl = /* @__PURE__ */ Hr("<path class=\"svelte-yruc9f\"></path><path class=\"svelte-yruc9f\"></path>", 1), xl = /* @__PURE__ */ Hr("<svg aria-hidden=\"true\" role=\"img\" xmlns=\"http://www.w3.org/2000/svg\"><g class=\"svelte-yruc9f\"><g class=\"svelte-yruc9f\"><!></g></g></svg>");
+function Sl(e, t) {
 	Ue(t, !1);
 	let n = qi(t, "class", 8, ""), r = qi(t, "id", 8, ""), i = qi(t, "style", 8, ""), a = qi(t, "icon", 8), o = qi(t, "size", 8, ""), s = qi(t, "color", 8, ""), c = qi(t, "fw", 8, !1), l = qi(t, "pull", 8, ""), u = qi(t, "scale", 8, 1), d = qi(t, "translateX", 8, 0), f = qi(t, "translateY", 8, 0), p = qi(t, "rotate", 8, ""), m = qi(t, "flip", 8, !1), h = qi(t, "spin", 8, !1), g = qi(t, "pulse", 8, !1), _ = qi(t, "primaryColor", 8, ""), v = qi(t, "secondaryColor", 8, ""), y = qi(t, "primaryOpacity", 8, 1), b = qi(t, "secondaryOpacity", 8, .4), x = qi(t, "swapOpacity", 8, !1), S = /* @__PURE__ */ Zt(), C = /* @__PURE__ */ Zt(), w = /* @__PURE__ */ Zt(), T = /* @__PURE__ */ Zt();
 	jn(() => Sr(a()), () => {
@@ -28837,25 +28837,25 @@ function xl(e, t) {
 			""
 		]);
 	}), jn(() => (Sr(n()), Sr(h()), Sr(g())), () => {
-		z(C, hl([
+		z(C, gl([
 			n(),
 			"svelte-fa",
 			h() && "spin",
 			g() && "pulse"
 		], " "));
 	}), jn(() => (Sr(i()), Sr(o()), Sr(l()), Sr(c())), () => {
-		z(w, gl(i(), o(), l(), c()));
+		z(w, _l(i(), o(), l(), c()));
 	}), jn(() => (Sr(u()), Sr(d()), Sr(f()), Sr(p()), Sr(m())), () => {
-		z(T, _l(u(), d(), f(), p(), m(), 512));
+		z(T, vl(u(), d(), f(), p(), m(), 512));
 	}), Mn(), Z();
 	var E = Wr(), D = fn(E), O = (e) => {
-		var t = bl(), n = B(t), i = B(n), a = B(i), o = (e) => {
-			var t = vl();
+		var t = xl(), n = B(t), i = B(n), a = B(i), o = (e) => {
+			var t = yl();
 			Fn(() => {
 				Ai(t, "d", (G(S), xr(() => G(S)[4]))), Ai(t, "fill", s() || _() || "currentColor"), Ai(t, "transform", (G(S), xr(() => `translate(${G(S)[0] / -2} ${G(S)[1] / -2})`)));
 			}), K(e, t);
 		}, c = (e) => {
-			var t = yl(), n = fn(t), r = mn(n);
+			var t = bl(), n = fn(t), r = mn(n);
 			Fn(() => {
 				Ai(n, "d", (G(S), xr(() => G(S)[4][0]))), Ai(n, "fill", v() || s() || "currentColor"), Ai(n, "fill-opacity", x() == 0 ? b() : y()), Ai(n, "transform", (G(S), xr(() => `translate(${G(S)[0] / -2} ${G(S)[1] / -2})`))), Ai(r, "d", (G(S), xr(() => G(S)[4][1]))), Ai(r, "fill", _() || s() || "currentColor"), Ai(r, "fill-opacity", x() == 0 ? y() : b()), Ai(r, "transform", (G(S), xr(() => `translate(${G(S)[0] / -2} ${G(S)[1] / -2})`)));
 			}), K(e, t);
@@ -28872,7 +28872,108 @@ function xl(e, t) {
 }
 //#endregion
 //#region node_modules/@beyonk/svelte-mapbox/src/lib/asset-loader.js
-var Sl = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
+function Cl(e, t) {
+	for (let { type: n, value: r, id: i } of e) {
+		if (document.getElementById(i)) {
+			n === "script" && t();
+			return;
+		}
+		let e = document.createElement(n);
+		e.id = i, n === "script" ? (e.async = !0, e.defer = !0, e.src = r, e.onload = () => t()) : (e.rel = "stylesheet", e.href = r), document.body.appendChild(e);
+	}
+}
+//#endregion
+//#region node_modules/@beyonk/svelte-mapbox/src/lib/event-bindings.js
+function wl(e, t, n, r) {
+	let i = [];
+	for (let [a, o] of Object.entries(t)) {
+		let t = (t) => {
+			let [i, a] = o(e, t, n);
+			r.dispatchEvent(new CustomEvent(i, { detail: a }));
+		};
+		e.on(a, t), i.push([a, t]);
+	}
+	return () => {
+		for (let [t, n] of i) e.off(t, n);
+	};
+}
+//#endregion
+//#region node_modules/@beyonk/svelte-mapbox/src/lib/geocoder/geocoder-action.js
+function Tl(e, t = {}) {
+	let n = [{
+		type: "script",
+		value: `//api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/${t.version}/mapbox-gl-geocoder.min.js`,
+		id: "byk-gc-js"
+	}, {
+		type: "link",
+		value: `//api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/${t.version}/mapbox-gl-geocoder.css`,
+		id: "byk-gc-css"
+	}], r = t.customStylesheetUrl;
+	r && n.push({
+		type: "link",
+		value: r,
+		id: "byk-gcsu-css"
+	});
+	let i = () => {};
+	return Cl(n, () => {
+		i = El(t, e);
+	}), { destroy() {
+		i();
+	} };
+}
+function El(e, t) {
+	let n = new window.MapboxGeocoder(e);
+	return n.addTo(`#${t.id}`), e.value && n.setInput(e.value), wl(n, Dl, !1, t);
+}
+var Dl = {
+	results: (e, t) => ["results", t],
+	result: (e, t) => ["result", t],
+	loading: (e, t) => ["loading", t],
+	error: (e, t) => ["error", t],
+	clear: (e, t) => ["clear", t],
+	load: (e) => ["ready", { geocoder: e }]
+}, Ol = /* @__PURE__ */ Br("<div class=\"svelte-w71fiy\"></div>");
+function kl(e, t) {
+	Ue(t, !1);
+	let n = qi(t, "accessToken", 8), r = qi(t, "options", 24, () => ({})), i = qi(t, "version", 8, "v4.5.1"), a = qi(t, "types", 24, () => [
+		"country",
+		"region",
+		"postcode",
+		"district",
+		"place",
+		"locality",
+		"neighborhood",
+		"address"
+	]), o = qi(t, "placeholder", 8, "Search"), s = qi(t, "value", 8, null), c = qi(t, "customStylesheetUrl", 8, !1), l = qi(t, "geocoder", 12), u = Zi(), d = "bsm-" + Math.random().toString(36).substring(6), f = Object.assign({
+		version: i(),
+		accessToken: n(),
+		types: a().join(","),
+		placeholder: o(),
+		customStylesheetUrl: c(),
+		value: s()
+	}, r());
+	function p({ detail: e }) {
+		l(e.geocoder), u("ready");
+	}
+	Z();
+	var m = Ol();
+	pi(m, (e, t) => Tl?.(e, t), () => f), An(() => Ar("ready", m, p)), An(() => Ar("results", m, function(e) {
+		Hi.call(this, t, e);
+	})), An(() => Ar("result", m, function(e) {
+		Hi.call(this, t, e);
+	})), An(() => Ar("loading", m, function(e) {
+		Hi.call(this, t, e);
+	})), An(() => Ar("error", m, function(e) {
+		Hi.call(this, t, e);
+	})), An(() => Ar("clear", m, function(e) {
+		Hi.call(this, t, e);
+	})), An(() => Ar("load", m, function(e) {
+		Hi.call(this, t, e);
+	})), Fn(() => Ai(m, "id", d)), K(e, m), We();
+}
+//#endregion
+//#region src/screenshot.js
+var Al = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 	(function(n, r) {
 		typeof e == "object" && t !== void 0 ? t.exports = r() : typeof define == "function" && define.amd ? define(r) : (n = typeof globalThis < "u" ? globalThis : n || self, n.html2canvas = r());
 	})(e, (function() {
@@ -32888,110 +32989,23 @@ var Sl = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
 		};
 		return Ol;
 	}));
-})))());
-function Cl(e, t) {
-	for (let { type: n, value: r, id: i } of e) {
-		if (document.getElementById(i)) {
-			n === "script" && t();
-			return;
-		}
-		let e = document.createElement(n);
-		e.id = i, n === "script" ? (e.async = !0, e.defer = !0, e.src = r, e.onload = () => t()) : (e.rel = "stylesheet", e.href = r), document.body.appendChild(e);
-	}
-}
-//#endregion
-//#region node_modules/@beyonk/svelte-mapbox/src/lib/event-bindings.js
-function wl(e, t, n, r) {
-	let i = [];
-	for (let [a, o] of Object.entries(t)) {
-		let t = (t) => {
-			let [i, a] = o(e, t, n);
-			r.dispatchEvent(new CustomEvent(i, { detail: a }));
-		};
-		e.on(a, t), i.push([a, t]);
-	}
-	return () => {
-		for (let [t, n] of i) e.off(t, n);
-	};
-}
-//#endregion
-//#region node_modules/@beyonk/svelte-mapbox/src/lib/geocoder/geocoder-action.js
-function Tl(e, t = {}) {
-	let n = [{
-		type: "script",
-		value: `//api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/${t.version}/mapbox-gl-geocoder.min.js`,
-		id: "byk-gc-js"
-	}, {
-		type: "link",
-		value: `//api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/${t.version}/mapbox-gl-geocoder.css`,
-		id: "byk-gc-css"
-	}], r = t.customStylesheetUrl;
-	r && n.push({
-		type: "link",
-		value: r,
-		id: "byk-gcsu-css"
+})))(), 1), jl = async (e) => {
+	let t = document.getElementsByClassName("maps")[0], n = [...document.getElementsByClassName("screenshot-label-transparent")];
+	n.forEach((e) => {
+		e.classList.remove("screenshot-label-transparent"), e.classList.add("screenshot-label");
 	});
-	let i = () => {};
-	return Cl(n, () => {
-		i = El(t, e);
-	}), { destroy() {
-		i();
-	} };
-}
-function El(e, t) {
-	let n = new window.MapboxGeocoder(e);
-	return n.addTo(`#${t.id}`), e.value && n.setInput(e.value), wl(n, Dl, !1, t);
-}
-var Dl = {
-	results: (e, t) => ["results", t],
-	result: (e, t) => ["result", t],
-	loading: (e, t) => ["loading", t],
-	error: (e, t) => ["error", t],
-	clear: (e, t) => ["clear", t],
-	load: (e) => ["ready", { geocoder: e }]
-}, Ol = /* @__PURE__ */ Br("<div class=\"svelte-w71fiy\"></div>");
-function kl(e, t) {
-	Ue(t, !1);
-	let n = qi(t, "accessToken", 8), r = qi(t, "options", 24, () => ({})), i = qi(t, "version", 8, "v4.5.1"), a = qi(t, "types", 24, () => [
-		"country",
-		"region",
-		"postcode",
-		"district",
-		"place",
-		"locality",
-		"neighborhood",
-		"address"
-	]), o = qi(t, "placeholder", 8, "Search"), s = qi(t, "value", 8, null), c = qi(t, "customStylesheetUrl", 8, !1), l = qi(t, "geocoder", 12), u = Zi(), d = "bsm-" + Math.random().toString(36).substring(6), f = Object.assign({
-		version: i(),
-		accessToken: n(),
-		types: a().join(","),
-		placeholder: o(),
-		customStylesheetUrl: c(),
-		value: s()
-	}, r());
-	function p({ detail: e }) {
-		l(e.geocoder), u("ready");
-	}
-	Z();
-	var m = Ol();
-	pi(m, (e, t) => Tl?.(e, t), () => f), An(() => Ar("ready", m, p)), An(() => Ar("results", m, function(e) {
-		Hi.call(this, t, e);
-	})), An(() => Ar("result", m, function(e) {
-		Hi.call(this, t, e);
-	})), An(() => Ar("loading", m, function(e) {
-		Hi.call(this, t, e);
-	})), An(() => Ar("error", m, function(e) {
-		Hi.call(this, t, e);
-	})), An(() => Ar("clear", m, function(e) {
-		Hi.call(this, t, e);
-	})), An(() => Ar("load", m, function(e) {
-		Hi.call(this, t, e);
-	})), Fn(() => Ai(m, "id", d)), K(e, m), We();
-}
-//#endregion
-//#region src/components/ViewModeControl.svelte
-var Al = /* @__PURE__ */ Br("<div class=\"dropdown-container svelte-1ez7zcb\"><!></div>");
-function jl(e, t) {
+	let r = [];
+	e === "mirror" && (r = [...document.getElementsByClassName("map-container-border")], r.forEach((e) => {
+		e.classList.remove("map-container-border"), e.classList.add("map-container-border-transparent");
+	})), (0, Al.default)(t, { ignoreElements: (e) => e.className && typeof e.className == "string" ? e.className.includes("map-label") : !1 }).then((e) => {
+		e.toBlob((e) => navigator.clipboard.write([new ClipboardItem({ "image/png": e })]));
+	}), n.forEach((e) => {
+		e.classList.remove("screenshot-label"), e.classList.add("screenshot-label-transparent");
+	}), e === "mirror" && r.forEach((e) => {
+		e.classList.remove("map-container-border-transparent"), e.classList.add("map-container-border");
+	});
+}, Ml = /* @__PURE__ */ Br("<div class=\"dropdown-container svelte-1ez7zcb\"><!></div>");
+function Nl(e, t) {
 	Ue(t, !0);
 	let n = () => st(ra, "$linkLocationsStore", r), [r, i] = ct(), a = /* @__PURE__ */ xt(() => {
 		let e = sa;
@@ -33003,13 +33017,13 @@ function jl(e, t) {
 	let s = (e) => {
 		t.onViewMode({ mode: e });
 	};
-	var c = Al(), l = B(c);
+	var c = Ml(), l = B(c);
 	{
 		let e = /* @__PURE__ */ xt(() => G(a).map((e) => ({
 			label: e,
 			value: e
 		})));
-		Tc(l, {
+		Ec(l, {
 			get options() {
 				return G(e);
 			},
@@ -33024,8 +33038,8 @@ function jl(e, t) {
 }
 //#endregion
 //#region src/components/Tooltip.svelte
-var Ml = /* @__PURE__ */ Br("<div class=\"tooltip svelte-sj99h3\"> </div>"), Nl = /* @__PURE__ */ Br("<div><!></div> <!>", 1);
-function Pl(e, t) {
+var Pl = /* @__PURE__ */ Br("<div class=\"tooltip svelte-sj99h3\"> </div>"), Fl = /* @__PURE__ */ Br("<div><!></div> <!>", 1);
+function Il(e, t) {
 	let n = qi(t, "title", 3, ""), r = /* @__PURE__ */ Xt(!1), i = /* @__PURE__ */ Xt(0), a = /* @__PURE__ */ Xt(0);
 	function o(e) {
 		z(r, !0), z(i, e.pageX + 5), z(a, e.pageY + 5);
@@ -33036,10 +33050,10 @@ function Pl(e, t) {
 	function c() {
 		z(r, !1);
 	}
-	var l = Nl(), u = fn(l);
+	var l = Fl(), u = fn(l);
 	di(B(u), () => t.children ?? m), F(u);
 	var d = mn(u, 2), f = (e) => {
-		var t = Ml(), r = pn(t, !0);
+		var t = Pl(), r = pn(t, !0);
 		Fn(() => {
 			wi(t, `top: ${G(a) ?? ""}px; left: ${G(i) ?? ""}px;`), Yr(r, n());
 		}), K(e, t);
@@ -33051,8 +33065,8 @@ function Pl(e, t) {
 Mr(["mouseover", "mousemove"]);
 //#endregion
 //#region src/components/MapLocationDropdown.svelte
-var Fl = /* @__PURE__ */ Br("<div class=\"dropdown-container svelte-fr2ki0\"><!></div>");
-function Il(e, t) {
+var Ll = /* @__PURE__ */ Br("<div class=\"dropdown-container svelte-fr2ki0\"><!></div>");
+function Rl(e, t) {
 	Ue(t, !0);
 	let n = () => st(ta, "$configStore", r), [r, i] = ct(), a = /* @__PURE__ */ xt(() => n().gazetteer), o = (e, t) => Number.parseFloat(e).toFixed(t), s = (e, t) => {
 		if (!e) return "";
@@ -33109,8 +33123,8 @@ function Il(e, t) {
 		return e;
 	}, []) : []);
 	var f = Wr(), p = fn(f), m = (e) => {
-		var t = Fl();
-		Tc(B(t), {
+		var t = Ll();
+		Ec(B(t), {
 			placeholder: "Go to...",
 			get options() {
 				return G(d);
@@ -33128,8 +33142,8 @@ function Il(e, t) {
 }
 //#endregion
 //#region src/components/MapControls.svelte
-var Ll = /* @__PURE__ */ Br("<label class=\"checkbox-container svelte-jgqmfg\"><span class=\"checkbox-label svelte-jgqmfg\">Highlight <span class=\"hotkey svelte-jgqmfg\">D</span>ifferences</span> <input type=\"checkbox\"/></label>"), Rl = /* @__PURE__ */ Br("<div> </div>"), zl = /* @__PURE__ */ Br("<div class=\"validation-messages svelte-jgqmfg\"></div>"), Bl = /* @__PURE__ */ Br("<div class=\"map-controls svelte-jgqmfg\"><div class=\"control-row svelte-jgqmfg\"><div class=\"control-section svelte-jgqmfg\"><div class=\"link-button svelte-jgqmfg\" style=\"margin-right: 6px\" role=\"button\" tabindex=\"0\"><!></div> <!></div> <div class=\"control-section svelte-jgqmfg\"><!></div> <div class=\"control-section svelte-jgqmfg\"><!></div> <div class=\"control-section svelte-jgqmfg\"><!></div> <div class=\"control-section svelte-jgqmfg\"><div class=\"checkboxes svelte-jgqmfg\"><label class=\"checkbox-container svelte-jgqmfg\"><span class=\"checkbox-label svelte-jgqmfg\">Label <span class=\"hotkey svelte-jgqmfg\">C</span>ollisions</span> <input type=\"checkbox\"/></label> <label class=\"checkbox-container svelte-jgqmfg\"><span class=\"checkbox-label svelte-jgqmfg\"><span class=\"hotkey svelte-jgqmfg\">T</span>ile Boundaries</span> <input type=\"checkbox\"/></label> <!></div></div> <div class=\"control-section svelte-jgqmfg\"><div class=\"buttons svelte-jgqmfg\"><button style=\"margin-right: 6px\">+ Add map</button> <button><!> Copy image</button></div></div> <div class=\"control-section svelte-jgqmfg\"><button class=\"fullscreen-btn svelte-jgqmfg\" title=\"Hide UI\">Hide UI</button></div></div> <!></div>"), Vl = /* @__PURE__ */ Br("<button class=\"fullscreen-btn show-ui svelte-jgqmfg\" title=\"Show UI\">Show UI</button>");
-function Hl(e, t) {
+var zl = /* @__PURE__ */ Br("<label class=\"checkbox-container svelte-jgqmfg\"><span class=\"checkbox-label svelte-jgqmfg\">Highlight <span class=\"hotkey svelte-jgqmfg\">D</span>ifferences</span> <input type=\"checkbox\"/></label>"), Bl = /* @__PURE__ */ Br("<div> </div>"), Vl = /* @__PURE__ */ Br("<div class=\"validation-messages svelte-jgqmfg\"></div>"), Hl = /* @__PURE__ */ Br("<div class=\"map-controls svelte-jgqmfg\"><div class=\"control-row svelte-jgqmfg\"><div class=\"control-section svelte-jgqmfg\"><div class=\"link-button svelte-jgqmfg\" style=\"margin-right: 6px\" role=\"button\" tabindex=\"0\"><!></div> <!></div> <div class=\"control-section svelte-jgqmfg\"><!></div> <div class=\"control-section svelte-jgqmfg\"><!></div> <div class=\"control-section svelte-jgqmfg\"><!></div> <div class=\"control-section svelte-jgqmfg\"><div class=\"checkboxes svelte-jgqmfg\"><label class=\"checkbox-container svelte-jgqmfg\"><span class=\"checkbox-label svelte-jgqmfg\">Label <span class=\"hotkey svelte-jgqmfg\">C</span>ollisions</span> <input type=\"checkbox\"/></label> <label class=\"checkbox-container svelte-jgqmfg\"><span class=\"checkbox-label svelte-jgqmfg\"><span class=\"hotkey svelte-jgqmfg\">T</span>ile Boundaries</span> <input type=\"checkbox\"/></label> <!></div></div> <div class=\"control-section svelte-jgqmfg\"><div class=\"buttons svelte-jgqmfg\"><button style=\"margin-right: 6px\">+ Add map</button> <button><!> Copy image</button></div></div> <div class=\"control-section svelte-jgqmfg\"><button class=\"fullscreen-btn svelte-jgqmfg\" title=\"Hide UI\">Hide UI</button></div></div> <!></div>"), Ul = /* @__PURE__ */ Br("<button class=\"fullscreen-btn show-ui svelte-jgqmfg\" title=\"Show UI\">Show UI</button>");
+function Wl(e, t) {
 	Ue(t, !0);
 	let n = () => st(ra, "$linkLocationsStore", i), r = () => st(na, "$showDisplaysStore", i), [i, a] = ct(), o = /* @__PURE__ */ Xt(nn(t.showCollisions)), s = /* @__PURE__ */ Xt(nn(t.showBoundaries)), c = /* @__PURE__ */ Xt(nn(t.showDiff)), l = /* @__PURE__ */ xt(() => t.viewMode === "swipe" && G(c)), u = /* @__PURE__ */ Xt(nn([]));
 	$i.subscribe((e) => z(u, e, !0));
@@ -33159,22 +33173,7 @@ function Hl(e, t) {
 			zoom: 17
 		};
 		n.bbox && (r.zoom = 14), t.onMapState({ options: r });
-	}, _ = async () => {
-		let e = document.getElementsByClassName("maps")[0], n = [...document.getElementsByClassName("screenshot-label-transparent")];
-		n.forEach((e) => {
-			e.classList.remove("screenshot-label-transparent"), e.classList.add("screenshot-label");
-		});
-		let r = [];
-		t.viewMode === "mirror" && (r = [...document.getElementsByClassName("map-container-border")], r.forEach((e) => {
-			e.classList.remove("map-container-border"), e.classList.add("map-container-border-transparent");
-		})), (0, Sl.default)(e, { ignoreElements: (e) => e.className && typeof e.className == "string" ? e.className.includes("map-label") : !1 }).then((e) => {
-			e.toBlob((e) => navigator.clipboard.write([new ClipboardItem({ "image/png": e })]));
-		}), n.forEach((e) => {
-			e.classList.remove("screenshot-label"), e.classList.add("screenshot-label-transparent");
-		}), t.viewMode === "mirror" && r.forEach((e) => {
-			e.classList.remove("map-container-border-transparent"), e.classList.add("map-container-border");
-		});
-	}, v = () => {
+	}, _ = () => jl(t.viewMode), v = () => {
 		$i.update((e) => {
 			let t = e[e.length - 1];
 			return t = {
@@ -33193,16 +33192,16 @@ function Hl(e, t) {
 	var S = Wr();
 	Ar("keydown", rn, x);
 	var C = fn(S), w = (e) => {
-		var r = Bl(), i = B(r), a = B(i), c = B(a), f = B(c);
+		var r = Hl(), i = B(r), a = B(i), c = B(a), f = B(c);
 		{
-			let e = /* @__PURE__ */ xt(() => n() ? fl : pl);
-			xl(f, { get icon() {
+			let e = /* @__PURE__ */ xt(() => n() ? pl : ml);
+			Sl(f, { get icon() {
 				return G(e);
 			} });
 		}
 		F(c);
 		var x = mn(c, 2), S = (e) => {
-			Uc(e, {
+			Wc(e, {
 				get bearing() {
 					return t.bearing;
 				},
@@ -33224,7 +33223,7 @@ function Hl(e, t) {
 			n() && e(S);
 		}), F(a);
 		var C = mn(a, 2);
-		jl(B(C), {
+		Nl(B(C), {
 			get mode() {
 				return t.viewMode;
 			},
@@ -33248,7 +33247,7 @@ function Hl(e, t) {
 			t.mapboxGlAccessToken && e(E);
 		}), F(w);
 		var D = mn(w, 2);
-		Il(B(D), {
+		Rl(B(D), {
 			get bearing() {
 				return t.bearing;
 			},
@@ -33270,10 +33269,10 @@ function Hl(e, t) {
 		var A = mn(k, 2), ne = mn(B(A), 2);
 		Oi(ne), F(A);
 		var j = mn(A, 2), M = (e) => {
-			Pl(e, {
+			Il(e, {
 				title: "Highlights visual differences between two styles.",
 				children: (e, t) => {
-					var n = Ll(), r = mn(B(n), 2);
+					var n = zl(), r = mn(B(n), 2);
 					Oi(r), F(n), Fn(() => ki(r, G(l))), jr("change", r, (e) => h(e.target.checked)), K(e, n);
 				},
 				$$slots: { default: !0 }
@@ -33283,20 +33282,20 @@ function Hl(e, t) {
 			t.viewMode === "swipe" && e(M);
 		}), F(ee), F(O);
 		var re = mn(O, 2), ie = B(re), N = B(ie), ae = mn(N, 2);
-		xl(B(ae), { get icon() {
-			return dl;
+		Sl(B(ae), { get icon() {
+			return fl;
 		} }), xe(), F(ae), F(ie), F(re);
 		var oe = mn(re, 2), se = B(oe);
-		pi(se, (e, t) => Oc?.(e, t), () => ({
+		pi(se, (e, t) => $?.(e, t), () => ({
 			shift: !0,
 			control: !0,
 			code: "KeyF",
 			callback: y
 		})), F(oe), F(i);
 		var ce = mn(i, 2), le = (e) => {
-			var t = zl();
+			var t = Vl();
 			oi(t, 21, () => G(d), ri, (e, t) => {
-				var n = Rl(), r = pn(n, !0);
+				var n = Bl(), r = pn(n, !0);
 				Fn(() => {
 					Si(n, 1, `validation-message-${G(t).type}`, "svelte-jgqmfg"), Yr(r, G(t).message);
 				}), K(e, n);
@@ -33308,8 +33307,8 @@ function Hl(e, t) {
 			Ai(c, "title", n() ? "Unlink locations" : "Link locations"), ki(te, G(o)), ki(ne, G(s)), N.disabled = G(u).length >= 8, Ai(N, "title", G(u).length >= 8 ? "Maximum of 8 maps allowed." : ""), ae.disabled = t.viewMode === "swipe", Ai(ae, "title", t.viewMode === "swipe" ? "Must be in phone or mirror mode to screenshot." : "Copy image to clipboard");
 		}), jr("click", c, b), jr("keydown", c, () => !1), jr("change", te, (e) => p(e.target.checked)), jr("change", ne, (e) => m(e.target.checked)), jr("click", N, v), jr("click", ae, _), jr("click", se, y), K(e, r);
 	}, T = (e) => {
-		var t = Vl();
-		pi(t, (e, t) => Oc?.(e, t), () => ({
+		var t = Ul();
+		pi(t, (e, t) => $?.(e, t), () => ({
 			shift: !0,
 			control: !0,
 			code: "KeyF",
@@ -33327,7 +33326,7 @@ Mr([
 ]);
 //#endregion
 //#region src/App.svelte?svelte&type=style&lang.css
-var Ul = (/* @__PURE__ */ t(((e, t) => {
+var Gl = (/* @__PURE__ */ t(((e, t) => {
 	Object.defineProperty(t.exports, "__esModule", { value: !0 }), t.exports.updateStyle = t.exports.addLink = void 0;
 	var n = {};
 	Object.defineProperty(n, "__esModule", { value: !0 }), n.stamenSvg = void 0, n.stamenSvg = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!-- Generator: Adobe Illustrator 24.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->\n<svg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n	 viewBox=\"0 0 98.6 21.7\" style=\"enable-background:new 0 0 98.6 21.7;\" xml:space=\"preserve\">\n<g id=\"palnts\">\n</g>\n<path d=\"M4.1,14.8c0.1,0.9,0.4,1.6,0.8,2.1c0.7,0.8,1.9,1.3,3.7,1.3c1,0,1.9-0.1,2.5-0.3c1.2-0.4,1.8-1.2,1.8-2.4\n	c0-0.7-0.3-1.2-0.9-1.6c-0.6-0.4-1.6-0.7-2.9-1l-2.2-0.5c-2.2-0.5-3.7-1-4.5-1.6C1,9.9,0.3,8.4,0.3,6.4c0-1.8,0.7-3.4,2-4.6\n	C3.7,0.6,5.7,0,8.4,0c2.2,0,4.1,0.6,5.6,1.7c1.6,1.2,2.4,2.8,2.4,5h-4.1c-0.1-1.2-0.6-2.1-1.7-2.6C9.9,3.7,9.1,3.6,8.1,3.6\n	c-1.1,0-2,0.2-2.7,0.7s-1,1.1-1,1.9c0,0.7,0.3,1.3,1,1.6C5.7,8,6.7,8.3,8.1,8.6l3.6,0.9c1.6,0.4,2.8,0.9,3.6,1.5\n	c1.2,1,1.8,2.4,1.8,4.2c0,1.9-0.7,3.4-2.2,4.7c-1.5,1.2-3.5,1.9-6.2,1.9S3.9,21.2,2.3,20C0.8,18.7,0,17,0,14.8H4.1z\" fill='white'/>\n<path d=\"M17.6,8.9V6.1h2.1V1.9h3.9v4.2h2.5v2.8h-2.5v8c0,0.6,0.1,1,0.2,1.2c0.2,0.2,0.6,0.2,1.5,0.2c0.1,0,0.2,0,0.4,0\n	c0.1,0,0.3,0,0.4,0v3l-1.9,0.1c-1.9,0.1-3.2-0.3-3.9-1c-0.4-0.5-0.7-1.2-0.7-2.1V8.9H17.6z\" fill='white'/>\n<path d=\"M34.8,11.9c0.7-0.1,1.3-0.2,1.6-0.3c0.6-0.2,0.9-0.6,0.9-1.1c0-0.6-0.2-1.1-0.7-1.3s-1.1-0.4-1.9-0.4c-1,0-1.6,0.2-2,0.7\n	c-0.3,0.3-0.5,0.8-0.6,1.4h-3.8c0.1-1.3,0.5-2.4,1.1-3.3c1.1-1.3,2.9-2,5.4-2c1.7,0,3.2,0.3,4.5,1s1.9,1.9,1.9,3.7v7\n	c0,0.5,0,1.1,0,1.8c0,0.5,0.1,0.9,0.2,1.1s0.3,0.3,0.6,0.5v0.6h-4.3c-0.1-0.3-0.2-0.6-0.3-0.9c0-0.3-0.1-0.6-0.1-0.9\n	c-0.6,0.6-1.2,1.1-1.9,1.5c-0.9,0.5-1.8,0.7-2.9,0.7c-1.4,0-2.5-0.4-3.4-1.2c-0.9-0.8-1.4-1.9-1.4-3.3c0-1.9,0.7-3.2,2.2-4.1\n	c0.8-0.5,2-0.8,3.5-1L34.8,11.9z M37.2,13.8c-0.3,0.2-0.5,0.3-0.8,0.4c-0.3,0.1-0.6,0.2-1.1,0.3l-0.9,0.2c-0.8,0.1-1.5,0.3-1.8,0.5\n	c-0.6,0.4-0.9,0.9-0.9,1.7c0,0.7,0.2,1.2,0.6,1.5c0.4,0.3,0.8,0.5,1.4,0.5c0.9,0,1.7-0.3,2.4-0.8s1.1-1.4,1.1-2.8\n	C37.2,15.3,37.2,13.8,37.2,13.8z\" fill='white'/>\n<path d=\"M63.1,6c0.7,0.3,1.2,0.7,1.8,1.4c0.4,0.5,0.7,1.2,0.9,2c0.1,0.5,0.1,1.3,0.1,2.2v9.6h-4.1v-9.7c0-0.6-0.1-1.1-0.3-1.4\n	c-0.4-0.7-1-1.1-2-1.1c-1.1,0-1.9,0.5-2.3,1.4c-0.2,0.5-0.3,1.1-0.3,1.7v9.1h-4v-9.1c0-0.9-0.1-1.6-0.3-2c-0.3-0.7-1-1.1-2-1.1\n	c-1.1,0-1.9,0.4-2.3,1.1c-0.2,0.4-0.3,1-0.3,1.9v9.2h-4V6h3.9v2.2c0.5-0.8,1-1.4,1.4-1.7c0.8-0.6,1.8-0.9,3-0.9s2.1,0.3,2.8,0.8\n	c0.6,0.5,1,1.1,1.3,1.8c0.5-0.9,1.2-1.6,1.9-2C59.1,5.8,60,5.6,61,5.6C61.7,5.6,62.4,5.8,63.1,6z\" fill='white'/>\n<path d=\"M78.9,6.3c1.1,0.5,1.9,1.2,2.6,2.3c0.6,0.9,1,2,1.2,3.1c0.1,0.7,0.2,1.7,0.1,3H71.7c0.1,1.5,0.6,2.6,1.6,3.2\n	c0.6,0.4,1.3,0.6,2.2,0.6c0.9,0,1.6-0.2,2.2-0.7c0.3-0.3,0.6-0.6,0.8-1h4.1c-0.1,0.9-0.6,1.8-1.5,2.8c-1.4,1.5-3.3,2.2-5.7,2.2\n	c-2,0-3.8-0.6-5.4-1.9s-2.3-3.3-2.3-6.1c0-2.6,0.7-4.7,2.1-6.1s3.2-2.1,5.4-2.1C76.6,5.6,77.8,5.8,78.9,6.3z M72.9,9.7\n	c-0.6,0.6-0.9,1.4-1.1,2.4h6.9c-0.1-1.1-0.4-1.9-1.1-2.4s-1.4-0.8-2.4-0.8C74.2,8.8,73.5,9.1,72.9,9.7z\" fill='white'/>\n<path d=\"M97.1,6.8c1,0.8,1.5,2.2,1.5,4.1v10.3h-4.1v-9.3c0-0.8-0.1-1.4-0.3-1.8c-0.4-0.8-1.1-1.2-2.2-1.2c-1.3,0-2.3,0.6-2.8,1.7\n	C89,11.2,88.8,12,88.8,13v8.2h-4V6h3.9v2.2c0.5-0.8,1-1.3,1.4-1.7C91,5.9,92,5.6,93.3,5.6C94.8,5.6,96.1,6,97.1,6.8z\" fill='white'/>\n</svg>";
@@ -33418,11 +33417,11 @@ var Ul = (/* @__PURE__ */ t(((e, t) => {
 		l(n, i), l(r, i), m = !0;
 	};
 	t.exports.addLink = h;
-})))(), Wl = /* @__PURE__ */ Br("<base/>"), Gl = /* @__PURE__ */ Br("<main class=\"svelte-1n46o8q\"><!> <div class=\"attribution-space svelte-1n46o8q\"></div> <div class=\"map-controls-container svelte-1n46o8q\"><!></div></main>");
-function Kl(e, t) {
+})))(), Kl = /* @__PURE__ */ Br("<base/>"), ql = /* @__PURE__ */ Br("<main class=\"svelte-1n46o8q\"><!> <div class=\"attribution-space svelte-1n46o8q\"></div> <div class=\"map-controls-container svelte-1n46o8q\"><!></div></main>");
+function Jl(e, t) {
 	Ue(t, !0);
 	let n = () => st(ia, "$mapLocationsStore", r), [r, i] = ct();
-	(0, Ul.addLink)("https://stamen.com/blog/", "Learn more"), (0, Ul.addLink)("https://github.com/stamen/maperture", "Fork on Github");
+	(0, Gl.addLink)("https://stamen.com/blog/", "Learn more"), (0, Gl.addLink)("https://github.com/stamen/maperture", "Fork on Github");
 	let a = oa(t.localConfig), { mapboxGlAccessToken: o, stylePresetUrls: s } = a;
 	ta.set(a);
 	let c = /* @__PURE__ */ Xt(nn(Pa(a)));
@@ -33501,13 +33500,13 @@ function Kl(e, t) {
 			...e
 		}, !0);
 	};
-	var g = Gl();
+	var g = ql();
 	fi("1n46o8q", (e) => {
-		var t = Wl();
+		var t = Kl();
 		Ai(t, "href", "/"), K(e, t);
 	});
 	var _ = B(g);
-	ul(_, {
+	dl(_, {
 		get maps() {
 			return G(c).maps;
 		},
@@ -33521,7 +33520,7 @@ function Kl(e, t) {
 		onSetDimensions: h
 	});
 	var v = mn(_, 4);
-	Hl(B(v), Ki({ get mapboxGlAccessToken() {
+	Wl(B(v), Ki({ get mapboxGlAccessToken() {
 		return o;
 	} }, () => G(f), {
 		get viewMode() {
@@ -33533,11 +33532,11 @@ function Kl(e, t) {
 }
 //#endregion
 //#region src/main.js
-var ql = (e, t) => Xr(Kl, {
+var Yl = (e, t) => Xr(Jl, {
 	target: e,
 	props: t
 });
 //#endregion
-export { ql as startApp };
+export { Yl as startApp };
 
 //# sourceMappingURL=bundle.js.map

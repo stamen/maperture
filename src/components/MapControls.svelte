@@ -6,9 +6,9 @@
     faCamera,
   } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa/src/fa.svelte';
-  import html2canvas from 'html2canvas';
   import { Geocoder } from '@beyonk/svelte-mapbox';
   import { getMapStateMessages } from '../map-state-utils';
+  import { captureMapsScreenshot } from '../screenshot';
   import ViewModeControl from './ViewModeControl.svelte';
   import Tooltip from './Tooltip.svelte';
   import MapLocationControl from './MapLocationControl.svelte';
@@ -95,56 +95,7 @@
     onMapState({ options });
   };
 
-  const downloadScreenshot = async () => {
-    const mapsView = document.getElementsByClassName('maps')[0];
-
-    let adjustedLabels = [
-      ...document.getElementsByClassName('screenshot-label-transparent'),
-    ];
-    adjustedLabels.forEach(el => {
-      el.classList.remove('screenshot-label-transparent');
-      el.classList.add('screenshot-label');
-    });
-
-    let adjustedBorders = [];
-    // Remove border on mirror mode screenshot
-    if (viewMode === 'mirror') {
-      adjustedBorders = [
-        ...document.getElementsByClassName('map-container-border'),
-      ];
-      adjustedBorders.forEach(el => {
-        el.classList.remove('map-container-border');
-        el.classList.add('map-container-border-transparent');
-      });
-    }
-
-    const ignoreElements = el => {
-      if (el.className && typeof el.className === 'string') {
-        return el.className.includes('map-label');
-      }
-      return false;
-    };
-
-    html2canvas(mapsView, { ignoreElements }).then(canvas => {
-      canvas.toBlob(blob =>
-        navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]),
-      );
-    });
-
-    // Cleanup labels
-    adjustedLabels.forEach(el => {
-      el.classList.remove('screenshot-label');
-      el.classList.add('screenshot-label-transparent');
-    });
-
-    // Cleanup for mirror mode border
-    if (viewMode === 'mirror') {
-      adjustedBorders.forEach(el => {
-        el.classList.remove('map-container-border-transparent');
-        el.classList.add('map-container-border');
-      });
-    }
-  };
+  const downloadScreenshot = () => captureMapsScreenshot(viewMode);
 
   const addMapPane = () => {
     mapsStore.update(current => {
