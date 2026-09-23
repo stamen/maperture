@@ -77,13 +77,17 @@
       id: mapId,
       mapStyle: {
         ...map,
-        // GlMap prefers `url` over `style` (it needs to be given the actual
-        // URL, not fetched-then-repassed content, so relative sprite/glyph
-        // refs inside the style resolve correctly) — except when this
-        // content just came from polling the same URL for local edits.
-        // Re-handing it that same URL again is a no-op there (it already
-        // has that exact style loaded), so it must get the freshly-fetched
-        // object directly instead, or a local edit would never show up.
+        // GlMap's effect does `map.setStyle(url || style)` — thanks to `||`
+        // short-circuiting, `style` is only ever *read* (and so only ever
+        // tracked as a dependency) when `url` is falsy. A poll tick never
+        // changes `url`'s value, so without this, that effect would simply
+        // never re-run on a poll tick at all — not because setStyle() is a
+        // no-op, but because Svelte 5 never calls it again. Blanking `url`
+        // during a poll forces `style` (the freshly re-fetched object) to
+        // be read instead, which is what actually gets a live-edited local
+        // style to show up. Renderers that don't have a `style`-object
+        // fallback (Tangram) instead just ignore url:undefined — see
+        // TangramMap.svelte.
         url: map.isPolling ? undefined : normalizeUrl(map.url, keys),
       },
       numberOfMaps,

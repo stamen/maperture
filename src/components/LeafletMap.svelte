@@ -75,8 +75,20 @@
     map.setView(mapViewProps.center, mapViewProps.zoom + 1, { animate: false });
   });
 
+  // Only tear down and rebuild the layer when what it should show actually
+  // changes — `overrideLayer` (a Tangram-produced layer, compared by
+  // reference) or `url` (a plain tile template, compared by value). Without
+  // this guard, an upstream recompute that hands down an equal-but-new
+  // `mapStyle` object (e.g. a poll tick re-fetching unchanged content) would
+  // otherwise re-fire this effect and redundantly remove+re-add the same
+  // layer — for a Tangram layer specifically, tearing down and reinitializing
+  // its WebGL scene while its own async init is still in flight crashes it.
+  let currentLayerKey;
   $effect(() => {
     if (!map) return;
+    const nextLayerKey = overrideLayer ?? url;
+    if (nextLayerKey === currentLayerKey) return;
+    currentLayerKey = nextLayerKey;
 
     if (layer) layer.remove();
     // TODO surface attribution

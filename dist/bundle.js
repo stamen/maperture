@@ -9999,8 +9999,12 @@ function Ws(e, t) {
 		G(n) && G(n).remove();
 	}), En(() => {
 		G(n) && s(G(a)) && G(n).setView(G(a).center, G(a).zoom + 1, { animate: !1 });
-	}), En(() => {
-		G(n) && (r && r.remove(), r = t.overrideLayer ?? Hs.tileLayer(G(i), { detectRetina: !0 }), r.addTo(G(n)));
+	});
+	let c;
+	En(() => {
+		if (!G(n)) return;
+		let e = t.overrideLayer ?? G(i);
+		e !== c && (c = e, r && r.remove(), r = t.overrideLayer ?? Hs.tileLayer(G(i), { detectRetina: !0 }), r.addTo(G(n)));
 	}), En(() => {
 		if (!G(n) || !t.numberOfMaps) return;
 		let e;
@@ -10011,8 +10015,8 @@ function Ws(e, t) {
 			}), e.observe(r));
 		}), () => e?.disconnect();
 	});
-	var c = Us();
-	Fn(() => Ai(c, "id", t.id)), K(e, c), We();
+	var l = Us();
+	Fn(() => Ai(l, "id", t.id)), K(e, l), We();
 }
 //#endregion
 //#region src/components/TangramMap.svelte
@@ -27732,7 +27736,9 @@ function qs(e, t) {
 	Ue(t, !0);
 	let n = /* @__PURE__ */ Wi(t, Ks), r = /* @__PURE__ */ xt(() => t.mapStyle.url), i = /* @__PURE__ */ Xt(void 0);
 	En(() => {
-		let e = G(r), t = xr(() => G(i));
+		let e = G(r);
+		if (e === void 0) return;
+		let t = xr(() => G(i));
 		(t == null || t.options.scene !== e) && z(i, (0, Gs.leafletLayer)({
 			scene: e,
 			webGLContextOptions: { preserveDrawingBuffer: !0 }
