@@ -7,6 +7,7 @@
   import { createBranchUrl } from '../branch-utils';
   import { MAPBOX_GL_MAX_PITCH } from '../constants';
   import { MapboxOverlay } from '@deck.gl/mapbox';
+  import { MapLibreOverlay } from '@deck.gl/maplibre';
   import { Tile3DLayer, TerrainLayer } from '@deck.gl/geo-layers';
   import { Tiles3DLoader } from '@loaders.gl/3d-tiles';
   import Color from 'color';
@@ -350,7 +351,17 @@
     });
 
     if (!deckOverlay) {
-      deckOverlay = new MapboxOverlay({
+      // maplibre-gl (and maptiler-sdk, which forks it) no longer exposes
+      // `map.transform._nearZ`/`_farZ` the way @deck.gl/mapbox's MapboxOverlay
+      // expects — @deck.gl/maplibre's MapLibreOverlay is built for these
+      // renderers specifically and reads near/far from the renderer's own
+      // public afterRender parameters instead. Real mapbox-gl still works
+      // fine with MapboxOverlay.
+      const Overlay =
+        mapRenderer === 'maplibre-gl' || mapRenderer === 'maptiler-sdk'
+          ? MapLibreOverlay
+          : MapboxOverlay;
+      deckOverlay = new Overlay({
         interleaved: true,
         // Boolen filter in case terrain isn't available
         layers: [terrainLayer, threeDlayer].filter(Boolean),
