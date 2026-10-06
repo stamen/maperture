@@ -9,6 +9,26 @@ import autoprefixer from 'autoprefixer';
 
 const production = !process.env.ROLLUP_WATCH;
 
+// MapLibre GL JS v6+ loads its worker as a separate file at a URL relative to
+// its own bundle, rather than inlining it as a blob, so it must be copied
+// alongside our output bundle for the app to be able to fetch it.
+// https://github.com/maplibre/maplibre-gl-js/blob/main/CHANGELOG.md
+function copyMaplibreWorker() {
+  return {
+    name: 'copy-maplibre-worker',
+    writeBundle(outputOptions) {
+      const path = require('path');
+      const fs = require('fs');
+      const outDir = path.dirname(outputOptions.file);
+      // The worker imports this chunk itself, so it must be copied too.
+      ['maplibre-gl-worker.mjs', 'maplibre-gl-shared.mjs'].forEach(file => {
+        const src = require.resolve(`maplibre-gl/dist/${file}`);
+        fs.copyFileSync(src, path.join(outDir, file));
+      });
+    },
+  };
+}
+
 function serve() {
   let server;
 
@@ -78,6 +98,8 @@ export default {
       extensions: ['.mjs', '.js', '.json', '.node'],
     }),
     commonjs(),
+
+    copyMaplibreWorker(),
 
     // In dev mode, call `npm run start` once
     // the bundle has been generated

@@ -7,14 +7,18 @@
   import { createBranchUrl } from '../branch-utils';
   import { MAPBOX_GL_MAX_PITCH } from '../constants';
   import { MapboxOverlay } from '@deck.gl/mapbox';
-  import { Tile3DLayer } from '@deck.gl/geo-layers';
+  import { MapLibreOverlay } from '@deck.gl/maplibre';
+  import { Tile3DLayer, TerrainLayer } from '@deck.gl/geo-layers';
   import { Tiles3DLoader } from '@loaders.gl/3d-tiles';
   import Color from 'color';
   import {
     LightingEffect,
     AmbientLight,
     DirectionalLight,
+    PointLight,
+    _CameraLight as CameraLight,
   } from '@deck.gl/core';
+  import { _TerrainExtension as TerrainExtension } from '@deck.gl/extensions';
 
   export let id;
   export let bearing;
@@ -218,13 +222,63 @@
   const set3dLayer = () => {
     const stylesheet = map.getStyle();
     const light = stylesheet?.light;
-    const { data: deckGlData, beforeId } = deckGlLayer;
+    const terrain = stylesheet?.terrain;
+    const {
+      data: deckGlData,
+      beforeId,
+      light: deckGlLight,
+      opacity: deckGlOpacity,
+    } = deckGlLayer;
 
     let ambientLight;
     let directionalLight;
+    let pointLight;
+    let cameraLight;
     let lightingEffect;
 
-    if (light) {
+    // Temp pass through, this is redundant
+    if (deckGlLight) {
+      const { ambient, directional, point, camera } = deckGlLight;
+
+      if (ambient) {
+        if (!ambient.color) {
+          ambient.color = 'rgb(255, 255, 255)';
+        }
+        ambient.color = Color(ambient.color).rgb().array();
+        ambientLight = new AmbientLight(ambient);
+      }
+
+      if (directional) {
+        if (!directional.color) {
+          directional.color = 'rgb(255, 255, 255)';
+        }
+        directional.color = Color(directional.color).rgb().array();
+        directionalLight = new DirectionalLight(directional);
+      }
+
+      if (point) {
+        if (!point.color) {
+          point.color = 'rgb(255, 255, 255)';
+        }
+        point.color = Color(point.color).rgb().array();
+        pointLight = new PointLight(point);
+      }
+
+      if (camera) {
+        if (!camera.color) {
+          camera.color = 'rgb(255, 255, 255)';
+        }
+        camera.color = Color(camera.color).rgb().array();
+        cameraLight = new CameraLight(camera);
+      }
+
+      lightingEffect = new LightingEffect({
+        ...(ambientLight && { ambientLight }),
+        ...(directionalLight && { directionalLight }),
+        ...(pointLight && { pointLight }),
+        ...(cameraLight && { cameraLight }),
+      });
+    } else if (light) {
       let { anchor, color, intensity, position } = light;
 
       if (!color) {
@@ -254,23 +308,66 @@
       }
     }
 
+    let terrainLayer;
+    let terrainExtension;
+
+    if (terrain) {
+      const { source: terrainSource, exaggeration } = terrain;
+      const terrainSourceObj = stylesheet?.sources?.[terrainSource];
+      const elevationData =
+        terrainSourceObj?.url ?? terrainSourceObj?.tiles?.[0];
+
+      terrainLayer = new TerrainLayer({
+        id: 'terrain',
+        minZoom: 0,
+        maxZoom: 23,
+        strategy: 'no-overlap',
+        // Mapbox settings, see https://deck.gl/docs/api-reference/geo-layers/terrain-layer
+        elevationDecoder: {
+          rScaler: 6553.6 * exaggeration,
+          gScaler: 25.6 * exaggeration,
+          bScaler: 0.1 * exaggeration,
+          offset: -10000 * exaggeration,
+        },
+        elevationData,
+        color: [255, 255, 255, 0],
+        operation: 'terrain+draw',
+      });
+
+      terrainExtension = new TerrainExtension();
+    }
+
     const threeDlayer = new Tile3DLayer({
       id: 'tile-3d-layer',
       data: deckGlData,
       loader: Tiles3DLoader,
-      // opacity: 0.75,
+      opacity: deckGlOpacity ?? 1,
       // onTilesetLoad: tileset => {
       //   console.log('3D Tileset loaded:', tileset);
       // },
       onTilesetError: e => console.log(e),
       ...(beforeId && { beforeId }),
+      ...(terrainExtension && { extensions: [terrainExtension] }),
     });
 
     if (!deckOverlay) {
-      deckOverlay = new MapboxOverlay({
+      // maplibre-gl (and maptiler-sdk, which forks it) no longer exposes
+      // `map.transform._nearZ`/`_farZ` the way @deck.gl/mapbox's MapboxOverlay
+      // expects — @deck.gl/maplibre's MapLibreOverlay is built for these
+      // renderers specifically and reads near/far from the renderer's own
+      // public afterRender parameters instead. Real mapbox-gl still works
+      // fine with MapboxOverlay.
+      const Overlay =
+        mapRenderer === 'maplibre-gl' || mapRenderer === 'maptiler-sdk'
+          ? MapLibreOverlay
+          : MapboxOverlay;
+      deckOverlay = new Overlay({
         interleaved: true,
-        layers: [threeDlayer],
-        ...(lightingEffect && { effects: [lightingEffect] }),
+        // Boolen filter in case terrain isn't available
+        layers: [terrainLayer, threeDlayer].filter(Boolean),
+        ...(lightingEffect && {
+          effects: [lightingEffect],
+        }),
       });
 
       map.addControl(deckOverlay);
@@ -308,9 +405,10 @@
 
     map = new glLibrary.Map({
       container: id,
-      style: url,
+      style: stylesheet ?? url,
       canvasContextAttributes: { preserveDrawingBuffer: true },
       preserveDrawingBuffer: true,
+      maxPitch: MAPBOX_GL_MAX_PITCH,
       ...mapViewProps,
     });
 
