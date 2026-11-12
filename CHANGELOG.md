@@ -4,6 +4,7 @@
 - Don't set RTL text plugin if already in progress
 - Add branch name to screenshots if looking at branch pattern
 - Add precompile option
+- Allow precompile checkbox options to be grouped under a `section` heading
 
 ## 0.17.0
 

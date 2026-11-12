@@ -41,7 +41,7 @@ Here, you can customize the following options:
     - `options`: Nested config for available options to pass to your compile script.
       - `type`: UI to show in the Maperture interface for option values. Currently only `checkbox` is supported.
       - `default`: The default option to pass to the compiler on initial render.
-      - `values`: An array of objects containing the `value` and `label` for individual options.
+      - `values`: An array of objects containing the `value` and `label` for individual options. An option can also set a `section` to list it under its own heading instead of under "Compile options".
 - `branchPatterns`: An array of objects that specify how to build a URL to fetch a style living on a branch with the following keys:
   - `pattern`: a tokenized url pattern using `{branch}` and `{style}` tokens
   - `styles`: an array specifying specific styles you can view on the specified branch

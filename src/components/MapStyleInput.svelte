@@ -24,6 +24,22 @@
     ? dropdownValue?.precompile?.options
     : null;
 
+  // Checkbox values can set an optional `section` to be listed under their own
+  // heading. Values without one stay under "Compile options".
+  $: precompileSections = (precompileOptions?.values ?? []).reduce(
+    (sections, value, index) => {
+      const label = value?.section ?? 'Compile options';
+      let section = sections.find(s => s.label === label);
+      if (!section) {
+        section = { label, values: [] };
+        sections.push(section);
+      }
+      section.values.push({ value, index });
+      return sections;
+    },
+    []
+  );
+
   let landmark3Dtoggle = dropdownValue?.landmarks3D ?? false;
 
   let focused = false;
@@ -264,23 +280,25 @@
     {#if precompileOptions?.type === 'checkbox'}
       {#if precompileOptions.values.length}
         <div class="checkbox-container">
-          <div class="checkbox-options">
-            <div class="checkbox-label">Compile options:</div>
-            {#each precompileOptions.values as value, i}
-              <div class="checkbox-row">
-                <input
-                  type="checkbox"
-                  id={`${mapIdIndex}-${i}`}
-                  checked={selected?.selectedPrecompileOption &&
-                    selected.selectedPrecompileOption.includes(value.value)}
-                  on:click={() => onChangeCompileOption(value.value)}
-                />
-                <label for={`${mapIdIndex}-${i}`}
-                  >{value?.label ?? value.value}</label
-                >
-              </div>
-            {/each}
-          </div>
+          {#each precompileSections as section}
+            <div class="checkbox-options">
+              <div class="checkbox-label">{section.label}:</div>
+              {#each section.values as { value, index: i }}
+                <div class="checkbox-row">
+                  <input
+                    type="checkbox"
+                    id={`${mapIdIndex}-${i}`}
+                    checked={selected?.selectedPrecompileOption &&
+                      selected.selectedPrecompileOption.includes(value.value)}
+                    on:click={() => onChangeCompileOption(value.value)}
+                  />
+                  <label for={`${mapIdIndex}-${i}`}
+                    >{value?.label ?? value.value}</label
+                  >
+                </div>
+              {/each}
+            </div>
+          {/each}
         </div>
       {/if}
     {/if}
@@ -315,7 +333,7 @@
   .checkbox-container {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.75rem;
   }
 
   .checkbox-options {
