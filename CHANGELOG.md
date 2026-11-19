@@ -5,6 +5,7 @@
 - Add branch name to screenshots if looking at branch pattern
 - Add precompile option
 - Allow precompile checkbox options to be grouped under a `section` heading
+- Upgrade MapLibre GL JS to 6.19 (adds layer blend modes)
 
 ## 0.17.0
 
